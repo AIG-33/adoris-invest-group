@@ -82,11 +82,6 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
                   />
                 </div>
-                {product?.stockStatus === 'in_stock' && (
-                  <div className="absolute top-4 right-4 bg-[#10B981] text-white text-xs font-bold px-3 py-1 rounded-full">
-                    In Stock
-                  </div>
-                )}
               </Link>
 
               {/* Info */}

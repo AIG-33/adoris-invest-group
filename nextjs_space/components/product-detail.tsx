@@ -75,12 +75,6 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />
-            {product?.stockStatus === 'in_stock' && (
-              <div className="absolute top-6 right-6 bg-[#10B981] text-white px-4 py-2 rounded-full font-semibold text-sm flex items-center gap-2">
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                In Stock
-              </div>
-            )}
           </div>
         </div>
 
@@ -121,18 +115,16 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
             </div>
           </div>
 
-          {/* Stock Info */}
-          {product?.stockStatus === 'in_stock' && (
-            <div className="bg-green-50 border-l-4 border-[#10B981] p-4 rounded-lg flex items-start gap-3">
-              <Truck className="w-6 h-6 text-[#10B981] flex-shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-semibold text-[#10B981] mb-1">In Stock - Ready to Ship</h4>
-                <p className="text-sm text-neutral-600">
-                  Usually ships within 3-5 business days. Free shipping for orders over €5,000.
-                </p>
-              </div>
+          {/* Order Info */}
+          <div className="bg-blue-50 border-l-4 border-[#06B6D4] p-4 rounded-lg flex items-start gap-3">
+            <Truck className="w-6 h-6 text-[#06B6D4] flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-[#06B6D4] mb-1">Available by Order Only</h4>
+              <p className="text-sm text-neutral-600">
+                Delivery to our warehouse in Vilnius takes 4-7 weeks. Products sourced directly from European manufacturers.
+              </p>
             </div>
-          )}
+          </div>
 
           {/* Quantity */}
           <div className="flex items-center gap-4">

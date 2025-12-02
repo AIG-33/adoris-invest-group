@@ -8,7 +8,6 @@ interface SidebarProps {
   manufacturers: any[]
   selectedCategory?: string
   selectedManufacturer?: string
-  selectedStock?: string
 }
 
 export function Sidebar({
@@ -16,7 +15,6 @@ export function Sidebar({
   manufacturers,
   selectedCategory,
   selectedManufacturer,
-  selectedStock,
 }: SidebarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -35,8 +33,7 @@ export function Sidebar({
     router?.push?.('/')
   }
 
-  const hasFilters =
-    selectedCategory || selectedManufacturer || selectedStock
+  const hasFilters = selectedCategory || selectedManufacturer
 
   return (
     <aside className="space-y-6">
@@ -86,7 +83,7 @@ export function Sidebar({
         </div>
 
         {/* Manufacturers */}
-        <div className="mb-6">
+        <div>
           <h3 className="text-sm font-semibold text-neutral-700 uppercase tracking-wide mb-3">
             Manufacturers
           </h3>
@@ -116,26 +113,6 @@ export function Sidebar({
               </label>
             )) || []}
           </div>
-        </div>
-
-        {/* Availability */}
-        <div>
-          <h3 className="text-sm font-semibold text-neutral-700 uppercase tracking-wide mb-3">
-            Availability
-          </h3>
-          <label className="flex items-center gap-3 cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={selectedStock === 'in_stock'}
-              onChange={(e) =>
-                updateFilter('stock', e?.target?.checked ? 'in_stock' : '')
-              }
-              className="w-4 h-4 text-[#06B6D4] border-neutral-300 rounded focus:ring-[#06B6D4]"
-            />
-            <span className="flex-1 text-sm text-neutral-700 group-hover:text-[#06B6D4]">
-              In Stock
-            </span>
-          </label>
         </div>
       </div>
 

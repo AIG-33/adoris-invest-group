@@ -12,7 +12,6 @@ interface SearchParams {
   manufacturer?: string
   minPrice?: string
   maxPrice?: string
-  stock?: string
 }
 
 export default async function Home({
@@ -26,7 +25,6 @@ export default async function Home({
   const manufacturer = params?.manufacturer || ''
   const minPrice = params?.minPrice ? parseFloat(params.minPrice) : undefined
   const maxPrice = params?.maxPrice ? parseFloat(params.maxPrice) : undefined
-  const stock = params?.stock || ''
 
   // Build where clause
   const where: any = {}
@@ -51,10 +49,6 @@ export default async function Home({
     where.price = {}
     if (minPrice !== undefined) where.price.gte = minPrice
     if (maxPrice !== undefined) where.price.lte = maxPrice
-  }
-
-  if (stock === 'in_stock') {
-    where.stockStatus = 'in_stock'
   }
 
   // Fetch products
@@ -113,7 +107,6 @@ export default async function Home({
               manufacturers={manufacturers}
               selectedCategory={category}
               selectedManufacturer={manufacturer}
-              selectedStock={stock}
             />
             <ProductGrid products={products} search={search} />
           </div>

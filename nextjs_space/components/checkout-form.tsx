@@ -58,7 +58,17 @@ export function CheckoutForm() {
   }
 
   const subtotal = cart?.reduce?.((sum, item) => sum + (item?.price || 0) * (item?.quantity || 0), 0) || 0
-  const discount = subtotal * 0.15
+  
+  // Calculate discount based on order value
+  let discountRate = 0
+  if (subtotal >= 100000) {
+    discountRate = 0.10 // 10% for orders €100,000+
+  } else if (subtotal >= 50000) {
+    discountRate = 0.05 // 5% for orders €50,000+
+  }
+  // 0% for orders below €50,000
+  
+  const discount = subtotal * discountRate
   const subtotalAfterDiscount = subtotal - discount
   const vat = subtotalAfterDiscount * 0.23
   const total = subtotalAfterDiscount + vat
@@ -413,10 +423,12 @@ export function CheckoutForm() {
                 <span className="text-neutral-700">Shipping</span>
                 <span className="font-semibold text-[#10B981]">FREE</span>
               </div>
-              <div className="flex justify-between text-[#10B981]">
-                <span>Discount (15%)</span>
-                <span className="font-semibold">-€{discount?.toFixed?.(2)}</span>
-              </div>
+              {discountRate > 0 && (
+                <div className="flex justify-between text-[#10B981]">
+                  <span>Volume Discount ({(discountRate * 100).toFixed(0)}%)</span>
+                  <span className="font-semibold">-€{discount?.toFixed?.(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-neutral-700">VAT (23%)</span>
                 <span className="font-semibold">€{vat?.toFixed?.(2)}</span>
