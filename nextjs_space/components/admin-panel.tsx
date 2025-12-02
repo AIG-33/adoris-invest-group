@@ -63,8 +63,8 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-neutral-200">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-[#06B6D4]/10 rounded-xl flex items-center justify-center">
-              <Package className="w-7 h-7 text-[#06B6D4]" />
+            <div className="w-14 h-14 bg-[#20a895]/10 rounded-xl flex items-center justify-center">
+              <Package className="w-7 h-7 text-[#20a895]" />
             </div>
             <div>
               <p className="text-sm text-neutral-600 font-medium">Total Products</p>
@@ -75,8 +75,8 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
 
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-neutral-200">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-[#10B981]/10 rounded-xl flex items-center justify-center">
-              <ShoppingBag className="w-7 h-7 text-[#10B981]" />
+            <div className="w-14 h-14 bg-[#2ec4b6]/10 rounded-xl flex items-center justify-center">
+              <ShoppingBag className="w-7 h-7 text-[#2ec4b6]" />
             </div>
             <div>
               <p className="text-sm text-neutral-600 font-medium">Total Orders</p>
@@ -101,11 +101,11 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       {/* Product Import */}
       <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200 mb-12">
         <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-          <FileSpreadsheet className="w-7 h-7 text-[#06B6D4]" />
+          <FileSpreadsheet className="w-7 h-7 text-[#20a895]" />
           Import Products from Excel/CSV
         </h2>
 
-        <div className="bg-gradient-to-r from-[#06B6D4]/10 to-[#10B981]/10 rounded-xl p-6 mb-6">
+        <div className="bg-gradient-to-r from-[#20a895]/10 to-[#2ec4b6]/10 rounded-xl p-6 mb-6">
           <p className="text-sm text-neutral-700 mb-4">
             Upload an Excel (.xlsx) or CSV file to bulk import products. The file should contain
             the following columns:
@@ -118,7 +118,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <label className="flex-1 cursor-pointer">
-              <div className="border-2 border-dashed border-neutral-300 rounded-xl p-8 hover:border-[#06B6D4] transition-colors">
+              <div className="border-2 border-dashed border-neutral-300 rounded-xl p-8 hover:border-[#20a895] transition-colors">
                 <div className="text-center">
                   <Upload className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
                   <p className="text-neutral-700 font-medium mb-1">
@@ -141,7 +141,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
           <button
             onClick={handleUpload}
             disabled={!file || uploading}
-            className="bg-[#06B6D4] text-white py-4 px-8 rounded-lg hover:bg-[#0891B2] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="bg-[#20a895] text-white py-4 px-8 rounded-lg hover:bg-[#0891B2] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {uploading ? 'Processing...' : 'Upload and Import'}
           </button>

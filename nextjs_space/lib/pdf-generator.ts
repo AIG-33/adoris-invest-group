@@ -4,11 +4,11 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   const doc = new jsPDF()
 
   // Colors
-  const primaryColor = '#0A2463'
-  const accentColor = '#06B6D4'
+  const primaryColor = '#1a8c7c'
+  const accentColor = '#20a895'
 
   // Header
-  doc.setFillColor(10, 36, 99)
+  doc.setFillColor(26, 140, 124)
   doc.rect(0, 0, 210, 40, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(28)
@@ -35,7 +35,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   // Billing Information
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(6, 182, 212)
+  doc.setTextColor(32, 168, 149)
   doc.text('Billing Information', 15, 90)
 
   doc.setFontSize(10)
@@ -60,7 +60,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   y += 15
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(6, 182, 212)
+  doc.setTextColor(32, 168, 149)
   doc.text('Order Items', 15, y)
 
   // Table Header
@@ -106,7 +106,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   doc.text(`€${(order?.subtotal || 0)?.toFixed?.(2)}`, 175, y)
   y += 6
   doc.text(`Discount (15% B2B):`, 140, y)
-  doc.setTextColor(16, 185, 129)
+  doc.setTextColor(46, 196, 182)
   doc.text(`-€${(order?.discount || 0)?.toFixed?.(2)}`, 175, y)
   y += 6
   doc.setTextColor(0, 0, 0)
@@ -138,7 +138,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
 
   // Company Footer
   const pageHeight = doc.internal.pageSize.height
-  doc.setFillColor(10, 36, 99)
+  doc.setFillColor(26, 140, 124)
   doc.rect(0, pageHeight - 20, 210, 20, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(8)

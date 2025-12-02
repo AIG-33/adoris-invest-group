@@ -89,11 +89,11 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                 <div className="text-xs text-neutral-500 uppercase tracking-wide mb-1">
                   {product?.category?.name}
                 </div>
-                <div className="text-sm font-semibold text-[#06B6D4] mb-2">
+                <div className="text-sm font-semibold text-[#20a895] mb-2">
                   {product?.manufacturer?.name}
                 </div>
                 <Link href={`/product/${product?.slug}`}>
-                  <h3 className="font-semibold text-neutral-900 mb-2 line-clamp-2 hover:text-[#06B6D4] transition-colors">
+                  <h3 className="font-semibold text-neutral-900 mb-2 line-clamp-2 hover:text-[#20a895] transition-colors">
                     {product?.name}
                   </h3>
                 </Link>
@@ -107,7 +107,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                 {/* Footer */}
                 <div className="mt-auto pt-4 border-t border-neutral-100">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="text-2xl font-bold text-[#0A2463]">
+                    <div className="text-2xl font-bold text-[#1a8c7c]">
                       €{product?.price?.toLocaleString?.('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -117,7 +117,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                   <div className="flex gap-2">
                     <button
                       onClick={() => addToCart(product)}
-                      className="flex-1 bg-[#06B6D4] text-white py-2 px-4 rounded-lg hover:bg-[#0891B2] transition-colors font-medium flex items-center justify-center gap-2"
+                      className="flex-1 bg-[#20a895] text-white py-2 px-4 rounded-lg hover:bg-[#0891B2] transition-colors font-medium flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add to Cart

@@ -13,8 +13,9 @@ export const metadata: Metadata = {
     'Professional B2B medical laboratory equipment and supplies. High-quality analyzers, reagents, and laboratory consumables from leading manufacturers.',
   metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/logo.png',
   },
   openGraph: {
     title: 'IVD Group - Medical Laboratory Equipment & Supplies',

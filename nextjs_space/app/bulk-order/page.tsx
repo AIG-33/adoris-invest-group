@@ -12,7 +12,7 @@ export default function BulkOrderPage() {
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-4xl font-bold text-[#0A2463] mb-2">
+              <h1 className="text-4xl font-bold text-[#1a8c7c] mb-2">
                 Bulk Order
               </h1>
               <p className="text-neutral-600">

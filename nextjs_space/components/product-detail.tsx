@@ -51,11 +51,11 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
     <div className="container mx-auto px-6 py-8">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-sm text-neutral-600 mb-8">
-        <Link href="/" className="hover:text-[#06B6D4]">Home</Link>
+        <Link href="/" className="hover:text-[#20a895]">Home</Link>
         <span>/</span>
-        <Link href="/" className="hover:text-[#06B6D4]">Products</Link>
+        <Link href="/" className="hover:text-[#20a895]">Products</Link>
         <span>/</span>
-        <Link href={`/?category=${product?.category?.slug}`} className="hover:text-[#06B6D4]">
+        <Link href={`/?category=${product?.category?.slug}`} className="hover:text-[#20a895]">
           {product?.category?.name}
         </Link>
         <span>/</span>
@@ -85,7 +85,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
             <span className="px-4 py-2 bg-neutral-100 rounded-full text-sm font-semibold text-neutral-700">
               {product?.category?.name}
             </span>
-            <span className="px-4 py-2 bg-gradient-to-r from-[#06B6D4] to-[#10B981] text-white rounded-full text-sm font-semibold">
+            <span className="px-4 py-2 bg-gradient-to-r from-[#20a895] to-[#2ec4b6] text-white rounded-full text-sm font-semibold">
               {product?.manufacturer?.name}
             </span>
           </div>
@@ -101,7 +101,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
             <div className="text-sm text-neutral-600 uppercase tracking-wide font-semibold mb-2">
               B2B Price (excl. VAT)
             </div>
-            <div className="text-5xl font-bold text-[#0A2463] mb-2">
+            <div className="text-5xl font-bold text-[#1a8c7c] mb-2">
               €{product?.price?.toLocaleString?.('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
@@ -116,10 +116,10 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           </div>
 
           {/* Order Info */}
-          <div className="bg-blue-50 border-l-4 border-[#06B6D4] p-4 rounded-lg flex items-start gap-3">
-            <Truck className="w-6 h-6 text-[#06B6D4] flex-shrink-0 mt-0.5" />
+          <div className="bg-blue-50 border-l-4 border-[#20a895] p-4 rounded-lg flex items-start gap-3">
+            <Truck className="w-6 h-6 text-[#20a895] flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-semibold text-[#06B6D4] mb-1">Available by Order Only</h4>
+              <h4 className="font-semibold text-[#20a895] mb-1">Available by Order Only</h4>
               <p className="text-sm text-neutral-600">
                 Delivery to our warehouse in Vilnius takes 4-7 weeks. Products sourced directly from European manufacturers.
               </p>
@@ -156,7 +156,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           <div className="flex gap-3">
             <button
               onClick={addToCart}
-              className="flex-1 bg-[#06B6D4] text-white py-4 px-8 rounded-lg hover:bg-[#0891B2] transition-all font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg hover:-translate-y-0.5"
+              className="flex-1 bg-[#20a895] text-white py-4 px-8 rounded-lg hover:bg-[#0891B2] transition-all font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg hover:-translate-y-0.5"
             >
               <ShoppingCart className="w-5 h-5" />
               Add to Cart
@@ -166,19 +166,19 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           {/* Features */}
           <div className="grid grid-cols-2 gap-4 pt-6">
             <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-              <Truck className="w-5 h-5 text-[#06B6D4]" />
+              <Truck className="w-5 h-5 text-[#20a895]" />
               <span className="text-sm font-medium">Free Shipping</span>
             </div>
             <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-              <Shield className="w-5 h-5 text-[#06B6D4]" />
+              <Shield className="w-5 h-5 text-[#20a895]" />
               <span className="text-sm font-medium">2 Year Warranty</span>
             </div>
             <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-              <Phone className="w-5 h-5 text-[#06B6D4]" />
+              <Phone className="w-5 h-5 text-[#20a895]" />
               <span className="text-sm font-medium">24/7 Support</span>
             </div>
             <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-              <Check className="w-5 h-5 text-[#06B6D4]" />
+              <Check className="w-5 h-5 text-[#20a895]" />
               <span className="text-sm font-medium">CE Certified</span>
             </div>
           </div>
@@ -190,13 +190,13 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
         <div className="flex border-b border-neutral-200 bg-neutral-50">
           <button
             onClick={() => setActiveTab('description')}
-            className={`flex-1 py-4 px-6 font-semibold transition-all ${activeTab === 'description' ? 'bg-white text-[#06B6D4] border-b-2 border-[#06B6D4]' : 'text-neutral-600 hover:text-neutral-900'}`}
+            className={`flex-1 py-4 px-6 font-semibold transition-all ${activeTab === 'description' ? 'bg-white text-[#20a895] border-b-2 border-[#20a895]' : 'text-neutral-600 hover:text-neutral-900'}`}
           >
             Description
           </button>
           <button
             onClick={() => setActiveTab('specifications')}
-            className={`flex-1 py-4 px-6 font-semibold transition-all ${activeTab === 'specifications' ? 'bg-white text-[#06B6D4] border-b-2 border-[#06B6D4]' : 'text-neutral-600 hover:text-neutral-900'}`}
+            className={`flex-1 py-4 px-6 font-semibold transition-all ${activeTab === 'specifications' ? 'bg-white text-[#20a895] border-b-2 border-[#20a895]' : 'text-neutral-600 hover:text-neutral-900'}`}
           >
             Specifications
           </button>
@@ -266,7 +266,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                   <h3 className="font-semibold text-sm text-neutral-900 line-clamp-2 mb-2">
                     {relProduct?.name}
                   </h3>
-                  <div className="text-xl font-bold text-[#0A2463]">
+                  <div className="text-xl font-bold text-[#1a8c7c]">
                     €{relProduct?.price?.toLocaleString?.('en-US', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,

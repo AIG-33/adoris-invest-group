@@ -117,9 +117,9 @@ export function CheckoutForm() {
     <div className="container mx-auto px-6 py-8">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-sm text-neutral-600 mb-8">
-        <Link href="/" className="hover:text-[#06B6D4]">Home</Link>
+        <Link href="/" className="hover:text-[#20a895]">Home</Link>
         <span>/</span>
-        <Link href="/cart" className="hover:text-[#06B6D4]">Cart</Link>
+        <Link href="/cart" className="hover:text-[#20a895]">Cart</Link>
         <span>/</span>
         <span className="text-neutral-900 font-medium">Checkout</span>
       </nav>
@@ -127,17 +127,17 @@ export function CheckoutForm() {
       {/* Progress Steps */}
       <div className="flex justify-center items-center gap-4 mb-12 bg-white p-6 rounded-xl shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#10B981] text-white flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-full bg-[#2ec4b6] text-white flex items-center justify-center font-bold">
             ✓
           </div>
-          <span className="font-semibold text-[#10B981]">Cart</span>
+          <span className="font-semibold text-[#2ec4b6]">Cart</span>
         </div>
-        <div className="w-16 h-0.5 bg-[#06B6D4]"></div>
+        <div className="w-16 h-0.5 bg-[#20a895]"></div>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#06B6D4] text-white flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-full bg-[#20a895] text-white flex items-center justify-center font-bold">
             2
           </div>
-          <span className="font-semibold text-[#06B6D4]">Checkout</span>
+          <span className="font-semibold text-[#20a895]">Checkout</span>
         </div>
         <div className="w-16 h-0.5 bg-neutral-200"></div>
         <div className="flex items-center gap-3">
@@ -154,7 +154,7 @@ export function CheckoutForm() {
           {/* Billing Information */}
           <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
             <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-              <Building2 className="w-7 h-7 text-[#06B6D4]" />
+              <Building2 className="w-7 h-7 text-[#20a895]" />
               Billing Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -168,7 +168,7 @@ export function CheckoutForm() {
                   value={formData.company}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="Your company name"
                 />
               </div>
@@ -182,7 +182,7 @@ export function CheckoutForm() {
                   value={formData.vatId}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="e.g., PL1234567890"
                 />
               </div>
@@ -195,7 +195,7 @@ export function CheckoutForm() {
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="e.g., Laboratory Services"
                 />
               </div>
@@ -209,7 +209,7 @@ export function CheckoutForm() {
                   value={formData.firstName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 />
               </div>
               <div>
@@ -222,7 +222,7 @@ export function CheckoutForm() {
                   value={formData.lastName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 />
               </div>
               <div>
@@ -235,7 +235,7 @@ export function CheckoutForm() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 />
               </div>
               <div>
@@ -248,7 +248,7 @@ export function CheckoutForm() {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 />
               </div>
               <div className="md:col-span-2">
@@ -261,7 +261,7 @@ export function CheckoutForm() {
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 />
               </div>
               <div>
@@ -274,7 +274,7 @@ export function CheckoutForm() {
                   value={formData.city}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 />
               </div>
               <div>
@@ -287,7 +287,7 @@ export function CheckoutForm() {
                   value={formData.postalCode}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 />
               </div>
               <div className="md:col-span-2">
@@ -299,7 +299,7 @@ export function CheckoutForm() {
                   value={formData.country}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 >
                   <option value="Poland">Poland</option>
                   <option value="Germany">Germany</option>
@@ -313,7 +313,7 @@ export function CheckoutForm() {
           {/* Order Details */}
           <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
             <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-              <FileText className="w-7 h-7 text-[#06B6D4]" />
+              <FileText className="w-7 h-7 text-[#20a895]" />
               Order Details
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -326,7 +326,7 @@ export function CheckoutForm() {
                   name="poNumber"
                   value={formData.poNumber}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="PO-2025-001"
                 />
               </div>
@@ -339,7 +339,7 @@ export function CheckoutForm() {
                   name="preferredDeliveryDate"
                   value={formData.preferredDeliveryDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 />
               </div>
               <div className="md:col-span-2">
@@ -351,7 +351,7 @@ export function CheckoutForm() {
                   value={formData.notes}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="Special instructions, delivery notes, etc."
                 />
               </div>
@@ -361,17 +361,17 @@ export function CheckoutForm() {
           {/* Payment Method */}
           <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
             <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-              <CreditCard className="w-7 h-7 text-[#06B6D4]" />
+              <CreditCard className="w-7 h-7 text-[#20a895]" />
               Payment Method
             </h2>
-            <label className="flex items-start gap-4 p-4 border-2 border-[#06B6D4] rounded-lg bg-[#06B6D4]/5 cursor-pointer">
+            <label className="flex items-start gap-4 p-4 border-2 border-[#20a895] rounded-lg bg-[#20a895]/5 cursor-pointer">
               <input
                 type="radio"
                 name="paymentMethod"
                 value="bank_transfer"
                 checked={formData.paymentMethod === 'bank_transfer'}
                 onChange={handleChange}
-                className="mt-1 w-5 h-5 text-[#06B6D4]"
+                className="mt-1 w-5 h-5 text-[#20a895]"
               />
               <div className="flex-1">
                 <div className="font-semibold text-neutral-900 mb-1">🏦 Bank Transfer</div>
@@ -406,7 +406,7 @@ export function CheckoutForm() {
                       {item?.name}
                     </h4>
                     <p className="text-xs text-neutral-600">Qty: {item?.quantity}</p>
-                    <p className="text-sm font-bold text-[#0A2463] mt-1">
+                    <p className="text-sm font-bold text-[#1a8c7c] mt-1">
                       €{((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}
                     </p>
                   </div>
@@ -421,10 +421,10 @@ export function CheckoutForm() {
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-700">Shipping</span>
-                <span className="font-semibold text-[#10B981]">FREE</span>
+                <span className="font-semibold text-[#2ec4b6]">FREE</span>
               </div>
               {discountRate > 0 && (
-                <div className="flex justify-between text-[#10B981]">
+                <div className="flex justify-between text-[#2ec4b6]">
                   <span>Volume Discount ({(discountRate * 100).toFixed(0)}%)</span>
                   <span className="font-semibold">-€{discount?.toFixed?.(2)}</span>
                 </div>
@@ -438,7 +438,7 @@ export function CheckoutForm() {
             <div className="border-t-2 border-neutral-900 pt-4 mb-6">
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold">Total</span>
-                <span className="text-3xl font-bold text-[#0A2463]">
+                <span className="text-3xl font-bold text-[#1a8c7c]">
                   €{total?.toFixed?.(2)}
                 </span>
               </div>
@@ -448,7 +448,7 @@ export function CheckoutForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#06B6D4] text-white py-4 rounded-lg hover:bg-[#0891B2] transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
+              className="w-full bg-[#20a895] text-white py-4 rounded-lg hover:bg-[#0891B2] transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
             >
               {loading ? 'Processing...' : 'Place Order'}
             </button>

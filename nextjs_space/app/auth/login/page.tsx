@@ -39,12 +39,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A2463] via-[#1E3A8A] to-[#06B6D4] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#1a8c7c] via-[#1E3A8A] to-[#20a895] flex items-center justify-center p-6">
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#06B6D4] to-[#10B981] rounded-xl flex items-center justify-center text-white font-bold text-2xl">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#20a895] to-[#2ec4b6] rounded-xl flex items-center justify-center text-white font-bold text-2xl">
               IVD
             </div>
             <div className="flex flex-col items-start">
@@ -75,7 +75,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e?.target?.value || '')}
                 required
-                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 placeholder="admin@ivdgroup.eu"
               />
             </div>
@@ -89,7 +89,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e?.target?.value || '')}
                 required
-                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10"
+                className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                 placeholder="••••••••"
               />
             </div>
@@ -97,7 +97,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#06B6D4] text-white py-4 rounded-lg hover:bg-[#0891B2] transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-[#20a895] text-white py-4 rounded-lg hover:bg-[#0891B2] transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -116,7 +116,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <Link
               href="/"
-              className="text-sm text-[#06B6D4] hover:text-[#0891B2] font-medium"
+              className="text-sm text-[#20a895] hover:text-[#0891B2] font-medium"
             >
               ← Back to Shop
             </Link>

@@ -122,8 +122,8 @@ SKU003\t10`;
       {/* Input Section */}
       <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Upload className="w-5 h-5 text-[#06B6D4]" />
-          <h2 className="text-xl font-bold text-[#0A2463]">Enter Products</h2>
+          <Upload className="w-5 h-5 text-[#20a895]" />
+          <h2 className="text-xl font-bold text-[#1a8c7c]">Enter Products</h2>
         </div>
 
         <div className="mb-4">
@@ -137,7 +137,7 @@ SKU003\t10`;
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={`Example:\n${exampleText}`}
-            className="w-full h-64 px-4 py-3 border-2 border-neutral-200 rounded-lg focus:border-[#06B6D4] focus:outline-none focus:ring-4 focus:ring-[#06B6D4]/10 transition-all font-mono text-sm"
+            className="w-full h-64 px-4 py-3 border-2 border-neutral-200 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10 transition-all font-mono text-sm"
           />
         </div>
 
@@ -145,7 +145,7 @@ SKU003\t10`;
           <button
             onClick={handleProcess}
             disabled={isProcessing || !inputText.trim()}
-            className="flex-1 bg-[#06B6D4] text-white px-6 py-3 rounded-lg hover:bg-[#0891B2] transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-[#20a895] text-white px-6 py-3 rounded-lg hover:bg-[#0891B2] transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>
@@ -193,8 +193,8 @@ SKU003\t10`;
       {/* Results Section */}
       <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Package className="w-5 h-5 text-[#10B981]" />
-          <h2 className="text-xl font-bold text-[#0A2463]">Results</h2>
+          <Package className="w-5 h-5 text-[#2ec4b6]" />
+          <h2 className="text-xl font-bold text-[#1a8c7c]">Results</h2>
         </div>
 
         {!result ? (
@@ -244,13 +244,13 @@ SKU003\t10`;
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm text-[#0A2463] truncate">
+                        <div className="font-semibold text-sm text-[#1a8c7c] truncate">
                           {product.name}
                         </div>
                         <div className="text-xs text-neutral-600 font-mono">{product.sku}</div>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <div className="text-sm font-bold text-[#0A2463]">
+                        <div className="text-sm font-bold text-[#1a8c7c]">
                           {product.requestedQuantity}x
                         </div>
                         <div className="text-xs text-neutral-500">
@@ -263,7 +263,7 @@ SKU003\t10`;
 
                 <button
                   onClick={addToCart}
-                  className="w-full mt-4 bg-[#10B981] text-white px-6 py-3 rounded-lg hover:bg-[#059669] transition-colors font-semibold flex items-center justify-center gap-2"
+                  className="w-full mt-4 bg-[#2ec4b6] text-white px-6 py-3 rounded-lg hover:bg-[#059669] transition-colors font-semibold flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Add All to Cart ({result.found.length} items)

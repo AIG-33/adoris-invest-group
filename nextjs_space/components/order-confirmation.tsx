@@ -14,7 +14,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
       <div className="max-w-4xl mx-auto">
         {/* Success Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-[#10B981] rounded-full mb-6 animate-bounce">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-[#2ec4b6] rounded-full mb-6 animate-bounce">
             <CheckCircle className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-neutral-900 mb-4">
@@ -23,7 +23,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
           <p className="text-xl text-neutral-600 mb-2">
             Thank you for your order. We've received it and are processing it now.
           </p>
-          <p className="text-lg font-semibold text-[#0A2463]">
+          <p className="text-lg font-semibold text-[#1a8c7c]">
             Order Number: {order?.orderNumber}
           </p>
         </div>
@@ -32,10 +32,10 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
         <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200 mb-8">
           <div className="flex justify-between items-center">
             <div className="flex flex-col items-center flex-1">
-              <div className="w-12 h-12 rounded-full bg-[#10B981] text-white flex items-center justify-center font-bold mb-2">
+              <div className="w-12 h-12 rounded-full bg-[#2ec4b6] text-white flex items-center justify-center font-bold mb-2">
                 <CheckCircle className="w-6 h-6" />
               </div>
-              <span className="text-sm font-semibold text-[#10B981]">Order Placed</span>
+              <span className="text-sm font-semibold text-[#2ec4b6]">Order Placed</span>
             </div>
             <div className="flex-1 h-1 bg-neutral-200 mx-4"></div>
             <div className="flex flex-col items-center flex-1">
@@ -55,9 +55,9 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
         </div>
 
         {/* Email Confirmation Notice */}
-        <div className="bg-[#06B6D4]/10 border-l-4 border-[#06B6D4] p-6 rounded-lg mb-8">
+        <div className="bg-[#20a895]/10 border-l-4 border-[#20a895] p-6 rounded-lg mb-8">
           <div className="flex items-start gap-4">
-            <Mail className="w-6 h-6 text-[#06B6D4] flex-shrink-0 mt-1" />
+            <Mail className="w-6 h-6 text-[#20a895] flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-semibold text-neutral-900 mb-2">
                 Order Confirmation Email Sent
@@ -134,7 +134,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xl font-bold text-[#0A2463]">
+                  <div className="text-xl font-bold text-[#1a8c7c]">
                     €{((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
                 <span className="text-neutral-700">Subtotal</span>
                 <span className="font-semibold">€{order?.subtotal?.toFixed?.(2)}</span>
               </div>
-              <div className="flex justify-between text-[#10B981]">
+              <div className="flex justify-between text-[#2ec4b6]">
                 <span>Discount (15% B2B)</span>
                 <span className="font-semibold">-€{order?.discount?.toFixed?.(2)}</span>
               </div>
@@ -160,7 +160,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
             </div>
             <div className="flex justify-between items-center text-xl font-bold border-t-2 border-neutral-900 pt-4">
               <span>Total</span>
-              <span className="text-[#0A2463]">€{order?.total?.toFixed?.(2)}</span>
+              <span className="text-[#1a8c7c]">€{order?.total?.toFixed?.(2)}</span>
             </div>
           </div>
         </div>
@@ -169,7 +169,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 bg-[#06B6D4] text-white px-8 py-4 rounded-lg hover:bg-[#0891B2] transition-all font-semibold"
+            className="inline-flex items-center justify-center gap-2 bg-[#20a895] text-white px-8 py-4 rounded-lg hover:bg-[#0891B2] transition-all font-semibold"
           >
             Continue Shopping
           </Link>
@@ -182,10 +182,10 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
             If you have any questions about your order, please don't hesitate to contact us.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
-            <a href="mailto:info@ivdgroup.eu" className="text-[#06B6D4] hover:underline">
+            <a href="mailto:info@ivdgroup.eu" className="text-[#20a895] hover:underline">
               📧 info@ivdgroup.eu
             </a>
-            <a href="tel:+48123456789" className="text-[#06B6D4] hover:underline">
+            <a href="tel:+48123456789" className="text-[#20a895] hover:underline">
               📞 +48 123 456 789
             </a>
           </div>
