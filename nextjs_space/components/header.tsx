@@ -112,9 +112,11 @@ export function Header() {
           <div className="flex justify-between items-center text-sm">
             <div className="flex items-center gap-4">
               <span>📧 info@ivdgroup.eu</span>
-              <span>📞 +48 123 456 789</span>
+              <span>📞 +48 88 1049959</span>
             </div>
-            <div>B2B Medical Equipment Portal</div>
+            <div className="flex items-center gap-4">
+              <span>IVD GROUP Sp. z o.o. | Warsaw, Poland</span>
+            </div>
           </div>
         </div>
       </div>
@@ -214,6 +216,21 @@ export function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
+            <Link
+              href="/bulk-order"
+              className="flex items-center gap-2 text-neutral-700 hover:text-[#10B981] font-medium transition-colors"
+            >
+              <Package className="w-5 h-5" />
+              <span>Bulk Order</span>
+            </Link>
+
+            <Link
+              href="/terms"
+              className="flex items-center gap-2 text-neutral-700 hover:text-[#06B6D4] font-medium transition-colors"
+            >
+              <span>Terms</span>
+            </Link>
+
             {status === 'authenticated' && session?.user ? (
               <>
                 {(session?.user as any)?.role === 'admin' && (
@@ -225,13 +242,6 @@ export function Header() {
                     <span>Admin</span>
                   </Link>
                 )}
-                <Link
-                  href="/bulk-order"
-                  className="flex items-center gap-2 text-neutral-700 hover:text-[#10B981] font-medium transition-colors"
-                >
-                  <Package className="w-5 h-5" />
-                  <span>Bulk Order</span>
-                </Link>
                 <button
                   onClick={() => signOut()}
                   className="flex items-center gap-2 text-neutral-700 hover:text-red-600 font-medium transition-colors"

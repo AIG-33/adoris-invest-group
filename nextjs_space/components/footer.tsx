@@ -33,6 +33,22 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/bulk-order"
+                  className="text-neutral-300 hover:text-[#06B6D4] transition-colors"
+                >
+                  Bulk Order
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-neutral-300 hover:text-[#06B6D4] transition-colors"
+                >
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/cart"
                   className="text-neutral-300 hover:text-[#06B6D4] transition-colors"
                 >
@@ -50,21 +66,27 @@ export function Footer() {
                 <span className="font-semibold">Email:</span> info@ivdgroup.eu
               </li>
               <li className="text-neutral-300">
-                <span className="font-semibold">Phone:</span> +48 123 456 789
+                <span className="font-semibold">Phone:</span> +48 88 1049959
               </li>
               <li className="text-neutral-300">
-                <span className="font-semibold">Hours:</span> Mon-Fri 8:00-18:00
+                <span className="font-semibold">Website:</span> www.ivdgroup.eu
               </li>
             </ul>
           </div>
 
-          {/* Info */}
+          {/* Company Details */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Business Info</h3>
+            <h3 className="font-bold text-lg mb-4">Company Info</h3>
             <ul className="space-y-2 text-sm text-neutral-300">
-              <li>🚚 Free Shipping over €5,000</li>
-              <li>✅ 2-Year Warranty</li>
-              <li>📞 24/7 Support</li>
+              <li>IVD GROUP Sp. z o.o.</li>
+              <li>Bartoszewicza 3-24</li>
+              <li>00-337 Warsaw, Poland</li>
+              <li className="pt-2">
+                <span className="font-semibold">VAT:</span> PL5252799583
+              </li>
+              <li>
+                <span className="font-semibold">KRS:</span> 0000800009
+              </li>
             </ul>
           </div>
         </div>
