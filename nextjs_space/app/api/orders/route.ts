@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       discount,
       vat,
       total,
+      userId,
     } = body
 
     // Generate order number
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
     const order = await prisma.order.create({
       data: {
         orderNumber,
+        userId: userId || null,
         customerName: `${firstName} ${lastName}`,
         email,
         phone,

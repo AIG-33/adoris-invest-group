@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, CreditCard, Building2, Truck, FileText } from 'lucide-react'
@@ -17,6 +18,7 @@ interface CartItem {
 
 export function CheckoutForm() {
   const router = useRouter()
+  const { data: session } = useSession() || {}
   const [cart, setCart] = useState<CartItem[]>([])
   const [mounted, setMounted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -85,6 +87,7 @@ export function CheckoutForm() {
         discount,
         vat,
         total,
+        userId: session?.user ? (session.user as any).id : null,
       }
 
       const response = await fetch('/api/orders', {

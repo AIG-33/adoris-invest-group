@@ -235,6 +235,13 @@ export function Header() {
 
             {status === 'authenticated' && session?.user ? (
               <>
+                <Link
+                  href="/account"
+                  className="flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors"
+                >
+                  <User className="w-5 h-5" />
+                  <span>My Account</span>
+                </Link>
                 {(session?.user as any)?.role === 'admin' && (
                   <Link
                     href="/admin"
