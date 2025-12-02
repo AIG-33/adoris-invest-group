@@ -83,18 +83,18 @@ export function StatsSection() {
             return (
               <div
                 key={idx}
-                className={`group rounded-2xl border border-[#1a8c7c]/20 bg-gradient-to-br from-gray-900/50 to-black/50 p-6 backdrop-blur-sm transition-all duration-700 hover:border-[#1a8c7c]/50 hover:shadow-xl hover:shadow-[#1a8c7c]/20 ${
+                className={`group rounded-2xl border border-[#000000]/20 bg-gradient-to-br from-gray-900/50 to-black/50 p-6 backdrop-blur-sm transition-all duration-700 hover:border-[#000000]/50 hover:shadow-xl hover:shadow-[#000000]/20 ${
                   isVisible
                     ? 'translate-y-0 opacity-100'
                     : 'translate-y-10 opacity-0'
                 }`}
                 style={{ transitionDelay: `${idx * 100}ms` }}
               >
-                <Icon className="mb-4 h-12 w-12 text-[#2ec4b6] transition-transform group-hover:scale-110" />
+                <Icon className="mb-4 h-12 w-12 text-[#666666] transition-transform group-hover:scale-110" />
                 <div className="mb-2 text-4xl font-bold text-white">
                   {stat.value}
                 </div>
-                <div className="mb-1 text-lg font-semibold text-[#2ec4b6]">
+                <div className="mb-1 text-lg font-semibold text-[#666666]">
                   {stat.label}
                 </div>
                 <div className="text-sm text-gray-400">{stat.description}</div>
@@ -112,14 +112,14 @@ export function StatsSection() {
             {features.map((feature, idx) => (
               <div
                 key={idx}
-                className={`group rounded-xl border border-[#1a8c7c]/20 bg-gradient-to-r from-gray-900/30 to-black/30 p-6 backdrop-blur-sm transition-all duration-700 hover:border-[#1a8c7c]/50 hover:bg-gradient-to-r hover:from-[#1a8c7c]/10 hover:to-[#156b5f]/10 ${
+                className={`group rounded-xl border border-[#000000]/20 bg-gradient-to-r from-gray-900/30 to-black/30 p-6 backdrop-blur-sm transition-all duration-700 hover:border-[#000000]/50 hover:bg-gradient-to-r hover:from-[#000000]/10 hover:to-[#156b5f]/10 ${
                   isVisible
                     ? 'translate-y-0 opacity-100'
                     : 'translate-y-10 opacity-0'
                 }`}
                 style={{ transitionDelay: `${400 + idx * 100}ms` }}
               >
-                <h3 className="mb-2 text-xl font-bold text-white transition-colors group-hover:text-[#2ec4b6]">
+                <h3 className="mb-2 text-xl font-bold text-white transition-colors group-hover:text-[#666666]">
                   {feature.title}
                 </h3>
                 <p className="text-gray-400">{feature.description}</p>
@@ -139,13 +139,13 @@ export function StatsSection() {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href="/products"
-              className="rounded-lg bg-[#1a8c7c] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#1a8c7c]/50"
+              className="rounded-lg bg-[#000000] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#000000]/50"
             >
               Browse Catalog
             </a>
             <a
               href="/terms"
-              className="rounded-lg border-2 border-[#1a8c7c] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#1a8c7c]/10"
+              className="rounded-lg border-2 border-[#000000] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#000000]/10"
             >
               View Terms
             </a>

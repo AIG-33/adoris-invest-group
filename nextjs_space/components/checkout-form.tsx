@@ -120,9 +120,9 @@ export function CheckoutForm() {
     <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600 mb-6 sm:mb-8">
-        <Link href="/" className="hover:text-[#20a895]">Home</Link>
+        <Link href="/" className="hover:text-[#333333]">Home</Link>
         <span>/</span>
-        <Link href="/cart" className="hover:text-[#20a895]">Cart</Link>
+        <Link href="/cart" className="hover:text-[#333333]">Cart</Link>
         <span>/</span>
         <span className="text-neutral-900 font-medium">Checkout</span>
       </nav>
@@ -130,17 +130,17 @@ export function CheckoutForm() {
       {/* Progress Steps - Compact on Mobile */}
       <div className="flex justify-center items-center gap-2 sm:gap-4 mb-8 sm:mb-12 bg-white p-4 sm:p-6 rounded-xl shadow-sm overflow-x-auto">
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#2ec4b6] text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#666666] text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0">
             ✓
           </div>
-          <span className="font-semibold text-[#2ec4b6] text-xs sm:text-base whitespace-nowrap">Cart</span>
+          <span className="font-semibold text-[#666666] text-xs sm:text-base whitespace-nowrap">Cart</span>
         </div>
-        <div className="w-8 sm:w-16 h-0.5 bg-[#20a895]"></div>
+        <div className="w-8 sm:w-16 h-0.5 bg-[#333333]"></div>
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#20a895] text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#333333] text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0">
             2
           </div>
-          <span className="font-semibold text-[#20a895] text-xs sm:text-base whitespace-nowrap">Checkout</span>
+          <span className="font-semibold text-[#333333] text-xs sm:text-base whitespace-nowrap">Checkout</span>
         </div>
         <div className="w-8 sm:w-16 h-0.5 bg-neutral-200"></div>
         <div className="flex items-center gap-1.5 sm:gap-3">
@@ -157,7 +157,7 @@ export function CheckoutForm() {
           {/* Billing Information */}
           <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-neutral-200">
             <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
-              <Building2 className="w-6 h-6 sm:w-7 sm:h-7 text-[#20a895]" />
+              <Building2 className="w-6 h-6 sm:w-7 sm:h-7 text-[#333333]" />
               Billing Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
@@ -171,7 +171,7 @@ export function CheckoutForm() {
                   value={formData.company}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                   placeholder="Your company name"
                 />
               </div>
@@ -185,7 +185,7 @@ export function CheckoutForm() {
                   value={formData.vatId}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                   placeholder="e.g., PL1234567890"
                 />
               </div>
@@ -198,7 +198,7 @@ export function CheckoutForm() {
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                   placeholder="e.g., Laboratory Services"
                 />
               </div>
@@ -212,7 +212,7 @@ export function CheckoutForm() {
                   value={formData.firstName}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -225,7 +225,7 @@ export function CheckoutForm() {
                   value={formData.lastName}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -238,7 +238,7 @@ export function CheckoutForm() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -251,7 +251,7 @@ export function CheckoutForm() {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 />
               </div>
               <div className="md:col-span-2">
@@ -264,7 +264,7 @@ export function CheckoutForm() {
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -277,7 +277,7 @@ export function CheckoutForm() {
                   value={formData.city}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -290,7 +290,7 @@ export function CheckoutForm() {
                   value={formData.postalCode}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 />
               </div>
               <div className="md:col-span-2">
@@ -302,7 +302,7 @@ export function CheckoutForm() {
                   value={formData.country}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 >
                   <option value="Poland">Poland</option>
                   <option value="Germany">Germany</option>
@@ -316,7 +316,7 @@ export function CheckoutForm() {
           {/* Order Details */}
           <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-neutral-200">
             <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
-              <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-[#20a895]" />
+              <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-[#333333]" />
               Order Details
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
@@ -329,7 +329,7 @@ export function CheckoutForm() {
                   name="poNumber"
                   value={formData.poNumber}
                   onChange={handleChange}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                   placeholder="PO-2025-001"
                 />
               </div>
@@ -342,7 +342,7 @@ export function CheckoutForm() {
                   name="preferredDeliveryDate"
                   value={formData.preferredDeliveryDate}
                   onChange={handleChange}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                 />
               </div>
               <div className="md:col-span-2">
@@ -354,7 +354,7 @@ export function CheckoutForm() {
                   value={formData.notes}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 text-sm sm:text-base"
                   placeholder="Special instructions, delivery notes, etc."
                 />
               </div>
@@ -364,17 +364,17 @@ export function CheckoutForm() {
           {/* Payment Method */}
           <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-neutral-200">
             <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
-              <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 text-[#20a895]" />
+              <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 text-[#333333]" />
               Payment Method
             </h2>
-            <label className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 border-2 border-[#20a895] rounded-lg bg-[#20a895]/5 cursor-pointer">
+            <label className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 border-2 border-[#333333] rounded-lg bg-[#333333]/5 cursor-pointer">
               <input
                 type="radio"
                 name="paymentMethod"
                 value="bank_transfer"
                 checked={formData.paymentMethod === 'bank_transfer'}
                 onChange={handleChange}
-                className="mt-1 w-5 h-5 text-[#20a895]"
+                className="mt-1 w-5 h-5 text-[#333333]"
               />
               <div className="flex-1">
                 <div className="font-semibold text-neutral-900 mb-1">🏦 Bank Transfer</div>
@@ -409,7 +409,7 @@ export function CheckoutForm() {
                       {item?.name}
                     </h4>
                     <p className="text-xs text-neutral-600">Qty: {item?.quantity}</p>
-                    <p className="text-sm font-bold text-[#1a8c7c] mt-1">
+                    <p className="text-sm font-bold text-[#000000] mt-1">
                       €{((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}
                     </p>
                   </div>
@@ -424,10 +424,10 @@ export function CheckoutForm() {
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-700">Shipping</span>
-                <span className="font-semibold text-[#2ec4b6]">FREE</span>
+                <span className="font-semibold text-[#666666]">FREE</span>
               </div>
               {discountRate > 0 && (
-                <div className="flex justify-between text-[#2ec4b6]">
+                <div className="flex justify-between text-[#666666]">
                   <span>Volume Discount ({(discountRate * 100).toFixed(0)}%)</span>
                   <span className="font-semibold">-€{discount?.toFixed?.(2)}</span>
                 </div>
@@ -441,7 +441,7 @@ export function CheckoutForm() {
             <div className="border-t-2 border-neutral-900 pt-4 mb-6">
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold">Total</span>
-                <span className="text-3xl font-bold text-[#1a8c7c]">
+                <span className="text-3xl font-bold text-[#000000]">
                   €{total?.toFixed?.(2)}
                 </span>
               </div>
@@ -451,7 +451,7 @@ export function CheckoutForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#20a895] text-white py-4 rounded-lg hover:bg-[#0891B2] transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
+              className="w-full bg-[#333333] text-white py-4 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
             >
               {loading ? 'Processing...' : 'Place Order'}
             </button>

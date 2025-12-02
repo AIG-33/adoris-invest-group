@@ -88,7 +88,7 @@ export function HeroSection() {
 
             {/* Subtitle */}
             <h2
-              className={`text-base sm:text-xl md:text-2xl lg:text-3xl font-medium text-[#2ec4b6] transition-all duration-700 ${
+              className={`text-base sm:text-xl md:text-2xl lg:text-3xl font-medium text-[#666666] transition-all duration-700 ${
                 isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}
               style={{ transitionDelay: '400ms' }}
@@ -115,7 +115,7 @@ export function HeroSection() {
             >
               <Link
                 href={slide.link}
-                className="group flex items-center justify-center gap-2 rounded-md bg-[#1a8c7c] px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#1a8c7c]/50"
+                className="group flex items-center justify-center gap-2 rounded-md bg-[#000000] px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#000000]/50"
               >
                 {slide.cta}
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
@@ -141,7 +141,7 @@ export function HeroSection() {
             onClick={() => setCurrentSlide(idx)}
             className={`h-1 rounded-full transition-all ${
               idx === currentSlide
-                ? 'w-8 sm:w-12 bg-[#1a8c7c]'
+                ? 'w-8 sm:w-12 bg-[#000000]'
                 : 'w-6 sm:w-8 bg-white/30 hover:bg-white/50'
             }`}
             aria-label={`Go to slide ${idx + 1}`}

@@ -114,15 +114,15 @@ export function Header() {
   return (
     <header className="bg-white border-b border-neutral-200 sticky top-0 z-50 shadow-sm">
       {/* Top Bar - Hidden on Mobile */}
-      <div className="bg-[#1a8c7c] text-white hidden md:block">
+      <div className="bg-black text-white hidden md:block">
         <div className="container mx-auto px-4 sm:px-6 py-2">
           <div className="flex justify-between items-center text-xs lg:text-sm">
             <div className="flex items-center gap-2 lg:gap-4">
-              <span className="truncate">📧 info@ivdgroup.eu</span>
-              <span className="hidden sm:inline">📞 +48 88 1049959</span>
+              <span className="truncate">📧 ceo@adorisgroup.com</span>
+              <span className="hidden sm:inline">📞 +48 881 049 959</span>
             </div>
             <div className="hidden lg:flex items-center gap-4">
-              <span>IVD GROUP Sp. z o.o. | Warsaw, Poland</span>
+              <span>ADORIS INVEST GROUP OÜ | Tallinn, Estonia</span>
             </div>
           </div>
         </div>
@@ -158,17 +158,17 @@ export function Header() {
                     }
                   }}
                   placeholder="Search products..."
-                  className="w-full px-3 py-2 sm:py-3 pl-10 sm:pl-12 pr-20 sm:pr-24 text-sm sm:text-base border-2 border-neutral-200 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 transition-all"
+                  className="w-full px-3 py-2 sm:py-3 pl-10 sm:pl-12 pr-20 sm:pr-24 text-sm sm:text-base border-2 border-neutral-200 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 transition-all"
                 />
                 <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 sm:w-5 sm:h-5" />
                 {isSearching ? (
                   <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-[#20a895] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-[#333333] border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : (
                   <button
                     type="submit"
-                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 bg-[#20a895] text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#0891B2] transition-colors font-medium text-xs sm:text-sm"
+                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 bg-[#333333] text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#1a1a1a] transition-colors font-medium text-xs sm:text-sm"
                   >
                     Search
                   </button>
@@ -200,7 +200,7 @@ export function Header() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-[#1a8c7c] truncate text-sm sm:text-base">{product.name}</div>
+                      <div className="font-semibold text-[#000000] truncate text-sm sm:text-base">{product.name}</div>
                       <div className="text-xs sm:text-sm text-neutral-600 flex items-center gap-1 sm:gap-2 mt-1">
                         <span className="font-mono bg-neutral-100 px-1.5 sm:px-2 py-0.5 rounded text-xs">
                           {product.sku}
@@ -211,7 +211,7 @@ export function Header() {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-bold text-[#1a8c7c] text-sm sm:text-base">€{product.price.toFixed(2)}</div>
+                      <div className="font-bold text-[#000000] text-sm sm:text-base">€{product.price.toFixed(2)}</div>
                       <div className="text-xs text-neutral-500 hidden sm:block">excl. VAT</div>
                     </div>
                   </button>
@@ -224,7 +224,7 @@ export function Header() {
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 order-2 sm:order-3">
             <Link
               href="/exhibitions"
-              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#2ec4b6] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
             >
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="hidden sm:inline">Exhibitions</span>
@@ -232,7 +232,7 @@ export function Header() {
 
             <Link
               href="/terms"
-              className="hidden md:flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors"
+              className="hidden md:flex items-center gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors"
             >
               <span>Terms</span>
             </Link>
@@ -241,7 +241,7 @@ export function Header() {
             {status === 'authenticated' && session?.user ? (
               <>
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors outline-none text-xs sm:text-sm lg:text-base">
+                  <DropdownMenuTrigger className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors outline-none text-xs sm:text-sm lg:text-base">
                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="hidden sm:inline">My Account</span>
                     <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -258,7 +258,7 @@ export function Header() {
                         <ShoppingCart className="w-4 h-4" />
                         <span>Cart</span>
                         {cartCount > 0 && (
-                          <span className="ml-auto bg-[#20a895] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                          <span className="ml-auto bg-[#333333] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                             {cartCount}
                           </span>
                         )}
@@ -275,7 +275,7 @@ export function Header() {
                       <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                          <Link href="/admin" className="flex items-center gap-2 cursor-pointer text-[#1a8c7c] font-semibold">
+                          <Link href="/admin" className="flex items-center gap-2 cursor-pointer text-[#000000] font-semibold">
                             <User className="w-4 h-4" />
                             <span>Admin Panel</span>
                           </Link>
@@ -296,7 +296,7 @@ export function Header() {
             ) : (
               <Link
                 href="/auth/login"
-                className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+                className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors text-xs sm:text-sm lg:text-base"
               >
                 <User className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span className="hidden sm:inline">Login</span>

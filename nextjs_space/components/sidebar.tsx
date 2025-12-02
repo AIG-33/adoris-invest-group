@@ -44,7 +44,7 @@ export function Sidebar({
           {hasFilters && (
             <button
               onClick={clearAllFilters}
-              className="text-sm text-[#20a895] hover:text-[#0891B2] font-medium flex items-center gap-1"
+              className="text-sm text-[#333333] hover:text-[#1a1a1a] font-medium flex items-center gap-1"
             >
               <X className="w-4 h-4" />
               Clear all
@@ -69,9 +69,9 @@ export function Sidebar({
                   onChange={(e) =>
                     updateFilter('category', e?.target?.checked ? cat?.slug : '')
                   }
-                  className="w-4 h-4 text-[#20a895] border-neutral-300 rounded focus:ring-[#20a895]"
+                  className="w-4 h-4 text-[#333333] border-neutral-300 rounded focus:ring-[#333333]"
                 />
-                <span className="flex-1 text-sm text-neutral-700 group-hover:text-[#20a895]">
+                <span className="flex-1 text-sm text-neutral-700 group-hover:text-[#333333]">
                   {cat?.name}
                 </span>
                 <span className="text-xs text-neutral-400">
@@ -102,9 +102,9 @@ export function Sidebar({
                       e?.target?.checked ? man?.slug : ''
                     )
                   }
-                  className="w-4 h-4 text-[#20a895] border-neutral-300 rounded focus:ring-[#20a895]"
+                  className="w-4 h-4 text-[#333333] border-neutral-300 rounded focus:ring-[#333333]"
                 />
-                <span className="flex-1 text-sm text-neutral-700 group-hover:text-[#20a895]">
+                <span className="flex-1 text-sm text-neutral-700 group-hover:text-[#333333]">
                   {man?.name}
                 </span>
                 <span className="text-xs text-neutral-400">
@@ -117,7 +117,7 @@ export function Sidebar({
       </div>
 
       {/* Info Card */}
-      <div className="bg-gradient-to-br from-[#20a895] to-[#2ec4b6] rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-br from-[#333333] to-[#666666] rounded-xl p-6 text-white">
         <h3 className="font-bold text-lg mb-2">🚚 Free Shipping</h3>
         <p className="text-sm opacity-90">
           On all orders over €5,000. Fast delivery across Europe.

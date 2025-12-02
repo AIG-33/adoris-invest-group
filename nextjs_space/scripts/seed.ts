@@ -23,10 +23,10 @@ async function main() {
   })
 
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@ivdgroup.eu' },
+    where: { email: 'ceo@adorisgroup.com' },
     update: {},
     create: {
-      email: 'admin@ivdgroup.eu',
+      email: 'ceo@adorisgroup.com',
       name: 'Admin User',
       password: hashedPassword2,
       role: 'admin',

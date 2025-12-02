@@ -13,7 +13,7 @@ export default function TermsPage() {
           <div className="max-w-4xl mx-auto">
             {/* Header */}
             <div className="mb-12 text-center">
-              <h1 className="text-4xl font-bold text-[#1a8c7c] mb-4">
+              <h1 className="text-4xl font-bold text-[#000000] mb-4">
                 Terms & Conditions
               </h1>
               <p className="text-lg text-neutral-600">
@@ -26,11 +26,11 @@ export default function TermsPage() {
               {/* Original Products */}
               <section>
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[#2ec4b6]/10 rounded-lg flex items-center justify-center">
-                    <CheckCircle className="w-6 h-6 text-[#2ec4b6]" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#666666]/10 rounded-lg flex items-center justify-center">
+                    <CheckCircle className="w-6 h-6 text-[#666666]" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-[#1a8c7c] mb-3">
+                    <h2 className="text-2xl font-bold text-[#000000] mb-3">
                       Original Products Guarantee
                     </h2>
                     <p className="text-neutral-700 leading-relaxed">
@@ -44,11 +44,11 @@ export default function TermsPage() {
               {/* Minimum Order */}
               <section>
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[#20a895]/10 rounded-lg flex items-center justify-center">
-                    <PackageCheck className="w-6 h-6 text-[#20a895]" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#333333]/10 rounded-lg flex items-center justify-center">
+                    <PackageCheck className="w-6 h-6 text-[#333333]" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-[#1a8c7c] mb-3">
+                    <h2 className="text-2xl font-bold text-[#000000] mb-3">
                       Minimum Order Value
                     </h2>
                     <p className="text-neutral-700 leading-relaxed mb-3">
@@ -67,11 +67,11 @@ export default function TermsPage() {
               {/* Payment Terms */}
               <section>
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[#1a8c7c]/10 rounded-lg flex items-center justify-center">
-                    <CreditCard className="w-6 h-6 text-[#1a8c7c]" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#000000]/10 rounded-lg flex items-center justify-center">
+                    <CreditCard className="w-6 h-6 text-[#000000]" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-[#1a8c7c] mb-3">
+                    <h2 className="text-2xl font-bold text-[#000000] mb-3">
                       Payment Terms
                     </h2>
                     <p className="text-neutral-700 leading-relaxed mb-3">
@@ -83,12 +83,12 @@ export default function TermsPage() {
                       from that point forward.
                     </p>
                     <div className="mt-4 bg-neutral-100 rounded-lg p-4">
-                      <h3 className="font-semibold text-[#1a8c7c] mb-2">Bank Details:</h3>
+                      <h3 className="font-semibold text-black mb-2">Bank Details:</h3>
                       <ul className="space-y-1 text-sm text-neutral-700">
-                        <li><strong>Bank:</strong> PKO Bank Polski SA</li>
-                        <li><strong>SWIFT:</strong> BPKOPLPWXXX</li>
-                        <li><strong>IBAN (EUR):</strong> PL52102010130000010204325890</li>
-                        <li><strong>Bank Address:</strong> Plac Powstańców Warszawy 4, Warsaw, Poland</li>
+                        <li><strong>Bank:</strong> PKO Bank Polski, Oddzial 18</li>
+                        <li><strong>SWIFT:</strong> BPKOPLPW</li>
+                        <li><strong>IBAN:</strong> PL73102011850000410203665122</li>
+                        <li><strong>Bank Address:</strong> ul. Skierniewicka 21, Warsaw, Poland</li>
                       </ul>
                     </div>
                   </div>
@@ -98,11 +98,11 @@ export default function TermsPage() {
               {/* Order Fulfillment */}
               <section>
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[#2ec4b6]/10 rounded-lg flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-[#2ec4b6]" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#666666]/10 rounded-lg flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-[#666666]" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-[#1a8c7c] mb-3">
+                    <h2 className="text-2xl font-bold text-[#000000] mb-3">
                       Order Fulfillment & Delivery Time
                     </h2>
                     <p className="text-neutral-700 leading-relaxed mb-3">
@@ -118,11 +118,11 @@ export default function TermsPage() {
               {/* Cold Chain */}
               <section>
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[#20a895]/10 rounded-lg flex items-center justify-center">
-                    <ThermometerSnowflake className="w-6 h-6 text-[#20a895]" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#333333]/10 rounded-lg flex items-center justify-center">
+                    <ThermometerSnowflake className="w-6 h-6 text-[#333333]" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-[#1a8c7c] mb-3">
+                    <h2 className="text-2xl font-bold text-[#000000] mb-3">
                       Cold Chain Compliance
                     </h2>
                     <p className="text-neutral-700 leading-relaxed">
@@ -137,23 +137,23 @@ export default function TermsPage() {
               {/* Discounts */}
               <section>
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-[#2ec4b6]/10 rounded-lg flex items-center justify-center">
-                    <ShieldCheck className="w-6 h-6 text-[#2ec4b6]" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#666666]/10 rounded-lg flex items-center justify-center">
+                    <ShieldCheck className="w-6 h-6 text-[#666666]" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-[#1a8c7c] mb-3">
+                    <h2 className="text-2xl font-bold text-[#000000] mb-3">
                       Volume Discounts
                     </h2>
                     <p className="text-neutral-700 leading-relaxed mb-4">
                       We offer attractive volume discounts for larger orders:
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gradient-to-br from-[#2ec4b6]/10 to-[#2ec4b6]/5 border border-[#2ec4b6]/20 rounded-lg p-4">
-                        <div className="text-3xl font-bold text-[#2ec4b6] mb-2">5%</div>
+                      <div className="bg-gradient-to-br from-[#666666]/10 to-[#666666]/5 border border-[#666666]/20 rounded-lg p-4">
+                        <div className="text-3xl font-bold text-[#666666] mb-2">5%</div>
                         <p className="text-sm font-semibold text-neutral-700">Orders €50,000+</p>
                       </div>
-                      <div className="bg-gradient-to-br from-[#20a895]/10 to-[#20a895]/5 border border-[#20a895]/20 rounded-lg p-4">
-                        <div className="text-3xl font-bold text-[#20a895] mb-2">10%</div>
+                      <div className="bg-gradient-to-br from-[#333333]/10 to-[#333333]/5 border border-[#333333]/20 rounded-lg p-4">
+                        <div className="text-3xl font-bold text-[#333333] mb-2">10%</div>
                         <p className="text-sm font-semibold text-neutral-700">Orders €100,000+</p>
                       </div>
                     </div>
@@ -163,23 +163,23 @@ export default function TermsPage() {
             </div>
 
             {/* Contact CTA */}
-            <div className="mt-12 bg-gradient-to-br from-[#1a8c7c] to-[#20a895] rounded-lg p-8 text-white text-center">
+            <div className="mt-12 bg-gradient-to-br from-black to-neutral-800 rounded-lg p-8 text-white text-center">
               <h2 className="text-2xl font-bold mb-4">Have Questions?</h2>
               <p className="mb-6 text-neutral-200">
                 Our team is ready to help you with any inquiries about our terms and conditions
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a
-                  href="mailto:info@ivdgroup.eu"
-                  className="bg-white text-[#1a8c7c] px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors"
+                  href="mailto:ceo@adorisgroup.com"
+                  className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors"
                 >
-                  📧 info@ivdgroup.eu
+                  📧 ceo@adorisgroup.com
                 </a>
                 <a
                   href="tel:+48881049959"
-                  className="bg-white text-[#1a8c7c] px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors"
+                  className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors"
                 >
-                  📞 +48 88 1049959
+                  📞 +48 881 049 959
                 </a>
               </div>
             </div>
@@ -187,10 +187,10 @@ export default function TermsPage() {
             {/* Company Info */}
             <div className="mt-8 text-center text-sm text-neutral-600">
               <p className="mb-2">
-                <strong>IVD GROUP Sp. z o.o.</strong>
+                <strong>ADORIS INVEST GROUP OÜ</strong>
               </p>
-              <p>Bartoszewicza 3-24, 00-337 Warsaw, Poland</p>
-              <p>VAT: PL5252799583 | KRS: 0000800009</p>
+              <p>Ruunaoja tn 3-36, 11415 Tallinn, Estonia</p>
+              <p>Reg. Code: 12825289 | VAT EE: EE102079353</p>
             </div>
           </div>
         </div>

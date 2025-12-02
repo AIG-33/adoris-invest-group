@@ -25,7 +25,7 @@ export default async function ExhibitionsPage() {
       <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1a8c7c]/20 to-[#2ec4b6]/20 opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#000000]/20 to-[#666666]/20 opacity-20" />
           <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="mb-4 text-5xl font-bold text-white md:text-6xl">
@@ -83,8 +83,8 @@ export default async function ExhibitionsPage() {
         {exhibitions.length === 0 && (
           <section className="py-20">
             <div className="container mx-auto px-4 text-center">
-              <div className="mx-auto max-w-md rounded-xl border border-[#1a8c7c]/20 bg-gray-900/50 p-12 backdrop-blur-sm">
-                <Calendar className="mx-auto mb-4 h-16 w-16 text-[#2ec4b6]/50" />
+              <div className="mx-auto max-w-md rounded-xl border border-[#000000]/20 bg-gray-900/50 p-12 backdrop-blur-sm">
+                <Calendar className="mx-auto mb-4 h-16 w-16 text-[#666666]/50" />
                 <h3 className="mb-2 text-2xl font-bold text-white">
                   No Exhibitions Yet
                 </h3>
@@ -99,7 +99,7 @@ export default async function ExhibitionsPage() {
         {/* CTA Section */}
         <section className="py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="rounded-2xl border border-[#1a8c7c]/30 bg-gradient-to-r from-[#1a8c7c]/10 to-[#156b5f]/10 p-12 text-center backdrop-blur-sm">
+            <div className="rounded-2xl border border-[#000000]/30 bg-gradient-to-r from-[#000000]/10 to-[#156b5f]/10 p-12 text-center backdrop-blur-sm">
               <h3 className="mb-4 text-3xl font-bold text-white">
                 Meet Us at Our Next Event
               </h3>
@@ -108,7 +108,7 @@ export default async function ExhibitionsPage() {
               </p>
               <Link
                 href="mailto:info@ivdgroup.eu"
-                className="inline-flex items-center gap-2 rounded-lg bg-[#1a8c7c] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#1a8c7c]/50"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#000000] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#000000]/50"
               >
                 Contact Us
                 <ArrowRight className="h-5 w-5" />
@@ -139,7 +139,7 @@ function ExhibitionCard({
   return (
     <Link
       href={`/exhibitions/${exhibition.id}`}
-      className="group relative overflow-hidden rounded-2xl border border-[#1a8c7c]/20 bg-gray-900/50 backdrop-blur-sm transition-all hover:border-[#1a8c7c]/50 hover:shadow-2xl hover:shadow-[#1a8c7c]/20"
+      className="group relative overflow-hidden rounded-2xl border border-[#000000]/20 bg-gray-900/50 backdrop-blur-sm transition-all hover:border-[#000000]/50 hover:shadow-2xl hover:shadow-[#000000]/20"
     >
       {/* Image */}
       <div className="relative aspect-video overflow-hidden bg-gray-800">
@@ -154,7 +154,7 @@ function ExhibitionCard({
 
         {/* Upcoming Badge */}
         {isUpcoming && (
-          <div className="absolute right-4 top-4 rounded-full bg-[#1a8c7c] px-4 py-2 text-sm font-bold text-white backdrop-blur-sm">
+          <div className="absolute right-4 top-4 rounded-full bg-[#000000] px-4 py-2 text-sm font-bold text-white backdrop-blur-sm">
             Upcoming
           </div>
         )}
@@ -162,17 +162,17 @@ function ExhibitionCard({
 
       {/* Content */}
       <div className="p-6">
-        <h3 className="mb-3 text-2xl font-bold text-white transition-colors group-hover:text-[#2ec4b6]">
+        <h3 className="mb-3 text-2xl font-bold text-white transition-colors group-hover:text-[#666666]">
           {exhibition.title}
         </h3>
 
         <div className="mb-4 space-y-2">
           <div className="flex items-center gap-2 text-gray-300">
-            <Calendar className="h-5 w-5 text-[#2ec4b6]" />
+            <Calendar className="h-5 w-5 text-[#666666]" />
             <span>{formattedDate}</span>
           </div>
           <div className="flex items-center gap-2 text-gray-300">
-            <MapPin className="h-5 w-5 text-[#2ec4b6]" />
+            <MapPin className="h-5 w-5 text-[#666666]" />
             <span>{exhibition.location}</span>
           </div>
         </div>
@@ -181,7 +181,7 @@ function ExhibitionCard({
           {exhibition.description}
         </p>
 
-        <div className="flex items-center gap-2 text-[#2ec4b6] transition-colors group-hover:text-[#20a895]">
+        <div className="flex items-center gap-2 text-[#666666] transition-colors group-hover:text-[#333333]">
           <span className="font-semibold">View Gallery</span>
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </div>

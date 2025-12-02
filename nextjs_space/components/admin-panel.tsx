@@ -147,7 +147,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
           onClick={() => setActiveTab('orders')}
           className={`px-6 py-3 font-semibold transition-all ${
             activeTab === 'orders'
-              ? 'border-b-2 border-[#1a8c7c] text-[#1a8c7c]'
+              ? 'border-b-2 border-[#000000] text-[#000000]'
               : 'text-neutral-600 hover:text-neutral-900'
           }`}
         >
@@ -160,7 +160,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
           onClick={() => setActiveTab('exhibitions')}
           className={`px-6 py-3 font-semibold transition-all ${
             activeTab === 'exhibitions'
-              ? 'border-b-2 border-[#1a8c7c] text-[#1a8c7c]'
+              ? 'border-b-2 border-[#000000] text-[#000000]'
               : 'text-neutral-600 hover:text-neutral-900'
           }`}
         >
@@ -178,8 +178,8 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-neutral-200">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-[#20a895]/10 rounded-xl flex items-center justify-center">
-              <Package className="w-7 h-7 text-[#20a895]" />
+            <div className="w-14 h-14 bg-[#333333]/10 rounded-xl flex items-center justify-center">
+              <Package className="w-7 h-7 text-[#333333]" />
             </div>
             <div>
               <p className="text-sm text-neutral-600 font-medium">Total Products</p>
@@ -190,8 +190,8 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
 
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-neutral-200">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-[#2ec4b6]/10 rounded-xl flex items-center justify-center">
-              <ShoppingBag className="w-7 h-7 text-[#2ec4b6]" />
+            <div className="w-14 h-14 bg-[#666666]/10 rounded-xl flex items-center justify-center">
+              <ShoppingBag className="w-7 h-7 text-[#666666]" />
             </div>
             <div>
               <p className="text-sm text-neutral-600 font-medium">Total Orders</p>
@@ -216,11 +216,11 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
       {/* Product Import */}
       <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200 mb-12">
         <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-          <FileSpreadsheet className="w-7 h-7 text-[#20a895]" />
+          <FileSpreadsheet className="w-7 h-7 text-[#333333]" />
           Import Products from Excel/CSV
         </h2>
 
-        <div className="bg-gradient-to-r from-[#20a895]/10 to-[#2ec4b6]/10 rounded-xl p-6 mb-6">
+        <div className="bg-gradient-to-r from-[#333333]/10 to-[#666666]/10 rounded-xl p-6 mb-6">
           <p className="text-sm text-neutral-700 mb-4">
             Upload an Excel (.xlsx) or CSV file to bulk import products. The file should contain
             the following columns:
@@ -233,7 +233,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <label className="flex-1 cursor-pointer">
-              <div className="border-2 border-dashed border-neutral-300 rounded-xl p-8 hover:border-[#20a895] transition-colors">
+              <div className="border-2 border-dashed border-neutral-300 rounded-xl p-8 hover:border-[#333333] transition-colors">
                 <div className="text-center">
                   <Upload className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
                   <p className="text-neutral-700 font-medium mb-1">
@@ -256,7 +256,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
           <button
             onClick={handleUpload}
             disabled={!file || uploading}
-            className="bg-[#20a895] text-white py-4 px-8 rounded-lg hover:bg-[#0891B2] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="bg-[#333333] text-white py-4 px-8 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {uploading ? 'Processing...' : 'Upload and Import'}
           </button>
@@ -342,7 +342,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
             <h2 className="text-2xl font-bold text-neutral-900">Manage Exhibitions</h2>
             <button
               onClick={() => setShowExhibitionForm(!showExhibitionForm)}
-              className="flex items-center gap-2 bg-[#1a8c7c] text-white px-6 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
+              className="flex items-center gap-2 bg-[#000000] text-white px-6 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
             >
               <Plus className="w-5 h-5" />
               Add New Exhibition
@@ -365,7 +365,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                       onChange={(e) =>
                         setExhibitionForm({ ...exhibitionForm, title: e.target.value })
                       }
-                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
                       required
                     />
                   </div>
@@ -380,7 +380,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                       onChange={(e) =>
                         setExhibitionForm({ ...exhibitionForm, date: e.target.value })
                       }
-                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
                       required
                     />
                   </div>
@@ -396,7 +396,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                     onChange={(e) =>
                       setExhibitionForm({ ...exhibitionForm, location: e.target.value })
                     }
-                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
                     placeholder="e.g., Medica 2025, Düsseldorf, Germany"
                     required
                   />
@@ -411,7 +411,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                     onChange={(e) =>
                       setExhibitionForm({ ...exhibitionForm, description: e.target.value })
                     }
-                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
                     rows={4}
                     placeholder="Tell us about this exhibition and your participation..."
                     required
@@ -427,7 +427,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                     onChange={(e) =>
                       setExhibitionForm({ ...exhibitionForm, images: e.target.value })
                     }
-                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
                     rows={5}
                     placeholder="https://lh4.googleusercontent.com/w2oZgAWRit5XvJyXetISnm26XoXwG5BGuan6muWuMCaiTO_RNtqoAMvLXrT7j9Zf-QYEOyE9Oq0tbgzXDfno-3n7IC9amxL8-6FhEqBsUa5O3C8fJau_GQcWQa9fyIncH03ngV6363yd4D3OxtlStyQ"
                   />
@@ -444,7 +444,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                     onChange={(e) =>
                       setExhibitionForm({ ...exhibitionForm, featured: e.target.checked })
                     }
-                    className="w-5 h-5 text-[#1a8c7c] border-neutral-300 rounded focus:ring-[#1a8c7c]"
+                    className="w-5 h-5 text-[#000000] border-neutral-300 rounded focus:ring-[#000000]"
                   />
                   <label htmlFor="featured" className="text-sm font-semibold text-neutral-700">
                     Featured Exhibition
@@ -454,7 +454,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                 <div className="flex gap-4">
                   <button
                     type="submit"
-                    className="bg-[#1a8c7c] text-white px-8 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
+                    className="bg-[#000000] text-white px-8 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
                   >
                     Create Exhibition
                   </button>
@@ -478,7 +478,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
               <p className="text-neutral-600 mb-6">Create your first exhibition to get started</p>
               <button
                 onClick={() => setShowExhibitionForm(true)}
-                className="inline-flex items-center gap-2 bg-[#1a8c7c] text-white px-6 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
+                className="inline-flex items-center gap-2 bg-[#000000] text-white px-6 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
               >
                 <Plus className="w-5 h-5" />
                 Add Exhibition
@@ -519,7 +519,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                         {exhibition.title}
                       </h3>
                       {exhibition.featured && (
-                        <span className="ml-2 px-2 py-1 bg-[#1a8c7c]/10 text-[#1a8c7c] text-xs font-semibold rounded">
+                        <span className="ml-2 px-2 py-1 bg-[#000000]/10 text-[#000000] text-xs font-semibold rounded">
                           Featured
                         </span>
                       )}
@@ -527,7 +527,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
 
                     <div className="space-y-2 mb-4">
                       <div className="flex items-center gap-2 text-sm text-neutral-600">
-                        <Calendar className="w-4 h-4 text-[#1a8c7c]" />
+                        <Calendar className="w-4 h-4 text-[#000000]" />
                         {new Date(exhibition.date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
@@ -535,7 +535,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                         })}
                       </div>
                       <div className="flex items-center gap-2 text-sm text-neutral-600">
-                        <MapPin className="w-4 h-4 text-[#1a8c7c]" />
+                        <MapPin className="w-4 h-4 text-[#000000]" />
                         {exhibition.location}
                       </div>
                     </div>

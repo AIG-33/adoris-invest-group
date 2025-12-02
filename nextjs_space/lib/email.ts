@@ -33,7 +33,7 @@ export async function sendOrderConfirmationEmail({
   })
 
   await transporter.sendMail({
-    from: 'IVD Group <noreply@ivdgroup.eu>',
+    from: 'ADORIS INVEST GROUP <noreply@adorisgroup.com>',
     to,
     subject: `Order Confirmation - ${orderNumber}`,
     html: `
@@ -41,8 +41,8 @@ export async function sendOrderConfirmationEmail({
       <p>Your order <strong>${orderNumber}</strong> has been received and is being processed.</p>
       <p>Please find your order confirmation attached as a PDF.</p>
       <p>Payment instructions will be provided separately.</p>
-      <p>For any questions, contact us at info@ivdgroup.eu</p>
-      <p>Best regards,<br/>IVD Group Team</p>
+      <p>For any questions, contact us at ceo@adorisgroup.com</p>
+      <p>Best regards,<br/>ADORIS INVEST GROUP Team</p>
     `,
     attachments: [
       {
@@ -54,8 +54,8 @@ export async function sendOrderConfirmationEmail({
   })
   */
 
-  // For demo purposes, also send to info@ivdgroup.eu
-  console.log('📧 Copy would also be sent to: info@ivdgroup.eu')
+  // For demo purposes, also send to ceo@adorisgroup.com
+  console.log('📧 Copy would also be sent to: ceo@adorisgroup.com')
 
   return Promise.resolve()
 }

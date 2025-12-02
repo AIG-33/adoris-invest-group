@@ -74,7 +74,7 @@ export function FeaturedProducts({ products }: Props) {
           </div>
           <Link
             href="/products"
-            className="hidden text-[#2ec4b6] transition-colors hover:text-[#20a895] md:block"
+            className="hidden text-[#666666] transition-colors hover:text-[#333333] md:block"
           >
             View All →
           </Link>
@@ -85,14 +85,14 @@ export function FeaturedProducts({ products }: Props) {
           {/* Navigation Buttons */}
           <button
             onClick={() => scroll('left')}
-            className="absolute -left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-3 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#1a8c7c] group-hover:opacity-100 lg:block"
+            className="absolute -left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-3 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#000000] group-hover:opacity-100 lg:block"
             aria-label="Scroll left"
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
           <button
             onClick={() => scroll('right')}
-            className="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-3 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#1a8c7c] group-hover:opacity-100 lg:block"
+            className="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-3 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#000000] group-hover:opacity-100 lg:block"
             aria-label="Scroll right"
           >
             <ChevronRight className="h-6 w-6" />
@@ -108,7 +108,7 @@ export function FeaturedProducts({ products }: Props) {
               <Link
                 key={product.id}
                 href={`/product/${product.slug}`}
-                className="group/card relative min-w-[280px] flex-shrink-0 overflow-hidden rounded-xl bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm transition-all hover:scale-105 hover:shadow-2xl hover:shadow-[#1a8c7c]/20 md:min-w-[320px]"
+                className="group/card relative min-w-[280px] flex-shrink-0 overflow-hidden rounded-xl bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm transition-all hover:scale-105 hover:shadow-2xl hover:shadow-[#000000]/20 md:min-w-[320px]"
               >
                 {/* Image Container */}
                 <div className="relative aspect-[4/3] overflow-hidden bg-gray-800">
@@ -122,14 +122,14 @@ export function FeaturedProducts({ products }: Props) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
                   {/* Category Badge */}
-                  <div className="absolute left-3 top-3 rounded-full bg-[#1a8c7c]/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                  <div className="absolute left-3 top-3 rounded-full bg-[#000000]/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                     {product.category.name}
                   </div>
 
                   {/* Quick Add Button */}
                   <button
                     onClick={(e) => handleAddToCart(product, e)}
-                    className="absolute bottom-3 right-3 rounded-full bg-white/90 p-2 text-[#1a8c7c] opacity-0 transition-all hover:bg-white hover:scale-110 group-hover/card:opacity-100"
+                    className="absolute bottom-3 right-3 rounded-full bg-white/90 p-2 text-[#000000] opacity-0 transition-all hover:bg-white hover:scale-110 group-hover/card:opacity-100"
                     aria-label="Add to cart"
                   >
                     <ShoppingCart className="h-5 w-5" />
@@ -150,7 +150,7 @@ export function FeaturedProducts({ products }: Props) {
                     </p>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-[#2ec4b6]">
+                    <span className="text-2xl font-bold text-[#666666]">
                       €{product.price.toLocaleString()}
                     </span>
                     <span className="text-sm text-gray-400">By Order</span>

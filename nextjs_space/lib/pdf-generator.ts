@@ -4,16 +4,16 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   const doc = new jsPDF()
 
   // Colors
-  const primaryColor = '#1a8c7c'
-  const accentColor = '#20a895'
+  const primaryColor = '#000000'
+  const accentColor = '#333333'
 
   // Header
-  doc.setFillColor(26, 140, 124)
+  doc.setFillColor(0, 0, 0)
   doc.rect(0, 0, 210, 40, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(28)
   doc.setFont('helvetica', 'bold')
-  doc.text('IVD GROUP', 15, 20)
+  doc.text('ADORIS INVEST GROUP', 15, 20)
   doc.setFontSize(12)
   doc.setFont('helvetica', 'normal')
   doc.text('Medical Laboratory Equipment & Supplies', 15, 28)
@@ -35,7 +35,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   // Billing Information
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(32, 168, 149)
+  doc.setTextColor(0, 0, 0)
   doc.text('Billing Information', 15, 90)
 
   doc.setFontSize(10)
@@ -60,7 +60,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   y += 15
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(32, 168, 149)
+  doc.setTextColor(0, 0, 0)
   doc.text('Order Items', 15, y)
 
   // Table Header
@@ -106,7 +106,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   doc.text(`€${(order?.subtotal || 0)?.toFixed?.(2)}`, 175, y)
   y += 6
   doc.text(`Discount (15% B2B):`, 140, y)
-  doc.setTextColor(46, 196, 182)
+  doc.setTextColor(0, 0, 0)
   doc.text(`-€${(order?.discount || 0)?.toFixed?.(2)}`, 175, y)
   y += 6
   doc.setTextColor(0, 0, 0)
@@ -134,15 +134,15 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   y += 5
   doc.text('Payment Instructions: Bank transfer details will be provided in a separate email.', 15, y)
   y += 5
-  doc.text('For questions, contact us at info@ivdgroup.eu or +48 123 456 789', 15, y)
+  doc.text('For questions, contact us at ceo@adorisgroup.com or +48 881 049 959', 15, y)
 
   // Company Footer
   const pageHeight = doc.internal.pageSize.height
-  doc.setFillColor(26, 140, 124)
+  doc.setFillColor(0, 0, 0)
   doc.rect(0, pageHeight - 20, 210, 20, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(8)
-  doc.text('IVD Group Sp. z o.o. | info@ivdgroup.eu | www.ivdgroup.eu', 105, pageHeight - 10, {
+  doc.text('ADORIS INVEST GROUP OÜ | ceo@adorisgroup.com | www.adorisgroup.com', 105, pageHeight - 10, {
     align: 'center',
   })
 

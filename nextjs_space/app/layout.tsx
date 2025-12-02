@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'IVD Group - Medical Laboratory Equipment & Supplies',
+  title: 'ADORIS INVEST GROUP - Medical Laboratory Equipment & Supplies',
   description:
     'Professional B2B medical laboratory equipment and supplies. High-quality analyzers, reagents, and laboratory consumables from leading manufacturers.',
   metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     apple: '/logo.png',
   },
   openGraph: {
-    title: 'IVD Group - Medical Laboratory Equipment & Supplies',
+    title: 'ADORIS INVEST GROUP - Medical Laboratory Equipment & Supplies',
     description:
       'Professional B2B medical laboratory equipment and supplies',
     images: ['/og-image.png'],

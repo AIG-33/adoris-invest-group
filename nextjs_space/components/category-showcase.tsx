@@ -63,7 +63,7 @@ function CategoryRow({ category }: { category: Category }) {
         </h2>
         <Link
           href={`/products?category=${category.slug}`}
-          className="text-[#2ec4b6] transition-colors hover:text-[#20a895]"
+          className="text-[#666666] transition-colors hover:text-[#333333]"
         >
           Explore All →
         </Link>
@@ -74,14 +74,14 @@ function CategoryRow({ category }: { category: Category }) {
         {/* Navigation Buttons */}
         <button
           onClick={() => scroll('left')}
-          className="absolute -left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-2 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#1a8c7c] group-hover:opacity-100 lg:block"
+          className="absolute -left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-2 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#000000] group-hover:opacity-100 lg:block"
           aria-label="Scroll left"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         <button
           onClick={() => scroll('right')}
-          className="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-2 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#1a8c7c] group-hover:opacity-100 lg:block"
+          className="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-2 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#000000] group-hover:opacity-100 lg:block"
           aria-label="Scroll right"
         >
           <ChevronRight className="h-5 w-5" />
@@ -118,7 +118,7 @@ function CategoryRow({ category }: { category: Category }) {
                   <p className="mb-1 text-xs text-gray-300">
                     {product.manufacturer.name}
                   </p>
-                  <p className="text-lg font-bold text-[#2ec4b6]">
+                  <p className="text-lg font-bold text-[#666666]">
                     €{product.price.toLocaleString()}
                   </p>
                 </div>

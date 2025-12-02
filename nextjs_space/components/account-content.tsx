@@ -97,7 +97,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
       case 'shipped':
         return 'text-green-600 bg-green-50 border-green-200'
       case 'delivered':
-        return 'text-[#1a8c7c] bg-[#2ec4b6]/10 border-[#2ec4b6]/20'
+        return 'text-[#000000] bg-[#666666]/10 border-[#666666]/20'
       case 'cancelled':
         return 'text-red-600 bg-red-50 border-red-200'
       default:
@@ -136,12 +136,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
     <div className="container mx-auto px-6 py-12">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#1a8c7c] mb-2">Личный кабинет</h1>
+        <h1 className="text-4xl font-bold text-[#000000] mb-2">Личный кабинет</h1>
         <p className="text-neutral-600">Управляйте своими заказами и настройками</p>
       </div>
 
       {/* User Info Card */}
-      <div className="bg-gradient-to-br from-[#20a895] to-[#2ec4b6] rounded-2xl p-8 mb-8 text-white shadow-lg">
+      <div className="bg-gradient-to-br from-[#333333] to-[#666666] rounded-2xl p-8 mb-8 text-white shadow-lg">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
             <User className="w-8 h-8" />
@@ -185,8 +185,8 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
 
       {/* Orders Section */}
       <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-        <div className="px-6 py-4 bg-gradient-to-r from-[#20a895]/10 to-[#2ec4b6]/5 border-b border-neutral-200">
-          <h2 className="text-2xl font-bold text-[#1a8c7c] flex items-center gap-2">
+        <div className="px-6 py-4 bg-gradient-to-r from-[#333333]/10 to-[#666666]/5 border-b border-neutral-200">
+          <h2 className="text-2xl font-bold text-[#000000] flex items-center gap-2">
             <ShoppingCart className="w-6 h-6" />
             Мои заказы
           </h2>
@@ -199,7 +199,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
             <p className="text-neutral-600 mb-6">Начните делать покупки в нашем магазине</p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#20a895] to-[#2ec4b6] text-white rounded-lg hover:from-[#1a8c7c] hover:to-[#20a895] transition-all shadow-lg"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#333333] to-[#666666] text-white rounded-lg hover:from-[#000000] hover:to-[#333333] transition-all shadow-lg"
             >
               <ShoppingCart className="w-5 h-5" />
               Перейти в каталог
@@ -211,12 +211,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
               <div key={order.id} className="p-6 hover:bg-neutral-50 transition-colors">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[#20a895] to-[#2ec4b6] rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#333333] to-[#666666] rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0">
                       {order.items.length}
                     </div>
                     <div>
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-bold text-[#1a8c7c]">
+                        <h3 className="text-lg font-bold text-[#000000]">
                           Заказ #{order.orderNumber}
                         </h3>
                         <span
@@ -241,7 +241,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                           <Package className="w-4 h-4" />
                           {order.items.length} {order.items.length === 1 ? 'товар' : 'товаров'}
                         </span>
-                        <span className="flex items-center gap-1 font-semibold text-[#1a8c7c]">
+                        <span className="flex items-center gap-1 font-semibold text-[#000000]">
                           <Euro className="w-4 h-4" />
                           €{order.total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </span>
@@ -252,7 +252,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/order-confirmation/${order.orderNumber}`}
-                      className="px-4 py-2 bg-white border-2 border-[#20a895] text-[#20a895] rounded-lg hover:bg-[#20a895] hover:text-white transition-all font-semibold flex items-center gap-2"
+                      className="px-4 py-2 bg-white border-2 border-[#333333] text-[#333333] rounded-lg hover:bg-[#333333] hover:text-white transition-all font-semibold flex items-center gap-2"
                     >
                       <Eye className="w-4 h-4" />
                       Детали
@@ -260,7 +260,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                     <button
                       onClick={() => handleReorder(order.id)}
                       disabled={reordering === order.id}
-                      className="px-4 py-2 bg-gradient-to-r from-[#20a895] to-[#2ec4b6] text-white rounded-lg hover:from-[#1a8c7c] hover:to-[#20a895] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md"
+                      className="px-4 py-2 bg-gradient-to-r from-[#333333] to-[#666666] text-white rounded-lg hover:from-[#000000] hover:to-[#333333] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md"
                     >
                       {reordering === order.id ? (
                         <>
@@ -296,7 +296,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                             : item.product.name}
                         </span>
                       </div>
-                      <span className="absolute top-2 right-2 bg-[#1a8c7c] text-white text-xs font-bold px-2 py-1 rounded-full">
+                      <span className="absolute top-2 right-2 bg-[#000000] text-white text-xs font-bold px-2 py-1 rounded-full">
                         ×{item.quantity}
                       </span>
                     </div>
