@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet } from 'lucide-react'
+import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, Calendar, Plus, Trash2, Image as ImageIcon, MapPin } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 interface AdminPanelProps {
   stats: {
@@ -10,18 +11,99 @@ interface AdminPanelProps {
     pendingOrders: number
   }
   recentOrders: any[]
+  exhibitions?: any[]
 }
 
-export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
+export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanelProps) {
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'exhibitions'>('orders')
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
+  
+  // Exhibition form state
+  const [showExhibitionForm, setShowExhibitionForm] = useState(false)
+  const [exhibitionForm, setExhibitionForm] = useState({
+    title: '',
+    description: '',
+    date: '',
+    location: '',
+    images: '',
+    featured: false,
+  })
+  const [exhibitionsList, setExhibitionsList] = useState(exhibitions)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e?.target?.files?.[0]
     if (selectedFile) {
       setFile(selectedFile)
       setMessage('')
+    }
+  }
+
+  const handleExhibitionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!exhibitionForm.title || !exhibitionForm.date || !exhibitionForm.location) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
+    try {
+      const images = exhibitionForm.images
+        .split('\n')
+        .map((url) => url.trim())
+        .filter((url) => url)
+
+      const response = await fetch('/api/exhibitions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...exhibitionForm,
+          images,
+        }),
+      })
+
+      if (response.ok) {
+        const newExhibition = await response.json()
+        setExhibitionsList([newExhibition, ...exhibitionsList])
+        toast.success('Exhibition created successfully!')
+        setShowExhibitionForm(false)
+        setExhibitionForm({
+          title: '',
+          description: '',
+          date: '',
+          location: '',
+          images: '',
+          featured: false,
+        })
+      } else {
+        toast.error('Failed to create exhibition')
+      }
+    } catch (error) {
+      console.error('Error creating exhibition:', error)
+      toast.error('An error occurred')
+    }
+  }
+
+  const handleDeleteExhibition = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this exhibition?')) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/exhibitions?id=${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setExhibitionsList(exhibitionsList.filter((ex) => ex.id !== id))
+        toast.success('Exhibition deleted successfully!')
+      } else {
+        toast.error('Failed to delete exhibition')
+      }
+    } catch (error) {
+      console.error('Error deleting exhibition:', error)
+      toast.error('An error occurred')
     }
   }
 
@@ -59,8 +141,41 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
     <div className="container mx-auto px-6 py-8">
       <h1 className="text-4xl font-bold text-neutral-900 mb-8">Admin Dashboard</h1>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      {/* Tabs */}
+      <div className="mb-8 flex gap-2 border-b border-neutral-200">
+        <button
+          onClick={() => setActiveTab('orders')}
+          className={`px-6 py-3 font-semibold transition-all ${
+            activeTab === 'orders'
+              ? 'border-b-2 border-[#1a8c7c] text-[#1a8c7c]'
+              : 'text-neutral-600 hover:text-neutral-900'
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <ShoppingBag className="w-5 h-5" />
+            Orders & Products
+          </span>
+        </button>
+        <button
+          onClick={() => setActiveTab('exhibitions')}
+          className={`px-6 py-3 font-semibold transition-all ${
+            activeTab === 'exhibitions'
+              ? 'border-b-2 border-[#1a8c7c] text-[#1a8c7c]'
+              : 'text-neutral-600 hover:text-neutral-900'
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Exhibitions
+          </span>
+        </button>
+      </div>
+
+      {/* Orders & Products Tab */}
+      {activeTab === 'orders' && (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-neutral-200">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-[#20a895]/10 rounded-xl flex items-center justify-center">
@@ -216,6 +331,233 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
           </table>
         </div>
       </div>
+        </>
+      )}
+
+      {/* Exhibitions Tab */}
+      {activeTab === 'exhibitions' && (
+        <div>
+          {/* Add Exhibition Button */}
+          <div className="mb-6 flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-neutral-900">Manage Exhibitions</h2>
+            <button
+              onClick={() => setShowExhibitionForm(!showExhibitionForm)}
+              className="flex items-center gap-2 bg-[#1a8c7c] text-white px-6 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
+            >
+              <Plus className="w-5 h-5" />
+              Add New Exhibition
+            </button>
+          </div>
+
+          {/* Exhibition Form */}
+          {showExhibitionForm && (
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200 mb-8">
+              <h3 className="text-xl font-bold text-neutral-900 mb-6">Create New Exhibition</h3>
+              <form onSubmit={handleExhibitionSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={exhibitionForm.title}
+                      onChange={(e) =>
+                        setExhibitionForm({ ...exhibitionForm, title: e.target.value })
+                      }
+                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Date *
+                    </label>
+                    <input
+                      type="date"
+                      value={exhibitionForm.date}
+                      onChange={(e) =>
+                        setExhibitionForm({ ...exhibitionForm, date: e.target.value })
+                      }
+                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    Location *
+                  </label>
+                  <input
+                    type="text"
+                    value={exhibitionForm.location}
+                    onChange={(e) =>
+                      setExhibitionForm({ ...exhibitionForm, location: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                    placeholder="e.g., Medica 2025, Düsseldorf, Germany"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    Description *
+                  </label>
+                  <textarea
+                    value={exhibitionForm.description}
+                    onChange={(e) =>
+                      setExhibitionForm({ ...exhibitionForm, description: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                    rows={4}
+                    placeholder="Tell us about this exhibition and your participation..."
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    Images URLs (one per line)
+                  </label>
+                  <textarea
+                    value={exhibitionForm.images}
+                    onChange={(e) =>
+                      setExhibitionForm({ ...exhibitionForm, images: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#1a8c7c] focus:border-transparent"
+                    rows={5}
+                    placeholder="https://lh4.googleusercontent.com/w2oZgAWRit5XvJyXetISnm26XoXwG5BGuan6muWuMCaiTO_RNtqoAMvLXrT7j9Zf-QYEOyE9Oq0tbgzXDfno-3n7IC9amxL8-6FhEqBsUa5O3C8fJau_GQcWQa9fyIncH03ngV6363yd4D3OxtlStyQ"
+                  />
+                  <p className="mt-2 text-sm text-neutral-600">
+                    Paste one image URL per line. You can use Unsplash or other image hosting services.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="featured"
+                    checked={exhibitionForm.featured}
+                    onChange={(e) =>
+                      setExhibitionForm({ ...exhibitionForm, featured: e.target.checked })
+                    }
+                    className="w-5 h-5 text-[#1a8c7c] border-neutral-300 rounded focus:ring-[#1a8c7c]"
+                  />
+                  <label htmlFor="featured" className="text-sm font-semibold text-neutral-700">
+                    Featured Exhibition
+                  </label>
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    className="bg-[#1a8c7c] text-white px-8 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
+                  >
+                    Create Exhibition
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowExhibitionForm(false)}
+                    className="bg-neutral-200 text-neutral-700 px-8 py-3 rounded-lg hover:bg-neutral-300 transition-all font-semibold"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Exhibitions List */}
+          {exhibitionsList.length === 0 ? (
+            <div className="bg-white rounded-2xl p-12 shadow-lg border border-neutral-200 text-center">
+              <Calendar className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-neutral-900 mb-2">No Exhibitions Yet</h3>
+              <p className="text-neutral-600 mb-6">Create your first exhibition to get started</p>
+              <button
+                onClick={() => setShowExhibitionForm(true)}
+                className="inline-flex items-center gap-2 bg-[#1a8c7c] text-white px-6 py-3 rounded-lg hover:bg-[#156b5f] transition-all font-semibold"
+              >
+                <Plus className="w-5 h-5" />
+                Add Exhibition
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {exhibitionsList.map((exhibition) => (
+                <div
+                  key={exhibition.id}
+                  className="bg-white rounded-xl shadow-lg border border-neutral-200 overflow-hidden group hover:shadow-xl transition-all"
+                >
+                  {/* Image Preview */}
+                  {exhibition.images.length > 0 ? (
+                    <div className="aspect-video bg-neutral-200 overflow-hidden relative">
+                      <img
+                        src={exhibition.images[0]}
+                        alt={exhibition.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      />
+                      {exhibition.images.length > 1 && (
+                        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-semibold">
+                          <ImageIcon className="w-3 h-3 inline mr-1" />
+                          {exhibition.images.length} photos
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="aspect-video bg-neutral-100 flex items-center justify-center">
+                      <ImageIcon className="w-12 h-12 text-neutral-300" />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-lg font-bold text-neutral-900 flex-1 line-clamp-2">
+                        {exhibition.title}
+                      </h3>
+                      {exhibition.featured && (
+                        <span className="ml-2 px-2 py-1 bg-[#1a8c7c]/10 text-[#1a8c7c] text-xs font-semibold rounded">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2 text-sm text-neutral-600">
+                        <Calendar className="w-4 h-4 text-[#1a8c7c]" />
+                        {new Date(exhibition.date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-neutral-600">
+                        <MapPin className="w-4 h-4 text-[#1a8c7c]" />
+                        {exhibition.location}
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-neutral-600 line-clamp-3 mb-4">
+                      {exhibition.description}
+                    </p>
+
+                    <button
+                      onClick={() => handleDeleteExhibition(exhibition.id)}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all font-semibold text-sm"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

@@ -147,3 +147,17 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
 }
+
+model Exhibition {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  date        DateTime
+  location    String
+  images      String[] // Array of image URLs
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([featured])
+}

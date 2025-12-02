@@ -34,6 +34,11 @@ export default async function AdminPage() {
     },
   })
 
+  // Fetch all exhibitions
+  const exhibitions = await prisma.exhibition.findMany({
+    orderBy: { date: 'desc' },
+  })
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -45,6 +50,7 @@ export default async function AdminPage() {
             pendingOrders,
           }}
           recentOrders={recentOrders}
+          exhibitions={exhibitions}
         />
       </main>
       <Footer />

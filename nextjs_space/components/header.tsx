@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 
@@ -224,6 +224,14 @@ export function Header() {
             >
               <Package className="w-5 h-5" />
               <span>Bulk Order</span>
+            </Link>
+
+            <Link
+              href="/exhibitions"
+              className="flex items-center gap-2 text-neutral-700 hover:text-[#2ec4b6] font-medium transition-colors"
+            >
+              <Calendar className="w-5 h-5" />
+              <span>Exhibitions</span>
             </Link>
 
             <Link
