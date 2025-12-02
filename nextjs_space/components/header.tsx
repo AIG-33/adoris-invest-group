@@ -113,15 +113,15 @@ export function Header() {
 
   return (
     <header className="bg-white border-b border-neutral-200 sticky top-0 z-50 shadow-sm">
-      {/* Top Bar */}
-      <div className="bg-[#1a8c7c] text-white">
-        <div className="container mx-auto px-6 py-2">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center gap-4">
-              <span>📧 info@ivdgroup.eu</span>
-              <span>📞 +48 88 1049959</span>
+      {/* Top Bar - Hidden on Mobile */}
+      <div className="bg-[#1a8c7c] text-white hidden md:block">
+        <div className="container mx-auto px-4 sm:px-6 py-2">
+          <div className="flex justify-between items-center text-xs lg:text-sm">
+            <div className="flex items-center gap-2 lg:gap-4">
+              <span className="truncate">📧 info@ivdgroup.eu</span>
+              <span className="hidden sm:inline">📞 +48 88 1049959</span>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-4">
               <span>IVD GROUP Sp. z o.o. | Warsaw, Poland</span>
             </div>
           </div>
@@ -129,11 +129,11 @@ export function Header() {
       </div>
 
       {/* Main Header */}
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between gap-6">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-48 h-12">
+      <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          {/* Logo - Smaller on Mobile */}
+          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
+            <div className="relative w-32 h-8 sm:w-40 sm:h-10 lg:w-48 lg:h-12">
               <Image
                 src="/logo.png"
                 alt="IVD GROUP"
@@ -145,7 +145,7 @@ export function Header() {
           </Link>
 
           {/* Search Bar with Autocomplete */}
-          <div ref={searchRef} className="flex-1 max-w-2xl relative">
+          <div ref={searchRef} className="flex-1 w-full sm:max-w-md lg:max-w-2xl relative order-3 sm:order-2">
             <form onSubmit={handleSearch}>
               <div className="relative">
                 <input
@@ -157,18 +157,18 @@ export function Header() {
                       setShowDropdown(true)
                     }
                   }}
-                  placeholder="Search by product name, SKU, manufacturer..."
-                  className="w-full px-4 py-3 pl-12 border-2 border-neutral-200 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10 transition-all"
+                  placeholder="Search products..."
+                  className="w-full px-3 py-2 sm:py-3 pl-10 sm:pl-12 pr-20 sm:pr-24 text-sm sm:text-base border-2 border-neutral-200 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 transition-all"
                 />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-5 h-5" />
+                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 sm:w-5 sm:h-5" />
                 {isSearching ? (
                   <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                    <div className="w-5 h-5 border-2 border-[#20a895] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-[#20a895] border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : (
                   <button
                     type="submit"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#20a895] text-white px-6 py-2 rounded-md hover:bg-[#0891B2] transition-colors font-medium"
+                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 bg-[#20a895] text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#0891B2] transition-colors font-medium text-xs sm:text-sm"
                   >
                     Search
                   </button>
@@ -178,14 +178,14 @@ export function Header() {
 
             {/* Autocomplete Dropdown */}
             {showDropdown && searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-neutral-200 rounded-lg shadow-xl max-h-96 overflow-y-auto z-50">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-neutral-200 rounded-lg shadow-xl max-h-80 sm:max-h-96 overflow-y-auto z-50">
                 {searchResults.map((product) => (
                   <button
                     key={product.id}
                     onClick={() => handleResultClick(product.slug)}
-                    className="w-full flex items-center gap-4 p-3 hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-b-0 text-left"
+                    className="w-full flex items-center gap-2 sm:gap-4 p-2 sm:p-3 hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-b-0 text-left"
                   >
-                    <div className="relative w-16 h-16 flex-shrink-0 bg-neutral-100 rounded-lg overflow-hidden">
+                    <div className="relative w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 bg-neutral-100 rounded-lg overflow-hidden">
                       {product.imageUrl ? (
                         <Image
                           src={product.imageUrl}
@@ -195,27 +195,24 @@ export function Header() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-neutral-400">
-                          <Package className="w-8 h-8" />
+                          <Package className="w-6 h-6 sm:w-8 sm:h-8" />
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-[#1a8c7c] truncate">{product.name}</div>
-                      <div className="text-sm text-neutral-600 flex items-center gap-2 mt-1">
-                        <span className="font-mono bg-neutral-100 px-2 py-0.5 rounded text-xs">
+                      <div className="font-semibold text-[#1a8c7c] truncate text-sm sm:text-base">{product.name}</div>
+                      <div className="text-xs sm:text-sm text-neutral-600 flex items-center gap-1 sm:gap-2 mt-1">
+                        <span className="font-mono bg-neutral-100 px-1.5 sm:px-2 py-0.5 rounded text-xs">
                           {product.sku}
                         </span>
                         {product.manufacturer && (
-                          <span className="text-xs">{product.manufacturer.name}</span>
+                          <span className="text-xs truncate">{product.manufacturer.name}</span>
                         )}
                       </div>
-                      {product.category && (
-                        <div className="text-xs text-neutral-500 mt-1">{product.category.name}</div>
-                      )}
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-bold text-[#1a8c7c]">€{product.price.toFixed(2)}</div>
-                      <div className="text-xs text-neutral-500">excl. VAT</div>
+                      <div className="font-bold text-[#1a8c7c] text-sm sm:text-base">€{product.price.toFixed(2)}</div>
+                      <div className="text-xs text-neutral-500 hidden sm:block">excl. VAT</div>
                     </div>
                   </button>
                 ))}
@@ -223,19 +220,19 @@ export function Header() {
             )}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-4">
+          {/* Actions - Compact on Mobile */}
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 order-2 sm:order-3">
             <Link
               href="/exhibitions"
-              className="flex items-center gap-2 text-neutral-700 hover:text-[#2ec4b6] font-medium transition-colors"
+              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#2ec4b6] font-medium transition-colors text-xs sm:text-sm lg:text-base"
             >
-              <Calendar className="w-5 h-5" />
-              <span>Exhibitions</span>
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Exhibitions</span>
             </Link>
 
             <Link
               href="/terms"
-              className="flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors"
+              className="hidden md:flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors"
             >
               <span>Terms</span>
             </Link>
@@ -244,12 +241,12 @@ export function Header() {
             {status === 'authenticated' && session?.user ? (
               <>
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors outline-none">
-                    <User className="w-5 h-5" />
-                    <span>My Account</span>
-                    <ChevronDown className="w-4 h-4" />
+                  <DropdownMenuTrigger className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors outline-none text-xs sm:text-sm lg:text-base">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="hidden sm:inline">My Account</span>
+                    <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuContent align="end" className="w-48 sm:w-56">
                     <DropdownMenuItem asChild>
                       <Link href="/bulk-order" className="flex items-center gap-2 cursor-pointer">
                         <Package className="w-4 h-4" />
@@ -299,10 +296,10 @@ export function Header() {
             ) : (
               <Link
                 href="/auth/login"
-                className="flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors"
+                className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors text-xs sm:text-sm lg:text-base"
               >
-                <User className="w-5 h-5" />
-                <span>Login</span>
+                <User className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Login</span>
               </Link>
             )}
           </div>

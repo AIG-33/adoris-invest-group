@@ -48,7 +48,7 @@ export function CheckoutForm() {
 
   if (!mounted) {
     return (
-      <div className="container mx-auto px-6 py-16">
+      <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="text-center text-neutral-600">Loading...</div>
       </div>
     )
@@ -117,9 +117,9 @@ export function CheckoutForm() {
   }
 
   return (
-    <div className="container mx-auto px-6 py-8">
+    <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-sm text-neutral-600 mb-8">
+      <nav className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600 mb-6 sm:mb-8">
         <Link href="/" className="hover:text-[#20a895]">Home</Link>
         <span>/</span>
         <Link href="/cart" className="hover:text-[#20a895]">Cart</Link>
@@ -127,40 +127,40 @@ export function CheckoutForm() {
         <span className="text-neutral-900 font-medium">Checkout</span>
       </nav>
 
-      {/* Progress Steps */}
-      <div className="flex justify-center items-center gap-4 mb-12 bg-white p-6 rounded-xl shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#2ec4b6] text-white flex items-center justify-center font-bold">
+      {/* Progress Steps - Compact on Mobile */}
+      <div className="flex justify-center items-center gap-2 sm:gap-4 mb-8 sm:mb-12 bg-white p-4 sm:p-6 rounded-xl shadow-sm overflow-x-auto">
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#2ec4b6] text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0">
             ✓
           </div>
-          <span className="font-semibold text-[#2ec4b6]">Cart</span>
+          <span className="font-semibold text-[#2ec4b6] text-xs sm:text-base whitespace-nowrap">Cart</span>
         </div>
-        <div className="w-16 h-0.5 bg-[#20a895]"></div>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#20a895] text-white flex items-center justify-center font-bold">
+        <div className="w-8 sm:w-16 h-0.5 bg-[#20a895]"></div>
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#20a895] text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0">
             2
           </div>
-          <span className="font-semibold text-[#20a895]">Checkout</span>
+          <span className="font-semibold text-[#20a895] text-xs sm:text-base whitespace-nowrap">Checkout</span>
         </div>
-        <div className="w-16 h-0.5 bg-neutral-200"></div>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-neutral-200 text-neutral-600 flex items-center justify-center font-bold">
+        <div className="w-8 sm:w-16 h-0.5 bg-neutral-200"></div>
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neutral-200 text-neutral-600 flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0">
             3
           </div>
-          <span className="font-semibold text-neutral-600">Confirmation</span>
+          <span className="font-semibold text-neutral-600 text-xs sm:text-base whitespace-nowrap hidden xs:inline">Confirm</span>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Left Column - Forms */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Billing Information */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
-            <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-              <Building2 className="w-7 h-7 text-[#20a895]" />
+          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-neutral-200">
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+              <Building2 className="w-6 h-6 sm:w-7 sm:h-7 text-[#20a895]" />
               Billing Information
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
                   Company Name <span className="text-red-500">*</span>
@@ -171,7 +171,7 @@ export function CheckoutForm() {
                   value={formData.company}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                   placeholder="Your company name"
                 />
               </div>
@@ -185,7 +185,7 @@ export function CheckoutForm() {
                   value={formData.vatId}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                   placeholder="e.g., PL1234567890"
                 />
               </div>
@@ -198,7 +198,7 @@ export function CheckoutForm() {
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                   placeholder="e.g., Laboratory Services"
                 />
               </div>
@@ -212,7 +212,7 @@ export function CheckoutForm() {
                   value={formData.firstName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -225,7 +225,7 @@ export function CheckoutForm() {
                   value={formData.lastName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -238,7 +238,7 @@ export function CheckoutForm() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -251,7 +251,7 @@ export function CheckoutForm() {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 />
               </div>
               <div className="md:col-span-2">
@@ -264,7 +264,7 @@ export function CheckoutForm() {
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -277,7 +277,7 @@ export function CheckoutForm() {
                   value={formData.city}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 />
               </div>
               <div>
@@ -290,7 +290,7 @@ export function CheckoutForm() {
                   value={formData.postalCode}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 />
               </div>
               <div className="md:col-span-2">
@@ -302,7 +302,7 @@ export function CheckoutForm() {
                   value={formData.country}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 >
                   <option value="Poland">Poland</option>
                   <option value="Germany">Germany</option>
@@ -314,12 +314,12 @@ export function CheckoutForm() {
           </div>
 
           {/* Order Details */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
-            <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-              <FileText className="w-7 h-7 text-[#20a895]" />
+          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-neutral-200">
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+              <FileText className="w-6 h-6 sm:w-7 sm:h-7 text-[#20a895]" />
               Order Details
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
                   Purchase Order Number
@@ -329,7 +329,7 @@ export function CheckoutForm() {
                   name="poNumber"
                   value={formData.poNumber}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                   placeholder="PO-2025-001"
                 />
               </div>
@@ -342,7 +342,7 @@ export function CheckoutForm() {
                   name="preferredDeliveryDate"
                   value={formData.preferredDeliveryDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                 />
               </div>
               <div className="md:col-span-2">
@@ -354,7 +354,7 @@ export function CheckoutForm() {
                   value={formData.notes}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#20a895]/10 text-sm sm:text-base"
                   placeholder="Special instructions, delivery notes, etc."
                 />
               </div>
@@ -362,12 +362,12 @@ export function CheckoutForm() {
           </div>
 
           {/* Payment Method */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
-            <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-              <CreditCard className="w-7 h-7 text-[#20a895]" />
+          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-neutral-200">
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
+              <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 text-[#20a895]" />
               Payment Method
             </h2>
-            <label className="flex items-start gap-4 p-4 border-2 border-[#20a895] rounded-lg bg-[#20a895]/5 cursor-pointer">
+            <label className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 border-2 border-[#20a895] rounded-lg bg-[#20a895]/5 cursor-pointer">
               <input
                 type="radio"
                 name="paymentMethod"
@@ -388,11 +388,11 @@ export function CheckoutForm() {
 
         {/* Right Column - Order Summary */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-neutral-200 sticky top-24">
-            <h2 className="text-2xl font-bold text-neutral-900 mb-6">Order Summary</h2>
+          <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg border-2 border-neutral-200 lg:sticky lg:top-24">
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6">Order Summary</h2>
 
             {/* Cart Items Mini */}
-            <div className="max-h-[300px] overflow-y-auto mb-6 space-y-3">
+            <div className="max-h-[250px] sm:max-h-[300px] overflow-y-auto mb-4 sm:mb-6 space-y-2 sm:space-y-3">
               {cart?.map?.((item) => (
                 <div key={item?.id} className="flex gap-3 p-3 bg-neutral-50 rounded-lg">
                   <div className="relative w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0">
@@ -417,7 +417,7 @@ export function CheckoutForm() {
               )) || []}
             </div>
 
-            <div className="space-y-3 mb-6 text-sm">
+            <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-xs sm:text-sm">
               <div className="flex justify-between">
                 <span className="text-neutral-700">Subtotal</span>
                 <span className="font-semibold">€{subtotal?.toFixed?.(2)}</span>

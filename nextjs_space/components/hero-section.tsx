@@ -48,7 +48,7 @@ export function HeroSection() {
   const slide = heroSlides[currentSlide]
 
   return (
-    <section className="relative h-[90vh] min-h-[600px] overflow-hidden">
+    <section className="relative h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-[90vh] min-h-[400px] sm:min-h-[500px] md:min-h-[600px] overflow-hidden">
       {/* Background Image with Parallax Effect */}
       <div className="absolute inset-0">
         {heroSlides.map((s, idx) => (
@@ -65,8 +65,8 @@ export function HeroSection() {
               className="object-cover"
               priority={idx === 0}
             />
-            {/* Dark Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
+            {/* Dark Gradient Overlay - Stronger on Mobile */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 md:via-black/80 to-black/50 md:to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
           </div>
         ))}
@@ -75,10 +75,10 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative z-10 flex h-full items-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-6">
+          <div className="max-w-3xl space-y-3 sm:space-y-4 md:space-y-6">
             {/* Title with Animation */}
             <h1
-              className={`text-5xl font-bold text-white md:text-7xl transition-all duration-700 ${
+              className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white transition-all duration-700 ${
                 isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}
               style={{ transitionDelay: '200ms' }}
@@ -88,7 +88,7 @@ export function HeroSection() {
 
             {/* Subtitle */}
             <h2
-              className={`text-2xl font-medium text-[#2ec4b6] md:text-3xl transition-all duration-700 ${
+              className={`text-base sm:text-xl md:text-2xl lg:text-3xl font-medium text-[#2ec4b6] transition-all duration-700 ${
                 isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}
               style={{ transitionDelay: '400ms' }}
@@ -98,7 +98,7 @@ export function HeroSection() {
 
             {/* Description */}
             <p
-              className={`text-lg text-gray-300 md:text-xl transition-all duration-700 ${
+              className={`text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 transition-all duration-700 ${
                 isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}
               style={{ transitionDelay: '600ms' }}
@@ -108,24 +108,24 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <div
-              className={`flex flex-wrap gap-4 transition-all duration-700 ${
+              className={`flex flex-col sm:flex-row gap-3 sm:gap-4 transition-all duration-700 ${
                 isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}
               style={{ transitionDelay: '800ms' }}
             >
               <Link
                 href={slide.link}
-                className="group flex items-center gap-2 rounded-md bg-[#1a8c7c] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#1a8c7c]/50"
+                className="group flex items-center justify-center gap-2 rounded-md bg-[#1a8c7c] px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#1a8c7c]/50"
               >
                 {slide.cta}
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
               </Link>
 
               <Link
                 href="/products"
-                className="group flex items-center gap-2 rounded-md border-2 border-white/30 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/20"
+                className="group flex items-center justify-center gap-2 rounded-md border-2 border-white/30 bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/20"
               >
-                <Play className="h-5 w-5" />
+                <Play className="h-4 w-4 sm:h-5 sm:w-5" />
                 Browse Catalog
               </Link>
             </div>
@@ -134,23 +134,23 @@ export function HeroSection() {
       </div>
 
       {/* Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+      <div className="absolute bottom-4 sm:bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-2">
         {heroSlides.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentSlide(idx)}
             className={`h-1 rounded-full transition-all ${
               idx === currentSlide
-                ? 'w-12 bg-[#1a8c7c]'
-                : 'w-8 bg-white/30 hover:bg-white/50'
+                ? 'w-8 sm:w-12 bg-[#1a8c7c]'
+                : 'w-6 sm:w-8 bg-white/30 hover:bg-white/50'
             }`}
             aria-label={`Go to slide ${idx + 1}`}
           />
         ))}
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 z-20 animate-bounce">
+      {/* Scroll Indicator - Hidden on Mobile */}
+      <div className="hidden md:block absolute bottom-8 right-8 z-20 animate-bounce">
         <div className="flex flex-col items-center gap-2 text-white/60">
           <span className="text-xs uppercase tracking-wider">Scroll</span>
           <div className="h-8 w-5 rounded-full border-2 border-white/30">

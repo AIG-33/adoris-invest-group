@@ -3,12 +3,12 @@ import Image from 'next/image'
 
 export function Footer() {
   return (
-    <footer className="bg-[#1a8c7c] text-white mt-20">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-[#1a8c7c] text-white mt-12 sm:mt-20">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Company Info */}
           <div>
-            <div className="relative w-32 h-10 mb-4">
+            <div className="relative w-28 h-9 sm:w-32 sm:h-10 mb-3 sm:mb-4">
               <Image
                 src="/logo.png"
                 alt="IVD GROUP"
@@ -16,7 +16,7 @@ export function Footer() {
                 className="object-contain brightness-0 invert"
               />
             </div>
-            <p className="text-neutral-300 text-sm">
+            <p className="text-neutral-300 text-xs sm:text-sm">
               Professional B2B medical laboratory equipment and supplies from
               leading manufacturers worldwide.
             </p>
@@ -24,12 +24,12 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Quick Links</h3>
+            <ul className="space-y-1.5 sm:space-y-2">
               <li>
                 <Link
                   href="/"
-                  className="text-neutral-300 hover:text-[#20a895] transition-colors"
+                  className="text-neutral-300 hover:text-[#20a895] transition-colors text-xs sm:text-sm"
                 >
                   Products
                 </Link>
@@ -37,7 +37,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/bulk-order"
-                  className="text-neutral-300 hover:text-[#20a895] transition-colors"
+                  className="text-neutral-300 hover:text-[#20a895] transition-colors text-xs sm:text-sm"
                 >
                   Bulk Order
                 </Link>
@@ -45,7 +45,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/exhibitions"
-                  className="text-neutral-300 hover:text-[#20a895] transition-colors"
+                  className="text-neutral-300 hover:text-[#20a895] transition-colors text-xs sm:text-sm"
                 >
                   Exhibitions
                 </Link>
@@ -53,7 +53,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="text-neutral-300 hover:text-[#20a895] transition-colors"
+                  className="text-neutral-300 hover:text-[#20a895] transition-colors text-xs sm:text-sm"
                 >
                   Terms & Conditions
                 </Link>
@@ -61,7 +61,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/cart"
-                  className="text-neutral-300 hover:text-[#20a895] transition-colors"
+                  className="text-neutral-300 hover:text-[#20a895] transition-colors text-xs sm:text-sm"
                 >
                   Shopping Cart
                 </Link>
@@ -71,15 +71,15 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Contact Us</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Contact Us</h3>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <li className="text-neutral-300">
                 <span className="font-semibold">Email:</span> info@ivdgroup.eu
               </li>
               <li className="text-neutral-300">
                 <span className="font-semibold">Phone:</span> +48 88 1049959
               </li>
-              <li className="text-neutral-300">
+              <li className="text-neutral-300 hidden sm:block">
                 <span className="font-semibold">Website:</span> www.ivdgroup.eu
               </li>
             </ul>
@@ -87,8 +87,8 @@ export function Footer() {
 
           {/* Company Details */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Company Info</h3>
-            <ul className="space-y-2 text-sm text-neutral-300">
+            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Company Info</h3>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-neutral-300">
               <li>IVD GROUP Sp. z o.o.</li>
               <li>Bartoszewicza 3-24</li>
               <li>00-337 Warsaw, Poland</li>
@@ -102,7 +102,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-neutral-700 mt-8 pt-8 text-center text-sm text-neutral-400">
+        <div className="border-t border-neutral-700 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-neutral-400">
           <p>
             © {new Date()?.getFullYear() || 2025} IVD Group Sp. z o.o. All
             rights reserved.
