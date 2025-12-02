@@ -3,9 +3,16 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 interface SearchResult {
   id: string
@@ -219,14 +226,6 @@ export function Header() {
           {/* Actions */}
           <div className="flex items-center gap-4">
             <Link
-              href="/bulk-order"
-              className="flex items-center gap-2 text-neutral-700 hover:text-[#2ec4b6] font-medium transition-colors"
-            >
-              <Package className="w-5 h-5" />
-              <span>Bulk Order</span>
-            </Link>
-
-            <Link
               href="/exhibitions"
               className="flex items-center gap-2 text-neutral-700 hover:text-[#2ec4b6] font-medium transition-colors"
             >
@@ -241,31 +240,61 @@ export function Header() {
               <span>Terms</span>
             </Link>
 
+            {/* My Account Dropdown Menu */}
             {status === 'authenticated' && session?.user ? (
               <>
-                <Link
-                  href="/account"
-                  className="flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors"
-                >
-                  <User className="w-5 h-5" />
-                  <span>My Account</span>
-                </Link>
-                {(session?.user as any)?.role === 'admin' && (
-                  <Link
-                    href="/admin"
-                    className="flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors"
-                  >
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors outline-none">
                     <User className="w-5 h-5" />
-                    <span>Admin</span>
-                  </Link>
-                )}
-                <button
-                  onClick={() => signOut()}
-                  className="flex items-center gap-2 text-neutral-700 hover:text-red-600 font-medium transition-colors"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span>Logout</span>
-                </button>
+                    <span>My Account</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem asChild>
+                      <Link href="/bulk-order" className="flex items-center gap-2 cursor-pointer">
+                        <Package className="w-4 h-4" />
+                        <span>Bulk Order</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/cart" className="flex items-center gap-2 cursor-pointer relative">
+                        <ShoppingCart className="w-4 h-4" />
+                        <span>Cart</span>
+                        {cartCount > 0 && (
+                          <span className="ml-auto bg-[#20a895] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                            {cartCount}
+                          </span>
+                        )}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/account" className="flex items-center gap-2 cursor-pointer">
+                        <User className="w-4 h-4" />
+                        <span>My Account</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    {(session?.user as any)?.role === 'admin' && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin" className="flex items-center gap-2 cursor-pointer text-[#1a8c7c] font-semibold">
+                            <User className="w-4 h-4" />
+                            <span>Admin Panel</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => signOut()}
+                      className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               <Link
@@ -276,19 +305,6 @@ export function Header() {
                 <span>Login</span>
               </Link>
             )}
-
-            <Link
-              href="/cart"
-              className="flex items-center gap-2 text-neutral-700 hover:text-[#20a895] font-medium transition-colors relative"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              <span>Cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#20a895] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
           </div>
         </div>
       </div>
