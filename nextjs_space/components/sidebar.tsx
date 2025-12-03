@@ -1,7 +1,8 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { X } from 'lucide-react'
+import Link from 'next/link'
+import { X, Package } from 'lucide-react'
 
 interface SidebarProps {
   categories: any[]
@@ -116,12 +117,21 @@ export function Sidebar({
         </div>
       </div>
 
-      {/* Info Card */}
+      {/* Bulk Order Card */}
       <div className="bg-gradient-to-br from-[#333333] to-[#666666] rounded-xl p-6 text-white">
-        <h3 className="font-bold text-lg mb-2">🚚 Free Shipping</h3>
-        <p className="text-sm opacity-90">
-          On all orders over €5,000. Fast delivery across Europe.
+        <div className="flex items-center gap-2 mb-2">
+          <Package className="w-5 h-5" />
+          <h3 className="font-bold text-lg">Bulk Order</h3>
+        </div>
+        <p className="text-sm opacity-90 mb-4">
+          Need to order multiple items at once? Use our bulk order tool to quickly add products by SKU.
         </p>
+        <Link
+          href="/bulk-order"
+          className="inline-block w-full text-center bg-white text-[#333333] font-semibold py-2.5 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          Go to Bulk Order
+        </Link>
       </div>
     </aside>
   )

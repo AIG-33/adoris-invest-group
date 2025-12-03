@@ -223,6 +223,14 @@ export function Header() {
           {/* Actions - Compact on Mobile */}
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 order-2 sm:order-3">
             <Link
+              href="/"
+              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+            >
+              <Package className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Catalog</span>
+            </Link>
+
+            <Link
               href="/exhibitions"
               className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
             >
