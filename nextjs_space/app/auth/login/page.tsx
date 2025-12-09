@@ -399,16 +399,6 @@ export default function LoginPage() {
                 )}
               </button>
 
-              {/* Demo Credentials */}
-              <div className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-                <p className="text-xs font-semibold text-neutral-700 mb-2">Demo Credentials:</p>
-                <p className="text-xs text-neutral-600">
-                  Email: <code className="bg-white px-2 py-1 rounded">admin@ivdgroup.eu</code>
-                </p>
-                <p className="text-xs text-neutral-600">
-                  Password: <code className="bg-white px-2 py-1 rounded">Admin123!</code>
-                </p>
-              </div>
             </form>
           )}
 
