@@ -33,13 +33,13 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError('Неверный email или пароль')
+        setError('Invalid email or password')
       } else {
         router?.push?.('/')
         router?.refresh?.()
       }
     } catch (err) {
-      setError('Что-то пошло не так')
+      setError('Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -59,12 +59,12 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError('Не удалось отправить письмо')
+        setError('Failed to send email')
       } else {
-        setSuccess('Проверьте вашу почту! Мы отправили вам ссылку для входа.')
+        setSuccess('Check your email! We sent you a sign-in link.')
       }
     } catch (err) {
-      setError('Что-то пошло не так')
+      setError('Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -77,12 +77,12 @@ export default function LoginPage() {
 
     // Validation
     if (password !== confirmPassword) {
-      setError('Пароли не совпадают')
+      setError('Passwords don\'t match')
       return
     }
 
     if (password.length < 6) {
-      setError('Пароль должен содержать минимум 6 символов')
+      setError('Password must be at least 6 characters')
       return
     }
 
@@ -100,8 +100,8 @@ export default function LoginPage() {
 
       if (!response.ok) {
         setError(data.error === 'User already exists' 
-          ? 'Пользователь с таким email уже существует' 
-          : 'Ошибка регистрации')
+          ? 'User with this email already exists' 
+          : 'Registration error')
         return
       }
 
@@ -113,14 +113,14 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setSuccess('Регистрация успешна! Теперь войдите в систему.')
+        setSuccess('Registration successful! Please sign in.')
         setMode('login')
       } else {
         router?.push?.('/')
         router?.refresh?.()
       }
     } catch (err) {
-      setError('Что-то пошло не так')
+      setError('Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -150,10 +150,10 @@ export default function LoginPage() {
         {/* Auth Card */}
         <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 mb-2">
-            {mode === 'login' ? 'Добро пожаловать' : 'Регистрация'}
+            {mode === 'login' ? 'Welcome Back' : 'Sign Up'}
           </h1>
           <p className="text-neutral-600 mb-6">
-            {mode === 'login' ? 'Войдите в свой аккаунт' : 'Создайте новый аккаунт'}
+            {mode === 'login' ? 'Sign in to your account' : 'Create a new account'}
           </p>
 
           {/* Mode Switch */}
@@ -171,7 +171,7 @@ export default function LoginPage() {
               }`}
             >
               <LogIn className="w-4 h-4" />
-              Вход
+              Sign In
             </button>
             <button
               onClick={() => {
@@ -186,7 +186,7 @@ export default function LoginPage() {
               }`}
             >
               <UserPlus className="w-4 h-4" />
-              Регистрация
+              Sign Up
             </button>
           </div>
 
@@ -202,7 +202,7 @@ export default function LoginPage() {
                 }`}
               >
                 <Key className="w-4 h-4" />
-                Пароль
+                Password
               </button>
               <button
                 onClick={() => setLoginMethod('magic')}
@@ -235,7 +235,7 @@ export default function LoginPage() {
             <form onSubmit={handleRegister} className="space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Имя
+                  Full Name
                 </label>
                 <input
                   type="text"
@@ -243,13 +243,13 @@ export default function LoginPage() {
                   onChange={(e) => setName(e?.target?.value || '')}
                   required
                   className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
-                  placeholder="Иван Иванов"
+                  placeholder="John Doe"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Email адрес
+                  Email Address
                 </label>
                 <input
                   type="email"
@@ -257,13 +257,13 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e?.target?.value || '')}
                   required
                   className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
-                  placeholder="ivan@example.com"
+                  placeholder="john@example.com"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Пароль
+                  Password
                 </label>
                 <input
                   type="password"
@@ -271,13 +271,13 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e?.target?.value || '')}
                   required
                   className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
-                  placeholder="минимум 6 символов"
+                  placeholder="minimum 6 characters"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Подтвердите пароль
+                  Confirm Password
                 </label>
                 <input
                   type="password"
@@ -297,12 +297,12 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Регистрация...
+                    Signing up...
                   </>
                 ) : (
                   <>
                     <UserPlus className="w-5 h-5" />
-                    Зарегистрироваться
+                    Sign Up
                   </>
                 )}
               </button>
@@ -314,7 +314,7 @@ export default function LoginPage() {
             <form onSubmit={handleMagicLink} className="space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Email адрес
+                  Email Address
                 </label>
                 <input
                   type="email"
@@ -334,18 +334,18 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Отправка...
+                    Sending...
                   </>
                 ) : (
                   <>
                     <Mail className="w-5 h-5" />
-                    Отправить ссылку
+                    Send Link
                   </>
                 )}
               </button>
 
               <p className="text-xs text-neutral-600 text-center">
-                Мы отправим вам письмо со ссылкой для входа без пароля
+                We'll send you an email with a passwordless sign-in link
               </p>
             </form>
           )}
@@ -355,7 +355,7 @@ export default function LoginPage() {
             <form onSubmit={handlePasswordLogin} className="space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Email адрес
+                  Email Address
                 </label>
                 <input
                   type="email"
@@ -369,7 +369,7 @@ export default function LoginPage() {
 
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Пароль
+                  Password
                 </label>
                 <input
                   type="password"
@@ -389,19 +389,19 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Вход...
+                    Signing in...
                   </>
                 ) : (
                   <>
                     <LogIn className="w-5 h-5" />
-                    Войти
+                    Sign In
                   </>
                 )}
               </button>
 
               {/* Demo Credentials */}
               <div className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
-                <p className="text-xs font-semibold text-neutral-700 mb-2">Демо данные:</p>
+                <p className="text-xs font-semibold text-neutral-700 mb-2">Demo Credentials:</p>
                 <p className="text-xs text-neutral-600">
                   Email: <code className="bg-white px-2 py-1 rounded">admin@ivdgroup.eu</code>
                 </p>
@@ -417,7 +417,7 @@ export default function LoginPage() {
               href="/"
               className="text-sm text-[#20a895] hover:text-[#1a8c7c] font-medium"
             >
-              ← Вернуться в магазин
+              ← Back to Shop
             </Link>
           </div>
         </div>
