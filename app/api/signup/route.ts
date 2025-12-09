@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
+import { sendWelcomeEmail } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +40,15 @@ export async function POST(request: Request) {
         name: name || email.split('@')[0],
         role: role || 'user',
       },
+    })
+
+    // Send welcome email (don't wait for it to complete)
+    sendWelcomeEmail({ 
+      to: user.email as string, 
+      name: (user.name || 'User') as string 
+    }).catch(error => {
+      console.error('Failed to send welcome email:', error)
+      // Don't fail the registration if email fails
     })
 
     return NextResponse.json(

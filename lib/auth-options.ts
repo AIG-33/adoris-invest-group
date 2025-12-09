@@ -4,29 +4,37 @@ import EmailProvider from 'next-auth/providers/email'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { prisma } from './db'
 import bcrypt from 'bcryptjs'
+import { sendMagicLinkEmail } from './email'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     EmailProvider({
       server: {
-        host: process.env.EMAIL_SERVER_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.EMAIL_SERVER_PORT || '587'),
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: parseInt(process.env.SMTP_PORT || '587'),
         auth: {
-          user: process.env.EMAIL_SERVER_USER || 'noreply@ivdgroup.eu',
-          pass: process.env.EMAIL_SERVER_PASSWORD || 'demo_password',
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
         },
       },
-      from: process.env.EMAIL_FROM || 'IVD GROUP <noreply@ivdgroup.eu>',
-      // Custom email send function for demo
+      from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
+      // Custom email send function using our email utility
       async sendVerificationRequest({ identifier: email, url }) {
-        console.log('\n🔐 MAGIC LINK LOGIN REQUEST')
-        console.log('═══════════════════════════════════════')
-        console.log(`📧 To: ${email}`)
-        console.log(`🔗 Magic Link: ${url}`)
-        console.log('═══════════════════════════════════════\n')
-        console.log('In production, this would send an email with the magic link.')
-        console.log('For demo, copy the link above and paste it in your browser.\n')
+        try {
+          console.log('\n🔐 MAGIC LINK LOGIN REQUEST')
+          console.log('═══════════════════════════════════════')
+          console.log(`📧 Sending to: ${email}`)
+          console.log(`🔗 Magic Link: ${url}`)
+          console.log('═══════════════════════════════════════\n')
+
+          await sendMagicLinkEmail({ to: email, url })
+          
+          console.log('✅ Magic link email sent successfully\n')
+        } catch (error) {
+          console.error('❌ Error sending magic link email:', error)
+          throw new Error('Could not send magic link email')
+        }
       },
     }),
     CredentialsProvider({
