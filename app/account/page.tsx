@@ -37,8 +37,8 @@ export default async function AccountPage() {
   // Calculate stats
   const stats = {
     totalOrders: orders.length,
-    totalSpent: orders.reduce((sum: number, order) => sum + order.total, 0),
-    pendingOrders: orders.filter((o) => o.status === 'pending').length,
+    totalSpent: orders.reduce((sum: number, order: any) => sum + order.total, 0),
+    pendingOrders: orders.filter((o: any) => o.status === 'pending').length,
   }
 
   return (
