@@ -47,7 +47,7 @@ export default async function ExhibitionsPage() {
                 Upcoming Events
               </h2>
               <div className="grid gap-8 md:grid-cols-2">
-                {upcomingExhibitions.map((exhibition) => (
+                {upcomingExhibitions.map((exhibition: any) => (
                   <ExhibitionCard
                     key={exhibition.id}
                     exhibition={exhibition}
@@ -67,7 +67,7 @@ export default async function ExhibitionsPage() {
                 Past Events
               </h2>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {pastExhibitions.map((exhibition) => (
+                {pastExhibitions.map((exhibition: any) => (
                   <ExhibitionCard
                     key={exhibition.id}
                     exhibition={exhibition}
