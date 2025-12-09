@@ -42,7 +42,7 @@ const getEmailFooter = () => `
   <div style="background: #f5f5f5; padding: 20px; margin-top: 30px; text-align: center; color: #666;">
     <p style="margin: 5px 0;">ADORIS INVEST GROUP OÜ</p>
     <p style="margin: 5px 0;">Harju maakond, Tallinn, Kesklinna linnaosa, Narva mnt 7-634, 10117</p>
-    <p style="margin: 5px 0;">Email: <a href="mailto:ceo@adorisgroup.com" style="color: #20a895;">ceo@adorisgroup.com</a></p>
+    <p style="margin: 5px 0;">Email: <a href="mailto:info@adorisgroup.com" style="color: #20a895;">info@adorisgroup.com</a></p>
     <p style="margin: 15px 0 5px 0; font-size: 12px; color: #999;">
       © ${new Date().getFullYear()} ADORIS INVEST GROUP. All rights reserved.
     </p>
@@ -215,7 +215,7 @@ export async function sendOrderConfirmationEmail({
                               Our team is ready to assist you with any questions about your order.
                             </p>
                             <p style="margin: 12px 0 0 0; color: #555; font-size: 14px;">
-                              📧 Email: <a href="mailto:ceo@adorisgroup.com" style="color: #20a895; text-decoration: none; font-weight: 600;">ceo@adorisgroup.com</a><br/>
+                              📧 Email: <a href="mailto:info@adorisgroup.com" style="color: #20a895; text-decoration: none; font-weight: 600;">info@adorisgroup.com</a><br/>
                               📞 Available: Monday-Friday, 9:00 AM - 6:00 PM EET
                             </p>
                           </td>
@@ -239,7 +239,7 @@ export async function sendOrderConfirmationEmail({
                             <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">Harju maakond, Tallinn, Kesklinna linnaosa</p>
                             <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 13px;">Narva mnt 7-634, 10117, Estonia</p>
                             <p style="margin: 0; color: #6b7280; font-size: 13px;">
-                              Email: <a href="mailto:ceo@adorisgroup.com" style="color: #20a895; text-decoration: none;">ceo@adorisgroup.com</a>
+                              Email: <a href="mailto:info@adorisgroup.com" style="color: #20a895; text-decoration: none;">info@adorisgroup.com</a>
                             </p>
                             <p style="margin: 15px 0 0 0; color: #9ca3af; font-size: 12px;">
                               © ${new Date().getFullYear()} ADORIS INVEST GROUP. All rights reserved.
@@ -272,10 +272,10 @@ export async function sendOrderConfirmationEmail({
     // Also send copy to CEO
     await transporter.sendMail({
       ...mailOptions,
-      to: 'ceo@adorisgroup.com',
+      to: 'info@adorisgroup.com',
       subject: `🆕 New Order: ${orderNumber} - ${customerName}`,
     })
-    console.log('✅ Order copy sent to: ceo@adorisgroup.com')
+    console.log('✅ Order copy sent to: info@adorisgroup.com')
 
     return { success: true }
   } catch (error) {
@@ -385,7 +385,7 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
                         <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6;">
                           <strong>💡 Need Help?</strong><br/>
                           Our team is here to assist you with product selection, pricing, or any questions. 
-                          Contact us at <a href="mailto:ceo@adorisgroup.com" style="color: #20a895; text-decoration: none; font-weight: bold;">ceo@adorisgroup.com</a>
+                          Contact us at <a href="mailto:info@adorisgroup.com" style="color: #20a895; text-decoration: none; font-weight: bold;">info@adorisgroup.com</a>
                         </p>
                       </div>
 
@@ -406,7 +406,7 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
                             <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">Harju maakond, Tallinn, Kesklinna linnaosa</p>
                             <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 13px;">Narva mnt 7-634, 10117, Estonia</p>
                             <p style="margin: 0; color: #6b7280; font-size: 13px;">
-                              Email: <a href="mailto:ceo@adorisgroup.com" style="color: #20a895; text-decoration: none;">ceo@adorisgroup.com</a>
+                              Email: <a href="mailto:info@adorisgroup.com" style="color: #20a895; text-decoration: none;">info@adorisgroup.com</a>
                             </p>
                             <p style="margin: 15px 0 0 0; color: #9ca3af; font-size: 12px;">
                               © ${new Date().getFullYear()} ADORIS INVEST GROUP. All rights reserved.
@@ -470,7 +470,7 @@ export async function sendMagicLinkEmail({ to, url }: MagicLinkEmailOptions) {
           </div>
           <p style="font-size: 14px; color: #666; margin-top: 30px;">
             Need help? Contact us at 
-            <a href="mailto:ceo@adorisgroup.com" style="color: #20a895;">ceo@adorisgroup.com</a>
+            <a href="mailto:info@adorisgroup.com" style="color: #20a895;">info@adorisgroup.com</a>
           </p>
           <p style="font-size: 16px; margin-top: 30px;">
             Best regards,<br/>
