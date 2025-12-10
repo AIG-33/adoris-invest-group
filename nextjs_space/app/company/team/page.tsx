@@ -65,7 +65,7 @@ export default function TeamPage() {
               <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 border-t-4 border-black relative">
                 <Quote className="absolute top-8 left-8 w-16 h-16 text-black/10" />
                 <div className="relative z-10">
-                  <h2 className="text-3xl sm:text-4xl font-bold text-[#000000] mb-8">
+                  <h2 className="text-3xl sm:text-4xl font-bold text-black mb-8">
                     A Message from the CEO
                   </h2>
                   
@@ -105,7 +105,7 @@ export default function TeamPage() {
                       dedication to your success.
                     </p>
                     
-                    <p className="text-xl font-semibold text-[#000000] pt-4">
+                    <p className="text-xl font-semibold text-black pt-4">
                       Thank you for choosing Adoris Invest Group OÜ. We look forward to building a lasting, honest partnership with you.
                     </p>
                   </div>
@@ -114,14 +114,14 @@ export default function TeamPage() {
                     <div className="flex items-center gap-4">
                       <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 border-4 border-black">
                         <Image
-                          src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop"
+                          src="/maksim-harbatsevich.jpg"
                           alt="Maksim Harbatsevich"
                           fill
                           className="object-cover"
                         />
                       </div>
                       <div>
-                        <div className="font-bold text-xl text-[#000000]">Maksim Harbatsevich</div>
+                        <div className="font-bold text-xl text-black">Maksim Harbatsevich</div>
                         <div className="text-neutral-600">Chief Executive Officer</div>
                         <a
                           href="https://www.linkedin.com/in/maksim-h/"
@@ -145,7 +145,7 @@ export default function TeamPage() {
         <section className="py-16 bg-neutral-100">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#000000] mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-center text-black mb-4">
                 Leadership Team
               </h2>
               <p className="text-center text-neutral-600 text-lg mb-12 max-w-2xl mx-auto">
@@ -169,7 +169,7 @@ export default function TeamPage() {
                         />
                       </div>
                       <div className="flex-1 text-center sm:text-left">
-                        <h3 className="text-2xl font-bold text-[#000000] mb-2">{member.name}</h3>
+                        <h3 className="text-2xl font-bold text-black mb-2">{member.name}</h3>
                         <p className="text-black font-semibold mb-4">{member.role}</p>
                         <p className="text-neutral-600 leading-relaxed mb-4">{member.bio}</p>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
@@ -203,7 +203,7 @@ export default function TeamPage() {
         <section className="py-16 sm:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#000000] mb-6">
+              <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6">
                 Work With a Team You Can Trust
               </h2>
               <p className="text-xl text-neutral-600 mb-8 leading-relaxed">

@@ -29,7 +29,7 @@ export default function AboutPage() {
             <div className="max-w-6xl mx-auto">
               <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
                 <div>
-                  <h2 className="text-3xl sm:text-4xl font-bold text-[#000000] mb-6">
+                  <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6">
                     Who We Are
                   </h2>
                   <p className="text-lg text-neutral-700 mb-4 leading-relaxed">
@@ -58,19 +58,19 @@ export default function AboutPage() {
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
-                  <div className="text-4xl font-bold text-[#000000] mb-2">10+</div>
+                  <div className="text-4xl font-bold text-black mb-2">10+</div>
                   <div className="text-neutral-600 font-medium">Years Experience</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
-                  <div className="text-4xl font-bold text-[#000000] mb-2">5</div>
+                  <div className="text-4xl font-bold text-black mb-2">5</div>
                   <div className="text-neutral-600 font-medium">Countries Served</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
-                  <div className="text-4xl font-bold text-[#000000] mb-2">100+</div>
+                  <div className="text-4xl font-bold text-black mb-2">100+</div>
                   <div className="text-neutral-600 font-medium">Global Partners</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
-                  <div className="text-4xl font-bold text-[#000000] mb-2">€781K</div>
+                  <div className="text-4xl font-bold text-black mb-2">€781K</div>
                   <div className="text-neutral-600 font-medium">Annual Revenue (2018)</div>
                 </div>
               </div>
@@ -82,7 +82,7 @@ export default function AboutPage() {
         <section className="py-16 bg-neutral-100">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#000000] mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-center text-black mb-12">
                 Our Core Values
               </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -90,7 +90,7 @@ export default function AboutPage() {
                   <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <CheckCircle2 className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#000000] mb-3">Quality Assurance</h3>
+                  <h3 className="text-xl font-bold text-black mb-3">Quality Assurance</h3>
                   <p className="text-neutral-600 leading-relaxed">
                     We partner only with top-tier manufacturers to ensure the highest quality standards for all products.
                   </p>
@@ -100,7 +100,7 @@ export default function AboutPage() {
                   <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Target className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#000000] mb-3">Customer Focus</h3>
+                  <h3 className="text-xl font-bold text-black mb-3">Customer Focus</h3>
                   <p className="text-neutral-600 leading-relaxed">
                     Our clients' success is our success. We tailor our services to meet specific needs and deadlines.
                   </p>
@@ -110,7 +110,7 @@ export default function AboutPage() {
                   <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Heart className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#000000] mb-3">Integrity</h3>
+                  <h3 className="text-xl font-bold text-black mb-3">Integrity</h3>
                   <p className="text-neutral-600 leading-relaxed">
                     We build lasting relationships based on trust, transparency, and honest communication.
                   </p>
@@ -120,7 +120,7 @@ export default function AboutPage() {
                   <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Lightbulb className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#000000] mb-3">Innovation</h3>
+                  <h3 className="text-xl font-bold text-black mb-3">Innovation</h3>
                   <p className="text-neutral-600 leading-relaxed">
                     We continuously optimize our processes to deliver cutting-edge solutions and services.
                   </p>
@@ -134,13 +134,13 @@ export default function AboutPage() {
         <section className="py-16 sm:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl font-bold text-center text-[#000000] mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-center text-black mb-12">
                 What We Offer
               </h2>
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
                   <Globe className="w-12 h-12 text-black mb-6" />
-                  <h3 className="text-2xl font-bold text-[#000000] mb-4">Global Distribution</h3>
+                  <h3 className="text-2xl font-bold text-black mb-4">Global Distribution</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
                     We serve clients across Russia, Belarus, Kazakhstan, European Union, USA, and Austria with efficient logistics.
                   </p>
@@ -162,7 +162,7 @@ export default function AboutPage() {
 
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
                   <Award className="w-12 h-12 text-black mb-6" />
-                  <h3 className="text-2xl font-bold text-[#000000] mb-4">Consulting Services</h3>
+                  <h3 className="text-2xl font-bold text-black mb-4">Consulting Services</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
                     As the #1 consulting company in Belarus, we offer comprehensive healthcare consulting services.
                   </p>
@@ -184,7 +184,7 @@ export default function AboutPage() {
 
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
                   <Users className="w-12 h-12 text-black mb-6" />
-                  <h3 className="text-2xl font-bold text-[#000000] mb-4">Trusted Partnerships</h3>
+                  <h3 className="text-2xl font-bold text-black mb-4">Trusted Partnerships</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
                     We collaborate with global healthcare leaders and regional distributors.
                   </p>
@@ -240,7 +240,7 @@ export default function AboutPage() {
         <section className="py-16 sm:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#000000] mb-6">
+              <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6">
                 Ready to Partner With Us?
               </h2>
               <p className="text-xl text-neutral-600 mb-8">
