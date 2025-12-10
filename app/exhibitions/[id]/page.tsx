@@ -35,7 +35,7 @@ export default async function ExhibitionDetailPage({ params }: Props) {
           {/* Back Button */}
           <Link
             href="/exhibitions"
-            className="mb-8 inline-flex items-center gap-2 text-[#2ec4b6] transition-colors hover:text-[#20a895]"
+            className="mb-8 inline-flex items-center gap-2 text-[#2ec4b6] transition-colors hover:text-black"
           >
             <ArrowLeft className="h-5 w-5" />
             Back to Exhibitions
@@ -106,7 +106,7 @@ export default async function ExhibitionDetailPage({ params }: Props) {
               </Link>
               <Link
                 href="mailto:info@ivdgroup.eu"
-                className="inline-flex items-center gap-2 rounded-lg border-2 border-[#1a8c7c] px-6 py-3 font-semibold text-white transition-all hover:bg-[#1a8c7c]/10"
+                className="inline-flex items-center gap-2 rounded-lg border-2 border-[#1a8c7c] px-6 py-3 font-semibold text-white transition-all hover:bg-neutral-800/10"
               >
                 <ExternalLink className="h-4 w-4" />
                 Contact Us

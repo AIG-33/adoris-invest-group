@@ -51,7 +51,7 @@ export default function VerifyRequest() {
               Мы отправили вам ссылку для входа на ваш email адрес.
             </p>
 
-            <div className="bg-[#20a895]/10 border border-[#20a895]/20 rounded-lg p-4 text-left">
+            <div className="bg-black/10 border border-black/20 rounded-lg p-4 text-left">
               <p className="text-sm text-neutral-700 mb-2">
                 <strong>Важно:</strong>
               </p>
@@ -67,7 +67,7 @@ export default function VerifyRequest() {
                 Возникли проблемы? Свяжитесь с нами:{' '}
                 <a
                   href="mailto:info@adorisgroup.com"
-                  className="text-[#20a895] hover:underline"
+                  className="text-black hover:underline"
                 >
                   info@adorisgroup.com
                 </a>
@@ -77,7 +77,7 @@ export default function VerifyRequest() {
             <div className="mt-6 text-center">
               <Link
                 href="/auth/login"
-                className="text-sm text-[#20a895] hover:text-[#1a8c7c] font-medium"
+                className="text-sm text-black hover:text-[#1a8c7c] font-medium"
               >
                 ← Вернуться к входу
               </Link>

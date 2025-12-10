@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import {
@@ -230,13 +230,34 @@ export function Header() {
               <span className="hidden sm:inline">Catalog</span>
             </Link>
 
-            <Link
-              href="/exhibitions"
-              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
-            >
-              <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Exhibitions</span>
-            </Link>
+            {/* Company Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors outline-none text-xs sm:text-sm lg:text-base">
+                <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Company</span>
+                <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 sm:w-56">
+                <DropdownMenuItem asChild>
+                  <Link href="/company/about" className="flex items-center gap-2 cursor-pointer">
+                    <Building2 className="w-4 h-4" />
+                    <span>About Us</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/company/team" className="flex items-center gap-2 cursor-pointer">
+                    <User className="w-4 h-4" />
+                    <span>Team</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/exhibitions" className="flex items-center gap-2 cursor-pointer">
+                    <Calendar className="w-4 h-4" />
+                    <span>Exhibitions</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <Link
               href="/terms"
