@@ -11,7 +11,7 @@ const teamMembers = [
     bio: 'Founder, board member, and shareholder of ADORIS INVEST GROUP OÜ. Passionate entrepreneur with extensive expertise in international sales, IT, and laboratory diagnostics. Strong leadership, communication, and teaching abilities.',
     linkedin: 'https://www.linkedin.com/in/maksim-h/',
     email: 'ceo@adorisgroup.com',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop',
+    image: '/maksim-harbatsevich.jpg',
   },
   {
     name: 'Anastasiya Valentsiukevich',
@@ -19,7 +19,7 @@ const teamMembers = [
     bio: 'Chairman of the Board at IVD Group and co-founder at NewMe. Over a decade of experience in laboratory diagnostics, marketing, and research. Specializes in strategic planning and business development.',
     linkedin: 'https://www.linkedin.com/in/anastasiya-valentsiukevich-ab2570b4/',
     email: 'info@adorisgroup.com',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
+    image: '/anastasiya-valentsiukevich.jpg',
   },
   {
     name: 'Anastasiya Mokhan',
@@ -27,7 +27,7 @@ const teamMembers = [
     bio: 'Creative marketing professional driving brand awareness and customer engagement. Expertise in digital marketing, content strategy, and market analysis for the medical equipment industry.',
     linkedin: 'https://www.linkedin.com/in/anastasiya-mokhan-2493391ba/',
     email: 'marketing@adorisgroup.com',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop',
+    image: '/anastasiya-mokhan.jpg',
   },
   {
     name: 'Kseniya Yudashkina',
@@ -35,7 +35,7 @@ const teamMembers = [
     bio: 'Results-oriented project manager with a track record of delivering complex logistics and supply chain projects on time. Ensures seamless coordination between manufacturers, distributors, and clients.',
     linkedin: 'https://www.linkedin.com/in/kseniya-yudashkina-7125791ab/',
     email: 'projects@adorisgroup.com',
-    image: 'https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=400&h=400&fit=crop',
+    image: '/kseniya-yudashkina.jpg',
   },
 ]
 
@@ -45,7 +45,7 @@ export default function TeamPage() {
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-white to-neutral-50">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-[#1a8c7c] to-[#20a895] text-white py-20">
+        <section className="relative bg-black text-white py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
@@ -62,8 +62,8 @@ export default function TeamPage() {
         <section className="py-16 sm:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
-              <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 border-t-4 border-[#20a895] relative">
-                <Quote className="absolute top-8 left-8 w-16 h-16 text-[#20a895]/10" />
+              <div className="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 border-t-4 border-black relative">
+                <Quote className="absolute top-8 left-8 w-16 h-16 text-black/10" />
                 <div className="relative z-10">
                   <h2 className="text-3xl sm:text-4xl font-bold text-[#000000] mb-8">
                     A Message from the CEO
@@ -76,7 +76,7 @@ export default function TeamPage() {
                     
                     <p>
                       For over a decade, we have been navigating the complex world of medical and laboratory wholesale with 
-                      a singular, unwavering principle: <strong className="text-[#20a895]">business is about people, not just products</strong>.
+                      a singular, unwavering principle: <strong className="text-black">business is about people, not just products</strong>.
                     </p>
                     
                     <p>
@@ -88,7 +88,7 @@ export default function TeamPage() {
                     </p>
                     
                     <p>
-                      However, our extensive inventory is not our greatest asset—<strong className="text-[#20a895]">our reputation is</strong>.
+                      However, our extensive inventory is not our greatest asset—<strong className="text-black">our reputation is</strong>.
                     </p>
                     
                     <p>
@@ -112,7 +112,7 @@ export default function TeamPage() {
 
                   <div className="mt-8 pt-8 border-t border-neutral-200">
                     <div className="flex items-center gap-4">
-                      <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 border-4 border-[#20a895]">
+                      <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 border-4 border-black">
                         <Image
                           src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop"
                           alt="Maksim Harbatsevich"
@@ -127,7 +127,7 @@ export default function TeamPage() {
                           href="https://www.linkedin.com/in/maksim-h/"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-[#20a895] hover:text-[#1a8c7c] transition-colors mt-1"
+                          className="inline-flex items-center gap-2 text-black hover:text-neutral-700 transition-colors mt-1"
                         >
                           <Linkedin className="w-4 h-4" />
                           <span className="text-sm">Connect on LinkedIn</span>
@@ -160,7 +160,7 @@ export default function TeamPage() {
                     className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all p-8 border border-neutral-200"
                   >
                     <div className="flex flex-col sm:flex-row gap-6">
-                      <div className="relative w-32 h-32 rounded-xl overflow-hidden flex-shrink-0 mx-auto sm:mx-0 border-4 border-[#20a895]">
+                      <div className="relative w-32 h-32 rounded-xl overflow-hidden flex-shrink-0 mx-auto sm:mx-0 border-4 border-black">
                         <Image
                           src={member.image}
                           alt={member.name}
@@ -170,7 +170,7 @@ export default function TeamPage() {
                       </div>
                       <div className="flex-1 text-center sm:text-left">
                         <h3 className="text-2xl font-bold text-[#000000] mb-2">{member.name}</h3>
-                        <p className="text-[#20a895] font-semibold mb-4">{member.role}</p>
+                        <p className="text-black font-semibold mb-4">{member.role}</p>
                         <p className="text-neutral-600 leading-relaxed mb-4">{member.bio}</p>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
                           <a
@@ -184,7 +184,7 @@ export default function TeamPage() {
                           </a>
                           <a
                             href={`mailto:${member.email}`}
-                            className="inline-flex items-center justify-center gap-2 px-4 py-2 border-2 border-neutral-300 text-neutral-700 rounded-lg hover:border-[#20a895] hover:text-[#20a895] transition-colors text-sm font-medium"
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2 border-2 border-neutral-300 text-neutral-700 rounded-lg hover:border-black hover:text-black transition-colors text-sm font-medium"
                           >
                             <Mail className="w-4 h-4" />
                             Email
@@ -213,13 +213,13 @@ export default function TeamPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/products"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#1a8c7c] to-[#20a895] text-white font-semibold rounded-lg hover:shadow-xl transition-all transform hover:scale-105"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-black to-neutral-800 text-white font-semibold rounded-lg hover:shadow-xl transition-all transform hover:scale-105"
                 >
                   View Our Products
                 </Link>
                 <Link
                   href="/company/about"
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-[#20a895] text-[#20a895] font-semibold rounded-lg hover:bg-[#20a895] hover:text-white transition-all"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-black text-black font-semibold rounded-lg hover:bg-black hover:text-white transition-all"
                 >
                   Learn More About Us
                 </Link>

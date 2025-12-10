@@ -10,7 +10,7 @@ export default function AboutPage() {
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-white to-neutral-50">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-[#1a8c7c] to-[#20a895] text-white py-20">
+        <section className="relative bg-gradient-to-r from-black to-neutral-800 text-white py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
@@ -57,19 +57,19 @@ export default function AboutPage() {
 
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-                <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-[#20a895]">
+                <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
                   <div className="text-4xl font-bold text-[#000000] mb-2">10+</div>
                   <div className="text-neutral-600 font-medium">Years Experience</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-[#20a895]">
+                <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
                   <div className="text-4xl font-bold text-[#000000] mb-2">5</div>
                   <div className="text-neutral-600 font-medium">Countries Served</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-[#20a895]">
+                <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
                   <div className="text-4xl font-bold text-[#000000] mb-2">100+</div>
                   <div className="text-neutral-600 font-medium">Global Partners</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-[#20a895]">
+                <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
                   <div className="text-4xl font-bold text-[#000000] mb-2">€781K</div>
                   <div className="text-neutral-600 font-medium">Annual Revenue (2018)</div>
                 </div>
@@ -87,7 +87,7 @@ export default function AboutPage() {
               </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="bg-gradient-to-br from-[#1a8c7c] to-[#20a895] w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                  <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <CheckCircle2 className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-[#000000] mb-3">Quality Assurance</h3>
@@ -97,7 +97,7 @@ export default function AboutPage() {
                 </div>
 
                 <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="bg-gradient-to-br from-[#1a8c7c] to-[#20a895] w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                  <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Target className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-[#000000] mb-3">Customer Focus</h3>
@@ -107,7 +107,7 @@ export default function AboutPage() {
                 </div>
 
                 <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="bg-gradient-to-br from-[#1a8c7c] to-[#20a895] w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                  <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Heart className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-[#000000] mb-3">Integrity</h3>
@@ -117,7 +117,7 @@ export default function AboutPage() {
                 </div>
 
                 <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="bg-gradient-to-br from-[#1a8c7c] to-[#20a895] w-16 h-16 rounded-lg flex items-center justify-center mb-6">
+                  <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Lightbulb className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-[#000000] mb-3">Innovation</h3>
@@ -139,66 +139,66 @@ export default function AboutPage() {
               </h2>
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
-                  <Globe className="w-12 h-12 text-[#20a895] mb-6" />
+                  <Globe className="w-12 h-12 text-black mb-6" />
                   <h3 className="text-2xl font-bold text-[#000000] mb-4">Global Distribution</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
                     We serve clients across Russia, Belarus, Kazakhstan, European Union, USA, and Austria with efficient logistics.
                   </p>
                   <ul className="space-y-2 text-neutral-600">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>Direct manufacturer contacts</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>Streamlined delivery routes</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>Flexible payment terms</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
-                  <Award className="w-12 h-12 text-[#20a895] mb-6" />
+                  <Award className="w-12 h-12 text-black mb-6" />
                   <h3 className="text-2xl font-bold text-[#000000] mb-4">Consulting Services</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
                     As the #1 consulting company in Belarus, we offer comprehensive healthcare consulting services.
                   </p>
                   <ul className="space-y-2 text-neutral-600">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>Marketing strategy</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>National registration</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>Procurement support</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
-                  <Users className="w-12 h-12 text-[#20a895] mb-6" />
+                  <Users className="w-12 h-12 text-black mb-6" />
                   <h3 className="text-2xl font-bold text-[#000000] mb-4">Trusted Partnerships</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
                     We collaborate with global healthcare leaders and regional distributors.
                   </p>
                   <ul className="space-y-2 text-neutral-600">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>Becton Dickinson & Company</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>Merck Millipore</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-[#20a895] flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
                       <span>Greiner Bio-One GmbH</span>
                     </li>
                   </ul>
@@ -209,7 +209,7 @@ export default function AboutPage() {
         </section>
 
         {/* Growth Stats */}
-        <section className="py-16 bg-gradient-to-r from-[#1a8c7c] to-[#20a895] text-white">
+        <section className="py-16 bg-gradient-to-r from-black to-neutral-800 text-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
@@ -249,13 +249,13 @@ export default function AboutPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/products"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#1a8c7c] to-[#20a895] text-white font-semibold rounded-lg hover:shadow-xl transition-all transform hover:scale-105"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-black to-neutral-800 text-white font-semibold rounded-lg hover:shadow-xl transition-all transform hover:scale-105"
                 >
                   Browse Our Catalog
                 </Link>
                 <Link
                   href="/company/team"
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-[#20a895] text-[#20a895] font-semibold rounded-lg hover:bg-[#20a895] hover:text-white transition-all"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-black text-black font-semibold rounded-lg hover:bg-black hover:text-white transition-all"
                 >
                   Meet Our Team
                 </Link>

@@ -242,7 +242,7 @@ export default function LoginPage() {
                   value={name}
                   onChange={(e) => setName(e?.target?.value || '')}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-black focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="John Doe"
                 />
               </div>
@@ -256,7 +256,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e?.target?.value || '')}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-black focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="john@example.com"
                 />
               </div>
@@ -270,7 +270,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e?.target?.value || '')}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-black focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="minimum 6 characters"
                 />
               </div>
@@ -284,7 +284,7 @@ export default function LoginPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e?.target?.value || '')}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-black focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="••••••••"
                 />
               </div>
@@ -321,7 +321,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e?.target?.value || '')}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-black focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="you@example.com"
                 />
               </div>
@@ -362,7 +362,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e?.target?.value || '')}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-black focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="admin@ivdgroup.eu"
                 />
               </div>
@@ -376,7 +376,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e?.target?.value || '')}
                   required
-                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#20a895] focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
+                  className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-black focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
                   placeholder="••••••••"
                 />
               </div>
@@ -405,7 +405,7 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <Link
               href="/"
-              className="text-sm text-[#20a895] hover:text-[#1a8c7c] font-medium"
+              className="text-sm text-black hover:text-[#1a8c7c] font-medium"
             >
               ← Back to Shop
             </Link>
