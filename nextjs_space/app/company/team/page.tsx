@@ -14,6 +14,14 @@ const teamMembers = [
     image: '/maksim-harbatsevich.jpg',
   },
   {
+    name: 'Alexei Myshkouski',
+    role: 'Chief Software Developer',
+    bio: 'Lead software architect driving digital transformation and innovation. Expert in full-stack development, system architecture, and enterprise software solutions. Spearheads development of cutting-edge platforms and internal tools.',
+    linkedin: 'https://www.linkedin.com/in/alexei-myshkouski-6788981b9/',
+    email: 'dev@adorisgroup.com',
+    image: '/alexei-myshkouski.jpg',
+  },
+  {
     name: 'Anastasiya Valentsiukevich',
     role: 'Chief Strategy Officer',
     bio: 'Chairman of the Board at IVD Group and co-founder at NewMe. Over a decade of experience in laboratory diagnostics, marketing, and research. Specializes in strategic planning and business development.',
