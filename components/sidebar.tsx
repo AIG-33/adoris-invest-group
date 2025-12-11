@@ -1,8 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { X, Package } from 'lucide-react'
+import { X, Package, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface SidebarProps {
   categories: any[]
@@ -10,6 +11,8 @@ interface SidebarProps {
   selectedCategory?: string
   selectedManufacturer?: string
 }
+
+const INITIAL_SHOW_COUNT = 10
 
 export function Sidebar({
   categories,
@@ -19,6 +22,8 @@ export function Sidebar({
 }: SidebarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [showAllCategories, setShowAllCategories] = useState(false)
+  const [showAllManufacturers, setShowAllManufacturers] = useState(false)
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams?.toString() || '')
@@ -27,14 +32,24 @@ export function Sidebar({
     } else {
       params.delete(key)
     }
-    router?.push?.(`/?${params?.toString?.() || ''}`)
+    // Reset to page 1 when filters change
+    params.delete('page')
+    router?.push?.(`/products?${params?.toString?.() || ''}`)
   }
 
   const clearAllFilters = () => {
-    router?.push?.('/')
+    router?.push?.('/products')
   }
 
   const hasFilters = selectedCategory || selectedManufacturer
+
+  const displayedCategories = showAllCategories 
+    ? categories 
+    : categories?.slice(0, INITIAL_SHOW_COUNT)
+    
+  const displayedManufacturers = showAllManufacturers 
+    ? manufacturers 
+    : manufacturers?.slice(0, INITIAL_SHOW_COUNT)
 
   return (
     <aside className="space-y-6">
@@ -59,7 +74,7 @@ export function Sidebar({
             Categories
           </h3>
           <div className="space-y-2">
-            {categories?.map?.((cat) => (
+            {displayedCategories?.map?.((cat) => (
               <label
                 key={cat?.id}
                 className="flex items-center gap-3 cursor-pointer group"
@@ -81,6 +96,25 @@ export function Sidebar({
               </label>
             )) || []}
           </div>
+          
+          {categories && categories.length > INITIAL_SHOW_COUNT && (
+            <button
+              onClick={() => setShowAllCategories(!showAllCategories)}
+              className="mt-3 text-sm text-[#333333] hover:text-[#1a1a1a] font-medium flex items-center gap-1 w-full justify-center"
+            >
+              {showAllCategories ? (
+                <>
+                  <ChevronUp className="w-4 h-4" />
+                  <span>Show less</span>
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4" />
+                  <span>Show all ({categories.length})</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Manufacturers */}
@@ -89,7 +123,7 @@ export function Sidebar({
             Manufacturers
           </h3>
           <div className="space-y-2">
-            {manufacturers?.map?.((man) => (
+            {displayedManufacturers?.map?.((man) => (
               <label
                 key={man?.id}
                 className="flex items-center gap-3 cursor-pointer group"
@@ -114,6 +148,25 @@ export function Sidebar({
               </label>
             )) || []}
           </div>
+          
+          {manufacturers && manufacturers.length > INITIAL_SHOW_COUNT && (
+            <button
+              onClick={() => setShowAllManufacturers(!showAllManufacturers)}
+              className="mt-3 text-sm text-[#333333] hover:text-[#1a1a1a] font-medium flex items-center gap-1 w-full justify-center"
+            >
+              {showAllManufacturers ? (
+                <>
+                  <ChevronUp className="w-4 h-4" />
+                  <span>Show less</span>
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4" />
+                  <span>Show all ({manufacturers.length})</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 

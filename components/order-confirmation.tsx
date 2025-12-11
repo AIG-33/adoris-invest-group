@@ -114,7 +114,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
               >
                 <div className="relative w-20 h-20 bg-white rounded-lg overflow-hidden flex-shrink-0">
                   <Image
-                    src={item?.product?.image || '/placeholder.png'}
+                    src={item?.product?.image && item.product.image.length > 0 ? item.product.image : '/placeholder.svg'}
                     alt={item?.product?.name || 'Product'}
                     fill
                     className="object-contain p-2"

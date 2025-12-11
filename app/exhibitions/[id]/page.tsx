@@ -77,7 +77,7 @@ export default async function ExhibitionDetailPage({ params }: Props) {
                     className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-[#1a8c7c]/20 bg-gray-800 transition-all hover:border-[#1a8c7c]/50 hover:shadow-2xl hover:shadow-[#1a8c7c]/20"
                   >
                     <Image
-                      src={image}
+                      src={image && image.length > 0 ? image : '/placeholder.svg'}
                       alt={`${exhibition.title} - Photo ${index + 1}`}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"

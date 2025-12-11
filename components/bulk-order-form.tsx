@@ -230,10 +230,10 @@ SKU003\t10`;
                       className="flex items-center gap-3 p-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
                     >
                       <div className="relative w-12 h-12 flex-shrink-0 bg-neutral-100 rounded overflow-hidden">
-                        {product.imageUrl ? (
+                        {product.imageUrl && product.imageUrl.length > 0 ? (
                           <Image
                             src={product.imageUrl}
-                            alt={product.name}
+                            alt={product.name || 'Product'}
                             fill
                             className="object-cover"
                           />

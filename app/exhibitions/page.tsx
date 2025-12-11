@@ -129,7 +129,7 @@ function ExhibitionCard({
   exhibition: any
   isUpcoming: boolean
 }) {
-  const mainImage = exhibition.images[0] || '/placeholder.jpg'
+  const mainImage = (exhibition.images && exhibition.images[0] && exhibition.images[0].length > 0) ? exhibition.images[0] : '/placeholder.svg'
   const formattedDate = new Date(exhibition.date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
