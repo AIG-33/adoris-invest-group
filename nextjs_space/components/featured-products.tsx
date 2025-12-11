@@ -13,7 +13,7 @@ type Product = {
   image: string
   shortDesc: string | null
   category: { name: string }
-  manufacturer: { name: string }
+  manufacturer: { name: string; logo: string | null }
 }
 
 type Props = {
@@ -113,7 +113,13 @@ export function FeaturedProducts({ products }: Props) {
                 {/* Image Container */}
                 <div className="relative aspect-[4/3] overflow-hidden bg-gray-800">
                   <Image
-                    src={product.image && product.image.length > 0 ? product.image : '/placeholder.svg'}
+                    src={
+                      product.image && product.image.length > 0
+                        ? product.image
+                        : product.manufacturer?.logo && product.manufacturer.logo.length > 0
+                        ? product.manufacturer.logo
+                        : '/placeholder.svg'
+                    }
                     alt={product.name || 'Product'}
                     fill
                     className="object-cover transition-transform duration-500 group-hover/card:scale-110"
