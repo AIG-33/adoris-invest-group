@@ -68,7 +68,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
         <div className="sticky top-24 h-fit">
           <div className="relative w-full aspect-square bg-neutral-50 rounded-2xl border-2 border-neutral-200 p-8">
             <Image
-              src={product?.image || '/placeholder.png'}
+              src={product?.image && product.image.length > 0 ? product.image : '/placeholder.svg'}
               alt={product?.name || 'Product'}
               fill
               className="object-contain"
@@ -255,7 +255,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               >
                 <div className="relative w-full aspect-square bg-neutral-50 p-4">
                   <Image
-                    src={relProduct?.image || '/placeholder.png'}
+                    src={relProduct?.image && relProduct.image.length > 0 ? relProduct.image : '/placeholder.svg'}
                     alt={relProduct?.name || 'Product'}
                     fill
                     className="object-contain"

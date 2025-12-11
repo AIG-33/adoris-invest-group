@@ -102,8 +102,8 @@ function CategoryRow({ category }: { category: Category }) {
               {/* Image */}
               <div className="relative aspect-[3/4] overflow-hidden bg-gray-800">
                 <Image
-                  src={product.image}
-                  alt={product.name}
+                  src={product.image && product.image.length > 0 ? product.image : '/placeholder.svg'}
+                  alt={product.name || 'Product'}
                   fill
                   className="object-cover transition-transform duration-500 group-hover/item:scale-110"
                 />

@@ -283,8 +283,8 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                     <div key={item.id} className="relative group">
                       <div className="aspect-square bg-neutral-100 rounded-lg overflow-hidden border border-neutral-200">
                         <Image
-                          src={item.product.image}
-                          alt={item.product.name}
+                          src={item.product?.image && item.product.image.length > 0 ? item.product.image : '/placeholder.svg'}
+                          alt={item.product?.name || 'Product'}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-300"
                         />

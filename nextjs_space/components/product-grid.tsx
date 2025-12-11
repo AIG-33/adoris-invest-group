@@ -75,7 +75,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
               <Link href={`/product/${product?.slug}`} className="relative">
                 <div className="relative w-full aspect-square bg-neutral-50 p-4 sm:p-6">
                   <Image
-                    src={product?.image || '/placeholder.png'}
+                    src={product?.image && product.image.length > 0 ? product.image : '/placeholder.svg'}
                     alt={product?.name || 'Product'}
                     fill
                     className="object-contain"

@@ -397,7 +397,7 @@ export function CheckoutForm() {
                 <div key={item?.id} className="flex gap-3 p-3 bg-neutral-50 rounded-lg">
                   <div className="relative w-16 h-16 bg-white rounded-lg overflow-hidden flex-shrink-0">
                     <Image
-                      src={item?.image || '/placeholder.png'}
+                      src={item?.image && item.image.length > 0 ? item.image : '/placeholder.svg'}
                       alt={item?.name || 'Product'}
                       fill
                       className="object-contain p-1"
