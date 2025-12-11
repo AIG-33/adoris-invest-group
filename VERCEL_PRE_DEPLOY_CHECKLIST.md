@@ -1,5 +1,13 @@
 # Чеклист перед деплоем на Vercel
 
+## 🌐 ВАЖНО: URL для проверки деплоя
+**Основной домен**: https://shop.adorisgroup.com  
+**Резервный URL**: https://adorisgroup.abacusai.app
+
+Всегда проверяйте деплой по основному домену!
+
+---
+
 ## ⚠️ ОБЯЗАТЕЛЬНЫЕ ШАГИ ПЕРЕД КАЖДЫМ ДЕПЛОЕМ
 
 ### 1. Удалить yarn.lock симлинк
@@ -21,7 +29,21 @@ rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.
 
 **Причина**: Эти скрипты содержат пути к файлам вне проекта (например, `/home/ubuntu/Uploads/IVD.csv`), которые не существуют на Vercel.
 
-### 3. Проверить vercel.json
+### 3. Проверить динамические API routes
+Убедиться, что все API routes, использующие `request.url` или другие динамические функции, имеют экспорт:
+```typescript
+export const dynamic = 'force-dynamic';
+```
+
+**Проверенные маршруты**:
+- ✅ `/app/api/products/search/route.ts` - исправлено
+
+**Причина**: Без этого Next.js пытается статически отрендерить динамические маршруты, что вызывает предупреждения:
+```
+Error: Dynamic server usage: Route /api/products/search couldn't be rendered statically
+```
+
+### 4. Проверить vercel.json
 Убедитесь, что `vercel.json` настроен для npm:
 ```json
 {
@@ -32,7 +54,7 @@ rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.
 }
 ```
 
-### 4. Коммит и пуш
+### 5. Коммит и пуш
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space
 git add .
@@ -49,19 +71,23 @@ cd /home/ubuntu/ivdgroup_mvp/nextjs_space && rm -f yarn.lock
 # 2. Удалить импорт-скрипты (если есть)
 cd scripts && rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.ts simple-import.ts && cd ..
 
-# 3. Коммит
-git add .
-git commit -m "Deploy: remove yarn.lock symlink and import scripts"
+# 3. Проверить динамические API routes (выполняется автоматически, если нужно)
+# Убедиться что все API routes с request.url имеют export const dynamic = 'force-dynamic'
 
-# 4. Пуш
+# 4. Коммит
+git add .
+git commit -m "Deploy: prepare for Vercel deployment"
+
+# 5. Пуш
 git push origin main
 ```
 
 ## ✅ После деплоя
 
 1. Дождаться завершения билда на Vercel (2-3 минуты)
-2. Проверить сайт: https://adorisgroup.abacusai.app
-3. Проверить основные функции:
+2. **Проверить сайт**: https://shop.adorisgroup.com (основной домен)
+3. Резервный URL: https://adorisgroup.abacusai.app
+4. Проверить основные функции:
    - Главная страница
    - Каталог продуктов
    - Фильтры и пагинация
@@ -79,5 +105,21 @@ ln -sf /opt/hostedapp/node/root/app/yarn.lock yarn.lock
 
 ---
 
-**Последнее обновление**: 11 декабря 2025
-**Deployment URL**: https://adorisgroup.abacusai.app
+## 📊 Известные предупреждения (не критичны)
+
+При билде могут появиться следующие предупреждения, которые **не влияют на работу сайта**:
+
+1. **Dynamic server usage warning** для `/api/products/search`:
+   ```
+   Search error: Route /api/products/search couldn't be rendered statically
+   ```
+   **Статус**: ✅ Исправлено добавлением `export const dynamic = 'force-dynamic'`
+
+2. **npm vulnerabilities** (6 vulnerabilities: 2 low, 4 moderate):
+   **Статус**: ⚠️ Не критично, связано с dev-зависимостями
+
+---
+
+**Последнее обновление**: 11 декабря 2025  
+**Основной домен**: https://shop.adorisgroup.com  
+**Резервный URL**: https://adorisgroup.abacusai.app
