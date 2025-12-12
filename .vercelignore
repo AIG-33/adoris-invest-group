@@ -12,6 +12,7 @@ scripts/simple-import.ts
 scripts/list-ids.ts
 scripts/check-db.ts
 scripts/add-missing-category.ts
+scripts/seed.ts
 
 # Ignore development files
 *.tar.gz
