@@ -1,4 +1,4 @@
-import { PrismaClient, Category, Manufacturer } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -7,10 +7,10 @@ async function main() {
   const mfrs = await prisma.manufacturer.findMany({ orderBy: { name: 'asc' } })
   
   console.log('📁 КАТЕГОРИИ В БАЗЕ (' + cats.length + '):')
-  cats.forEach((c: Category) => console.log(`   ${c.id} → ${c.name}`))
+  cats.forEach(c => console.log(`   ${c.id} → ${c.name}`))
   
   console.log('\n🏭 ПРОИЗВОДИТЕЛИ В БАЗЕ (' + mfrs.length + '):')
-  mfrs.forEach((m: Manufacturer) => console.log(`   ${m.id} → ${m.name}`))
+  mfrs.forEach(m => console.log(`   ${m.id} → ${m.name}`))
 }
 
 main()
