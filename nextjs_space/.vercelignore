@@ -8,6 +8,11 @@ scripts/import-missing.ts
 scripts/fast-import.ts
 scripts/simple-import.ts
 
+# Ignore debug/utility scripts (local development only)
+scripts/list-ids.ts
+scripts/check-db.ts
+scripts/add-missing-category.ts
+
 # Ignore development files
 *.tar.gz
 *.log

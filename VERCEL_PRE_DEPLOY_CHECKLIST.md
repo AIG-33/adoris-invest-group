@@ -21,22 +21,38 @@ rm -f yarn.lock
 Error: ENOENT: no such file or directory, stat '/vercel/path0/yarn.lock'
 ```
 
-### 2. Проверить TypeScript типы в скриптах
+### 2. Проверить .vercelignore
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space
-yarn tsc --noEmit
+cat .vercelignore
 ```
 
-**Причина**: TypeScript ошибки в скриптах (даже если они не используются в продакшене) вызывают сбой билда на Vercel:
+**КРИТИЧНО**: Убедитесь, что ВСЕ debug-скрипты добавлены в `.vercelignore`:
+```
+# Ignore debug/utility scripts (local development only)
+scripts/list-ids.ts
+scripts/check-db.ts
+scripts/add-missing-category.ts
+```
+
+**Причина**: TypeScript ошибки в debug-скриптах вызывают сбой билда на Vercel:
 ```
 Type error: Parameter 'c' implicitly has an 'any' type.
 ```
 
-**Если найдены ошибки**: 
-- Добавьте явные типы для параметров функций
-- Или удалите проблемные скрипты, если они не нужны для продакшена
+**Решение**: Эти скрипты нужны только для локальной разработки, поэтому исключаем их из деплоя.
 
-### 3. Удалить скрипты импорта данных (если они есть)
+### 3. Проверить TypeScript типы
+```bash
+cd /home/ubuntu/ivdgroup_mvp/nextjs_space
+npx tsc --noEmit
+```
+
+**Если найдены ошибки**: 
+- Проверьте, что проблемные файлы добавлены в `.vercelignore`
+- Или добавьте явные типы для параметров функций
+
+### 4. Удалить скрипты импорта данных (если они есть)
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space/scripts
 rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.ts simple-import.ts
@@ -44,7 +60,7 @@ rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.
 
 **Причина**: Эти скрипты содержат пути к файлам вне проекта (например, `/home/ubuntu/Uploads/IVD.csv`), которые не существуют на Vercel.
 
-### 4. Удалить outputFileTracingRoot из next.config.js
+### 5. Удалить outputFileTracingRoot из next.config.js
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space
 ```
@@ -75,7 +91,7 @@ const nextConfig = {
 Error: ENOENT: no such file or directory, lstat '/vercel/path0/path0/.next/routes-manifest.json'
 ```
 
-### 5. Проверить динамические API routes
+### 6. Проверить динамические API routes
 Убедиться, что все API routes, использующие `request.url` или другие динамические функции, имеют экспорт:
 ```typescript
 export const dynamic = 'force-dynamic';
@@ -91,7 +107,7 @@ export const dynamic = 'force-dynamic';
 Error: Dynamic server usage: Route /api/products/search couldn't be rendered statically
 ```
 
-### 6. Проверить vercel.json
+### 7. Проверить vercel.json
 Убедитесь, что `vercel.json` настроен для npm:
 ```json
 {
@@ -102,7 +118,7 @@ Error: Dynamic server usage: Route /api/products/search couldn't be rendered sta
 }
 ```
 
-### 7. Коммит и пуш
+### 8. Коммит и пуш
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space
 git add .
@@ -116,23 +132,29 @@ git push origin main
 # 1. Удалить yarn.lock
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space && rm -f yarn.lock
 
-# 2. Проверить TypeScript типы
-yarn tsc --noEmit
+# 2. Проверить .vercelignore
+cat .vercelignore | grep -E "(list-ids|check-db|add-missing-category)"
 
-# 3. Удалить импорт-скрипты (если есть)
+# 3. Проверить TypeScript типы
+npx tsc --noEmit
+
+# 4. Удалить импорт-скрипты (если есть)
 cd scripts && rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.ts simple-import.ts && cd ..
 
-# 4. Проверить next.config.js (удалить outputFileTracingRoot если есть)
+# 5. Проверить next.config.js (удалить outputFileTracingRoot если есть)
 # Убедиться что нет секции experimental с outputFileTracingRoot
 
-# 5. Проверить динамические API routes (выполняется автоматически, если нужно)
+# 6. Проверить динамические API routes (выполняется автоматически, если нужно)
 # Убедиться что все API routes с request.url имеют export const dynamic = 'force-dynamic'
 
-# 6. Коммит
+# 7. Проверить vercel.json
+cat vercel.json | jq .
+
+# 8. Коммит
 git add .
 git commit -m "Deploy: prepare for Vercel deployment"
 
-# 7. Пуш
+# 9. Пуш
 git push origin main
 ```
 
@@ -181,18 +203,19 @@ ln -sf /opt/hostedapp/node/root/app/yarn.lock yarn.lock
    ```
    **Решение**: Добавить `export const dynamic = 'force-dynamic'` в API route (шаг 5)
 
-4. **TypeScript implicit any type error**:
+4. **TypeScript implicit any type error в debug-скриптах**:
    ```
    Type error: Parameter 'c' implicitly has an 'any' type.
+   ./scripts/list-ids.ts:10:16
    ```
-   **Решение**: Добавить явные типы для параметров в forEach (шаг 2)
-   ```typescript
-   // ❌ НЕПРАВИЛЬНО
-   cats.forEach(c => console.log(`${c.id} → ${c.name}`))
-   
-   // ✅ ПРАВИЛЬНО
-   cats.forEach((c: Category) => console.log(`${c.id} → ${c.name}`))
+   **Решение**: Добавить debug-скрипты в `.vercelignore` (шаг 2)
    ```
+   # В .vercelignore
+   scripts/list-ids.ts
+   scripts/check-db.ts
+   scripts/add-missing-category.ts
+   ```
+   **Почему**: Debug-скрипты нужны только для локальной разработки. Исключаем их из деплоя вместо исправления TypeScript ошибок.
 
 ### ⚠️ Некритичные предупреждения:
 
