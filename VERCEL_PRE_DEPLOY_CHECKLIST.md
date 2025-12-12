@@ -21,7 +21,22 @@ rm -f yarn.lock
 Error: ENOENT: no such file or directory, stat '/vercel/path0/yarn.lock'
 ```
 
-### 2. Удалить скрипты импорта данных (если они есть)
+### 2. Проверить TypeScript типы в скриптах
+```bash
+cd /home/ubuntu/ivdgroup_mvp/nextjs_space
+yarn tsc --noEmit
+```
+
+**Причина**: TypeScript ошибки в скриптах (даже если они не используются в продакшене) вызывают сбой билда на Vercel:
+```
+Type error: Parameter 'c' implicitly has an 'any' type.
+```
+
+**Если найдены ошибки**: 
+- Добавьте явные типы для параметров функций
+- Или удалите проблемные скрипты, если они не нужны для продакшена
+
+### 3. Удалить скрипты импорта данных (если они есть)
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space/scripts
 rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.ts simple-import.ts
@@ -29,7 +44,7 @@ rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.
 
 **Причина**: Эти скрипты содержат пути к файлам вне проекта (например, `/home/ubuntu/Uploads/IVD.csv`), которые не существуют на Vercel.
 
-### 3. Удалить outputFileTracingRoot из next.config.js
+### 4. Удалить outputFileTracingRoot из next.config.js
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space
 ```
@@ -60,7 +75,7 @@ const nextConfig = {
 Error: ENOENT: no such file or directory, lstat '/vercel/path0/path0/.next/routes-manifest.json'
 ```
 
-### 4. Проверить динамические API routes
+### 5. Проверить динамические API routes
 Убедиться, что все API routes, использующие `request.url` или другие динамические функции, имеют экспорт:
 ```typescript
 export const dynamic = 'force-dynamic';
@@ -68,13 +83,15 @@ export const dynamic = 'force-dynamic';
 
 **Проверенные маршруты**:
 - ✅ `/app/api/products/search/route.ts` - исправлено
+- ✅ `/app/api/signup/route.ts` - исправлено
+- ✅ `/app/api/orders/route.ts` - исправлено
 
 **Причина**: Без этого Next.js пытается статически отрендерить динамические маршруты, что вызывает предупреждения:
 ```
 Error: Dynamic server usage: Route /api/products/search couldn't be rendered statically
 ```
 
-### 5. Проверить vercel.json
+### 6. Проверить vercel.json
 Убедитесь, что `vercel.json` настроен для npm:
 ```json
 {
@@ -85,7 +102,7 @@ Error: Dynamic server usage: Route /api/products/search couldn't be rendered sta
 }
 ```
 
-### 6. Коммит и пуш
+### 7. Коммит и пуш
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space
 git add .
@@ -99,20 +116,23 @@ git push origin main
 # 1. Удалить yarn.lock
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space && rm -f yarn.lock
 
-# 2. Удалить импорт-скрипты (если есть)
+# 2. Проверить TypeScript типы
+yarn tsc --noEmit
+
+# 3. Удалить импорт-скрипты (если есть)
 cd scripts && rm -f find-and-import-missing.ts update-prices.ts fast-import.ts import-missing.ts simple-import.ts && cd ..
 
-# 3. Проверить next.config.js (удалить outputFileTracingRoot если есть)
+# 4. Проверить next.config.js (удалить outputFileTracingRoot если есть)
 # Убедиться что нет секции experimental с outputFileTracingRoot
 
-# 4. Проверить динамические API routes (выполняется автоматически, если нужно)
+# 5. Проверить динамические API routes (выполняется автоматически, если нужно)
 # Убедиться что все API routes с request.url имеют export const dynamic = 'force-dynamic'
 
-# 5. Коммит
+# 6. Коммит
 git add .
 git commit -m "Deploy: prepare for Vercel deployment"
 
-# 6. Пуш
+# 7. Пуш
 git push origin main
 ```
 
@@ -153,13 +173,26 @@ ln -sf /opt/hostedapp/node/root/app/yarn.lock yarn.lock
    ```
    Error: ENOENT: no such file or directory, lstat '/vercel/path0/path0/.next/routes-manifest.json'
    ```
-   **Решение**: Удалить `experimental.outputFileTracingRoot` из `next.config.js` (шаг 3)
+   **Решение**: Удалить `experimental.outputFileTracingRoot` из `next.config.js` (шаг 4)
 
 3. **Dynamic server usage warning** для `/api/products/search`:
    ```
    Search error: Route /api/products/search couldn't be rendered statically
    ```
-   **Решение**: Добавить `export const dynamic = 'force-dynamic'` в API route (шаг 4)
+   **Решение**: Добавить `export const dynamic = 'force-dynamic'` в API route (шаг 5)
+
+4. **TypeScript implicit any type error**:
+   ```
+   Type error: Parameter 'c' implicitly has an 'any' type.
+   ```
+   **Решение**: Добавить явные типы для параметров в forEach (шаг 2)
+   ```typescript
+   // ❌ НЕПРАВИЛЬНО
+   cats.forEach(c => console.log(`${c.id} → ${c.name}`))
+   
+   // ✅ ПРАВИЛЬНО
+   cats.forEach((c: Category) => console.log(`${c.id} → ${c.name}`))
+   ```
 
 ### ⚠️ Некритичные предупреждения:
 
@@ -168,6 +201,6 @@ ln -sf /opt/hostedapp/node/root/app/yarn.lock yarn.lock
 
 ---
 
-**Последнее обновление**: 11 декабря 2025  
+**Последнее обновление**: 12 декабря 2025  
 **Основной домен**: https://shop.adorisgroup.com  
 **Резервный URL**: https://adorisgroup.abacusai.app
