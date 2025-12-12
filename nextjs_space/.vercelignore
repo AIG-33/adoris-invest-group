@@ -1,0 +1,14 @@
+# Ignore yarn lock file (project uses npm on Vercel)
+yarn.lock
+
+# Ignore scripts with external paths
+scripts/update-prices-from-csv.ts
+scripts/get-manufacturers.ts
+scripts/import-missing.ts
+scripts/fast-import.ts
+scripts/simple-import.ts
+
+# Ignore development files
+*.tar.gz
+*.log
+.DS_Store
