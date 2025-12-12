@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   // Fetch featured products
-  const featuredProducts = await prisma.product.findMany({
+  const featuredProductsRaw = await prisma.product.findMany({
     where: { featured: true },
     include: {
       category: true,
@@ -20,8 +20,14 @@ export default async function HomePage() {
     orderBy: { createdAt: 'desc' },
   })
 
+  // Convert Decimal to number for featuredProducts
+  const featuredProducts = featuredProductsRaw.map(p => ({
+    ...p,
+    price: Number(p.price),
+  }))
+
   // Fetch products by category for showcase
-  const categories = await prisma.category.findMany({
+  const categoriesRaw = await prisma.category.findMany({
     include: {
       products: {
         take: 6,
@@ -31,6 +37,15 @@ export default async function HomePage() {
       },
     },
   })
+
+  // Convert Decimal to number for categories
+  const categories = categoriesRaw.map(cat => ({
+    ...cat,
+    products: cat.products.map(p => ({
+      ...p,
+      price: Number(p.price),
+    })),
+  }))
 
   return (
     <>

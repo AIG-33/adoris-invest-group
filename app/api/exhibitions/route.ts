@@ -7,7 +7,7 @@ import { authOptions } from '@/lib/auth-options'
 export async function GET() {
   try {
     const exhibitions = await prisma.exhibition.findMany({
-      orderBy: { date: 'desc' },
+      orderBy: { startDate: 'desc' },
     })
 
     return NextResponse.json(exhibitions)
@@ -30,9 +30,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, description, date, location, images, featured } = body
+    const { title, description, startDate, endDate, location, images } = body
 
-    if (!title || !description || !date || !location) {
+    if (!title || !description || !startDate || !endDate || !location) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -43,10 +43,10 @@ export async function POST(request: NextRequest) {
       data: {
         title,
         description,
-        date: new Date(date),
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
         location,
         images: images || [],
-        featured: featured || false,
       },
     })
 

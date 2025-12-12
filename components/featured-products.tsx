@@ -10,8 +10,8 @@ type Product = {
   name: string
   slug: string
   price: number
-  image: string
-  shortDesc: string | null
+  image: string | null
+  description: string | null
   category: { name: string }
   manufacturer: { name: string; logo: string | null }
 }
@@ -150,9 +150,9 @@ export function FeaturedProducts({ products }: Props) {
                   <p className="mb-2 text-sm text-gray-400">
                     {product.manufacturer.name}
                   </p>
-                  {product.shortDesc && (
+                  {product.description && (
                     <p className="mb-3 text-sm text-gray-300 line-clamp-2">
-                      {product.shortDesc}
+                      {product.description}
                     </p>
                   )}
                   <div className="flex items-center justify-between">

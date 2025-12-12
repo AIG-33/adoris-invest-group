@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function ExhibitionsPage() {
   const exhibitions = await prisma.exhibition.findMany({
-    orderBy: { date: 'desc' },
+    orderBy: { startDate: 'desc' },
   })
 
   const upcomingExhibitions = exhibitions.filter(

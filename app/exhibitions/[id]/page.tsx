@@ -21,7 +21,7 @@ export default async function ExhibitionDetailPage({ params }: Props) {
     notFound()
   }
 
-  const formattedDate = new Date(exhibition.date).toLocaleDateString('en-US', {
+  const formattedDate = new Date(exhibition.startDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

@@ -36,7 +36,7 @@ export default async function AdminPage() {
 
   // Fetch all exhibitions
   const exhibitions = await prisma.exhibition.findMany({
-    orderBy: { date: 'desc' },
+    orderBy: { startDate: 'desc' },
   })
 
   return (

@@ -10,7 +10,7 @@ type Product = {
   name: string
   slug: string
   price: number
-  image: string
+  image: string | null
   manufacturer: { name: string }
 }
 
