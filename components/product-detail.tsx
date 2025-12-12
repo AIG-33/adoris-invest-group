@@ -17,7 +17,7 @@ interface Product {
   stockStatus: string
   stockQuantity: number
   category: { name: string; slug: string }
-  manufacturer: { name: string; slug: string }
+  manufacturer: { name: string; slug: string; logo: string | null }
 }
 
 interface ProductDetailProps {

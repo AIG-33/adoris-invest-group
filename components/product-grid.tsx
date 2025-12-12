@@ -15,7 +15,7 @@ interface Product {
   image: string
   stockStatus: string
   category: { name: string }
-  manufacturer: { name: string }
+  manufacturer: { name: string; logo: string | null }
 }
 
 interface ProductGridProps {
@@ -75,7 +75,13 @@ export function ProductGrid({ products, search }: ProductGridProps) {
               <Link href={`/product/${product?.slug}`} className="relative">
                 <div className="relative w-full aspect-square bg-neutral-50 p-4 sm:p-6">
                   <Image
-                    src={product?.image && product.image.length > 0 ? product.image : '/placeholder.svg'}
+                    src={
+                      product?.image && product.image.length > 0
+                        ? product.image
+                        : product?.manufacturer?.logo && product.manufacturer.logo.length > 0
+                        ? product.manufacturer.logo
+                        : '/placeholder.svg'
+                    }
                     alt={product?.name || 'Product'}
                     fill
                     className="object-contain"

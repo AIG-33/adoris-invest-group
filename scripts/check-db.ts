@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -7,18 +8,36 @@ async function main() {
   const manufacturers = await prisma.manufacturer.count()
   const products = await prisma.product.count()
   
-  console.log('📊 Текущее состояние базы данных:')
-  console.log(`   Категории: ${categories}`)
-  console.log(`   Производители: ${manufacturers}`)
-  console.log(`   Товары: ${products}`)
+  const manufacturersWithLogo = await prisma.manufacturer.count({
+    where: {
+      logo: {
+        not: ''
+      }
+    }
+  })
   
-  if (categories > 0) {
-    console.log('\n📁 Первые 5 категорий:')
-    const cats = await prisma.category.findMany({ take: 5 })
-    cats.forEach(c => console.log(`   - ${c.name} (${c.slug})`))
-  }
+  const productsWithPrice = await prisma.product.count({
+    where: {
+      price: {
+        gt: 0
+      }
+    }
+  })
+  
+  console.log('\nСтатистика базы данных:')
+  console.log('========================')
+  console.log(`Категорий: ${categories}`)
+  console.log(`Производителей: ${manufacturers}`)
+  console.log(`Производителей с логотипами: ${manufacturersWithLogo}`)
+  console.log(`Продуктов: ${products}`)
+  console.log(`Продуктов с ценами: ${productsWithPrice}`)
 }
 
 main()
-  .then(() => prisma.$disconnect())
-  .catch(console.error)
+  .catch((e) => {
+    console.error(e)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
