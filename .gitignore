@@ -36,3 +36,6 @@ next-env.d.ts
 
 # prisma
 prisma/migrations/
+
+# yarn lock file (we use npm for Vercel)
+yarn.lock
