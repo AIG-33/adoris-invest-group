@@ -37,3 +37,8 @@ next-env.d.ts
 
 # Ignore yarn lock (project uses npm on Vercel)
 yarn.lock
+
+# Build artifacts
+.build/
+*.backup
+*.with-experimental
