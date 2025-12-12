@@ -10,6 +10,36 @@
 
 ## ⚠️ ОБЯЗАТЕЛЬНЫЕ ШАГИ ПЕРЕД КАЖДЫМ ДЕПЛОЕМ
 
+### 0. КРИТИЧНО: Проверить prisma/schema.prisma
+```bash
+cd /home/ubuntu/ivdgroup_mvp/nextjs_space
+cat prisma/schema.prisma | head -5
+```
+
+**ВАЖНО**: В `generator client` НЕ должно быть абсолютного пути `output`:
+
+**❌ НЕПРАВИЛЬНО** (вызывает ошибку "Prisma client did not initialize"):
+```prisma
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/ivdgroup_mvp/nextjs_space/node_modules/.prisma/client"  ← УДАЛИТЬ!
+}
+```
+
+**✅ ПРАВИЛЬНО** (для Vercel):
+```prisma
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+```
+
+**Причина**: 
+- Абсолютные пути `/home/ubuntu/` не существуют на Vercel
+- Vercel использует Debian, а не Alpine Linux (нужен `debian-openssl-3.0.x`, а не `linux-musl-arm64`)
+- Prisma автоматически определит правильный путь output при деплое
+
 ### 1. Удалить yarn.lock симлинк
 ```bash
 cd /home/ubuntu/ivdgroup_mvp/nextjs_space
@@ -129,8 +159,14 @@ git push origin main
 ## 📋 Полная последовательность команд
 
 ```bash
+# 0. КРИТИЧНО: Проверить prisma/schema.prisma
+cd /home/ubuntu/ivdgroup_mvp/nextjs_space
+grep -A 3 "generator client" prisma/schema.prisma
+# Убедиться что НЕТ строки output с абсолютным путем
+# Убедиться что binaryTargets = ["native", "debian-openssl-3.0.x"]
+
 # 1. Удалить yarn.lock
-cd /home/ubuntu/ivdgroup_mvp/nextjs_space && rm -f yarn.lock
+rm -f yarn.lock
 
 # 2. Проверить .vercelignore
 cat .vercelignore | grep -E "(list-ids|check-db|add-missing-category)"
@@ -185,7 +221,24 @@ ln -sf /opt/hostedapp/node/root/app/yarn.lock yarn.lock
 
 ### ✅ Исправленные ошибки:
 
-1. **yarn.lock symlink error**:
+1. **Prisma Client initialization error**:
+   ```
+   Error: @prisma/client did not initialize yet. Please run "prisma generate"
+   Failed to collect page data for /api/bulk-order
+   ```
+   **Решение**: Исправить `prisma/schema.prisma` (шаг 0)
+   ```prisma
+   generator client {
+       provider = "prisma-client-js"
+       binaryTargets = ["native", "debian-openssl-3.0.x"]
+   }
+   ```
+   **Почему**: 
+   - Удалить абсолютный путь `output = "/home/ubuntu/..."`
+   - Использовать правильный `binaryTargets` для Vercel (Debian)
+   - Prisma автоматически определит output путь при деплое
+
+2. **yarn.lock symlink error**:
    ```
    Error: ENOENT: no such file or directory, stat '/vercel/path0/yarn.lock'
    ```

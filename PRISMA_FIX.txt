@@ -1,0 +1,24 @@
+КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Prisma Schema для Vercel
+
+ПРОБЛЕМА:
+@prisma/client did not initialize yet. Please run "prisma generate"
+
+ПРИЧИНА:
+В prisma/schema.prisma был указан абсолютный путь output="/home/ubuntu/..." 
+который НЕ существует на серверах Vercel
+
+РЕШЕНИЕ:
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+ВАЖНО:
+- Удалить строку output с абсолютным путем
+- Использовать binaryTargets = ["native", "debian-openssl-3.0.x"] для Vercel (Debian)
+- НЕ использовать linux-musl-arm64-openssl-3.0.x (это для Alpine Linux, не для Vercel)
+
+ПРОВЕРКА:
+cd /home/ubuntu/ivdgroup_mvp/nextjs_space
+grep -A 3 "generator client" prisma/schema.prisma
+# Должно быть БЕЗ строки output и с правильным binaryTargets
