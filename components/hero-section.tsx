@@ -28,7 +28,7 @@ const heroSlides = [
     description: 'Original products from top European manufacturers with full compliance',
     image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1920&h=1080&fit=crop',
     cta: 'Shop Now',
-    link: '/products?category=reagents-disposables',
+    link: '/products',
   },
 ]
 
