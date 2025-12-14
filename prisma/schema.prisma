@@ -1,11 +1,11 @@
 generator client {
-    provider = "prisma-client-js"
-    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
@@ -41,10 +41,17 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  password      String?
+  
+  // --- Добавленные поля ---
+  role          String    @default("user")
+  updatedAt     DateTime  @default(now()) @updatedAt
+  // ------------------------
+
+  createdAt     DateTime  @default(now())
+  
   accounts      Account[]
   sessions      Session[]
-  password      String?
-  createdAt     DateTime  @default(now())
   orders        Order[]
 }
 
@@ -78,21 +85,21 @@ enum StockStatus {
 }
 
 model Product {
-  id             String      @id @default(cuid())
-  sku            String      @unique
+  id             String       @id @default(cuid())
+  sku            String       @unique
   name           String
-  slug           String      @unique
-  description    String?     @db.Text
-  price          Decimal     @db.Decimal(10, 2)
+  slug           String       @unique
+  description    String?      @db.Text
+  price          Decimal      @db.Decimal(10, 2)
   image          String?
-  category       Category    @relation(fields: [categoryId], references: [id])
+  category       Category     @relation(fields: [categoryId], references: [id])
   categoryId     String
   manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id])
   manufacturerId String
-  stockStatus    StockStatus @default(in_stock)
-  stockQuantity  Int         @default(0)
-  featured       Boolean     @default(false)
-  createdAt      DateTime    @default(now())
+  stockStatus    StockStatus  @default(in_stock)
+  stockQuantity  Int          @default(0)
+  featured       Boolean      @default(false)
+  createdAt      DateTime     @default(now())
   orderItems     OrderItem[]
 }
 
@@ -105,21 +112,21 @@ enum OrderStatus {
 }
 
 model Order {
-  id            String      @id @default(cuid())
-  orderNumber   String      @unique
-  userId        String?
-  user          User?       @relation(fields: [userId], references: [id])
-  customerName  String
-  customerEmail String
-  customerPhone String?
-  billingAddress String?   @db.Text
-  status        OrderStatus @default(pending)
-  subtotal      Decimal     @db.Decimal(10, 2)
-  tax           Decimal     @db.Decimal(10, 2)
-  total         Decimal     @db.Decimal(10, 2)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  items         OrderItem[]
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique
+  userId         String?
+  user           User?       @relation(fields: [userId], references: [id])
+  customerName   String
+  customerEmail  String
+  customerPhone  String?
+  billingAddress String?     @db.Text
+  status         OrderStatus @default(pending)
+  subtotal       Decimal     @db.Decimal(10, 2)
+  tax            Decimal     @db.Decimal(10, 2)
+  total          Decimal     @db.Decimal(10, 2)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  items          OrderItem[]
 }
 
 model OrderItem {
@@ -139,7 +146,7 @@ model Exhibition {
   location    String
   startDate   DateTime
   endDate     DateTime
-  images      String[] 
+  images      String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
