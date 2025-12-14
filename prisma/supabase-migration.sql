@@ -57,7 +57,21 @@ END $$;
 -- Step 2: Ensure customerPhone column exists
 DO $$ 
 BEGIN
-    IF NOT EXISTS (
+    -- Check if old 'phone' column exists and rename it
+    IF EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'phone'
+        AND table_schema = 'public'
+    ) THEN
+        -- Rename phone to customerPhone
+        ALTER TABLE "Order" RENAME COLUMN "phone" TO "customerPhone";
+        -- Make it nullable if it's not already
+        ALTER TABLE "Order" ALTER COLUMN "customerPhone" DROP NOT NULL;
+        RAISE NOTICE '✅ Renamed phone column to customerPhone and made it nullable';
+    -- Check if customerPhone doesn't exist at all
+    ELSIF NOT EXISTS (
         SELECT 1 
         FROM information_schema.columns 
         WHERE table_name = 'Order' 
@@ -67,7 +81,9 @@ BEGIN
         ALTER TABLE "Order" ADD COLUMN "customerPhone" TEXT;
         RAISE NOTICE '✅ Added customerPhone column';
     ELSE
-        RAISE NOTICE 'ℹ️ customerPhone column already exists';
+        -- Ensure it's nullable
+        ALTER TABLE "Order" ALTER COLUMN "customerPhone" DROP NOT NULL;
+        RAISE NOTICE 'ℹ️ customerPhone column already exists, ensured it is nullable';
     END IF;
 END $$;
 

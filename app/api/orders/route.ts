@@ -61,7 +61,7 @@ export async function POST(request: Request) {
         userId: userId || null,
         customerName: `${firstName} ${lastName}`,
         customerEmail: email, // Fixed: use customerEmail instead of email
-        customerPhone: phone || null,
+        customerPhone: phone && phone.trim() !== '' ? phone : null,
         billingAddress: billingAddress || null,
         subtotal,
         tax: vat, // tax field in schema maps to vat from form
