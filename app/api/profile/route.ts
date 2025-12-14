@@ -19,7 +19,48 @@ export async function GET() {
     }
 
     const userId = (session.user as any).id
+    const userEmail = session.user.email
 
+    // Use id if available, otherwise use email
+    if (!userId || userId === '') {
+      if (!userEmail) {
+        return NextResponse.json(
+          { error: 'User ID or email is required' },
+          { status: 400 }
+        )
+      }
+      // Find user by email
+      const user = await prisma.user.findUnique({
+        where: { email: userEmail },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          company: true,
+          vatId: true,
+          phone: true,
+          address: true,
+          city: true,
+          postalCode: true,
+          country: true,
+          department: true,
+          paymentMethod: true,
+        },
+      })
+
+      if (!user) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404 }
+        )
+      }
+
+      return NextResponse.json({ profile: user })
+    }
+
+    // Find user by id
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -70,6 +111,36 @@ export async function PUT(request: Request) {
     }
 
     const userId = (session.user as any).id
+    const userEmail = session.user.email
+
+    // Determine the actual user id to use
+    let actualUserId = userId
+
+    // If userId is empty or undefined, find user by email
+    if (!userId || userId === '') {
+      if (!userEmail) {
+        return NextResponse.json(
+          { error: 'User ID or email is required' },
+          { status: 400 }
+        )
+      }
+      // Find user by email first to get id
+      const existingUser = await prisma.user.findUnique({
+        where: { email: userEmail },
+        select: { id: true },
+      })
+
+      if (!existingUser) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404 }
+        )
+      }
+
+      // Use the found user id
+      actualUserId = existingUser.id
+    }
+
     const body = await request.json()
 
     const {
@@ -88,7 +159,7 @@ export async function PUT(request: Request) {
 
     // Update user profile
     const updatedUser = await prisma.user.update({
-      where: { id: userId },
+      where: { id: actualUserId },
       data: {
         firstName: firstName || null,
         lastName: lastName || null,
