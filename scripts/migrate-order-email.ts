@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🔄 Starting migration: Add customerEmail to Order table...')
+  console.log('🔄 Starting migration: Add missing fields to Order table...')
   
   try {
     // Check current structure
@@ -12,7 +12,7 @@ async function main() {
       SELECT column_name 
       FROM information_schema.columns 
       WHERE table_name = 'Order'
-      AND column_name IN ('email', 'customerEmail', 'customerPhone')
+      AND column_name IN ('email', 'customerEmail', 'customerPhone', 'billingAddress')
     `
     
     console.log('Current columns:', result.map(r => r.column_name))
@@ -20,6 +20,7 @@ async function main() {
     const hasEmail = result.some(r => r.column_name === 'email')
     const hasCustomerEmail = result.some(r => r.column_name === 'customerEmail')
     const hasCustomerPhone = result.some(r => r.column_name === 'customerPhone')
+    const hasBillingAddress = result.some(r => r.column_name === 'billingAddress')
     
     if (hasEmail && !hasCustomerEmail) {
       console.log('📝 Renaming email to customerEmail...')
@@ -39,6 +40,14 @@ async function main() {
       console.log('✅ Added customerPhone column')
     } else {
       console.log('✅ customerPhone column already exists')
+    }
+    
+    if (!hasBillingAddress) {
+      console.log('📝 Adding billingAddress column...')
+      await prisma.$executeRaw`ALTER TABLE "Order" ADD COLUMN "billingAddress" TEXT`
+      console.log('✅ Added billingAddress column')
+    } else {
+      console.log('✅ billingAddress column already exists')
     }
     
     console.log('🎉 Migration completed successfully!')

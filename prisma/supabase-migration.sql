@@ -1,5 +1,6 @@
--- Supabase Migration: Add customerEmail to Order table
+-- Supabase Migration: Add missing fields to Order table
 -- Execute this in Supabase SQL Editor: https://app.supabase.com/project/YOUR_PROJECT/sql
+-- This migration adds: customerEmail, customerPhone, and billingAddress fields
 
 -- Step 1: Check if email column exists and rename it to customerEmail
 DO $$ 
@@ -48,6 +49,23 @@ BEGIN
     END IF;
 END $$;
 
+-- Step 3: Ensure billingAddress column exists
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'billingAddress'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "Order" ADD COLUMN "billingAddress" TEXT;
+        RAISE NOTICE '✅ Added billingAddress column';
+    ELSE
+        RAISE NOTICE 'ℹ️ billingAddress column already exists';
+    END IF;
+END $$;
+
 -- Verification: Check the final structure
 SELECT 
     column_name, 
@@ -55,6 +73,6 @@ SELECT
     is_nullable
 FROM information_schema.columns 
 WHERE table_name = 'Order' 
-AND column_name IN ('customerEmail', 'customerPhone', 'customerName')
+AND column_name IN ('customerEmail', 'customerPhone', 'customerName', 'billingAddress')
 ORDER BY column_name;
 

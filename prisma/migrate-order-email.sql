@@ -44,3 +44,20 @@ BEGIN
     END IF;
 END $$;
 
+-- Step 3: Ensure billingAddress exists
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'billingAddress'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "Order" ADD COLUMN "billingAddress" TEXT;
+        RAISE NOTICE 'Added billingAddress column';
+    ELSE
+        RAISE NOTICE 'billingAddress column already exists';
+    END IF;
+END $$;
+
