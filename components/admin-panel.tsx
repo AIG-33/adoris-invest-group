@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, Calendar, Plus, Trash2, Image as ImageIcon, MapPin } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, Calendar, Plus, Trash2, Image as ImageIcon, MapPin, XCircle, Truck, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface AdminPanelProps {
@@ -19,6 +19,9 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
+  const [orders, setOrders] = useState<any[]>(recentOrders)
+  const [loadingOrders, setLoadingOrders] = useState(false)
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
   
   // Exhibition form state
   const [showExhibitionForm, setShowExhibitionForm] = useState(false)
@@ -31,6 +34,89 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
     featured: false,
   })
   const [exhibitionsList, setExhibitionsList] = useState(exhibitions)
+
+  // Load all orders
+  useEffect(() => {
+    if (activeTab === 'orders') {
+      loadAllOrders()
+    }
+  }, [activeTab])
+
+  const loadAllOrders = async () => {
+    setLoadingOrders(true)
+    try {
+      const response = await fetch('/api/admin/orders')
+      if (response.ok) {
+        const data = await response.json()
+        setOrders(data.orders || [])
+      } else {
+        toast.error('Failed to load orders')
+      }
+    } catch (error) {
+      console.error('Error loading orders:', error)
+      toast.error('Error loading orders')
+    } finally {
+      setLoadingOrders(false)
+    }
+  }
+
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    setUpdatingStatus(orderId)
+    try {
+      const response = await fetch(`/api/admin/orders/${orderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setOrders(orders.map(order => order.id === orderId ? data.order : order))
+        toast.success(`Order status updated to ${newStatus}`)
+      } else {
+        toast.error('Failed to update order status')
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error)
+      toast.error('Error updating order status')
+    } finally {
+      setUpdatingStatus(null)
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-orange-100 text-orange-700 border-orange-200'
+      case 'processing':
+        return 'bg-blue-100 text-blue-700 border-blue-200'
+      case 'shipped':
+        return 'bg-purple-100 text-purple-700 border-purple-200'
+      case 'delivered':
+        return 'bg-green-100 text-green-700 border-green-200'
+      case 'cancelled':
+        return 'bg-red-100 text-red-700 border-red-200'
+      default:
+        return 'bg-neutral-100 text-neutral-700 border-neutral-200'
+    }
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="w-3 h-3" />
+      case 'processing':
+        return <RefreshCw className="w-3 h-3" />
+      case 'shipped':
+        return <Truck className="w-3 h-3" />
+      case 'delivered':
+        return <CheckCircle className="w-3 h-3" />
+      case 'cancelled':
+        return <XCircle className="w-3 h-3" />
+      default:
+        return <Package className="w-3 h-3" />
+    }
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e?.target?.files?.[0]
@@ -277,59 +363,101 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
         </div>
       </div>
 
-      {/* Recent Orders */}
+      {/* All Orders */}
       <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
-        <h2 className="text-2xl font-bold text-neutral-900 mb-6">Recent Orders</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-neutral-200">
-                <th className="text-left py-3 px-4 font-semibold text-neutral-700">Order #</th>
-                <th className="text-left py-3 px-4 font-semibold text-neutral-700">Customer</th>
-                <th className="text-left py-3 px-4 font-semibold text-neutral-700">Date</th>
-                <th className="text-left py-3 px-4 font-semibold text-neutral-700">Items</th>
-                <th className="text-left py-3 px-4 font-semibold text-neutral-700">Total</th>
-                <th className="text-left py-3 px-4 font-semibold text-neutral-700">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders?.map?.((order) => (
-                <tr key={order?.id} className="border-b border-neutral-100 hover:bg-neutral-50">
-                  <td className="py-4 px-4 font-mono text-sm">{order?.orderNumber}</td>
-                  <td className="py-4 px-4">
-                    <div className="text-sm font-medium text-neutral-900">{order?.customerName}</div>
-                    <div className="text-xs text-neutral-600">{order?.company}</div>
-                  </td>
-                  <td className="py-4 px-4 text-sm text-neutral-600">
-                    {new Date(order?.createdAt)?.toLocaleDateString?.()}
-                  </td>
-                  <td className="py-4 px-4 text-sm text-neutral-600">
-                    {order?.items?.length || 0} items
-                  </td>
-                  <td className="py-4 px-4 font-semibold text-neutral-900">
-                    €{order?.total?.toFixed?.(2)}
-                  </td>
-                  <td className="py-4 px-4">
-                    <span
-                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
-                        order?.status === 'pending'
-                          ? 'bg-orange-100 text-orange-700'
-                          : 'bg-green-100 text-green-700'
-                      }`}
-                    >
-                      {order?.status === 'pending' ? (
-                        <Clock className="w-3 h-3" />
-                      ) : (
-                        <CheckCircle className="w-3 h-3" />
-                      )}
-                      {order?.status}
-                    </span>
-                  </td>
-                </tr>
-              )) || []}
-            </tbody>
-          </table>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-neutral-900">All Orders</h2>
+          <button
+            onClick={loadAllOrders}
+            disabled={loadingOrders}
+            className="flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${loadingOrders ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
         </div>
+        {loadingOrders ? (
+          <div className="text-center py-12">
+            <RefreshCw className="w-8 h-8 text-neutral-400 animate-spin mx-auto mb-4" />
+            <p className="text-neutral-600">Loading orders...</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-neutral-200">
+                  <th className="text-left py-3 px-4 font-semibold text-neutral-700">Order #</th>
+                  <th className="text-left py-3 px-4 font-semibold text-neutral-700">Customer</th>
+                  <th className="text-left py-3 px-4 font-semibold text-neutral-700">Email</th>
+                  <th className="text-left py-3 px-4 font-semibold text-neutral-700">Date</th>
+                  <th className="text-left py-3 px-4 font-semibold text-neutral-700">Items</th>
+                  <th className="text-left py-3 px-4 font-semibold text-neutral-700">Total</th>
+                  <th className="text-left py-3 px-4 font-semibold text-neutral-700">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold text-neutral-700">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders?.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="py-12 text-center text-neutral-600">
+                      No orders found
+                    </td>
+                  </tr>
+                ) : (
+                  orders?.map?.((order) => (
+                    <tr key={order?.id} className="border-b border-neutral-100 hover:bg-neutral-50">
+                      <td className="py-4 px-4 font-mono text-sm">{order?.orderNumber}</td>
+                      <td className="py-4 px-4">
+                        <div className="text-sm font-medium text-neutral-900">{order?.customerName}</div>
+                        <div className="text-xs text-neutral-600">{order?.billingAddress?.split(',')[0] || ''}</div>
+                      </td>
+                      <td className="py-4 px-4 text-sm text-neutral-600">
+                        {order?.customerEmail}
+                      </td>
+                      <td className="py-4 px-4 text-sm text-neutral-600">
+                        {new Date(order?.createdAt)?.toLocaleDateString?.('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </td>
+                      <td className="py-4 px-4 text-sm text-neutral-600">
+                        {order?.items?.length || 0} items
+                      </td>
+                      <td className="py-4 px-4 font-semibold text-neutral-900">
+                        €{Number(order?.total || 0).toFixed(2)}
+                      </td>
+                      <td className="py-4 px-4">
+                        <span
+                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                            order?.status
+                          )}`}
+                        >
+                          {getStatusIcon(order?.status)}
+                          {order?.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4">
+                        <select
+                          value={order?.status}
+                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                          disabled={updatingStatus === order.id}
+                          className="text-xs px-2 py-1 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#333333]/20 focus:border-[#333333] disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="processing">Processing</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="delivered">Delivered</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                      </td>
+                    </tr>
+                  )) || []
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
         </>
       )}
