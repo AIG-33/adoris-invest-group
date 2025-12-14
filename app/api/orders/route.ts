@@ -36,29 +36,36 @@ export async function POST(request: Request) {
     // Generate order number
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`
 
+    // Build billing address string with all additional info
+    const billingAddressParts = []
+    if (address) billingAddressParts.push(address)
+    if (city) billingAddressParts.push(city)
+    if (postalCode) billingAddressParts.push(postalCode)
+    if (country) billingAddressParts.push(country)
+    if (company) billingAddressParts.push(`Company: ${company}`)
+    if (vatId) billingAddressParts.push(`VAT ID: ${vatId}`)
+    if (department) billingAddressParts.push(`Department: ${department}`)
+    if (poNumber) billingAddressParts.push(`PO Number: ${poNumber}`)
+    if (preferredDeliveryDate) billingAddressParts.push(`Preferred Delivery: ${preferredDeliveryDate}`)
+    if (notes) billingAddressParts.push(`Notes: ${notes}`)
+    if (paymentMethod) billingAddressParts.push(`Payment Method: ${paymentMethod}`)
+    
+    const billingAddress = billingAddressParts.length > 0 
+      ? billingAddressParts.join(', ') 
+      : null
+
     // Create order
     const order = await prisma.order.create({
       data: {
         orderNumber,
         userId: userId || null,
         customerName: `${firstName} ${lastName}`,
-        email,
-        phone,
-        company,
-        vatId,
-        address: `${address}, ${city}, ${postalCode}, ${country}`,
-        city,
-        postalCode,
-        country,
-        department,
-        poNumber,
-        preferredDeliveryDate,
-        notes,
+        customerEmail: email, // Fixed: use customerEmail instead of email
+        customerPhone: phone || null,
+        billingAddress: billingAddress || null,
         subtotal,
-        discount,
-        vat,
+        tax: vat, // tax field in schema maps to vat from form
         total,
-        paymentMethod,
         status: 'pending',
         items: {
           create: items?.map?.((item: any) => ({
