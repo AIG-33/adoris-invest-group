@@ -40,7 +40,9 @@ export function Header() {
     // Update cart count from localStorage
     const updateCartCount = () => {
       const cart = JSON.parse(localStorage?.getItem?.('cart') || '[]')
-      setCartCount(cart?.length || 0)
+      // Count total quantity of all items, not just number of items
+      const totalQuantity = cart?.reduce?.((sum: number, item: any) => sum + (item?.quantity || 0), 0) || 0
+      setCartCount(totalQuantity)
     }
     updateCartCount()
 
@@ -264,6 +266,22 @@ export function Header() {
               className="hidden md:flex items-center gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors"
             >
               <span>Terms</span>
+            </Link>
+
+            {/* Cart Icon - Always visible */}
+            <Link
+              href="/cart"
+              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors relative text-xs sm:text-sm lg:text-base"
+            >
+              <div className="relative">
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#333333] text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
+              </div>
+              <span className="hidden sm:inline">Cart</span>
             </Link>
 
             {/* My Account Dropdown Menu */}
