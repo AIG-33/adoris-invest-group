@@ -269,13 +269,13 @@ export async function sendOrderConfirmationEmail({
     await transporter.sendMail(mailOptions)
     console.log('✅ Order confirmation email sent to:', to)
 
-    // Also send copy to CEO
+    // Also send copy to supplier
     await transporter.sendMail({
       ...mailOptions,
-      to: 'info@adorisgroup.com',
+      to: 'info@ivdgroup.eu',
       subject: `🆕 New Order: ${orderNumber} - ${customerName}`,
     })
-    console.log('✅ Order copy sent to: info@adorisgroup.com')
+    console.log('✅ Order copy sent to: info@ivdgroup.eu')
 
     return { success: true }
   } catch (error) {

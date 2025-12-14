@@ -65,7 +65,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
               <p className="text-neutral-700 text-sm">
                 We've sent a confirmation email with your order details and PDF invoice to{' '}
                 <strong>{order?.email}</strong>. If you don't receive it within a few minutes,
-                please check your spam folder or contact us at info@ivdgroup.eu
+                please check your spam folder or contact us at info@adorisgroup.com
               </p>
             </div>
           </div>
@@ -182,8 +182,8 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
             If you have any questions about your order, please don't hesitate to contact us.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
-            <a href="mailto:info@ivdgroup.eu" className="text-[#333333] hover:underline">
-              📧 info@ivdgroup.eu
+            <a href="mailto:info@adorisgroup.com" className="text-[#333333] hover:underline">
+              📧 info@adorisgroup.com
             </a>
             <a href="tel:+48123456789" className="text-[#333333] hover:underline">
               📞 +48 123 456 789
