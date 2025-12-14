@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { 
@@ -16,7 +16,11 @@ import {
   Mail,
   Phone,
   RefreshCw,
-  Eye
+  Eye,
+  Settings,
+  Save,
+  Building2,
+  FileText
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
@@ -34,6 +38,82 @@ interface AccountContentProps {
 export function AccountContent({ orders, stats, user }: AccountContentProps) {
   const router = useRouter()
   const [reordering, setReordering] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'orders' | 'profile'>('orders')
+  const [loading, setLoading] = useState(false)
+  const [profileLoading, setProfileLoading] = useState(true)
+  const [profileData, setProfileData] = useState({
+    firstName: '',
+    lastName: '',
+    company: '',
+    vatId: '',
+    phone: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    country: 'Poland',
+    department: '',
+    paymentMethod: 'bank_transfer',
+  })
+
+  // Load profile data
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const response = await fetch('/api/profile')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.profile) {
+            setProfileData({
+              firstName: data.profile.firstName || '',
+              lastName: data.profile.lastName || '',
+              company: data.profile.company || '',
+              vatId: data.profile.vatId || '',
+              phone: data.profile.phone || '',
+              address: data.profile.address || '',
+              city: data.profile.city || '',
+              postalCode: data.profile.postalCode || '',
+              country: data.profile.country || 'Poland',
+              department: data.profile.department || '',
+              paymentMethod: data.profile.paymentMethod || 'bank_transfer',
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error)
+      } finally {
+        setProfileLoading(false)
+      }
+    }
+    loadProfile()
+  }, [])
+
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setProfileData({ ...profileData, [e.target.name]: e.target.value })
+  }
+
+  const handleProfileSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save profile')
+      }
+
+      toast.success('Профиль успешно сохранён!')
+    } catch (error) {
+      console.error('Error saving profile:', error)
+      toast.error('Не удалось сохранить профиль')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleReorder = async (orderId: string) => {
     setReordering(orderId)
@@ -183,7 +263,264 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="bg-white rounded-xl shadow-sm border border-neutral-200 mb-6 overflow-hidden">
+        <div className="flex border-b border-neutral-200">
+          <button
+            onClick={() => setActiveTab('orders')}
+            className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'orders'
+                ? 'text-[#000000] border-b-2 border-[#333333] bg-neutral-50'
+                : 'text-neutral-600 hover:text-[#000000] hover:bg-neutral-50'
+            }`}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            Мои заказы
+          </button>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'profile'
+                ? 'text-[#000000] border-b-2 border-[#333333] bg-neutral-50'
+                : 'text-neutral-600 hover:text-[#000000] hover:bg-neutral-50'
+            }`}
+          >
+            <Settings className="w-5 h-5" />
+            Профиль
+          </button>
+        </div>
+      </div>
+
+      {/* Profile Tab */}
+      {activeTab === 'profile' && (
+        <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
+          <div className="px-6 py-4 bg-gradient-to-r from-[#333333]/10 to-[#666666]/5 border-b border-neutral-200">
+            <h2 className="text-2xl font-bold text-[#000000] flex items-center gap-2">
+              <User className="w-6 h-6" />
+              Редактирование профиля
+            </h2>
+            <p className="text-neutral-600 mt-1">Заполните данные для быстрого оформления заказов</p>
+          </div>
+
+          {profileLoading ? (
+            <div className="p-12 text-center">
+              <RefreshCw className="w-8 h-8 text-neutral-400 animate-spin mx-auto mb-4" />
+              <p className="text-neutral-600">Загрузка профиля...</p>
+            </div>
+          ) : (
+            <form onSubmit={handleProfileSave} className="p-6 space-y-6">
+              {/* Personal Information */}
+              <div>
+                <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Личная информация
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Имя
+                    </label>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={profileData.firstName}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="Иван"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Фамилия
+                    </label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={profileData.lastName}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="Иванов"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Телефон
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={profileData.phone}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="+48 123 456 789"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Company Information */}
+              <div>
+                <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
+                  <Building2 className="w-5 h-5" />
+                  Информация о компании
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Название компании
+                    </label>
+                    <input
+                      type="text"
+                      name="company"
+                      value={profileData.company}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="Название вашей компании"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      VAT ID
+                    </label>
+                    <input
+                      type="text"
+                      name="vatId"
+                      value={profileData.vatId}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="PL1234567890"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Отдел
+                    </label>
+                    <input
+                      type="text"
+                      name="department"
+                      value={profileData.department}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="Лабораторные услуги"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Address Information */}
+              <div>
+                <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  Адрес доставки
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Улица и номер
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      value={profileData.address}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="ул. Примерная, д. 123"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Город
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={profileData.city}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="Варшава"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Почтовый индекс
+                    </label>
+                    <input
+                      type="text"
+                      name="postalCode"
+                      value={profileData.postalCode}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      placeholder="00-001"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      Страна
+                    </label>
+                    <select
+                      name="country"
+                      value={profileData.country}
+                      onChange={handleProfileChange}
+                      className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                    >
+                      <option value="Poland">Poland</option>
+                      <option value="Germany">Germany</option>
+                      <option value="France">France</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Preferences */}
+              <div>
+                <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  Предпочтения оплаты
+                </h3>
+                <div>
+                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                    Способ оплаты по умолчанию
+                  </label>
+                  <select
+                    name="paymentMethod"
+                    value={profileData.paymentMethod}
+                    onChange={handleProfileChange}
+                    className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                  >
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="credit_card">Credit Card</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <div className="flex justify-end pt-4 border-t border-neutral-200">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-6 py-3 bg-gradient-to-r from-[#333333] to-[#666666] text-white rounded-lg hover:from-[#000000] hover:to-[#333333] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg"
+                >
+                  {loading ? (
+                    <>
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                      Сохранение...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5" />
+                      Сохранить профиль
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      )}
+
       {/* Orders Section */}
+      {activeTab === 'orders' && (
       <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
         <div className="px-6 py-4 bg-gradient-to-r from-[#333333]/10 to-[#666666]/5 border-b border-neutral-200">
           <h2 className="text-2xl font-bold text-[#000000] flex items-center gap-2">
@@ -316,6 +653,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
           </div>
         )}
       </div>
+      )}
     </div>
   )
 }

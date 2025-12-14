@@ -47,6 +47,20 @@ model User {
   role          String    @default("user")
   updatedAt     DateTime  @default(now()) @updatedAt
   // ------------------------
+  
+  // --- Profile fields for orders ---
+  firstName     String?
+  lastName      String?
+  company       String?
+  vatId         String?
+  phone         String?
+  address       String?
+  city          String?
+  postalCode    String?
+  country       String?   @default("Poland")
+  department    String?
+  paymentMethod String?   @default("bank_transfer")
+  // --------------------------------
 
   createdAt     DateTime  @default(now())
   

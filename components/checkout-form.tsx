@@ -44,7 +44,47 @@ export function CheckoutForm() {
     setMounted(true)
     const savedCart = JSON.parse(localStorage?.getItem?.('cart') || '[]')
     setCart(savedCart || [])
-  }, [])
+    
+    // Load profile data if user is logged in
+    if (session?.user) {
+      fetch('/api/profile')
+        .then(res => res.json())
+        .then(data => {
+          if (data.profile) {
+            const profile = data.profile
+            // Split name into firstName and lastName if needed
+            let firstName = profile.firstName || ''
+            let lastName = profile.lastName || ''
+            
+            // If name exists but firstName/lastName don't, try to split
+            if (!firstName && !lastName && profile.name) {
+              const nameParts = profile.name.split(' ')
+              firstName = nameParts[0] || ''
+              lastName = nameParts.slice(1).join(' ') || ''
+            }
+            
+            setFormData(prev => ({
+              ...prev,
+              firstName: firstName || prev.firstName,
+              lastName: lastName || prev.lastName,
+              email: profile.email || prev.email,
+              company: profile.company || prev.company,
+              vatId: profile.vatId || prev.vatId,
+              phone: profile.phone || prev.phone,
+              address: profile.address || prev.address,
+              city: profile.city || prev.city,
+              postalCode: profile.postalCode || prev.postalCode,
+              country: profile.country || prev.country,
+              department: profile.department || prev.department,
+              paymentMethod: profile.paymentMethod || prev.paymentMethod,
+            }))
+          }
+        })
+        .catch(error => {
+          console.error('Error loading profile:', error)
+        })
+    }
+  }, [session])
 
   if (!mounted) {
     return (
