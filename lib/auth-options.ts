@@ -83,19 +83,77 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = (user as any).role
-        token.id = user.id
+    async signIn({ user, account, profile, email }) {
+      // Allow sign in for email provider
+      if (account?.provider === 'email') {
+        // Check if user exists in database
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email || email?.verificationRequest?.identifier },
+        })
+        
+        if (existingUser) {
+          // User exists, allow sign in
+          console.log('✅ Email sign in: User found', existingUser.email)
+          return true
+        } else {
+          // User doesn't exist, PrismaAdapter will create it
+          console.log('✅ Email sign in: Creating new user')
+          return true
+        }
       }
+      
+      // Allow sign in for credentials provider
+      if (account?.provider === 'credentials') {
+        return true
+      }
+      
+      return true
+    },
+    async jwt({ token, user, account }) {
+      // Initial sign in
+      if (user) {
+        token.role = (user as any).role || 'user'
+        token.id = user.id
+        token.email = user.email
+      }
+      
+      // If signing in with email, fetch user from database to get role
+      if (account?.provider === 'email' && token.email && !token.role) {
+        const dbUser = await prisma.user.findUnique({
+          where: { email: token.email as string },
+        })
+        if (dbUser) {
+          token.role = dbUser.role
+          token.id = dbUser.id
+        }
+      }
+      
       return token
     },
     async session({ session, token }) {
       if (session?.user) {
-        (session.user as any).role = token.role as string
-        (session.user as any).id = token.id as string
+        const role = token.role ? String(token.role) : 'user'
+        const id = token.id ? String(token.id) : ''
+        (session.user as any).role = role
+        (session.user as any).id = id
+        if (token.email) {
+          session.user.email = String(token.email)
+        }
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      // Handle redirect after sign in
+      // If url is relative, make it absolute
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`
+      }
+      // If url is on the same origin, allow it
+      if (new URL(url).origin === baseUrl) {
+        return url
+      }
+      // Default redirect to home
+      return baseUrl
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
