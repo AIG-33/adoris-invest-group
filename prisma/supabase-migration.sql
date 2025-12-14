@@ -1,6 +1,28 @@
 -- Supabase Migration: Add missing fields to Order table
 -- Execute this in Supabase SQL Editor: https://app.supabase.com/project/YOUR_PROJECT/sql
--- This migration adds: customerEmail, customerPhone, billingAddress, subtotal, tax, and total fields
+-- This migration adds: OrderStatus enum, customerEmail, customerPhone, billingAddress, subtotal, tax, total, and status fields
+
+-- Step 0: Create OrderStatus enum if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'OrderStatus') THEN
+        CREATE TYPE "OrderStatus" AS ENUM ('pending', 'processing', 'shipped', 'delivered', 'cancelled');
+        RAISE NOTICE '✅ Created OrderStatus enum';
+    ELSE
+        RAISE NOTICE 'ℹ️ OrderStatus enum already exists';
+    END IF;
+END $$;
+
+-- Step 0.1: Create StockStatus enum if it doesn't exist (for Product table)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'StockStatus') THEN
+        CREATE TYPE "StockStatus" AS ENUM ('in_stock', 'out_of_stock', 'pre_order');
+        RAISE NOTICE '✅ Created StockStatus enum';
+    ELSE
+        RAISE NOTICE 'ℹ️ StockStatus enum already exists';
+    END IF;
+END $$;
 
 -- Step 1: Check if email column exists and rename it to customerEmail
 DO $$ 
@@ -114,6 +136,43 @@ BEGIN
         RAISE NOTICE '✅ Added total column';
     ELSE
         RAISE NOTICE 'ℹ️ total column already exists';
+    END IF;
+END $$;
+
+-- Step 7: Ensure status column uses OrderStatus enum
+DO $$ 
+BEGIN
+    -- Check if status column exists
+    IF EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'status'
+        AND table_schema = 'public'
+    ) THEN
+        -- Check if it's already the correct type
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM information_schema.columns 
+            WHERE table_name = 'Order' 
+            AND column_name = 'status'
+            AND udt_name = 'OrderStatus'
+            AND table_schema = 'public'
+        ) THEN
+            -- Try to alter the column type (may fail if there's existing data)
+            BEGIN
+                ALTER TABLE "Order" ALTER COLUMN "status" TYPE "OrderStatus" USING "status"::text::"OrderStatus";
+                RAISE NOTICE '✅ Updated status column to use OrderStatus enum';
+            EXCEPTION WHEN OTHERS THEN
+                RAISE NOTICE '⚠️ Could not convert status column type. You may need to update it manually.';
+            END;
+        ELSE
+            RAISE NOTICE 'ℹ️ status column already uses OrderStatus enum';
+        END IF;
+    ELSE
+        -- Add status column if it doesn't exist
+        ALTER TABLE "Order" ADD COLUMN "status" "OrderStatus" NOT NULL DEFAULT 'pending';
+        RAISE NOTICE '✅ Added status column with OrderStatus enum';
     END IF;
 END $$;
 
