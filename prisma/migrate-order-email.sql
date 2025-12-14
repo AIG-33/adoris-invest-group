@@ -61,3 +61,48 @@ BEGIN
     END IF;
 END $$;
 
+-- Step 4: Ensure subtotal exists (Decimal type)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'subtotal'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "Order" ADD COLUMN "subtotal" DECIMAL(10, 2) NOT NULL DEFAULT 0;
+        RAISE NOTICE 'Added subtotal column';
+    END IF;
+END $$;
+
+-- Step 5: Ensure tax exists (Decimal type)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'tax'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "Order" ADD COLUMN "tax" DECIMAL(10, 2) NOT NULL DEFAULT 0;
+        RAISE NOTICE 'Added tax column';
+    END IF;
+END $$;
+
+-- Step 6: Ensure total exists (Decimal type)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'total'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "Order" ADD COLUMN "total" DECIMAL(10, 2) NOT NULL DEFAULT 0;
+        RAISE NOTICE 'Added total column';
+    END IF;
+END $$;
+

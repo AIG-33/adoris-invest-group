@@ -1,6 +1,6 @@
 -- Supabase Migration: Add missing fields to Order table
 -- Execute this in Supabase SQL Editor: https://app.supabase.com/project/YOUR_PROJECT/sql
--- This migration adds: customerEmail, customerPhone, and billingAddress fields
+-- This migration adds: customerEmail, customerPhone, billingAddress, subtotal, tax, and total fields
 
 -- Step 1: Check if email column exists and rename it to customerEmail
 DO $$ 
@@ -66,13 +66,65 @@ BEGIN
     END IF;
 END $$;
 
+-- Step 4: Ensure subtotal column exists (Decimal type)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'subtotal'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "Order" ADD COLUMN "subtotal" DECIMAL(10, 2) NOT NULL DEFAULT 0;
+        RAISE NOTICE '✅ Added subtotal column';
+    ELSE
+        RAISE NOTICE 'ℹ️ subtotal column already exists';
+    END IF;
+END $$;
+
+-- Step 5: Ensure tax column exists (Decimal type)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'tax'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "Order" ADD COLUMN "tax" DECIMAL(10, 2) NOT NULL DEFAULT 0;
+        RAISE NOTICE '✅ Added tax column';
+    ELSE
+        RAISE NOTICE 'ℹ️ tax column already exists';
+    END IF;
+END $$;
+
+-- Step 6: Ensure total column exists (Decimal type)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'Order' 
+        AND column_name = 'total'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE "Order" ADD COLUMN "total" DECIMAL(10, 2) NOT NULL DEFAULT 0;
+        RAISE NOTICE '✅ Added total column';
+    ELSE
+        RAISE NOTICE 'ℹ️ total column already exists';
+    END IF;
+END $$;
+
 -- Verification: Check the final structure
 SELECT 
     column_name, 
     data_type, 
-    is_nullable
+    is_nullable,
+    column_default
 FROM information_schema.columns 
 WHERE table_name = 'Order' 
-AND column_name IN ('customerEmail', 'customerPhone', 'customerName', 'billingAddress')
+AND column_name IN ('customerEmail', 'customerPhone', 'customerName', 'billingAddress', 'subtotal', 'tax', 'total')
 ORDER BY column_name;
 
