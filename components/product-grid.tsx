@@ -107,7 +107,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                   SKU: {product?.sku}
                 </p>
                 <p className="text-xs sm:text-sm text-neutral-600 line-clamp-2 mb-3 sm:mb-4">
-                  {product?.shortDesc}
+                  {product?.description}
                 </p>
 
                 {/* Footer */}
