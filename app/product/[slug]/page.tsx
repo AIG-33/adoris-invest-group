@@ -26,7 +26,7 @@ export default async function ProductPage({
   }
 
   // Get related products from same category
-  const relatedProducts = await prisma.product.findMany({
+  const relatedProductsRaw = await prisma.product.findMany({
     where: {
       categoryId: product?.categoryId,
       id: { not: product?.id },
@@ -38,11 +38,22 @@ export default async function ProductPage({
     },
   })
 
+  // Convert Decimal to number for prices
+  const productWithNumber = {
+    ...product,
+    price: Number(product.price),
+  }
+
+  const relatedProducts = relatedProductsRaw.map(p => ({
+    ...p,
+    price: Number(p.price),
+  }))
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <ProductDetail product={product} relatedProducts={relatedProducts} />
+        <ProductDetail product={productWithNumber} relatedProducts={relatedProducts} />
       </main>
       <Footer />
     </div>

@@ -56,7 +56,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
 
   // Fetch products with pagination
-  const products = await prisma.product.findMany({
+  const productsRaw = await prisma.product.findMany({
     where,
     include: {
       category: true,
@@ -66,6 +66,12 @@ export default async function ProductsPage({ searchParams }: Props) {
     skip: (currentPage - 1) * ITEMS_PER_PAGE,
     take: ITEMS_PER_PAGE,
   })
+
+  // Convert Decimal to number for prices
+  const products = productsRaw.map(p => ({
+    ...p,
+    price: Number(p.price),
+  }))
 
   // Fetch all categories and manufacturers for filters with product counts
   const categories = await prisma.category.findMany({

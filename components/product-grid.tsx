@@ -10,9 +10,9 @@ interface Product {
   name: string
   slug: string
   sku: string
-  shortDesc: string | null
+  description: string | null
   price: number
-  image: string
+  image: string | null
   stockStatus: string
   category: { name: string }
   manufacturer: { name: string; logo: string | null }
