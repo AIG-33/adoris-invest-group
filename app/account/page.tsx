@@ -35,9 +35,14 @@ export default async function AccountPage() {
   })
 
   // Calculate stats
+  const totalSpentSum = orders.reduce((sum: number, order: any) => {
+    const orderTotal = Number(order.total) || 0
+    return sum + orderTotal
+  }, 0)
+  
   const stats = {
     totalOrders: orders.length,
-    totalSpent: orders.reduce((sum: number, order: any) => sum + order.total, 0),
+    totalSpent: Math.round(totalSpentSum * 100) / 100, // Round to 2 decimal places
     pendingOrders: orders.filter((o: any) => o.status === 'pending').length,
   }
 

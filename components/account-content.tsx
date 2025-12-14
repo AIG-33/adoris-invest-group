@@ -106,10 +106,10 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
         throw new Error('Failed to save profile')
       }
 
-      toast.success('Профиль успешно сохранён!')
+      toast.success('Profile saved successfully!')
     } catch (error) {
       console.error('Error saving profile:', error)
-      toast.error('Не удалось сохранить профиль')
+      toast.error('Failed to save profile')
     } finally {
       setLoading(false)
     }
@@ -154,7 +154,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
       // Dispatch custom event to update cart count
       window.dispatchEvent(new Event('cartUpdated'))
 
-      toast.success(`${order.items.length} товаров добавлено в корзину!`)
+      toast.success(`${order.items.length} item(s) added to cart!`)
       
       // Redirect to cart after a short delay
       setTimeout(() => {
@@ -162,7 +162,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
       }, 1000)
     } catch (error) {
       console.error('Error reordering:', error)
-      toast.error('Не удалось повторить заказ')
+      toast.error('Failed to reorder')
     } finally {
       setReordering(null)
     }
@@ -203,11 +203,11 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
 
   const formatStatus = (status: string) => {
     const statusMap: Record<string, string> = {
-      pending: 'Ожидает',
-      processing: 'Обрабатывается',
-      shipped: 'Отправлен',
-      delivered: 'Доставлен',
-      cancelled: 'Отменён',
+      pending: 'Pending',
+      processing: 'Processing',
+      shipped: 'Shipped',
+      delivered: 'Delivered',
+      cancelled: 'Cancelled',
     }
     return statusMap[status] || status
   }
@@ -216,8 +216,8 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
     <div className="container mx-auto px-6 py-12">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#000000] mb-2">Личный кабинет</h1>
-        <p className="text-neutral-600">Управляйте своими заказами и настройками</p>
+        <h1 className="text-4xl font-bold text-[#000000] mb-2">My Account</h1>
+        <p className="text-neutral-600">Manage your orders and settings</p>
       </div>
 
       {/* User Info Card */}
@@ -227,7 +227,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
             <User className="w-8 h-8" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold">{user.name || 'Пользователь'}</h2>
+            <h2 className="text-2xl font-bold">{user.name || 'User'}</h2>
             <p className="text-white/90 flex items-center gap-2">
               <Mail className="w-4 h-4" />
               {user.email}
@@ -240,23 +240,23 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
           <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-2">
               <Package className="w-5 h-5" />
-              <span className="text-sm font-medium">Всего заказов</span>
+              <span className="text-sm font-medium">Total Orders</span>
             </div>
             <p className="text-3xl font-bold">{stats.totalOrders}</p>
           </div>
           <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-2">
               <Euro className="w-5 h-5" />
-              <span className="text-sm font-medium">Общая сумма</span>
+              <span className="text-sm font-medium">Total Spent</span>
             </div>
             <p className="text-3xl font-bold">
-              €{stats.totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              €{Number(stats.totalSpent).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
           <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-2">
               <Clock className="w-5 h-5" />
-              <span className="text-sm font-medium">В обработке</span>
+              <span className="text-sm font-medium">Pending</span>
             </div>
             <p className="text-3xl font-bold">{stats.pendingOrders}</p>
           </div>
@@ -275,7 +275,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
             }`}
           >
             <ShoppingCart className="w-5 h-5" />
-            Мои заказы
+            My Orders
           </button>
           <button
             onClick={() => setActiveTab('profile')}
@@ -286,7 +286,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
             }`}
           >
             <Settings className="w-5 h-5" />
-            Профиль
+            Profile
           </button>
         </div>
       </div>
@@ -297,15 +297,15 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
           <div className="px-6 py-4 bg-gradient-to-r from-[#333333]/10 to-[#666666]/5 border-b border-neutral-200">
             <h2 className="text-2xl font-bold text-[#000000] flex items-center gap-2">
               <User className="w-6 h-6" />
-              Редактирование профиля
+              Edit Profile
             </h2>
-            <p className="text-neutral-600 mt-1">Заполните данные для быстрого оформления заказов</p>
+            <p className="text-neutral-600 mt-1">Fill in your details for faster checkout</p>
           </div>
 
           {profileLoading ? (
             <div className="p-12 text-center">
               <RefreshCw className="w-8 h-8 text-neutral-400 animate-spin mx-auto mb-4" />
-              <p className="text-neutral-600">Загрузка профиля...</p>
+              <p className="text-neutral-600">Loading profile...</p>
             </div>
           ) : (
             <form onSubmit={handleProfileSave} className="p-6 space-y-6">
@@ -313,12 +313,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
               <div>
                 <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
                   <User className="w-5 h-5" />
-                  Личная информация
+                  Personal Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Имя
+                      First Name
                     </label>
                     <input
                       type="text"
@@ -326,12 +326,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       value={profileData.firstName}
                       onChange={handleProfileChange}
                       className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
-                      placeholder="Иван"
+                      placeholder="John"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Фамилия
+                      Last Name
                     </label>
                     <input
                       type="text"
@@ -339,12 +339,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       value={profileData.lastName}
                       onChange={handleProfileChange}
                       className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
-                      placeholder="Иванов"
+                      placeholder="Doe"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Телефон
+                      Phone
                     </label>
                     <input
                       type="tel"
@@ -362,12 +362,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
               <div>
                 <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
                   <Building2 className="w-5 h-5" />
-                  Информация о компании
+                  Company Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Название компании
+                      Company Name
                     </label>
                     <input
                       type="text"
@@ -375,7 +375,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       value={profileData.company}
                       onChange={handleProfileChange}
                       className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
-                      placeholder="Название вашей компании"
+                      placeholder="Your company name"
                     />
                   </div>
                   <div>
@@ -393,7 +393,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Отдел
+                      Department
                     </label>
                     <input
                       type="text"
@@ -401,7 +401,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       value={profileData.department}
                       onChange={handleProfileChange}
                       className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
-                      placeholder="Лабораторные услуги"
+                      placeholder="Laboratory Services"
                     />
                   </div>
                 </div>
@@ -411,12 +411,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
               <div>
                 <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
-                  Адрес доставки
+                  Delivery Address
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Улица и номер
+                      Street Address
                     </label>
                     <input
                       type="text"
@@ -424,12 +424,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       value={profileData.address}
                       onChange={handleProfileChange}
                       className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
-                      placeholder="ул. Примерная, д. 123"
+                      placeholder="123 Main Street"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Город
+                      City
                     </label>
                     <input
                       type="text"
@@ -437,12 +437,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       value={profileData.city}
                       onChange={handleProfileChange}
                       className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
-                      placeholder="Варшава"
+                      placeholder="Warsaw"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Почтовый индекс
+                      Postal Code
                     </label>
                     <input
                       type="text"
@@ -455,7 +455,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Страна
+                      Country
                     </label>
                     <select
                       name="country"
@@ -476,11 +476,11 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
               <div>
                 <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
                   <FileText className="w-5 h-5" />
-                  Предпочтения оплаты
+                  Payment Preferences
                 </h3>
                 <div>
                   <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                    Способ оплаты по умолчанию
+                    Default Payment Method
                   </label>
                   <select
                     name="paymentMethod"
@@ -504,12 +504,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                   {loading ? (
                     <>
                       <RefreshCw className="w-5 h-5 animate-spin" />
-                      Сохранение...
+                      Saving...
                     </>
                   ) : (
                     <>
                       <Save className="w-5 h-5" />
-                      Сохранить профиль
+                      Save Profile
                     </>
                   )}
                 </button>
@@ -525,21 +525,21 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
         <div className="px-6 py-4 bg-gradient-to-r from-[#333333]/10 to-[#666666]/5 border-b border-neutral-200">
           <h2 className="text-2xl font-bold text-[#000000] flex items-center gap-2">
             <ShoppingCart className="w-6 h-6" />
-            Мои заказы
+            My Orders
           </h2>
         </div>
 
         {orders.length === 0 ? (
           <div className="p-12 text-center">
             <Package className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-neutral-900 mb-2">У вас пока нет заказов</h3>
-            <p className="text-neutral-600 mb-6">Начните делать покупки в нашем магазине</p>
+            <h3 className="text-xl font-semibold text-neutral-900 mb-2">You have no orders yet</h3>
+            <p className="text-neutral-600 mb-6">Start shopping in our store</p>
             <Link
               href="/"
               className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#333333] to-[#666666] text-white rounded-lg hover:from-[#000000] hover:to-[#333333] transition-all shadow-lg"
             >
               <ShoppingCart className="w-5 h-5" />
-              Перейти в каталог
+              Go to Catalog
             </Link>
           </div>
         ) : (
@@ -554,7 +554,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                     <div>
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-lg font-bold text-[#000000]">
-                          Заказ #{order.orderNumber}
+                          Order #{order.orderNumber}
                         </h3>
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold border flex items-center gap-1 ${getStatusColor(
@@ -568,7 +568,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-600">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          {new Date(order.createdAt).toLocaleDateString('ru-RU', {
+                          {new Date(order.createdAt).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
@@ -576,7 +576,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                         </span>
                         <span className="flex items-center gap-1">
                           <Package className="w-4 h-4" />
-                          {order.items.length} {order.items.length === 1 ? 'товар' : 'товаров'}
+                          {order.items.length} {order.items.length === 1 ? 'item' : 'items'}
                         </span>
                         <span className="flex items-center gap-1 font-semibold text-[#000000]">
                           <Euro className="w-4 h-4" />
@@ -592,7 +592,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       className="px-4 py-2 bg-white border-2 border-[#333333] text-[#333333] rounded-lg hover:bg-[#333333] hover:text-white transition-all font-semibold flex items-center gap-2"
                     >
                       <Eye className="w-4 h-4" />
-                      Детали
+                      Details
                     </Link>
                     <button
                       onClick={() => handleReorder(order.id)}
@@ -602,12 +602,12 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       {reordering === order.id ? (
                         <>
                           <RefreshCw className="w-4 h-4 animate-spin" />
-                          Добавление...
+                          Adding...
                         </>
                       ) : (
                         <>
                           <RefreshCw className="w-4 h-4" />
-                          Повторить
+                          Reorder
                         </>
                       )}
                     </button>
@@ -643,7 +643,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       <span className="text-neutral-600 font-semibold text-center">
                         +{order.items.length - 6}
                         <br />
-                        ещё
+                        more
                       </span>
                     </div>
                   )}
