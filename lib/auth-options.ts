@@ -118,26 +118,39 @@ export const authOptions: NextAuthOptions = {
       }
       
       // Always fetch latest role from database to ensure it's up to date
-      if (token.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email as string },
-          select: { id: true, role: true },
-        })
-        if (dbUser) {
-          token.role = dbUser.role || 'user'
-          token.id = dbUser.id
+      // This runs on every JWT token refresh/update
+      try {
+        if (token.email) {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: token.email as string },
+            select: { id: true, role: true },
+          })
+          if (dbUser) {
+            token.role = dbUser.role || 'user'
+            token.id = dbUser.id
+            console.log('✅ JWT: Updated role from DB for email:', token.email, 'role:', dbUser.role)
+          } else {
+            console.log('⚠️ JWT: User not found by email:', token.email)
+          }
+        } else if (token.id) {
+          // Fallback: if we have id but no email, fetch by id
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { id: true, role: true, email: true },
+          })
+          if (dbUser) {
+            token.role = dbUser.role || 'user'
+            token.id = dbUser.id
+            token.email = dbUser.email
+            console.log('✅ JWT: Updated role from DB for id:', token.id, 'role:', dbUser.role)
+          } else {
+            console.log('⚠️ JWT: User not found by id:', token.id)
+          }
+        } else {
+          console.log('⚠️ JWT: No email or id in token:', token)
         }
-      } else if (token.id) {
-        // Fallback: if we have id but no email, fetch by id
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { id: true, role: true, email: true },
-        })
-        if (dbUser) {
-          token.role = dbUser.role || 'user'
-          token.id = dbUser.id
-          token.email = dbUser.email
-        }
+      } catch (error) {
+        console.error('❌ JWT: Error fetching user from DB:', error)
       }
       
       return token
@@ -151,6 +164,7 @@ export const authOptions: NextAuthOptions = {
         if (token.email) {
           session.user.email = String(token.email)
         }
+        console.log('✅ Session: Setting role:', role, 'id:', id, 'email:', token.email)
       }
       return session
     },
