@@ -22,6 +22,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
   const [orders, setOrders] = useState<any[]>(recentOrders)
   const [loadingOrders, setLoadingOrders] = useState(false)
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
+  const [deletingOrder, setDeletingOrder] = useState<string | null>(null)
   
   // Exhibition form state
   const [showExhibitionForm, setShowExhibitionForm] = useState(false)
@@ -81,6 +82,31 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
       toast.error('Error updating order status')
     } finally {
       setUpdatingStatus(null)
+    }
+  }
+
+  const handleDeleteOrder = async (orderId: string, orderNumber: string) => {
+    if (!confirm(`Are you sure you want to delete order ${orderNumber}? This action cannot be undone.`)) {
+      return
+    }
+
+    setDeletingOrder(orderId)
+    try {
+      const response = await fetch(`/api/admin/orders/${orderId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setOrders(orders.filter(order => order.id !== orderId))
+        toast.success(`Order ${orderNumber} deleted successfully`)
+      } else {
+        toast.error('Failed to delete order')
+      }
+    } catch (error) {
+      console.error('Error deleting order:', error)
+      toast.error('Error deleting order')
+    } finally {
+      setDeletingOrder(null)
     }
   }
 
@@ -438,18 +464,32 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                         </span>
                       </td>
                       <td className="py-4 px-4">
-                        <select
-                          value={order?.status}
-                          onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                          disabled={updatingStatus === order.id}
-                          className="text-xs px-2 py-1 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#333333]/20 focus:border-[#333333] disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="processing">Processing</option>
-                          <option value="shipped">Shipped</option>
-                          <option value="delivered">Delivered</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={order?.status}
+                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                            disabled={updatingStatus === order.id}
+                            className="text-xs px-2 py-1 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#333333]/20 focus:border-[#333333] disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                          </select>
+                          <button
+                            onClick={() => handleDeleteOrder(order.id, order.orderNumber)}
+                            disabled={deletingOrder === order.id}
+                            className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Delete order"
+                          >
+                            {deletingOrder === order.id ? (
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )) || []
