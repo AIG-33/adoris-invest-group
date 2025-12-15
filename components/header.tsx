@@ -30,6 +30,19 @@ export function Header() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [cartCount, setCartCount] = useState(0)
+  
+  // Debug: log session info
+  useEffect(() => {
+    if (session?.user) {
+      console.log('🔍 Header Session Debug:', {
+        user: session.user,
+        role: (session.user as any)?.role,
+        id: (session.user as any)?.id,
+        email: session.user.email,
+        status,
+      })
+    }
+  }, [session, status])
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [showDropdown, setShowDropdown] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
@@ -285,16 +298,14 @@ export function Header() {
             </Link>
 
             {/* Admin Panel Link - Only for admins */}
-            {status === 'authenticated' && session?.user && (
-              (session?.user as any)?.role === 'admin' && (
-                <Link
-                  href="/admin"
-                  className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors text-xs sm:text-sm lg:text-base"
-                >
-                  <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="hidden sm:inline">ADMIN</span>
-                </Link>
-              )
+            {status === 'authenticated' && session?.user && (session?.user as any)?.role === 'admin' && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+              >
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">ADMIN</span>
+              </Link>
             )}
 
             {/* My Account Dropdown Menu */}
