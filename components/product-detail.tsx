@@ -3,7 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { ShoppingCart, Minus, Plus, Truck, Shield, Phone, Check } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { ShoppingCart, Minus, Plus, Truck, Edit } from 'lucide-react'
 
 interface Product {
   id: string
@@ -25,6 +26,8 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product, relatedProducts }: ProductDetailProps) {
+  const { data: session } = useSession()
+  const isAdmin = session?.user && (session.user as any)?.role === 'admin'
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState('description')
 
@@ -154,26 +157,15 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               <ShoppingCart className="w-5 h-5" />
               Add to Cart
             </button>
-          </div>
-
-          {/* Features */}
-          <div className="grid grid-cols-2 gap-4 pt-6">
-            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-              <Truck className="w-5 h-5 text-[#333333]" />
-              <span className="text-sm font-medium">Free Shipping</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-              <Shield className="w-5 h-5 text-[#333333]" />
-              <span className="text-sm font-medium">2 Year Warranty</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-              <Phone className="w-5 h-5 text-[#333333]" />
-              <span className="text-sm font-medium">24/7 Support</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg">
-              <Check className="w-5 h-5 text-[#333333]" />
-              <span className="text-sm font-medium">CE Certified</span>
-            </div>
+            {isAdmin && (
+              <Link
+                href={`/admin/products/${product?.id}/edit`}
+                className="bg-[#666666] text-white py-4 px-6 rounded-lg hover:bg-[#555555] transition-all font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-0.5"
+              >
+                <Edit className="w-5 h-5" />
+                Edit
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -214,19 +206,9 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                 <span className="w-1/3 font-semibold text-neutral-900">Manufacturer</span>
                 <span className="flex-1 text-neutral-700">{product?.manufacturer?.name}</span>
               </div>
-              <div className="flex border-b border-neutral-200 py-3">
+              <div className="flex py-3">
                 <span className="w-1/3 font-semibold text-neutral-900">Category</span>
                 <span className="flex-1 text-neutral-700">{product?.category?.name}</span>
-              </div>
-              <div className="flex border-b border-neutral-200 py-3">
-                <span className="w-1/3 font-semibold text-neutral-900">Stock Status</span>
-                <span className="flex-1 text-neutral-700 capitalize">
-                  {product?.stockStatus?.replace('_', ' ')}
-                </span>
-              </div>
-              <div className="flex py-3">
-                <span className="w-1/3 font-semibold text-neutral-900">Warranty</span>
-                <span className="flex-1 text-neutral-700">2 years parts and labor</span>
               </div>
             </div>
           )}
