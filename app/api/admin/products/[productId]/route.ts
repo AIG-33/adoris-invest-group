@@ -198,18 +198,27 @@ export async function PUT(
       )
     }
 
+    // Prepare update data
+    const updateData: any = {
+      name,
+      sku,
+      slug,
+      description: description || null,
+      price: priceNum,
+      categoryId,
+      manufacturerId,
+    }
+
+    // Handle image field - only update if provided
+    // If image is empty string or null, set to empty string (not null) to avoid constraint violation
+    if (image !== undefined) {
+      updateData.image = image && image.trim() !== '' ? image.trim() : ''
+    }
+    // If image is not provided in the request, don't update it (keep existing value)
+
     const updatedProduct = await prisma.product.update({
       where: { id: actualProductId },
-      data: {
-        name,
-        sku,
-        slug,
-        description: description || null,
-        price: priceNum,
-        image: image || null,
-        categoryId,
-        manufacturerId,
-      },
+      data: updateData,
       include: {
         category: true,
         manufacturer: true,
