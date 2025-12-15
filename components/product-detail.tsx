@@ -161,6 +161,11 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               <Link
                 href={`/admin/products/${product?.id}/edit`}
                 className="bg-[#666666] text-white py-4 px-6 rounded-lg hover:bg-[#555555] transition-all font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-0.5"
+                onClick={() => {
+                  if (process.env.NODE_ENV === 'development') {
+                    console.log('Edit product - ID:', product?.id, 'SKU:', product?.sku)
+                  }
+                }}
               >
                 <Edit className="w-5 h-5" />
                 Edit

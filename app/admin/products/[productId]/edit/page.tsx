@@ -21,7 +21,8 @@ export default async function EditProductPage({
 
   const { productId } = await params
 
-  const product = await prisma.product.findUnique({
+  // Try to find product by ID first
+  let product = await prisma.product.findUnique({
     where: { id: productId },
     include: {
       category: true,
@@ -29,7 +30,31 @@ export default async function EditProductPage({
     },
   })
 
+  // If not found and starts with prod_, try by SKU
+  if (!product && productId.startsWith('prod_')) {
+    const sku = productId.replace('prod_', '')
+    product = await prisma.product.findUnique({
+      where: { sku },
+      include: {
+        category: true,
+        manufacturer: true,
+      },
+    })
+  }
+
+  // If still not found, try by SKU directly
   if (!product) {
+    product = await prisma.product.findUnique({
+      where: { sku: productId },
+      include: {
+        category: true,
+        manufacturer: true,
+      },
+    })
+  }
+
+  if (!product) {
+    console.error('Product not found for edit:', productId)
     notFound()
   }
 
