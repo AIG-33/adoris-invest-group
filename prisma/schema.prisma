@@ -153,14 +153,3 @@ model OrderItem {
   price     Decimal @db.Decimal(10, 2)
 }
 
-model Exhibition {
-  id          String   @id @default(cuid())
-  title       String
-  description String?  @db.Text
-  location    String
-  startDate   DateTime
-  endDate     DateTime
-  images      String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}

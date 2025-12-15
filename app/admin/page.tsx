@@ -47,19 +47,6 @@ export default async function AdminPage() {
       },
     })
 
-    // Fetch all exhibitions
-    let exhibitions = []
-    try {
-      exhibitions = await prisma.exhibition.findMany({
-        orderBy: { createdAt: 'desc' },
-      })
-    } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Error fetching exhibitions:', error)
-      }
-      exhibitions = []
-    }
-
     return (
       <div className="min-h-screen flex flex-col bg-white">
         <Header />
@@ -71,7 +58,6 @@ export default async function AdminPage() {
               pendingOrders,
             }}
             recentOrders={recentOrders || []}
-            exhibitions={exhibitions || []}
           />
         </main>
         <Footer />
