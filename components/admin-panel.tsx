@@ -36,6 +36,8 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
     featured: false,
   })
   const [exhibitionsList, setExhibitionsList] = useState(exhibitions || [])
+  const [uploadingImages, setUploadingImages] = useState(false)
+  const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([])
 
   // Load all orders
   useEffect(() => {
@@ -155,6 +157,52 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
     }
   }
 
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return
+
+    setUploadingImages(true)
+    const uploadedUrls: string[] = []
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const response = await fetch('/api/upload/exhibition-image', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          uploadedUrls.push(data.url)
+        } else {
+          const error = await response.json()
+          toast.error(`Failed to upload ${file.name}: ${error.error || 'Unknown error'}`)
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        setUploadedImageUrls([...uploadedImageUrls, ...uploadedUrls])
+        const currentImages = exhibitionForm.images
+          .split('\n')
+          .map((url) => url.trim())
+          .filter((url) => url)
+        const allImages = [...currentImages, ...uploadedUrls].join('\n')
+        setExhibitionForm({ ...exhibitionForm, images: allImages })
+        toast.success(`${uploadedUrls.length} image(s) uploaded successfully!`)
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error uploading images:', error)
+      }
+      toast.error('Error uploading images')
+    } finally {
+      setUploadingImages(false)
+    }
+  }
+
   const handleExhibitionSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -196,11 +244,14 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
           images: '',
           featured: false,
         })
+        setUploadedImageUrls([])
       } else {
         toast.error('Failed to create exhibition')
       }
     } catch (error) {
-      console.error('Error creating exhibition:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error creating exhibition:', error)
+      }
       toast.error('An error occurred')
     }
   }
