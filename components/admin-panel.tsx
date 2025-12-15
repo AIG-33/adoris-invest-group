@@ -246,7 +246,11 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
         })
         setUploadedImageUrls([])
       } else {
-        toast.error('Failed to create exhibition')
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(errorData.error || 'Failed to create exhibition')
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Exhibition creation error:', errorData)
+        }
       }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {

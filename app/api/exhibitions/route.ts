@@ -34,9 +34,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { title, description, startDate, endDate, location, images } = body
 
-    if (!title || !description || !startDate || !endDate || !location) {
+    if (!title || !startDate || !endDate || !location) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields: title, startDate, endDate, and location are required' },
         { status: 400 }
       )
     }
@@ -57,8 +57,9 @@ export async function POST(request: NextRequest) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Error creating exhibition:', error)
     }
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to create exhibition' },
+      { error: 'Failed to create exhibition', details: errorMessage },
       { status: 500 }
     )
   }
