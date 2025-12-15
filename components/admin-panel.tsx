@@ -178,8 +178,12 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
           const data = await response.json()
           uploadedUrls.push(data.url)
         } else {
-          const error = await response.json()
-          toast.error(`Failed to upload ${file.name}: ${error.error || 'Unknown error'}`)
+          const error = await response.json().catch(() => ({ error: 'Unknown error' }))
+          const errorMsg = error.details || error.error || 'Unknown error'
+          toast.error(`Failed to upload ${file.name}: ${errorMsg}`)
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Upload error details:', error)
+          }
         }
       }
 

@@ -64,11 +64,19 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: publicUrl }, { status: 200 })
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : undefined
+    
     if (process.env.NODE_ENV === 'development') {
       console.error('Error uploading image:', error)
+      console.error('Error details:', { errorMessage, errorStack })
     }
+    
     return NextResponse.json(
-      { error: 'Failed to upload image' },
+      { 
+        error: 'Failed to upload image',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     )
   }
