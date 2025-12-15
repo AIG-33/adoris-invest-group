@@ -64,7 +64,16 @@ export async function PUT(
     }
 
     const { productId } = await params
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Product ID from params:', productId)
+    }
+
     const body = await request.json()
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Request body:', JSON.stringify(body, null, 2))
+    }
 
     const {
       name,
@@ -135,16 +144,31 @@ export async function PUT(
     }
 
     // Check if product exists
-    const existingProduct = await prisma.product.findUnique({
+    let existingProduct = await prisma.product.findUnique({
       where: { id: productId },
     })
 
+    // If not found by ID, try to find by SKU (in case productId is actually a SKU)
+    if (!existingProduct && productId.startsWith('prod_')) {
+      const sku = productId.replace('prod_', '')
+      existingProduct = await prisma.product.findUnique({
+        where: { sku },
+      })
+      
+      if (existingProduct && process.env.NODE_ENV === 'development') {
+        console.log('Found product by SKU:', sku, 'Actual ID:', existingProduct.id)
+      }
+    }
+
     if (!existingProduct) {
       return NextResponse.json(
-        { error: 'Product not found' },
+        { error: 'Product not found', productId },
         { status: 404 }
       )
     }
+
+    // Use the actual product ID from database
+    const actualProductId = existingProduct.id
 
     const updatedProduct = await prisma.product.update({
       where: { id: productId },
@@ -166,21 +190,23 @@ export async function PUT(
 
     return NextResponse.json({ product: updatedProduct })
   } catch (error: any) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error updating product:', error)
-    }
+    console.error('Error updating product:', error)
+    console.error('Error stack:', error?.stack)
+    console.error('Error code:', error?.code)
+    console.error('Error meta:', error?.meta)
     
     // Handle Prisma errors
     if (error?.code === 'P2002') {
+      const field = error?.meta?.target?.[0] || 'field'
       return NextResponse.json(
-        { error: 'SKU or slug already exists' },
+        { error: `${field} already exists`, code: 'P2002' },
         { status: 400 }
       )
     }
     
     if (error?.code === 'P2025') {
       return NextResponse.json(
-        { error: 'Product not found' },
+        { error: 'Product not found', code: 'P2025' },
         { status: 404 }
       )
     }
@@ -188,7 +214,13 @@ export async function PUT(
     return NextResponse.json(
       { 
         error: 'Failed to update product',
-        message: process.env.NODE_ENV === 'development' ? error?.message : undefined
+        message: error?.message || 'Unknown error',
+        code: error?.code,
+        details: process.env.NODE_ENV === 'development' ? {
+          message: error?.message,
+          code: error?.code,
+          meta: error?.meta,
+        } : undefined
       },
       { status: 500 }
     )
