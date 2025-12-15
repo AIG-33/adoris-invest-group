@@ -215,13 +215,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
   }
 
   return (
-    <div className="container mx-auto px-6 py-12">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#000000] mb-2">My Account</h1>
-        <p className="text-neutral-600">Manage your orders and settings</p>
-      </div>
-
+    <div className="container mx-auto px-6 py-12 bg-white">
       {/* User Info Card */}
       <div className="bg-gradient-to-br from-[#333333] to-[#666666] rounded-2xl p-8 mb-8 text-white shadow-lg">
         <div className="flex items-center gap-4 mb-6">
