@@ -34,7 +34,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
     images: '',
     featured: false,
   })
-  const [exhibitionsList, setExhibitionsList] = useState(exhibitions)
+  const [exhibitionsList, setExhibitionsList] = useState(exhibitions || [])
 
   // Load all orders
   useEffect(() => {
