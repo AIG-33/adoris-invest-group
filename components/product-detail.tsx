@@ -43,8 +43,8 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
     alert(`${quantity} x ${product?.name} added to cart!`)
   }
 
-  const vatAmount = product?.price ? product.price * 0.23 : 0
-  const priceWithVat = product?.price ? product.price + vatAmount : 0
+  // VAT is always 0%
+  const priceWithVat = product?.price || 0
 
   return (
     <div className="container mx-auto px-6 py-8">
@@ -110,7 +110,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               €{priceWithVat?.toLocaleString?.('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
-              }) || '0.00'} incl. 23% VAT
+              }) || '0.00'}
             </div>
           </div>
 
