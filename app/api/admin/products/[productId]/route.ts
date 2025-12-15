@@ -123,20 +123,44 @@ export async function PUT(
     })
 
     // If not found by ID, try to find by SKU (in case productId is actually a SKU)
-    if (!existingProduct && productId.startsWith('prod_')) {
-      const skuFromId = productId.replace('prod_', '')
-      existingProduct = await prisma.product.findUnique({
-        where: { sku: skuFromId },
-      })
-      
-      if (existingProduct && process.env.NODE_ENV === 'development') {
-        console.log('Found product by SKU:', skuFromId, 'Actual ID:', existingProduct.id)
+    if (!existingProduct) {
+      if (productId.startsWith('prod_')) {
+        const skuFromId = productId.replace('prod_', '')
+        console.log('Product not found by ID, trying SKU:', skuFromId)
+        existingProduct = await prisma.product.findUnique({
+          where: { sku: skuFromId },
+        })
+        
+        if (existingProduct) {
+          console.log('✅ Found product by SKU:', skuFromId, 'Actual ID:', existingProduct.id)
+        } else {
+          console.log('❌ Product not found by SKU either:', skuFromId)
+        }
+      } else {
+        // Try to find by SKU directly (without prod_ prefix)
+        console.log('Product not found by ID, trying SKU directly:', productId)
+        existingProduct = await prisma.product.findUnique({
+          where: { sku: productId },
+        })
+        
+        if (existingProduct) {
+          console.log('✅ Found product by SKU:', productId, 'Actual ID:', existingProduct.id)
+        }
       }
     }
 
     if (!existingProduct) {
+      console.error('❌ Product not found:', {
+        productId,
+        triedAsId: true,
+        triedAsSku: productId.startsWith('prod_') || true,
+      })
       return NextResponse.json(
-        { error: 'Product not found', productId },
+        { 
+          error: 'Product not found',
+          productId,
+          message: `Product with ID/SKU "${productId}" was not found in the database`
+        },
         { status: 404 }
       )
     }
