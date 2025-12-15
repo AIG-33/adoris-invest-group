@@ -47,8 +47,21 @@ export default async function AccountPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-white">
       <Header />
+      {/* Hero Section */}
+      <section className="relative bg-black text-white py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+              My Account
+            </h1>
+            <p className="text-xl sm:text-2xl text-white/90">
+              Manage your orders and profile settings
+            </p>
+          </div>
+        </div>
+      </section>
       <AccountContent orders={orders} stats={stats} user={session.user} />
       <Footer />
     </div>
