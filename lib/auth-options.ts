@@ -110,59 +110,55 @@ export const authOptions: NextAuthOptions = {
       return true
     },
     async jwt({ token, user, account }) {
-      // Initial sign in - fetch user from DB to get role
+      // On initial sign in, set basic token info
       if (user) {
         token.id = user.id
-        token.email = user.email
-        
-        // Always fetch from DB to get latest role
-        try {
-          const dbUser = await prisma.user.findUnique({
-            where: { 
-              OR: [
-                { id: user.id },
-                { email: user.email || '' }
-              ]
-            },
-            select: { id: true, role: true, email: true },
-          })
-          
-          if (dbUser) {
-            token.role = dbUser.role || 'user'
-            token.id = dbUser.id
-            token.email = dbUser.email || token.email
-            console.log('✅ JWT (sign in): Set role from DB:', dbUser.role, 'for user:', dbUser.email)
-          } else {
-            token.role = (user as any).role || 'user'
-            console.log('⚠️ JWT (sign in): User not found in DB, using default role:', token.role)
-          }
-        } catch (error) {
-          console.error('❌ JWT (sign in): Error fetching user:', error)
-          token.role = (user as any).role || 'user'
-        }
+        token.email = user.email || (user as any).email
       }
       
-      // On every JWT token refresh/update - always fetch latest role from database
-      if (!user && (token.email || token.id)) {
-        try {
-          const dbUser = await prisma.user.findUnique({
-            where: token.email 
-              ? { email: token.email as string }
-              : { id: token.id as string },
+      // ALWAYS fetch role from database - both on sign in and on every token refresh
+      // This ensures we always have the latest role, even if it was changed in the DB
+      try {
+        let dbUser = null
+        
+        // Try to find user by email first (most reliable)
+        if (token.email) {
+          dbUser = await prisma.user.findUnique({
+            where: { email: token.email as string },
             select: { id: true, role: true, email: true },
           })
-          
-          if (dbUser) {
-            token.role = dbUser.role || 'user'
-            token.id = dbUser.id
-            if (dbUser.email) token.email = dbUser.email
-            console.log('✅ JWT (refresh): Updated role from DB:', dbUser.role, 'for:', dbUser.email || dbUser.id)
-          } else {
-            console.log('⚠️ JWT (refresh): User not found in DB')
-          }
-        } catch (error) {
-          console.error('❌ JWT (refresh): Error fetching user:', error)
         }
+        
+        // Fallback: try by id if email didn't work
+        if (!dbUser && token.id) {
+          dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { id: true, role: true, email: true },
+          })
+        }
+        
+        if (dbUser) {
+          token.role = dbUser.role || 'user'
+          token.id = dbUser.id
+          if (dbUser.email) token.email = dbUser.email
+          console.log('✅ JWT: Role set from DB -', {
+            email: dbUser.email,
+            role: dbUser.role,
+            id: dbUser.id,
+            isSignIn: !!user
+          })
+        } else {
+          // User not found - set default role
+          token.role = (user as any)?.role || 'user'
+          console.log('⚠️ JWT: User not found in DB, using default role:', token.role, {
+            tokenEmail: token.email,
+            tokenId: token.id,
+            userEmail: user?.email
+          })
+        }
+      } catch (error) {
+        console.error('❌ JWT: Error fetching user from DB:', error)
+        token.role = (user as any)?.role || 'user'
       }
       
       return token
