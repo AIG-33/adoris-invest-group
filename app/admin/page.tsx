@@ -19,14 +19,11 @@ export default async function AdminPage() {
     // Get statistics
     const totalProducts = await prisma.product.count()
     const totalOrders = await prisma.order.count()
-    const pendingOrders = await prisma.order.count({
-      where: { 
-        status: {
-          equals: 'pending',
-          mode: 'insensitive'
-        }
-      },
+    // Count pending orders - use string comparison since DB might have text type
+    const allOrders = await prisma.order.findMany({
+      select: { status: true },
     })
+    const pendingOrders = allOrders.filter((o: any) => String(o.status) === 'pending').length
 
     const recentOrders = await prisma.order.findMany({
       take: 10,
