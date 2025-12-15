@@ -8,7 +8,6 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "migrate:order-email": "tsx --require dotenv/config scripts/migrate-order-email.ts",
-    "download:logos": "tsx --require dotenv/config scripts/download-manufacturer-logos-google.ts",
     "update:logos": "tsx --require dotenv/config scripts/update-all-manufacturer-logos.ts"
   },
   "prisma": {
