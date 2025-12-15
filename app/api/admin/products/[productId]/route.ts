@@ -53,6 +53,9 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ productId: string }> }
 ) {
+  let productId: string | undefined
+  let body: any = null
+  
   try {
     const session = await getServerSession(authOptions)
 
@@ -63,13 +66,14 @@ export async function PUT(
       )
     }
 
-    const { productId } = await params
+    const paramsData = await params
+    productId = paramsData.productId
     
     if (process.env.NODE_ENV === 'development') {
       console.log('Product ID from params:', productId)
     }
 
-    const body = await request.json()
+    body = await request.json()
     
     if (process.env.NODE_ENV === 'development') {
       console.log('Request body:', JSON.stringify(body, null, 2))
@@ -197,8 +201,8 @@ export async function PUT(
       name: error?.name,
       stack: error?.stack,
       meta: error?.meta,
-      productId,
-      body: process.env.NODE_ENV === 'development' ? body : undefined,
+      productId: productId || 'not defined',
+      body: body ? (process.env.NODE_ENV === 'development' ? body : 'defined') : 'not defined',
     })
     
     // Handle Prisma errors
@@ -234,7 +238,7 @@ export async function PUT(
           code: error?.code,
           name: error?.name,
           meta: error?.meta,
-          productId: productId,
+          productId: productId || 'not defined',
         }
       },
       { status: 500 }
