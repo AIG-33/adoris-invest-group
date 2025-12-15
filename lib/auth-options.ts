@@ -164,14 +164,19 @@ export const authOptions: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
+      // Always ensure role and id are set from token
+      const role = token.role ? String(token.role) : 'user'
+      const id = token.id ? String(token.id) : ''
+      
       if (session?.user) {
-        const role = token.role ? String(token.role) : 'user'
-        const id = token.id ? String(token.id) : ''
-        (session.user as any).role = role
-        (session.user as any).id = id
+        // Explicitly set role and id on session.user
+        ;(session.user as any).role = role
+        ;(session.user as any).id = id
+        
         if (token.email) {
           session.user.email = String(token.email)
         }
+        
         console.log('✅ Session callback:', {
           tokenRole: token.role,
           tokenId: token.id,
@@ -179,6 +184,7 @@ export const authOptions: NextAuthOptions = {
           sessionRole: role,
           sessionId: id,
           sessionEmail: session.user.email,
+          sessionUserBefore: JSON.stringify(session.user),
         })
         
         // Double-check: if role is still 'user' but we have email, fetch from DB one more time
@@ -197,7 +203,16 @@ export const authOptions: NextAuthOptions = {
           }
         }
       }
-      return session
+      
+      // Return session with explicit role and id
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          role: role,
+          id: id,
+        } as any,
+      }
     },
     async redirect({ url, baseUrl }) {
       // Handle redirect after sign in
