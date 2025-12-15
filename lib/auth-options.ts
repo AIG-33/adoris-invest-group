@@ -172,7 +172,30 @@ export const authOptions: NextAuthOptions = {
         if (token.email) {
           session.user.email = String(token.email)
         }
-        console.log('✅ Session: Setting role:', role, 'id:', id, 'email:', token.email)
+        console.log('✅ Session callback:', {
+          tokenRole: token.role,
+          tokenId: token.id,
+          tokenEmail: token.email,
+          sessionRole: role,
+          sessionId: id,
+          sessionEmail: session.user.email,
+        })
+        
+        // Double-check: if role is still 'user' but we have email, fetch from DB one more time
+        if (role === 'user' && token.email) {
+          try {
+            const dbUser = await prisma.user.findUnique({
+              where: { email: token.email as string },
+              select: { role: true },
+            })
+            if (dbUser && dbUser.role !== 'user') {
+              console.log('⚠️ Session: Role mismatch detected, correcting:', dbUser.role)
+              ;(session.user as any).role = dbUser.role
+            }
+          } catch (error) {
+            console.error('❌ Session: Error double-checking role:', error)
+          }
+        }
       }
       return session
     },

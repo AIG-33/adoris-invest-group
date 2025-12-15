@@ -58,7 +58,22 @@ export function Header() {
         email: session.user.email,
         status,
         willShowAdminButton: status === 'authenticated' && isAdmin,
+        fullSession: JSON.stringify(session, null, 2),
       })
+      
+      // If role is still missing after update, try direct API call
+      if (!userRole && session.user.email) {
+        console.log('⚠️ Role still missing, checking API...')
+        fetch('/api/auth/session')
+          .then(res => res.json())
+          .then(data => {
+            console.log('📡 API Session Response:', data)
+            if (data?.user && !(data.user as any)?.role) {
+              console.log('❌ Role still not in API response - JWT callback may not be working')
+            }
+          })
+          .catch(err => console.error('Error fetching session:', err))
+      }
     }
   }, [session, status])
   
