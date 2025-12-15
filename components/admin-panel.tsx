@@ -253,16 +253,22 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <h1 className="text-4xl font-bold text-white mb-8">Admin Dashboard</h1>
+      {/* Hero Section */}
+      <section className="relative bg-black text-white py-16 mb-12 -mx-6 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
+          <p className="text-lg text-white/90">Manage orders, products, and exhibitions</p>
+        </div>
+      </section>
 
       {/* Tabs */}
-      <div className="mb-8 flex gap-2 border-b border-white/20">
+      <div className="mb-8 flex gap-2 border-b border-neutral-200">
         <button
           onClick={() => setActiveTab('orders')}
           className={`px-6 py-3 font-semibold transition-all ${
             activeTab === 'orders'
-              ? 'border-b-2 border-white text-white'
-              : 'text-neutral-400 hover:text-white'
+              ? 'border-b-2 border-[#000000] text-[#000000]'
+              : 'text-neutral-600 hover:text-neutral-900'
           }`}
         >
           <span className="flex items-center gap-2">
@@ -274,8 +280,8 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
           onClick={() => setActiveTab('exhibitions')}
           className={`px-6 py-3 font-semibold transition-all ${
             activeTab === 'exhibitions'
-              ? 'border-b-2 border-white text-white'
-              : 'text-neutral-400 hover:text-white'
+              ? 'border-b-2 border-[#000000] text-[#000000]'
+              : 'text-neutral-600 hover:text-neutral-900'
           }`}
         >
           <span className="flex items-center gap-2">
@@ -290,14 +296,14 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
         <>
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div className="bg-gradient-to-br from-neutral-900 to-black rounded-2xl p-6 shadow-lg border border-white/10">
+        <div className="bg-white rounded-2xl p-6 shadow-lg border border-neutral-200">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center">
-              <Package className="w-7 h-7 text-white" />
+            <div className="w-14 h-14 bg-[#333333]/10 rounded-xl flex items-center justify-center">
+              <Package className="w-7 h-7 text-[#333333]" />
             </div>
             <div>
-              <p className="text-sm text-neutral-400 font-medium">Total Products</p>
-              <p className="text-3xl font-bold text-white">{stats?.totalProducts || 0}</p>
+              <p className="text-sm text-neutral-600 font-medium">Total Products</p>
+              <p className="text-3xl font-bold text-neutral-900">{stats?.totalProducts || 0}</p>
             </div>
           </div>
         </div>
@@ -328,8 +334,8 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
       </div>
 
       {/* Product Import */}
-      <div className="bg-gradient-to-br from-neutral-900 to-black rounded-2xl p-8 shadow-lg border border-white/10 mb-12">
-        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+      <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200 mb-12">
+        <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
           <FileSpreadsheet className="w-7 h-7 text-[#333333]" />
           Import Products from Excel/CSV
         </h2>
@@ -392,9 +398,9 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
       </div>
 
       {/* All Orders */}
-      <div className="bg-gradient-to-br from-neutral-900 to-black rounded-2xl p-8 shadow-lg border border-white/10">
+      <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-white">All Orders</h2>
+          <h2 className="text-2xl font-bold text-neutral-900">All Orders</h2>
           <button
             onClick={loadAllOrders}
             disabled={loadingOrders}

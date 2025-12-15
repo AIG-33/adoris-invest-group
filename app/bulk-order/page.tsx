@@ -8,17 +8,23 @@ export default function BulkOrderPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black py-12">
-        <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-white mb-2">
+      <main className="min-h-screen bg-white">
+        {/* Hero Section */}
+        <section className="relative bg-black text-white py-20">
+          <div className="container mx-auto px-6">
+            <div className="max-w-6xl mx-auto text-center">
+              <h1 className="text-4xl font-bold mb-2">
                 Bulk Order
               </h1>
-              <p className="text-neutral-400">
+              <p className="text-lg text-white/90">
                 Quickly add multiple products to your cart by pasting SKUs and quantities
               </p>
             </div>
+          </div>
+        </section>
+
+        <div className="container mx-auto px-6 py-12">
+          <div className="max-w-6xl mx-auto">
 
             <BulkOrderForm />
           </div>
