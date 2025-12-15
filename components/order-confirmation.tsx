@@ -156,10 +156,6 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
                 <span>Discount (15% B2B)</span>
                 <span className="font-semibold">-€{order?.discount?.toFixed?.(2)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-neutral-700">VAT (23%)</span>
-                <span className="font-semibold">€{order?.vat?.toFixed?.(2)}</span>
-              </div>
             </div>
             <div className="flex justify-between items-center text-xl font-bold border-t-2 border-neutral-900 pt-4">
               <span>Total</span>
