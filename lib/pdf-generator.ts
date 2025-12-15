@@ -108,16 +108,29 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   y += 10
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
+  
+  // Calculate discount from formData or order
+  const discount = formData?.discount || 0
+  const subtotal = Number(order?.subtotal || 0)
+  const discountRate = discount > 0 ? (discount / subtotal) * 100 : 0
+  const discountLabel = discountRate > 0 
+    ? `Volume Discount (${discountRate.toFixed(0)}%)` 
+    : 'Discount'
+  
   doc.text(`Subtotal:`, 140, y)
-  doc.text(`€${(order?.subtotal || 0)?.toFixed?.(2)}`, 175, y)
+  doc.text(`€${subtotal?.toFixed?.(2)}`, 175, y)
   y += 6
-  doc.text(`Discount (15% B2B):`, 140, y)
-  doc.setTextColor(0, 0, 0)
-  doc.text(`-€${(order?.discount || 0)?.toFixed?.(2)}`, 175, y)
-  y += 6
+  
+  if (discount > 0) {
+    doc.text(`${discountLabel}:`, 140, y)
+    doc.setTextColor(0, 0, 0)
+    doc.text(`-€${discount?.toFixed?.(2)}`, 175, y)
+    y += 6
+  }
+  
   doc.setTextColor(0, 0, 0)
   doc.text(`Subtotal (excl. VAT):`, 140, y)
-  doc.text(`€${((order?.subtotal || 0) - (order?.discount || 0))?.toFixed?.(2)}`, 175, y)
+  doc.text(`€${(subtotal - discount)?.toFixed?.(2)}`, 175, y)
   y += 8
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(12)
