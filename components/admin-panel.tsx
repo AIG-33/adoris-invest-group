@@ -668,19 +668,92 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
 
                 <div>
                   <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                    Images URLs (one per line)
+                    Images
                   </label>
-                  <textarea
-                    value={exhibitionForm.images}
-                    onChange={(e) =>
-                      setExhibitionForm({ ...exhibitionForm, images: e.target.value })
-                    }
-                    className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
-                    rows={5}
-                    placeholder="https://lh4.googleusercontent.com/w2oZgAWRit5XvJyXetISnm26XoXwG5BGuan6muWuMCaiTO_RNtqoAMvLXrT7j9Zf-QYEOyE9Oq0tbgzXDfno-3n7IC9amxL8-6FhEqBsUa5O3C8fJau_GQcWQa9fyIncH03ngV6363yd4D3OxtlStyQ"
-                  />
+                  
+                  {/* File Upload Section */}
+                  <div className="mb-4">
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-neutral-300 rounded-lg cursor-pointer bg-neutral-50 hover:bg-neutral-100 transition-colors">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="w-8 h-8 mb-2 text-neutral-400" />
+                        <p className="mb-2 text-sm text-neutral-600">
+                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          PNG, JPG, WEBP, GIF (MAX. 10MB per file)
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => handleImageUpload(e.target.files)}
+                        disabled={uploadingImages}
+                      />
+                    </label>
+                    {uploadingImages && (
+                      <div className="mt-2 flex items-center gap-2 text-sm text-neutral-600">
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        Uploading images...
+                      </div>
+                    )}
+                  </div>
+
+                  {/* URL Input Section */}
+                  <div className="mb-2">
+                    <p className="text-sm font-medium text-neutral-700 mb-2">
+                      Or paste image URLs (one per line):
+                    </p>
+                    <textarea
+                      value={exhibitionForm.images}
+                      onChange={(e) =>
+                        setExhibitionForm({ ...exhibitionForm, images: e.target.value })
+                      }
+                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
+                      rows={4}
+                      placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                    />
+                  </div>
+
+                  {/* Preview uploaded images */}
+                  {uploadedImageUrls.length > 0 && (
+                    <div className="mt-4">
+                      <p className="text-sm font-medium text-neutral-700 mb-2">
+                        Uploaded Images:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {uploadedImageUrls.map((url, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={url}
+                              alt={`Uploaded ${index + 1}`}
+                              className="w-20 h-20 object-cover rounded-lg border border-neutral-300"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newUrls = uploadedImageUrls.filter((_, i) => i !== index)
+                                setUploadedImageUrls(newUrls)
+                                const currentImages = exhibitionForm.images
+                                  .split('\n')
+                                  .map((u) => u.trim())
+                                  .filter((u) => u)
+                                const filteredImages = currentImages.filter((u) => u !== url)
+                                setExhibitionForm({ ...exhibitionForm, images: filteredImages.join('\n') })
+                              }}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <p className="mt-2 text-sm text-neutral-600">
-                    Paste one image URL per line. You can use Unsplash or other image hosting services.
+                    You can upload images from your device or paste URLs. Both methods work together.
                   </p>
                 </div>
 
