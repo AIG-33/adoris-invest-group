@@ -113,36 +113,6 @@ export async function PUT(
       )
     }
 
-    // Check if SKU is unique (excluding current product)
-    const existingProduct = await prisma.product.findFirst({
-      where: {
-        sku,
-        id: { not: productId },
-      },
-    })
-
-    if (existingProduct) {
-      return NextResponse.json(
-        { error: 'SKU already exists' },
-        { status: 400 }
-      )
-    }
-
-    // Check if slug is unique (excluding current product)
-    const existingSlug = await prisma.product.findFirst({
-      where: {
-        slug,
-        id: { not: productId },
-      },
-    })
-
-    if (existingSlug) {
-      return NextResponse.json(
-        { error: 'Slug already exists' },
-        { status: 400 }
-      )
-    }
-
     // Check if product exists
     let existingProduct = await prisma.product.findUnique({
       where: { id: productId },
@@ -150,13 +120,13 @@ export async function PUT(
 
     // If not found by ID, try to find by SKU (in case productId is actually a SKU)
     if (!existingProduct && productId.startsWith('prod_')) {
-      const sku = productId.replace('prod_', '')
+      const skuFromId = productId.replace('prod_', '')
       existingProduct = await prisma.product.findUnique({
-        where: { sku },
+        where: { sku: skuFromId },
       })
       
       if (existingProduct && process.env.NODE_ENV === 'development') {
-        console.log('Found product by SKU:', sku, 'Actual ID:', existingProduct.id)
+        console.log('Found product by SKU:', skuFromId, 'Actual ID:', existingProduct.id)
       }
     }
 
@@ -170,8 +140,38 @@ export async function PUT(
     // Use the actual product ID from database
     const actualProductId = existingProduct.id
 
+    // Check if SKU is unique (excluding current product)
+    const existingSkuProduct = await prisma.product.findFirst({
+      where: {
+        sku,
+        id: { not: actualProductId },
+      },
+    })
+
+    if (existingSkuProduct) {
+      return NextResponse.json(
+        { error: 'SKU already exists' },
+        { status: 400 }
+      )
+    }
+
+    // Check if slug is unique (excluding current product)
+    const existingSlug = await prisma.product.findFirst({
+      where: {
+        slug,
+        id: { not: actualProductId },
+      },
+    })
+
+    if (existingSlug) {
+      return NextResponse.json(
+        { error: 'Slug already exists' },
+        { status: 400 }
+      )
+    }
+
     const updatedProduct = await prisma.product.update({
-      where: { id: productId },
+      where: { id: actualProductId },
       data: {
         name,
         sku,
