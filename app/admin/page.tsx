@@ -20,7 +20,12 @@ export default async function AdminPage() {
     const totalProducts = await prisma.product.count()
     const totalOrders = await prisma.order.count()
     const pendingOrders = await prisma.order.count({
-      where: { status: 'pending' },
+      where: { 
+        status: {
+          equals: 'pending',
+          mode: 'insensitive'
+        }
+      },
     })
 
     const recentOrders = await prisma.order.findMany({
