@@ -98,16 +98,10 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           {/* Price */}
           <div className="bg-neutral-50 p-6 rounded-2xl border-2 border-neutral-200">
             <div className="text-sm text-neutral-600 uppercase tracking-wide font-semibold mb-2">
-              B2B Price (excl. VAT)
+              B2B Price
             </div>
-            <div className="text-5xl font-bold text-[#000000] mb-2">
+            <div className="text-5xl font-bold text-[#000000]">
               €{product?.price?.toLocaleString?.('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }) || '0.00'}
-            </div>
-            <div className="text-sm text-neutral-600">
-              €{priceWithVat?.toLocaleString?.('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               }) || '0.00'}
