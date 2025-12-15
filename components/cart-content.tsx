@@ -52,7 +52,7 @@ export function CartContent() {
   if (!mounted) {
     return (
       <div className="container mx-auto px-6 py-16">
-        <div className="text-center text-neutral-600">Loading cart...</div>
+        <div className="text-center text-neutral-400">Loading cart...</div>
       </div>
     )
   }
@@ -77,10 +77,10 @@ export function CartContent() {
     return (
       <div className="container mx-auto px-6 py-16">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="bg-white rounded-2xl shadow-lg p-12 border border-neutral-200">
+          <div className="bg-gradient-to-br from-neutral-900 to-black rounded-2xl shadow-lg p-12 border border-white/10">
             <div className="text-6xl mb-4">🛒</div>
-            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Your cart is empty</h2>
-            <p className="text-neutral-600 mb-8">
+            <h2 className="text-3xl font-bold text-white mb-4">Your cart is empty</h2>
+            <p className="text-neutral-400 mb-8">
               Browse our products and add items to your cart to get started.
             </p>
             <Link
@@ -99,13 +99,13 @@ export function CartContent() {
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600 mb-6 sm:mb-8">
-        <Link href="/" className="hover:text-[#333333]">Home</Link>
+      <nav className="flex items-center gap-2 text-xs sm:text-sm text-neutral-400 mb-6 sm:mb-8">
+        <Link href="/" className="hover:text-white">Home</Link>
         <span>/</span>
-        <span className="text-neutral-900 font-medium">Shopping Cart</span>
+        <span className="text-white font-medium">Shopping Cart</span>
       </nav>
 
-      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900 mb-6 sm:mb-8">Shopping Cart</h1>
+      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-6 sm:mb-8">Shopping Cart</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Cart Items */}
@@ -113,7 +113,7 @@ export function CartContent() {
           {cart?.map?.((item) => (
             <div
               key={item?.id}
-              className="bg-white rounded-xl p-3 sm:p-6 border-2 border-neutral-200 hover:border-[#333333] transition-all flex flex-col sm:flex-row gap-3 sm:gap-6"
+              className="bg-gradient-to-br from-neutral-900 to-black rounded-xl p-3 sm:p-6 border-2 border-white/10 hover:border-white/30 transition-all flex flex-col sm:flex-row gap-3 sm:gap-6"
             >
               <Link href={`/product/${item?.slug}`} className="flex-shrink-0 mx-auto sm:mx-0">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 bg-neutral-50 rounded-lg overflow-hidden">
@@ -128,32 +128,32 @@ export function CartContent() {
               </Link>
 
               <div className="flex-1 flex flex-col">
-                <div className="text-xs sm:text-sm text-[#333333] font-semibold mb-1">
+                <div className="text-xs sm:text-sm text-white/70 font-semibold mb-1">
                   {item?.manufacturer?.name}
                 </div>
                 <Link href={`/product/${item?.slug}`}>
-                  <h3 className="font-semibold text-sm sm:text-lg text-neutral-900 mb-1 hover:text-[#333333] transition-colors line-clamp-2">
+                  <h3 className="font-semibold text-sm sm:text-lg text-white mb-1 hover:text-neutral-300 transition-colors line-clamp-2">
                     {item?.name}
                   </h3>
                 </Link>
-                <p className="text-xs sm:text-sm text-neutral-600 font-mono mb-3 sm:mb-4">SKU: {item?.sku}</p>
+                <p className="text-xs sm:text-sm text-neutral-400 font-mono mb-3 sm:mb-4">SKU: {item?.sku}</p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-auto">
                   <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                    <span className="text-xs sm:text-sm font-medium text-neutral-700">Qty:</span>
-                    <div className="flex border-2 border-neutral-300 rounded-lg overflow-hidden">
+                    <span className="text-xs sm:text-sm font-medium text-neutral-300">Qty:</span>
+                    <div className="flex border-2 border-white/20 rounded-lg overflow-hidden">
                       <button
                         onClick={() => updateQuantity(item?.id, (item?.quantity || 1) - 1)}
-                        className="px-2 sm:px-3 py-1 bg-neutral-100 hover:bg-neutral-200 transition-colors"
+                        className="px-2 sm:px-3 py-1 bg-neutral-800 hover:bg-neutral-700 transition-colors text-white"
                       >
                         <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
-                      <span className="px-3 sm:px-4 py-1 font-semibold border-x-2 border-neutral-300 min-w-[40px] sm:min-w-[50px] text-center text-sm">
+                      <span className="px-3 sm:px-4 py-1 font-semibold border-x-2 border-white/20 min-w-[40px] sm:min-w-[50px] text-center text-sm text-white">
                         {item?.quantity}
                       </span>
                       <button
                         onClick={() => updateQuantity(item?.id, (item?.quantity || 1) + 1)}
-                        className="px-2 sm:px-3 py-1 bg-neutral-100 hover:bg-neutral-200 transition-colors"
+                        className="px-2 sm:px-3 py-1 bg-neutral-800 hover:bg-neutral-700 transition-colors text-white"
                       >
                         <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
@@ -161,7 +161,7 @@ export function CartContent() {
                   </div>
 
                   <div className="flex items-center justify-between w-full sm:w-auto sm:text-right gap-3">
-                    <div className="text-lg sm:text-2xl font-bold text-[#000000]">
+                    <div className="text-lg sm:text-2xl font-bold text-white">
                       €{((item?.price || 0) * (item?.quantity || 0))?.toLocaleString?.('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -182,11 +182,11 @@ export function CartContent() {
 
         {/* Order Summary */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl p-4 sm:p-6 border-2 border-neutral-200 shadow-lg lg:sticky lg:top-24">
-            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6">💼 Order Summary</h2>
+          <div className="bg-gradient-to-br from-neutral-900 to-black rounded-2xl p-4 sm:p-6 border-2 border-white/10 shadow-lg lg:sticky lg:top-24">
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">💼 Order Summary</h2>
 
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-sm sm:text-base">
-              <div className="flex justify-between text-neutral-700">
+              <div className="flex justify-between text-neutral-300">
                 <span>Subtotal ({cart?.length} items)</span>
                 <span className="font-semibold">
                   €{subtotal?.toLocaleString?.('en-US', {
@@ -230,17 +230,17 @@ export function CartContent() {
               </div>
             </div>
 
-            <div className="border-t-2 border-neutral-900 pt-3 sm:pt-4 mb-4 sm:mb-6">
+            <div className="border-t-2 border-white/20 pt-3 sm:pt-4 mb-4 sm:mb-6">
               <div className="flex justify-between items-center">
-                <span className="text-lg sm:text-xl font-bold text-neutral-900">Total</span>
-                <span className="text-2xl sm:text-3xl font-bold text-[#000000]">
+                <span className="text-lg sm:text-xl font-bold text-white">Total</span>
+                <span className="text-2xl sm:text-3xl font-bold text-white">
                   €{total?.toLocaleString?.('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   }) || '0.00'}
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-neutral-600 text-center mt-2">Including 23% VAT</p>
+              <p className="text-xs sm:text-sm text-neutral-400 text-center mt-2">Including 23% VAT</p>
             </div>
 
             <button
@@ -251,7 +251,7 @@ export function CartContent() {
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            <div className="mt-4 sm:mt-6 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-neutral-600">
+            <div className="mt-4 sm:mt-6 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-neutral-400">
               <div className="flex items-center gap-2">
                 <span>✅</span>
                 <span>Free shipping on orders over €5,000</span>

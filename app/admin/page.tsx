@@ -61,7 +61,7 @@ export default async function AdminPage() {
     }
 
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-gray-900 to-black">
         <Header />
         <main className="flex-1">
           <AdminPanel
@@ -82,13 +82,13 @@ export default async function AdminPage() {
       console.error('Admin page error:', error)
     }
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-gray-900 to-black">
         <Header />
         <main className="flex-1 container mx-auto px-6 py-12">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h1 className="text-2xl font-bold text-red-900 mb-2">Error Loading Admin Panel</h1>
-            <p className="text-red-700">An error occurred while loading the admin panel. Please try refreshing the page.</p>
-            <p className="text-sm text-red-600 mt-2">Error: {error instanceof Error ? error.message : 'Unknown error'}</p>
+          <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-6 text-white">
+            <h1 className="text-2xl font-bold text-red-200 mb-2">Error Loading Admin Panel</h1>
+            <p className="text-red-300">An error occurred while loading the admin panel. Please try refreshing the page.</p>
+            <p className="text-sm text-red-400 mt-2">Error: {error instanceof Error ? error.message : 'Unknown error'}</p>
           </div>
         </main>
         <Footer />

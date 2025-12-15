@@ -8,14 +8,14 @@ export default function BulkOrderPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-neutral-50 py-12">
+      <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black py-12">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             <div className="mb-8">
-              <h1 className="text-4xl font-bold text-[#000000] mb-2">
+              <h1 className="text-4xl font-bold text-white mb-2">
                 Bulk Order
               </h1>
-              <p className="text-neutral-600">
+              <p className="text-neutral-400">
                 Quickly add multiple products to your cart by pasting SKUs and quantities
               </p>
             </div>
