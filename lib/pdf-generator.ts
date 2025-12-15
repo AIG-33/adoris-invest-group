@@ -18,11 +18,17 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   doc.setFont('helvetica', 'normal')
   doc.text('Medical Laboratory Equipment & Supplies', 15, 28)
 
-  // Order Confirmation Title
+  // Order Request Title
   doc.setTextColor(0, 0, 0)
   doc.setFontSize(20)
   doc.setFont('helvetica', 'bold')
-  doc.text('ORDER CONFIRMATION', 15, 55)
+  doc.text('Order Request', 15, 55)
+  
+  // Thank you message
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(0, 0, 0)
+  doc.text('Thank you for your request. After reviewing it, we will get back to you shortly.', 15, 62)
 
   // Order Info Box
   doc.setFontSize(10)
@@ -112,9 +118,6 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   doc.setTextColor(0, 0, 0)
   doc.text(`Subtotal (excl. VAT):`, 140, y)
   doc.text(`€${((order?.subtotal || 0) - (order?.discount || 0))?.toFixed?.(2)}`, 175, y)
-  y += 6
-  doc.text(`VAT (23%):`, 140, y)
-  doc.text(`€${(order?.vat || 0)?.toFixed?.(2)}`, 175, y)
   y += 8
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(12)

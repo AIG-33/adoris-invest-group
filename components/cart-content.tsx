@@ -70,7 +70,7 @@ export function CartContent() {
   
   const discount = subtotal * discountRate
   const subtotalAfterDiscount = subtotal - discount
-  const vat = subtotalAfterDiscount * 0.23 // 23% VAT
+  const vat = 0 // VAT is always 0%
   const total = subtotalAfterDiscount + vat
 
   if (cart?.length === 0) {
@@ -225,15 +225,6 @@ export function CartContent() {
                   }) || '0.00'}
                 </span>
               </div>
-              <div className="flex justify-between text-neutral-700">
-                <span>VAT (23%)</span>
-                <span className="font-semibold">
-                  €{vat?.toLocaleString?.('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }) || '0.00'}
-                </span>
-              </div>
             </div>
 
             <div className="border-t-2 border-neutral-900 pt-3 sm:pt-4 mb-4 sm:mb-6">
@@ -246,7 +237,6 @@ export function CartContent() {
                   }) || '0.00'}
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-neutral-600 text-center mt-2">Including 23% VAT</p>
             </div>
 
             <button
@@ -256,21 +246,6 @@ export function CartContent() {
               Proceed to Checkout
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-
-            <div className="mt-4 sm:mt-6 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-neutral-600">
-              <div className="flex items-center gap-2">
-                <span>✅</span>
-                <span>Free shipping on orders over €5,000</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span>✅</span>
-                <span>2-year warranty included</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span>✅</span>
-                <span>30-day return policy</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

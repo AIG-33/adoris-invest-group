@@ -112,10 +112,10 @@ export function CheckoutForm() {
   }
   // 0% for orders below €50,000
   
-  const discount = subtotal * discountRate
-  const subtotalAfterDiscount = subtotal - discount
-  const vat = subtotalAfterDiscount * 0.23
-  const total = subtotalAfterDiscount + vat
+        const discount = subtotal * discountRate
+        const subtotalAfterDiscount = subtotal - discount
+        const vat = 0 // VAT is always 0%
+        const total = subtotalAfterDiscount + vat
 
   const handleSubmit = async (e: React.FormEvent) => {
     e?.preventDefault?.()
@@ -476,10 +476,6 @@ export function CheckoutForm() {
                   <span className="font-semibold">-€{discount?.toFixed?.(2)}</span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span className="text-neutral-700">VAT (23%)</span>
-                <span className="font-semibold">€{vat?.toFixed?.(2)}</span>
-              </div>
             </div>
 
             <div className="border-t-2 border-neutral-900 pt-4 mb-6">
@@ -489,7 +485,6 @@ export function CheckoutForm() {
                   €{total?.toFixed?.(2)}
                 </span>
               </div>
-              <p className="text-xs text-center text-neutral-600 mt-2">Including VAT</p>
             </div>
 
             <button
