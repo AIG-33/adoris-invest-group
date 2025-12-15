@@ -7,28 +7,20 @@ import { useEffect, useState } from 'react'
 
 const heroSlides = [
   {
-    title: 'MedNAIS™',
-    subtitle: 'Enhancing Medical SOPs and streamline healthcare operations',
-    description: 'MedNAIS™ must have FREE App for medical nurses and laboratory professionals',
-    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1920&h=1080&fit=crop',
-    cta: 'MORE INFO',
-    link: 'https://mednais.com',
-  },
-  {
-    title: 'ILabU™ Kits',
-    subtitle: 'Open new revenues for your IVD business',
-    description: 'Easy to use at-home sample collection set, designed to make testing accessible from the comfort of your home',
-    image: 'https://immunoserv.com/wp-content/uploads/bb-plugin/cache/827A3079-landscape-db75b79966d420a6479b7be6c0af29a7-fqtkhsu3vy0j.jpg',
-    cta: 'MORE INFO',
-    link: 'https://ilabu.io',
-  },
-  {
     title: 'Reagents & Disposables',
     subtitle: 'Premium Quality Medical Supplies',
     description: 'Original products from top European manufacturers with full compliance',
     image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1920&h=1080&fit=crop',
     cta: 'Shop Now',
     link: '/products',
+  },
+  {
+    title: 'Bulk Order',
+    subtitle: 'Save Time with Automated Ordering',
+    description: 'Simply paste catalog numbers and quantities - your order is automatically created. This feature saves time by streamlining the ordering process.',
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=1080&fit=crop',
+    cta: 'Try Bulk Order',
+    link: '/bulk-order',
   },
 ]
 

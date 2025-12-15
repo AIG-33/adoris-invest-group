@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2 } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import {
@@ -266,6 +266,21 @@ export function Header() {
                     <Calendar className="w-4 h-4" />
                     <span>Exhibitions</span>
                   </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <a href="https://mednais.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
+                    <Package className="w-4 h-4" />
+                    <span>MedNAIS™</span>
+                    <ExternalLink className="w-3 h-3 ml-auto" />
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="https://ilabu.io" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
+                    <Package className="w-4 h-4" />
+                    <span>iLabU™</span>
+                    <ExternalLink className="w-3 h-3 ml-auto" />
+                  </a>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

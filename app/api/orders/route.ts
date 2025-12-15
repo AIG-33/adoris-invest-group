@@ -33,10 +33,8 @@ export async function POST(request: Request) {
       userId,
     } = body
 
-    // Generate order number
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`
 
-    // Build billing address string with all additional info
     const billingAddressParts = []
     if (address) billingAddressParts.push(address)
     if (city) billingAddressParts.push(city)
@@ -54,7 +52,6 @@ export async function POST(request: Request) {
       ? billingAddressParts.join(', ') 
       : null
 
-    // Create order
     const order = await prisma.order.create({
       data: {
         orderNumber,
@@ -89,10 +86,8 @@ export async function POST(request: Request) {
       },
     })
 
-    // Generate PDF
     const pdfBuffer = await generateOrderPDF(order, body)
 
-    // Send email with PDF
     await sendOrderConfirmationEmail({
       to: email,
       orderNumber,
