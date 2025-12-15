@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2 } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, Shield } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import {
@@ -283,6 +283,17 @@ export function Header() {
               </div>
               <span className="hidden sm:inline">Cart</span>
             </Link>
+
+            {/* Admin Panel Link - Only for admins */}
+            {status === 'authenticated' && session?.user && (session?.user as any)?.role === 'admin' && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+              >
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">ADMIN</span>
+              </Link>
+            )}
 
             {/* My Account Dropdown Menu */}
             {status === 'authenticated' && session?.user ? (
