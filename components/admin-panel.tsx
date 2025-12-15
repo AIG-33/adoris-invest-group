@@ -54,7 +54,9 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
         toast.error('Failed to load orders')
       }
     } catch (error) {
-      console.error('Error loading orders:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error loading orders:', error)
+      }
       toast.error('Error loading orders')
     } finally {
       setLoadingOrders(false)

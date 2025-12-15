@@ -67,7 +67,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Bulk order error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Bulk order error:', error);
+    }
     return NextResponse.json(
       { error: 'Failed to process bulk order' },
       { status: 500 }

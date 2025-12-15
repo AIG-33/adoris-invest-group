@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
-// GET - получить профиль пользователя
+// GET - Get user profile
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
@@ -90,7 +90,9 @@ export async function GET() {
 
     return NextResponse.json({ profile: user })
   } catch (error) {
-    console.error('Profile fetch error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Profile fetch error:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to fetch profile' },
       { status: 500 }
@@ -98,7 +100,7 @@ export async function GET() {
   }
 }
 
-// PUT - обновить профиль пользователя
+// PUT - Update user profile
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions)
@@ -113,18 +115,15 @@ export async function PUT(request: Request) {
     const userId = (session.user as any).id
     const userEmail = session.user.email
 
-    // Determine the actual user id to use
     let actualUserId = userId
 
-    // If userId is empty or undefined, find user by email
     if (!userId || userId === '') {
       if (!userEmail) {
         return NextResponse.json(
-          { error: 'User ID or email is required' },
-          { status: 400 }
-        )
-      }
-      // Find user by email first to get id
+        { error: 'User ID or email is required' },
+        { status: 400 }
+      )
+    }
       const existingUser = await prisma.user.findUnique({
         where: { email: userEmail },
         select: { id: true },
@@ -133,11 +132,9 @@ export async function PUT(request: Request) {
       if (!existingUser) {
         return NextResponse.json(
           { error: 'User not found' },
-          { status: 404 }
-        )
-      }
-
-      // Use the found user id
+        { status: 404 }
+      )
+    }
       actualUserId = existingUser.id
     }
 
@@ -157,7 +154,6 @@ export async function PUT(request: Request) {
       paymentMethod,
     } = body
 
-    // Update user profile
     const updatedUser = await prisma.user.update({
       where: { id: actualUserId },
       data: {
@@ -172,7 +168,6 @@ export async function PUT(request: Request) {
         country: country || null,
         department: department || null,
         paymentMethod: paymentMethod || null,
-        // Update name if firstName or lastName provided
         name: firstName && lastName 
           ? `${firstName} ${lastName}` 
           : firstName || lastName || undefined,
@@ -200,7 +195,9 @@ export async function PUT(request: Request) {
       profile: updatedUser 
     })
   } catch (error) {
-    console.error('Profile update error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Profile update error:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to update profile' },
       { status: 500 }

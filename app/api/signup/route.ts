@@ -39,7 +39,6 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         name: name || email.split('@')[0],
-        updatedAt: new Date(), // Добавлено это поле
       },
     })
 
@@ -47,10 +46,7 @@ export async function POST(request: Request) {
     sendWelcomeEmail({ 
       to: user.email as string, 
       name: (user.name || 'User') as string 
-    }).catch(error => {
-      console.error('Failed to send welcome email:', error)
-      // Don't fail the registration if email fails
-    })
+    }).catch(() => {})
 
     return NextResponse.json(
       {
@@ -63,7 +59,9 @@ export async function POST(request: Request) {
       { status: 201 }
     )
   } catch (error) {
-    console.error('Signup error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Signup error:', error)
+    }
     return NextResponse.json(
       { error: 'Something went wrong' },
       { status: 500 }

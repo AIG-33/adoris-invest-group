@@ -47,7 +47,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json(products);
   } catch (error) {
-    console.error('Search error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Search error:', error);
+    }
     return NextResponse.json(
       { error: 'Failed to search products' },
       { status: 500 }

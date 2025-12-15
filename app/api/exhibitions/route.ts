@@ -12,7 +12,9 @@ export async function GET() {
 
     return NextResponse.json(exhibitions)
   } catch (error) {
-    console.error('Error fetching exhibitions:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching exhibitions:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to fetch exhibitions' },
       { status: 500 }
@@ -52,7 +54,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(exhibition, { status: 201 })
   } catch (error) {
-    console.error('Error creating exhibition:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error creating exhibition:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to create exhibition' },
       { status: 500 }
@@ -85,7 +89,9 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting exhibition:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error deleting exhibition:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to delete exhibition' },
       { status: 500 }

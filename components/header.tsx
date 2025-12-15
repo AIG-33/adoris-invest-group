@@ -32,52 +32,12 @@ export function Header() {
   const [cartCount, setCartCount] = useState(0)
   const [sessionUpdated, setSessionUpdated] = useState(false)
   
-  // Force session update on mount if role is missing
   useEffect(() => {
     if (status === 'authenticated' && session?.user && !(session.user as any)?.role && !sessionUpdated) {
-      console.log('🔄 Header: Role missing, forcing session update...')
-      update().then(() => {
-        setSessionUpdated(true)
-        console.log('✅ Header: Session updated')
-      }).catch(err => {
-        console.error('❌ Header: Error updating session:', err)
-      })
+      update().then(() => setSessionUpdated(true)).catch(() => {})
     }
   }, [status, session, update, sessionUpdated])
   
-  // Debug: log session info
-  useEffect(() => {
-    if (session?.user) {
-      const userRole = (session.user as any)?.role
-      const isAdmin = userRole === 'admin'
-      console.log('🔍 Header Session Debug:', {
-        user: session.user,
-        role: userRole,
-        isAdmin: isAdmin,
-        id: (session.user as any)?.id,
-        email: session.user.email,
-        status,
-        willShowAdminButton: status === 'authenticated' && isAdmin,
-        fullSession: JSON.stringify(session, null, 2),
-      })
-      
-      // If role is still missing after update, try direct API call
-      if (!userRole && session.user.email) {
-        console.log('⚠️ Role still missing, checking API...')
-        fetch('/api/auth/session')
-          .then(res => res.json())
-          .then(data => {
-            console.log('📡 API Session Response:', data)
-            if (data?.user && !(data.user as any)?.role) {
-              console.log('❌ Role still not in API response - JWT callback may not be working')
-            }
-          })
-          .catch(err => console.error('Error fetching session:', err))
-      }
-    }
-  }, [session, status])
-  
-  // Check if user is admin
   const isAdmin = status === 'authenticated' && session?.user && (session.user as any)?.role === 'admin'
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [showDropdown, setShowDropdown] = useState(false)

@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
-// GET - получить все заказы (только для админа)
+// GET - Get all orders (admin only)
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
@@ -45,7 +45,9 @@ export async function GET() {
 
     return NextResponse.json({ orders })
   } catch (error) {
-    console.error('Error fetching orders:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching orders:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to fetch orders' },
       { status: 500 }

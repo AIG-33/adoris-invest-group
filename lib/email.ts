@@ -266,23 +266,21 @@ export async function sendOrderConfirmationEmail({
       ],
     }
 
-    await transporter.sendMail(mailOptions)
-    console.log('✅ Order confirmation email sent to:', to)
+          await transporter.sendMail(mailOptions)
 
-    // Also send copy to supplier
-    await transporter.sendMail({
-      ...mailOptions,
-      to: 'info@ivdgroup.eu',
-      subject: `🆕 New Order: ${orderNumber} - ${customerName}`,
-    })
-    console.log('✅ Order copy sent to: info@ivdgroup.eu')
+          await transporter.sendMail({
+            ...mailOptions,
+            to: 'info@ivdgroup.eu',
+            subject: `🆕 New Order: ${orderNumber} - ${customerName}`,
+          })
 
-    return { success: true }
-  } catch (error) {
-    console.error('❌ Error sending order confirmation email:', error)
-    // Don't throw error - order should still be created even if email fails
-    return { success: false, error }
-  }
+          return { success: true }
+        } catch (error) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error sending order confirmation email:', error)
+          }
+          return { success: false, error }
+        }
 }
 
 // Send welcome email after registration
@@ -426,12 +424,13 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
       `,
     })
 
-    console.log('✅ Welcome email sent to:', to)
-    return { success: true }
-  } catch (error) {
-    console.error('❌ Error sending welcome email:', error)
-    return { success: false, error }
-  }
+          return { success: true }
+        } catch (error) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error sending welcome email:', error)
+          }
+          return { success: false, error }
+        }
 }
 
 // Send magic link email
@@ -481,10 +480,11 @@ export async function sendMagicLinkEmail({ to, url }: MagicLinkEmailOptions) {
       `,
     })
 
-    console.log('✅ Magic link email sent to:', to)
     return { success: true }
   } catch (error) {
-    console.error('❌ Error sending magic link email:', error)
-    throw error // Magic link should fail if email can't be sent
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error sending magic link email:', error)
+    }
+    throw error
   }
 }

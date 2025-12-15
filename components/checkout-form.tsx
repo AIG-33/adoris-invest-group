@@ -81,7 +81,9 @@ export function CheckoutForm() {
           }
         })
         .catch(error => {
-          console.error('Error loading profile:', error)
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error loading profile:', error)
+          }
         })
     }
   }, [session])
@@ -145,7 +147,9 @@ export function CheckoutForm() {
       window?.dispatchEvent?.(new Event('cartUpdated'))
       router?.push?.(`/order-confirmation/${result?.orderNumber}`)
     } catch (error) {
-      console.error('Order error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Order error:', error)
+      }
       alert('Failed to place order. Please try again.')
     } finally {
       setLoading(false)

@@ -60,11 +60,11 @@ export async function POST(request: Request) {
         orderNumber,
         userId: userId || null,
         customerName: `${firstName} ${lastName}`,
-        customerEmail: email, // Fixed: use customerEmail instead of email
+        customerEmail: email,
         customerPhone: phone && phone.trim() !== '' ? phone : null,
         billingAddress: billingAddress || null,
         subtotal,
-        tax: vat, // tax field in schema maps to vat from form
+        tax: vat,
         total,
         status: 'pending',
         items: {
@@ -102,7 +102,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, orderNumber }, { status: 201 })
   } catch (error) {
-    console.error('Order creation error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Order creation error:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to create order' },
       { status: 500 }

@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
-// PUT - обновить статус заказа (только для админа)
+// PUT - Update order status (admin only)
 export async function PUT(
   request: Request,
   { params }: { params: { orderId: string } }
@@ -25,7 +25,6 @@ export async function PUT(
     const body = await request.json()
     const { status } = body
 
-    // Validate status
     const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
@@ -60,7 +59,9 @@ export async function PUT(
 
     return NextResponse.json({ order: updatedOrder })
   } catch (error) {
-    console.error('Error updating order status:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error updating order status:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to update order status' },
       { status: 500 }
@@ -68,7 +69,7 @@ export async function PUT(
   }
 }
 
-// DELETE - удалить заказ (только для админа)
+// DELETE - Delete order (admin only)
 export async function DELETE(
   request: Request,
   { params }: { params: { orderId: string } }
@@ -85,14 +86,15 @@ export async function DELETE(
 
     const { orderId } = params
 
-    // Удаляем заказ (OrderItem удалятся автоматически из-за onDelete: Cascade)
     await prisma.order.delete({
       where: { id: orderId },
     })
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting order:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error deleting order:', error)
+    }
     return NextResponse.json(
       { error: 'Failed to delete order' },
       { status: 500 }

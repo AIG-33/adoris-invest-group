@@ -23,17 +23,11 @@ export const authOptions: NextAuthOptions = {
       // Custom email send function using our email utility
       async sendVerificationRequest({ identifier: email, url }) {
         try {
-          console.log('\n🔐 MAGIC LINK LOGIN REQUEST')
-          console.log('═══════════════════════════════════════')
-          console.log(`📧 Sending to: ${email}`)
-          console.log(`🔗 Magic Link: ${url}`)
-          console.log('═══════════════════════════════════════\n')
-
           await sendMagicLinkEmail({ to: email, url })
-          
-          console.log('✅ Magic link email sent successfully\n')
         } catch (error) {
-          console.error('❌ Error sending magic link email:', error)
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Error sending magic link email:', error)
+          }
           throw new Error('Could not send magic link email')
         }
       },
@@ -83,45 +77,21 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   callbacks: {
-    async signIn({ user, account, profile, email }) {
-      // Allow sign in for email provider
-      if (account?.provider === 'email') {
-        // Check if user exists in database
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email || email?.verificationRequest?.identifier },
-        })
-        
-        if (existingUser) {
-          // User exists, allow sign in
-          console.log('✅ Email sign in: User found', existingUser.email)
-          return true
-        } else {
-          // User doesn't exist, PrismaAdapter will create it
-          console.log('✅ Email sign in: Creating new user')
-          return true
-        }
-      }
-      
-      // Allow sign in for credentials provider
-      if (account?.provider === 'credentials') {
+    async signIn({ user, account }) {
+      if (account?.provider === 'email' || account?.provider === 'credentials') {
         return true
       }
-      
       return true
     },
-    async jwt({ token, user, account }) {
-      // On initial sign in, set basic token info
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
         token.email = user.email || (user as any).email
       }
       
-      // ALWAYS fetch role from database - both on sign in and on every token refresh
-      // This ensures we always have the latest role, even if it was changed in the DB
       try {
         let dbUser = null
         
-        // Try to find user by email first (most reliable)
         if (token.email) {
           dbUser = await prisma.user.findUnique({
             where: { email: token.email as string },
@@ -129,7 +99,6 @@ export const authOptions: NextAuthOptions = {
           })
         }
         
-        // Fallback: try by id if email didn't work
         if (!dbUser && token.id) {
           dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
@@ -141,35 +110,23 @@ export const authOptions: NextAuthOptions = {
           token.role = dbUser.role || 'user'
           token.id = dbUser.id
           if (dbUser.email) token.email = dbUser.email
-          console.log('✅ JWT: Role set from DB -', {
-            email: dbUser.email,
-            role: dbUser.role,
-            id: dbUser.id,
-            isSignIn: !!user
-          })
         } else {
-          // User not found - set default role
           token.role = (user as any)?.role || 'user'
-          console.log('⚠️ JWT: User not found in DB, using default role:', token.role, {
-            tokenEmail: token.email,
-            tokenId: token.id,
-            userEmail: user?.email
-          })
         }
       } catch (error) {
-        console.error('❌ JWT: Error fetching user from DB:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('JWT: Error fetching user from DB:', error)
+        }
         token.role = (user as any)?.role || 'user'
       }
       
       return token
     },
     async session({ session, token }) {
-      // Always ensure role and id are set from token
       const role = token.role ? String(token.role) : 'user'
       const id = token.id ? String(token.id) : ''
       
       if (session?.user) {
-        // Explicitly set role and id on session.user
         ;(session.user as any).role = role
         ;(session.user as any).id = id
         
@@ -177,17 +134,6 @@ export const authOptions: NextAuthOptions = {
           session.user.email = String(token.email)
         }
         
-        console.log('✅ Session callback:', {
-          tokenRole: token.role,
-          tokenId: token.id,
-          tokenEmail: token.email,
-          sessionRole: role,
-          sessionId: id,
-          sessionEmail: session.user.email,
-          sessionUserBefore: JSON.stringify(session.user),
-        })
-        
-        // Double-check: if role is still 'user' but we have email, fetch from DB one more time
         if (role === 'user' && token.email) {
           try {
             const dbUser = await prisma.user.findUnique({
@@ -195,16 +141,16 @@ export const authOptions: NextAuthOptions = {
               select: { role: true },
             })
             if (dbUser && dbUser.role !== 'user') {
-              console.log('⚠️ Session: Role mismatch detected, correcting:', dbUser.role)
               ;(session.user as any).role = dbUser.role
             }
           } catch (error) {
-            console.error('❌ Session: Error double-checking role:', error)
+            if (process.env.NODE_ENV === 'development') {
+              console.error('Session: Error checking role:', error)
+            }
           }
         }
       }
       
-      // Return session with explicit role and id
       return {
         ...session,
         user: {

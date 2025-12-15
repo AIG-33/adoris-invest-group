@@ -16,13 +16,11 @@ export default async function AdminPage() {
       redirect('/auth/login')
     }
 
-    // Get statistics
-    const totalProducts = await prisma.product.count()
-    const totalOrders = await prisma.order.count()
-    // Count pending orders - use string comparison since DB might have text type
-    const allOrders = await prisma.order.findMany({
-      select: { status: true },
-    })
+    const [totalProducts, totalOrders, allOrders] = await Promise.all([
+      prisma.product.count(),
+      prisma.order.count(),
+      prisma.order.findMany({ select: { status: true } }),
+    ])
     const pendingOrders = allOrders.filter((o: any) => String(o.status) === 'pending').length
 
     const recentOrders = await prisma.order.findMany({
@@ -56,7 +54,9 @@ export default async function AdminPage() {
         orderBy: { startDate: 'desc' },
       })
     } catch (error) {
-      console.error('Error fetching exhibitions:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error fetching exhibitions:', error)
+      }
       exhibitions = []
     }
 
@@ -78,7 +78,9 @@ export default async function AdminPage() {
       </div>
     )
   } catch (error) {
-    console.error('Admin page error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Admin page error:', error)
+    }
     return (
       <div className="min-h-screen flex flex-col">
         <Header />

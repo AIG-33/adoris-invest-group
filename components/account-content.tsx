@@ -79,7 +79,9 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
           }
         }
       } catch (error) {
-        console.error('Error loading profile:', error)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading profile:', error)
+        }
       } finally {
         setProfileLoading(false)
       }
