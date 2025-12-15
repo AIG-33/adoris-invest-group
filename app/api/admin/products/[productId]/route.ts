@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  { params }: { params: { productId: string } }
+  { params }: { params: Promise<{ productId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -20,7 +20,7 @@ export async function GET(
       )
     }
 
-    const { productId } = params
+    const { productId } = await params
 
     const product = await prisma.product.findUnique({
       where: { id: productId },
@@ -51,7 +51,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { productId: string } }
+  { params }: { params: Promise<{ productId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -63,7 +63,7 @@ export async function PUT(
       )
     }
 
-    const { productId } = params
+    const { productId } = await params
     const body = await request.json()
 
     const {
@@ -78,9 +78,28 @@ export async function PUT(
     } = body
 
     // Validate required fields
-    if (!name || !sku || !slug || !price || !categoryId || !manufacturerId) {
+    if (!name || !sku || !slug || price === undefined || price === null || !categoryId || !manufacturerId) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { 
+          error: 'Missing required fields',
+          details: {
+            name: !!name,
+            sku: !!sku,
+            slug: !!slug,
+            price: price !== undefined && price !== null,
+            categoryId: !!categoryId,
+            manufacturerId: !!manufacturerId,
+          }
+        },
+        { status: 400 }
+      )
+    }
+
+    // Validate price is a valid number
+    const priceNum = parseFloat(price)
+    if (isNaN(priceNum) || priceNum < 0) {
+      return NextResponse.json(
+        { error: 'Invalid price. Must be a positive number.' },
         { status: 400 }
       )
     }
@@ -115,6 +134,18 @@ export async function PUT(
       )
     }
 
+    // Check if product exists
+    const existingProduct = await prisma.product.findUnique({
+      where: { id: productId },
+    })
+
+    if (!existingProduct) {
+      return NextResponse.json(
+        { error: 'Product not found' },
+        { status: 404 }
+      )
+    }
+
     const updatedProduct = await prisma.product.update({
       where: { id: productId },
       data: {
@@ -122,7 +153,7 @@ export async function PUT(
         sku,
         slug,
         description: description || null,
-        price: parseFloat(price),
+        price: priceNum,
         image: image || null,
         categoryId,
         manufacturerId,
@@ -134,12 +165,31 @@ export async function PUT(
     })
 
     return NextResponse.json({ product: updatedProduct })
-  } catch (error) {
+  } catch (error: any) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Error updating product:', error)
     }
+    
+    // Handle Prisma errors
+    if (error?.code === 'P2002') {
+      return NextResponse.json(
+        { error: 'SKU or slug already exists' },
+        { status: 400 }
+      )
+    }
+    
+    if (error?.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Product not found' },
+        { status: 404 }
+      )
+    }
+
     return NextResponse.json(
-      { error: 'Failed to update product' },
+      { 
+        error: 'Failed to update product',
+        message: process.env.NODE_ENV === 'development' ? error?.message : undefined
+      },
       { status: 500 }
     )
   }

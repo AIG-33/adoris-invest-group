@@ -57,9 +57,12 @@ export function EditProductForm({ product, categories, manufacturers }: EditProd
         body: JSON.stringify(formData),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to update product')
+        const errorMessage = data.error || 'Failed to update product'
+        const errorDetails = data.details ? ` Details: ${JSON.stringify(data.details)}` : ''
+        throw new Error(errorMessage + errorDetails)
       }
 
       toast.success('Product updated successfully!')
@@ -67,6 +70,9 @@ export function EditProductForm({ product, categories, manufacturers }: EditProd
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message)
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Update error:', error)
+        }
       } else {
         toast.error('Failed to update product')
       }
