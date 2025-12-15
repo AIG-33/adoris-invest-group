@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth-options'
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { existsSync } from 'fs'
+import { uploadToS3 } from '@/lib/s3'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,28 +48,44 @@ export async function POST(request: Request) {
     const fileExtension = file.name.split('.').pop() || 'jpg'
     const filename = `exhibition-${timestamp}-${randomString}.${fileExtension}`
 
-    // Try to save to local filesystem first (for development/local servers)
+    // Convert file to buffer
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
+    // Try S3 upload first if configured
+    if (process.env.AWS_S3_BUCKET_NAME) {
+      try {
+        const publicUrl = await uploadToS3(buffer, filename, file.type)
+        return NextResponse.json({ url: publicUrl }, { status: 200 })
+      } catch (s3Error) {
+        const errorMessage = s3Error instanceof Error ? s3Error.message : 'S3 upload failed'
+        if (process.env.NODE_ENV === 'development') {
+          console.error('S3 upload error:', s3Error)
+        }
+        // Fall through to try local filesystem
+      }
+    }
+
+    // Try to save to local filesystem (for development/local servers)
     try {
       const exhibitionsDir = join(process.cwd(), 'public', 'exhibitions')
       if (!existsSync(exhibitionsDir)) {
         await mkdir(exhibitionsDir, { recursive: true })
       }
       const filepath = join(exhibitionsDir, filename)
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
       await writeFile(filepath, buffer)
       const publicUrl = `/exhibitions/${filename}`
       return NextResponse.json({ url: publicUrl }, { status: 200 })
     } catch (fsError) {
-      // If filesystem write fails (e.g., on Vercel), return error with details
+      // If both S3 and filesystem fail, return error
       const errorMessage = fsError instanceof Error ? fsError.message : 'File system write failed'
       if (process.env.NODE_ENV === 'development') {
         console.error('Filesystem write error:', fsError)
       }
       return NextResponse.json(
         { 
-          error: 'Failed to save image to file system. This may not be supported on your hosting platform.',
-          details: process.env.NODE_ENV === 'development' ? errorMessage : 'Please use image URLs instead of file uploads, or configure S3 storage.'
+          error: 'Failed to save image. Please configure AWS S3 or use image URLs instead.',
+          details: process.env.NODE_ENV === 'development' ? errorMessage : 'File upload is not available on this platform. Please use image URLs.'
         },
         { status: 500 }
       )
