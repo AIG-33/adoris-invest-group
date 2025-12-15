@@ -51,7 +51,7 @@ export default async function AdminPage() {
     let exhibitions = []
     try {
       exhibitions = await prisma.exhibition.findMany({
-        orderBy: { startDate: 'desc' },
+        orderBy: { createdAt: 'desc' },
       })
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {

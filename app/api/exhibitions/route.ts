@@ -7,7 +7,7 @@ import { authOptions } from '@/lib/auth-options'
 export async function GET() {
   try {
     const exhibitions = await prisma.exhibition.findMany({
-      orderBy: { startDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
     })
 
     return NextResponse.json(exhibitions)

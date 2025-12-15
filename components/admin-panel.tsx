@@ -29,7 +29,8 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
   const [exhibitionForm, setExhibitionForm] = useState({
     title: '',
     description: '',
-    date: '',
+    startDate: '',
+    endDate: '',
     location: '',
     images: '',
     featured: false,
@@ -157,7 +158,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
   const handleExhibitionSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!exhibitionForm.title || !exhibitionForm.date || !exhibitionForm.location) {
+    if (!exhibitionForm.title || !exhibitionForm.startDate || !exhibitionForm.endDate || !exhibitionForm.location) {
       toast.error('Please fill in all required fields')
       return
     }
@@ -172,8 +173,12 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...exhibitionForm,
-          images,
+          title: exhibitionForm.title,
+          description: exhibitionForm.description,
+          startDate: exhibitionForm.startDate,
+          endDate: exhibitionForm.endDate,
+          location: exhibitionForm.location,
+          images: images,
         }),
       })
 
@@ -548,13 +553,28 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
 
                   <div>
                     <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                      Date *
+                      Start Date *
                     </label>
                     <input
                       type="date"
-                      value={exhibitionForm.date}
+                      value={exhibitionForm.startDate}
                       onChange={(e) =>
-                        setExhibitionForm({ ...exhibitionForm, date: e.target.value })
+                        setExhibitionForm({ ...exhibitionForm, startDate: e.target.value })
+                      }
+                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                      End Date *
+                    </label>
+                    <input
+                      type="date"
+                      value={exhibitionForm.endDate}
+                      onChange={(e) =>
+                        setExhibitionForm({ ...exhibitionForm, endDate: e.target.value })
                       }
                       className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#000000] focus:border-transparent"
                       required
@@ -704,7 +724,7 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
                     <div className="space-y-2 mb-4">
                       <div className="flex items-center gap-2 text-sm text-neutral-600">
                         <Calendar className="w-4 h-4 text-[#000000]" />
-                        {new Date(exhibition.date).toLocaleDateString('en-US', {
+                        {new Date(exhibition.startDate || exhibition.endDate || exhibition.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',

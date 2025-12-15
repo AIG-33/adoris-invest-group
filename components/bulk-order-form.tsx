@@ -191,10 +191,10 @@ SKU003\t10`;
       </div>
 
       {/* Results Section */}
-      <div className="bg-gradient-to-br from-neutral-900 to-black rounded-lg shadow-sm border border-white/10 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Package className="w-5 h-5 text-white" />
-          <h2 className="text-xl font-bold text-white">Results</h2>
+          <Package className="w-5 h-5 text-[#666666]" />
+          <h2 className="text-xl font-bold text-[#000000]">Results</h2>
         </div>
 
         {!result ? (

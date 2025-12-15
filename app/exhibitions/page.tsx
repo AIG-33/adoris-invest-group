@@ -8,15 +8,23 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 
 export default async function ExhibitionsPage() {
-  const exhibitions = await prisma.exhibition.findMany({
-    orderBy: { startDate: 'desc' },
-  })
+  let exhibitions = []
+  try {
+    exhibitions = await prisma.exhibition.findMany({
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching exhibitions:', error)
+    }
+    exhibitions = []
+  }
 
   const upcomingExhibitions = exhibitions.filter(
-    (ex: any) => new Date(ex.date) >= new Date()
+    (ex: any) => new Date(ex.startDate || ex.endDate) >= new Date()
   )
   const pastExhibitions = exhibitions.filter(
-    (ex: any) => new Date(ex.date) < new Date()
+    (ex: any) => new Date(ex.endDate || ex.startDate) < new Date()
   )
 
   return (
@@ -130,7 +138,8 @@ function ExhibitionCard({
   isUpcoming: boolean
 }) {
   const mainImage = (exhibition.images && exhibition.images[0] && exhibition.images[0].length > 0) ? exhibition.images[0] : '/placeholder.svg'
-  const formattedDate = new Date(exhibition.date).toLocaleDateString('en-US', {
+  const exhibitionDate = exhibition.startDate || exhibition.endDate || new Date()
+  const formattedDate = new Date(exhibitionDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
