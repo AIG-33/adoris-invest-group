@@ -2,6 +2,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { Sidebar } from '@/components/sidebar'
 import { ProductGrid } from '@/components/product-grid'
+import { SortDropdown } from '@/components/sort-dropdown'
 import { prisma } from '@/lib/db'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
@@ -15,6 +16,7 @@ type SearchParams = {
   minPrice?: string
   maxPrice?: string
   page?: string
+  sort?: string
 }
 
 type Props = {
@@ -24,7 +26,7 @@ type Props = {
 const ITEMS_PER_PAGE = 9
 
 export default async function ProductsPage({ searchParams }: Props) {
-  const { search, category, manufacturer, minPrice, maxPrice, page } = searchParams
+  const { search, category, manufacturer, minPrice, maxPrice, page, sort } = searchParams
   const currentPage = parseInt(page || '1')
 
   // Build where clause
@@ -51,6 +53,14 @@ export default async function ProductsPage({ searchParams }: Props) {
     if (maxPrice) where.price.lte = parseFloat(maxPrice)
   }
 
+  // Build orderBy clause
+  let orderBy: any = { createdAt: 'desc' }
+  if (sort === 'price-asc') {
+    orderBy = { price: 'asc' }
+  } else if (sort === 'price-desc') {
+    orderBy = { price: 'desc' }
+  }
+
   // Get total count for pagination
   const totalProducts = await prisma.product.count({ where })
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
@@ -62,7 +72,7 @@ export default async function ProductsPage({ searchParams }: Props) {
       category: true,
       manufacturer: true,
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy,
     skip: (currentPage - 1) * ITEMS_PER_PAGE,
     take: ITEMS_PER_PAGE,
   })
@@ -73,16 +83,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     price: Number(p.price),
   }))
 
-  // Fetch all categories and manufacturers for filters with product counts
-  const categories = await prisma.category.findMany({
-    orderBy: { name: 'asc' },
-    include: {
-      _count: {
-        select: { products: true },
-      },
-    },
-  })
-
+  // Fetch manufacturers for filters with product counts
   const manufacturers = await prisma.manufacturer.findMany({
     orderBy: { name: 'asc' },
     include: {
@@ -100,6 +101,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     if (manufacturer) params.set('manufacturer', manufacturer)
     if (minPrice) params.set('minPrice', minPrice)
     if (maxPrice) params.set('maxPrice', maxPrice)
+    if (sort) params.set('sort', sort)
     if (pageNum > 1) params.set('page', pageNum.toString())
     return `/products?${params.toString()}`
   }
@@ -112,9 +114,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           <div className="flex flex-col gap-8 lg:flex-row">
             <aside className="lg:w-64">
               <Sidebar
-                categories={categories}
                 manufacturers={manufacturers}
-                selectedCategory={category}
                 selectedManufacturer={manufacturer}
               />
             </aside>
@@ -123,6 +123,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                 <p className="text-neutral-400 text-sm">
                   Showing {products.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, totalProducts)} of {totalProducts} products
                 </p>
+                <SortDropdown currentSort={sort} />
               </div>
               
               <ProductGrid products={products} />

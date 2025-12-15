@@ -6,23 +6,18 @@ import Link from 'next/link'
 import { X, Package, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface SidebarProps {
-  categories: any[]
   manufacturers: any[]
-  selectedCategory?: string
   selectedManufacturer?: string
 }
 
-const INITIAL_SHOW_COUNT = 10
+const INITIAL_SHOW_COUNT = 20
 
 export function Sidebar({
-  categories,
   manufacturers,
-  selectedCategory,
   selectedManufacturer,
 }: SidebarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [showAllCategories, setShowAllCategories] = useState(false)
   const [showAllManufacturers, setShowAllManufacturers] = useState(false)
 
   const updateFilter = (key: string, value: string) => {
@@ -41,12 +36,8 @@ export function Sidebar({
     router?.push?.('/products')
   }
 
-  const hasFilters = selectedCategory || selectedManufacturer
+  const hasFilters = selectedManufacturer
 
-  const displayedCategories = showAllCategories 
-    ? categories 
-    : categories?.slice(0, INITIAL_SHOW_COUNT)
-    
   const displayedManufacturers = showAllManufacturers 
     ? manufacturers 
     : manufacturers?.slice(0, INITIAL_SHOW_COUNT)
@@ -64,55 +55,6 @@ export function Sidebar({
             >
               <X className="w-4 h-4" />
               Clear all
-            </button>
-          )}
-        </div>
-
-        {/* Categories */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-neutral-700 uppercase tracking-wide mb-3">
-            Categories
-          </h3>
-          <div className="space-y-2">
-            {displayedCategories?.map?.((cat) => (
-              <label
-                key={cat?.id}
-                className="flex items-center gap-3 cursor-pointer group"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedCategory === cat?.slug}
-                  onChange={(e) =>
-                    updateFilter('category', e?.target?.checked ? cat?.slug : '')
-                  }
-                  className="w-4 h-4 text-[#333333] border-neutral-300 rounded focus:ring-[#333333]"
-                />
-                <span className="flex-1 text-sm text-neutral-700 group-hover:text-[#333333]">
-                  {cat?.name}
-                </span>
-                <span className="text-xs text-neutral-400">
-                  {cat?._count?.products || 0}
-                </span>
-              </label>
-            )) || []}
-          </div>
-          
-          {categories && categories.length > INITIAL_SHOW_COUNT && (
-            <button
-              onClick={() => setShowAllCategories(!showAllCategories)}
-              className="mt-3 text-sm text-[#333333] hover:text-[#1a1a1a] font-medium flex items-center gap-1 w-full justify-center"
-            >
-              {showAllCategories ? (
-                <>
-                  <ChevronUp className="w-4 h-4" />
-                  <span>Show less</span>
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-4 h-4" />
-                  <span>Show all ({categories.length})</span>
-                </>
-              )}
             </button>
           )}
         </div>
