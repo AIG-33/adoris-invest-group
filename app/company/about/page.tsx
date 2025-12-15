@@ -265,7 +265,7 @@ export default function AboutPage() {
                   <strong>Contact Us:</strong>
                 </p>
                 <p className="text-neutral-700">
-                  📧 ceo@adorisgroup.com | 📞 +48 881 049 959
+                  📧 ceo@adorisgroup.com | 📞 +48793081310
                 </p>
                 <p className="text-neutral-600 text-sm mt-2">
                   ADORIS INVEST GROUP OÜ | Ruunaoja tn 3-36, 11415 Tallinn, Estonia

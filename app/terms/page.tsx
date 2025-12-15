@@ -180,10 +180,10 @@ export default function TermsPage() {
                   📧 ceo@adorisgroup.com
                 </a>
                 <a
-                  href="tel:+48881049959"
+                  href="tel:+48793081310"
                   className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors"
                 >
-                  📞 +48 881 049 959
+                  📞 +48793081310
                 </a>
               </div>
             </div>

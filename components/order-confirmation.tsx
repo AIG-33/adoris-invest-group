@@ -188,8 +188,8 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
             <a href="mailto:info@adorisgroup.com" className="text-[#333333] hover:underline">
               📧 info@adorisgroup.com
             </a>
-            <a href="tel:+48123456789" className="text-[#333333] hover:underline">
-              📞 +48 123 456 789
+            <a href="tel:+48793081310" className="text-[#333333] hover:underline">
+              📞 +48793081310
             </a>
           </div>
         </div>

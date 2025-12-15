@@ -130,7 +130,7 @@ export function Header() {
           <div className="flex justify-between items-center text-xs lg:text-sm">
             <div className="flex items-center gap-2 lg:gap-4">
               <span className="truncate">📧 ceo@adorisgroup.com</span>
-              <span className="hidden sm:inline">📞 +48 881 049 959</span>
+              <span className="hidden sm:inline">📞 +48793081310</span>
             </div>
             <div className="hidden lg:flex items-center gap-4">
               <span>ADORIS INVEST GROUP OÜ | Tallinn, Estonia</span>

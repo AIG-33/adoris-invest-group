@@ -77,7 +77,7 @@ export function Footer() {
                 <span className="font-semibold">Email:</span> ceo@adorisgroup.com
               </li>
               <li className="text-neutral-300">
-                <span className="font-semibold">Phone:</span> +48 881 049 959
+                <span className="font-semibold">Phone:</span> +48793081310
               </li>
               <li className="text-neutral-300 hidden sm:block">
                 <span className="font-semibold">Website:</span> www.adorisgroup.com

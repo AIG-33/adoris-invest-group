@@ -348,7 +348,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       value={profileData.phone}
                       onChange={handleProfileChange}
                       className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
-                      placeholder="+48 123 456 789"
+                      placeholder="+48793081310"
                     />
                   </div>
                 </div>
