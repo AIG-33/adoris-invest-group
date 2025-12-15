@@ -117,14 +117,26 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email
       }
       
-      // If signing in with email, fetch user from database to get role
-      if (account?.provider === 'email' && token.email && !token.role) {
+      // Always fetch latest role from database to ensure it's up to date
+      if (token.email) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email as string },
+          select: { id: true, role: true },
         })
         if (dbUser) {
-          token.role = dbUser.role
+          token.role = dbUser.role || 'user'
           token.id = dbUser.id
+        }
+      } else if (token.id) {
+        // Fallback: if we have id but no email, fetch by id
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { id: true, role: true, email: true },
+        })
+        if (dbUser) {
+          token.role = dbUser.role || 'user'
+          token.id = dbUser.id
+          token.email = dbUser.email
         }
       }
       

@@ -285,14 +285,16 @@ export function Header() {
             </Link>
 
             {/* Admin Panel Link - Only for admins */}
-            {status === 'authenticated' && session?.user && (session?.user as any)?.role === 'admin' && (
-              <Link
-                href="/admin"
-                className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors text-xs sm:text-sm lg:text-base"
-              >
-                <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">ADMIN</span>
-              </Link>
+            {status === 'authenticated' && session?.user && (
+              (session?.user as any)?.role === 'admin' && (
+                <Link
+                  href="/admin"
+                  className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+                >
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="hidden sm:inline">ADMIN</span>
+                </Link>
+              )
             )}
 
             {/* My Account Dropdown Menu */}
