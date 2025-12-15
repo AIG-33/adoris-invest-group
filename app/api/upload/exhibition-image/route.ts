@@ -41,28 +41,38 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create exhibitions directory if it doesn't exist
-    const exhibitionsDir = join(process.cwd(), 'public', 'exhibitions')
-    if (!existsSync(exhibitionsDir)) {
-      await mkdir(exhibitionsDir, { recursive: true })
-    }
-
     // Generate unique filename
     const timestamp = Date.now()
     const randomString = Math.random().toString(36).substring(2, 15)
     const fileExtension = file.name.split('.').pop() || 'jpg'
     const filename = `exhibition-${timestamp}-${randomString}.${fileExtension}`
-    const filepath = join(exhibitionsDir, filename)
 
-    // Convert file to buffer and save
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filepath, buffer)
-
-    // Return the public URL
-    const publicUrl = `/exhibitions/${filename}`
-
-    return NextResponse.json({ url: publicUrl }, { status: 200 })
+    // Try to save to local filesystem first (for development/local servers)
+    try {
+      const exhibitionsDir = join(process.cwd(), 'public', 'exhibitions')
+      if (!existsSync(exhibitionsDir)) {
+        await mkdir(exhibitionsDir, { recursive: true })
+      }
+      const filepath = join(exhibitionsDir, filename)
+      const bytes = await file.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+      await writeFile(filepath, buffer)
+      const publicUrl = `/exhibitions/${filename}`
+      return NextResponse.json({ url: publicUrl }, { status: 200 })
+    } catch (fsError) {
+      // If filesystem write fails (e.g., on Vercel), return error with details
+      const errorMessage = fsError instanceof Error ? fsError.message : 'File system write failed'
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Filesystem write error:', fsError)
+      }
+      return NextResponse.json(
+        { 
+          error: 'Failed to save image to file system. This may not be supported on your hosting platform.',
+          details: process.env.NODE_ENV === 'development' ? errorMessage : 'Please use image URLs instead of file uploads, or configure S3 storage.'
+        },
+        { status: 500 }
+      )
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     const errorStack = error instanceof Error ? error.stack : undefined
