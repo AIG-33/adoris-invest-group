@@ -150,16 +150,28 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
             <div className="space-y-2 text-sm mb-4">
               <div className="flex justify-between">
                 <span className="text-neutral-700">Subtotal</span>
-                <span className="font-semibold">€{order?.subtotal?.toFixed?.(2)}</span>
+                <span className="font-semibold">€{Number(order?.subtotal || 0)?.toFixed?.(2)}</span>
               </div>
-              <div className="flex justify-between text-[#666666]">
-                <span>Discount (15% B2B)</span>
-                <span className="font-semibold">-€{order?.discount?.toFixed?.(2)}</span>
-              </div>
+              {(() => {
+                const subtotal = Number(order?.subtotal || 0)
+                const total = Number(order?.total || 0)
+                const discount = subtotal - total
+                const discountRate = subtotal > 0 ? (discount / subtotal) * 100 : 0
+                
+                if (discount > 0) {
+                  return (
+                    <div className="flex justify-between text-[#666666]">
+                      <span>Volume Discount ({discountRate.toFixed(0)}%)</span>
+                      <span className="font-semibold">-€{discount?.toFixed?.(2)}</span>
+                    </div>
+                  )
+                }
+                return null
+              })()}
             </div>
             <div className="flex justify-between items-center text-xl font-bold border-t-2 border-neutral-900 pt-4">
               <span>Total</span>
-              <span className="text-[#000000]">€{order?.total?.toFixed?.(2)}</span>
+              <span className="text-[#000000]">€{Number(order?.total || 0)?.toFixed?.(2)}</span>
             </div>
           </div>
         </div>
