@@ -190,16 +190,27 @@ export async function PUT(
 
     return NextResponse.json({ product: updatedProduct })
   } catch (error: any) {
-    console.error('Error updating product:', error)
-    console.error('Error stack:', error?.stack)
-    console.error('Error code:', error?.code)
-    console.error('Error meta:', error?.meta)
+    // Always log errors for debugging
+    console.error('❌ Error updating product:', {
+      message: error?.message,
+      code: error?.code,
+      name: error?.name,
+      stack: error?.stack,
+      meta: error?.meta,
+      productId,
+      body: process.env.NODE_ENV === 'development' ? body : undefined,
+    })
     
     // Handle Prisma errors
     if (error?.code === 'P2002') {
       const field = error?.meta?.target?.[0] || 'field'
       return NextResponse.json(
-        { error: `${field} already exists`, code: 'P2002' },
+        { 
+          error: `${field} already exists`, 
+          code: 'P2002',
+          field: field,
+          target: error?.meta?.target
+        },
         { status: 400 }
       )
     }
@@ -211,16 +222,20 @@ export async function PUT(
       )
     }
 
+    // Return detailed error in development, generic in production
     return NextResponse.json(
       { 
         error: 'Failed to update product',
         message: error?.message || 'Unknown error',
-        code: error?.code,
-        details: process.env.NODE_ENV === 'development' ? {
+        code: error?.code || 'UNKNOWN',
+        name: error?.name,
+        details: {
           message: error?.message,
           code: error?.code,
+          name: error?.name,
           meta: error?.meta,
-        } : undefined
+          productId: productId,
+        }
       },
       { status: 500 }
     )

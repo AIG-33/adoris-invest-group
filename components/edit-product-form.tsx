@@ -61,20 +61,38 @@ export function EditProductForm({ product, categories, manufacturers }: EditProd
 
       if (!response.ok) {
         const errorMessage = data.error || 'Failed to update product'
-        const errorDetails = data.details ? ` Details: ${JSON.stringify(data.details)}` : ''
+        let errorDetails = ''
+        
+        if (data.details) {
+          errorDetails = ` Details: ${JSON.stringify(data.details)}`
+        }
+        if (data.message) {
+          errorDetails += ` Message: ${data.message}`
+        }
+        if (data.code) {
+          errorDetails += ` Code: ${data.code}`
+        }
+        
+        console.error('API Error Response:', {
+          status: response.status,
+          error: data.error,
+          message: data.message,
+          code: data.code,
+          details: data.details,
+          fullResponse: data
+        })
+        
         throw new Error(errorMessage + errorDetails)
       }
 
       toast.success('Product updated successfully!')
       router.push(`/product/${formData.slug}`)
     } catch (error) {
+      console.error('Update error:', error)
       if (error instanceof Error) {
-        toast.error(error.message)
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Update error:', error)
-        }
+        toast.error(error.message || 'Failed to update product')
       } else {
-        toast.error('Failed to update product')
+        toast.error('Failed to update product. Please check the console for details.')
       }
     } finally {
       setLoading(false)
