@@ -190,7 +190,8 @@ export function AdminPanel({ stats, recentOrders, exhibitions = [] }: AdminPanel
         setExhibitionForm({
           title: '',
           description: '',
-          date: '',
+          startDate: '',
+          endDate: '',
           location: '',
           images: '',
           featured: false,
