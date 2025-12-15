@@ -26,10 +26,24 @@ interface SearchResult {
 }
 
 export function Header() {
-  const { data: session, status } = useSession() || {}
+  const { data: session, status, update } = useSession() || {}
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [cartCount, setCartCount] = useState(0)
+  const [sessionUpdated, setSessionUpdated] = useState(false)
+  
+  // Force session update on mount if role is missing
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user && !(session.user as any)?.role && !sessionUpdated) {
+      console.log('🔄 Header: Role missing, forcing session update...')
+      update().then(() => {
+        setSessionUpdated(true)
+        console.log('✅ Header: Session updated')
+      }).catch(err => {
+        console.error('❌ Header: Error updating session:', err)
+      })
+    }
+  }, [status, session, update, sessionUpdated])
   
   // Debug: log session info
   useEffect(() => {
