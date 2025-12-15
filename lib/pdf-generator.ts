@@ -134,7 +134,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   y += 5
   doc.text('Payment Instructions: Bank transfer details will be provided in a separate email.', 15, y)
   y += 5
-  doc.text('For questions, contact us at ceo@adorisgroup.com or +48 881 049 959', 15, y)
+  doc.text('For questions, contact us at ceo@adorisgroup.com or +48793081310', 15, y)
 
   // Company Footer
   const pageHeight = doc.internal.pageSize.height
