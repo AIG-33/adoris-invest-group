@@ -120,14 +120,14 @@ SKU003\t10`;
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Input Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
+      <div className="bg-gradient-to-br from-neutral-900 to-black rounded-lg shadow-sm border border-white/10 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Upload className="w-5 h-5 text-[#333333]" />
-          <h2 className="text-xl font-bold text-[#000000]">Enter Products</h2>
+          <Upload className="w-5 h-5 text-white" />
+          <h2 className="text-xl font-bold text-white">Enter Products</h2>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-neutral-700 mb-2">
+          <label className="block text-sm font-medium text-neutral-300 mb-2">
             Paste SKUs and Quantities
             <span className="text-neutral-500 ml-2">
               (one per line, separated by tab, comma, or space)
@@ -137,7 +137,7 @@ SKU003\t10`;
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={`Example:\n${exampleText}`}
-            className="w-full h-64 px-4 py-3 border-2 border-neutral-200 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10 transition-all font-mono text-sm"
+            className="w-full h-64 px-4 py-3 bg-neutral-800 border-2 border-white/20 rounded-lg focus:border-white/40 focus:outline-none focus:ring-4 focus:ring-white/10 transition-all font-mono text-sm text-white"
           />
         </div>
 
@@ -165,25 +165,25 @@ SKU003\t10`;
               setResult(null);
               setError('');
             }}
-            className="px-6 py-3 border-2 border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors font-semibold text-neutral-700"
+            className="px-6 py-3 border-2 border-white/20 rounded-lg hover:bg-white/10 transition-colors font-semibold text-white"
           >
             Clear
           </button>
         </div>
 
         {error && (
-          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="mt-4 p-4 bg-red-900/30 border border-red-500/30 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-red-200">{error}</p>
           </div>
         )}
 
         {/* Format Guide */}
-        <div className="mt-6 p-4 bg-neutral-50 rounded-lg">
-          <h3 className="font-semibold text-sm text-neutral-700 mb-2">Format Guide:</h3>
-          <ul className="text-sm text-neutral-600 space-y-1">
+        <div className="mt-6 p-4 bg-neutral-800/50 rounded-lg">
+          <h3 className="font-semibold text-sm text-white mb-2">Format Guide:</h3>
+          <ul className="text-sm text-neutral-300 space-y-1">
             <li>• One product per line</li>
-            <li>• Format: <code className="bg-white px-2 py-0.5 rounded font-mono text-xs">SKU [TAB/COMMA/SPACE] Quantity</code></li>
+            <li>• Format: <code className="bg-neutral-900 px-2 py-0.5 rounded font-mono text-xs text-white">SKU [TAB/COMMA/SPACE] Quantity</code></li>
             <li>• Quantity is optional (defaults to 1)</li>
             <li>• SKU must match exactly (case-insensitive)</li>
           </ul>
@@ -191,10 +191,10 @@ SKU003\t10`;
       </div>
 
       {/* Results Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
+      <div className="bg-gradient-to-br from-neutral-900 to-black rounded-lg shadow-sm border border-white/10 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Package className="w-5 h-5 text-[#666666]" />
-          <h2 className="text-xl font-bold text-[#000000]">Results</h2>
+          <Package className="w-5 h-5 text-white" />
+          <h2 className="text-xl font-bold text-white">Results</h2>
         </div>
 
         {!result ? (
