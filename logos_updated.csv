@@ -1,101 +1,277 @@
 name;logo
-AAT Bioquest;/logos/aat-bioquest.png
-Ab Sciex;/logos/ab-sciex.png
-Abbexa;/logos/abbexa.png
-Abbott;/logos/abbott.png
-Abbott Laboratories;/logos/abbott-laboratories.png
-abcam;/logos/abcam.png
-abclonal;/logos/abclonal.png
-ABCR;/logos/abcr.png
-ABCR GMBH;/logos/abcr-gmbh.png
-ABM;/logos/abm.png
-Abnova;/logos/abnova.png
-Abren;/logos/abren.png
-AcroBiosystems;/logos/acrobiosystems.png
-Acros;/logos/acros.png
-Actif Motif;/logos/actif-motif.png
-Active Motif;/logos/active-motif.png
-AdooQ Bioscience;/logos/adooq-bioscience.png
-Advanced instruments;/logos/advanced-instruments.png
-Affinity Bio;/logos/affinity-bio.png
-Agdia;/logos/agdia.png
-AHN;/logos/ahn.png
-AJ Innuscreen GmbH;/logos/aj-innuscreen-gmbh.png
-Alfa Aesar;/logos/alfa-aesar.png
-Alomone;
-Alpha Diagnostic;/logos/alpha-diagnostic.png
-Amresco;
-amsbio;/logos/amsbio.png
-Analytik Jena;/logos/analytik-jena.png
-Anamed;/logos/anamed.png
-Anaspec;/logos/anaspec.png
-Ancell;/logos/ancell.png
-Antibodies Incorporated;/logos/antibodies-incorporated.png
-antibodies-online;/logos/antibodies-online.png
-Apollo Scientific;/logos/apollo-scientific.png
-AppliChem;/logos/applichem.png
-Applichem;/logos/applichem.png
-Applied Biosystems;/logos/applied-biosystems.png
-Arigo;
-ARP;/logos/arp.png
-AssayGenie;/logos/assaygenie.png
-AssayMax;/logos/assaymax.png
-AssayPro;/logos/assaypro.png
-Associates of Cape Cod;/logos/associates-of-cape-cod.png
-ATCC;/logos/atcc.png
-Atlas;/logos/atlas.png
-Avanti;/logos/avanti.png
-Avantor;/logos/avantor.png
-Aven;/logos/aven.png
-Aviva systems biology;/logos/aviva-systems-biology.png
-Axygen;/logos/axygen.png
-Bachem;/logos/bachem.png
-BD;/logos/bd.png
-Beckman Coulter Inc.;/logos/beckman-coulter-inc.png
-Bel-Art;/logos/bel-art.png
-Bethyl;/logos/bethyl.png
-Bio SB;/logos/bio-sb.png
-Bio-Techne;/logos/bio-techne.png
-Bio X Cell;/logos/bio-x-cell.png
-Bioanalytic;/logos/bioanalytic.png
-BioAssaySystems;/logos/bioassaysystems.png
-BIOBASIC;/logos/biobasic.png
-Biocare;/logos/biocare.png
-BioCat;/logos/biocat.png
-Biochrom;/logos/biochrom.png
-BioGems;/logos/biogems.png
-Biohit;/logos/biohit.png
-BioIVT;/logos/bioivt.png
-BioLegend;/logos/biolegend.png
-Biologix;/logos/biologix.png
-Biomatik;
-BioMedica;/logos/biomedica.png
-Biomerieux;/logos/biomerieux.png
-Biorad;/logos/biorad.png
-Biorbyt;
-Biosera;/logos/biosera.png
-BIOSYNTH;
-Biotec;
-Biotechne;/logos/biotechne.png
-Biotium;/logos/biotium.png
-BioVendor R&D;
-Biowest;/logos/biowest.png
-BIOXCELL;/logos/bioxcell.png
-Biozol;/logos/biozol.png
-Biozym;/logos/biozym.png
-Boster Bio;/logos/boster-bio.png
-BPS Bioscience;/logos/bps-bioscience.png
-Brand;/logos/brand.png
-Brandtech;/logos/brandtech.png
-CalBioChem;/logos/calbiochem.png
-CANDOR;/logos/candor.png
-Capitol Scientific;/logos/capitol-scientific.png
-Capricorn;/logos/capricorn.png
-Carl Roth;/logos/carl-roth.png
-CAYMAN CHEMICAL;/logos/cayman-chemical.png
-Cedarlane;/logos/cedarlane.png
-cell marque;/logos/cell-marque.png
-Cell Signaling;
-CellScript;/logos/cellscript.png
-ChemScene;/logos/chemscene.png
-CHROMagar;/logos/chromagar.png
+CloneMedia;/logos/clonemedia.png
+Cloud-Clone;/logos/cloud-clone.png
+CoaChrom;/logos/coachrom.png
+CondaLab;/logos/condalab.png
+Cook Medical;/logos/cook-medical.png
+Corning;/logos/corning.png
+Covaris;/logos/covaris.png
+Covidien;/logos/covidien.png
+CPAChem;/logos/cpachem.png
+Creative Biolabs;/logos/creative-biolabs.png
+Creative Diagnostics;/logos/creative-diagnostics.png
+Creative Enzymes;/logos/creative-enzymes.png
+CUSABIO;/logos/cusabio.png
+Cygnus;/logos/cygnus.png
+Cytiva;/logos/cytiva.png
+Cytognos;/logos/cytognos.png
+Cytomark;/logos/cytomark.png
+DeNovix;/logos/denovix.png
+Diagenode;/logos/diagenode.png
+Diagnostic Biosystems;/logos/diagnostic-biosystems.png
+Diagnostica Stago;/logos/diagnostica-stago.png
+dianova;/logos/dianova.png
+Diversified Biotech;/logos/diversified-biotech.png
+DOHLER;/logos/dohler.png
+Dr. Ehrenstorfer;/logos/dr-ehrenstorfer.png
+Dr. Möller & Schmelz;/logos/dr-möller-schmelz.png
+Dr.Ehrenstorfer;/logos/drehrenstorfer.png
+Dr Ehrenstorfer;/logos/dr-ehrenstorfer.png
+DRG;/logos/drg.png
+DUCHEFA Biochemie;/logos/duchefa-biochemie.png
+DWK Life Sciences;/logos/dwk-life-sciences.png
+Dynex;/logos/dynex.png
+eBioScience;/logos/ebioscience.png
+Echelon;/logos/echelon.png
+EDQM;/logos/edqm.png
+EKF;/logos/ekf.png
+Elabscience;/logos/elabscience.png
+Electron Microscopy Sciences;/logos/electron-microscopy-sciences.png
+ELK Biotechnology;/logos/elk-biotechnology.png
+Empire Genomics;/logos/empire-genomics.png
+Enzo;/logos/enzo.png
+Eppendorf;/logos/eppendorf.png
+Epredia;/logos/epredia.png
+Ethicon;/logos/ethicon.png
+EURx;/logos/eurx.png
+Exbio;/logos/exbio.png
+Fine Biotech;/logos/fine-biotech.png
+FineTest;/logos/finetest.png
+FUJIFILM;/logos/fujifilm.png
+Fuller;/logos/fuller.png
+G-Biosciences;/logos/g-biosciences.png
+GE Healthcare;/logos/ge-healthcare.png
+GeneTex;/logos/genetex.png
+Geno Chem;/logos/geno-chem.png
+GenScript;/logos/genscript.png
+Gerbu;/logos/gerbu.png
+Gibco;/logos/gibco.png
+Gilson;/logos/gilson.png
+GL Sciences;/logos/gl-sciences.png
+Glen Research;/logos/glen-research.png
+GoldBio;/logos/goldbio.png
+Grace Bio-Labs;/logos/grace-bio-labs.png
+Grant Instruments;/logos/grant-instruments.png
+Greiner;/logos/greiner.png
+Hach;/logos/hach.png
+Hamilton;/logos/hamilton.png
+Hampton Research;/logos/hampton-research.png
+Hanna;/logos/hanna.png
+Hellma;/logos/hellma.png
+Hello Bio;/logos/hello-bio.png
+HemoCue;/logos/hemocue.png
+HERMLE;/logos/hermle.png
+HiMedia;/logos/himedia.png
+Honeywell;/logos/honeywell.png
+HPC;/logos/hpc.png
+HPS;/logos/hps.png
+HTL;/logos/htl.png
+Hygiena;/logos/hygiena.png
+HYPHEN;/logos/hyphen.png
+iba-lifescience;/logos/iba-lifescience.png
+iba-lifesciences;/logos/iba-lifesciences.png
+IBA LifeSciences;/logos/iba-lifesciences.png
+IBIDI;/logos/ibidi.png
+IDT;/logos/idt.png
+IL;
+Illumina;/logos/illumina.png
+Immundiagnostik;/logos/immundiagnostik.png
+Innovative research;/logos/innovative-research.png
+Innuscreen;/logos/innuscreen.png
+Instrumentation Laboratory;/logos/instrumentation-laboratory.png
+Intact Genomics;/logos/intact-genomics.png
+Integrated DNA technologies;/logos/integrated-dna-technologies.png
+Invitrogen;/logos/invitrogen.png
+Invivogen;
+IQ Products;/logos/iq-products.png
+Iris-biotech;/logos/iris-biotech.png
+Irvine scientific;/logos/irvine-scientific.png
+IVD Group Sp. z o.o.;
+J.T. Baker;/logos/jt-baker.png
+Jackson Immuno Research;/logos/jackson-immuno-research.png
+Jena;/logos/jena.png
+Jet Biofil;/logos/jet-biofil.png
+Jiangsu Huida Medical Instruments Co.\;
+Karl Storz;
+Kementec;
+Krishgen;/logos/krishgen.png
+Kyokuto;
+Labor Diagnostika;/logos/labor-diagnostika.png
+Larodan;/logos/larodan.png
+Leinco Technologies;/logos/leinco-technologies.png
+LGC;
+Life Technologies Corporation;
+LKT;
+LKT Labs;/logos/lkt-labs.png
+LOEWE;
+Logos;
+Lonza;
+Lubio;
+Lucigen;
+Ludger;
+Mabtech;
+Macherey-Nagel;
+MCE;
+medac;
+MedChemExpress;
+Megazyme;
+Mercedes Scientific;
+Merck;
+Metrohm;
+METTLER TOLEDO;
+Mikromol;
+Millipore;
+Minerva;
+MoBiTec;
+Molecular Probes;
+Monosan;
+Morphisto;
+MP Biomedicals;
+MRC holland;
+MyBioSource;
+MZ;
+Nalgene;
+NEB;/logos/neb.png
+neoFroxx;
+NeoLab;
+Neubauer;
+NIBSC;
+Nimagen;
+NIPPON;
+Nordic-Mubio;
+NovusBio;
+Nunc;
+Omega;
+Orgentec;
+Ortho;/logos/ortho.png
+Oxford Nanopore Technologies;
+OZ Biosciences;
+PanReac;
+PeproTech;
+Perkin Elmer;
+Phadia;/logos/phadia.png
+PhytoTech;
+Pierce;
+pluriSelect;
+Polysciences;
+PROGEN;
+Promega;
+PromoCell;
+ProSci-Inc;
+prospec;
+ProteinSimple;
+Proteintech;
+QA bio;
+QED Bioscience;
+Qiagen;
+Quidel;
+R-Biopharm;
+R&D Systems;
+Radiometer;
+Randox Laboratories Ltd.;
+RayBiotech;
+RD_Tocris;
+Reagecon;
+Reprocell;
+Retsch;
+Roche;/logos/roche.png
+Roche Diagnostics;
+Rockland;
+RWD Life Science;
+SAB;
+SAFC;
+Santa Crus;
+Santa Cruz;
+Sapphire;
+Sarstedt;
+Sartorius;
+SBI;
+Scharlab;
+Scharlau;
+Sciex;
+Sebia;
+Selleck;
+Seracare;
+Seramun;
+Serva;
+Shanghai Korain Biotech Company;
+Shodex;
+Siemens;/logos/siemens.png
+Siemens Healthineers;
+Siemens Allergy;/logos/siemens-allergy.png
+Siemens Coag;
+Sigma-Aldrich;/logos/sigma-aldrich.png
+Sigma Laboratory Centrifuges;
+SignaChem;
+Simport;
+SinoBiological;
+Sisco;
+siTOOLs Biotech;
+Smith & Nephew;
+Sony Biotechnology;
+SouthernBiotech;
+Spectrum;
+Spherotech;
+Stago;
+STEMCELL;
+StemCell;
+Streck;
+Stryker;
+Supelco;
+Synaptic Systems;
+Sysmex;
+Sysmex UF;
+System Biosciences;
+Takara Bio;
+TargetMol;
+TCI;
+Ted Pella;
+Teknova;
+Texwipe;
+TFS;
+The Native Antigen Company;
+Thermo Fisher Scientific;
+Thermo;/logos/thermo-fisher.png
+Tocris Bioscience;
+TOKU-e;
+Toronto Research Chemicals;
+TOSOH;
+TPP;
+Trajan;
+Transcat;
+TransGen;
+TRC;
+TRC-Canada;
+United States Biological;
+Unknown;
+Upchurch;
+USBio;
+USBiological;
+USP;
+Vazyme;
+Vector Laboratories;
+VMD;
+VWR;
+Wako;
+Waters;
+Welch;
+Whatman;
+Wilmad;
+Worthington;
+Wuhan;
+XpressBio;
+ZenBio;
+Zeptometrix;
+Zymo Research;
+ZytoLight;
+Zytomed;
