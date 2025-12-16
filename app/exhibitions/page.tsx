@@ -1,7 +1,123 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { Calendar, MapPin, ArrowRight } from 'lucide-react'
+import { Calendar, MapPin, ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
+
+interface Exhibition {
+  id: string
+  name: string
+  date: string
+  location: string
+  description: string
+  highlights?: string[]
+  images: string[]
+}
+
+const exhibitions: Exhibition[] = [
+  {
+    id: 'worldlab-2024',
+    name: 'WorldLab',
+    date: 'May 2024',
+    location: 'Rome, Italy',
+    description: 'WorldLab is one of the most important international exhibitions for clinical laboratory diagnostics. We showcased our latest innovations in laboratory equipment and solutions.',
+    highlights: [
+      'Latest laboratory equipment and solutions',
+      'Networking with industry professionals',
+      'Product demonstrations'
+    ],
+    images: [
+      '/exhibitions/worldlab-2024-1.jpg',
+      '/exhibitions/worldlab-2024-2.jpg',
+      '/exhibitions/worldlab-2024-3.jpg'
+    ]
+  },
+  {
+    id: 'worldlab-2023',
+    name: 'WorldLab',
+    date: 'May 2023',
+    location: 'Rome, Italy',
+    description: 'Our participation at WorldLab 2023 allowed us to connect with leading professionals in the clinical laboratory diagnostics field and present our comprehensive range of products.',
+    highlights: [
+      'Clinical laboratory diagnostics showcase',
+      'Industry networking opportunities',
+      'Innovation presentations'
+    ],
+    images: [
+      '/exhibitions/worldlab-2023-1.jpg',
+      '/exhibitions/worldlab-2023-2.jpg',
+      '/exhibitions/worldlab-2023-3.jpg'
+    ]
+  },
+  {
+    id: 'euromedlab-2022',
+    name: 'Euromedlab',
+    date: 'April 2022',
+    location: 'Milan, Italy',
+    description: 'At Euromedlab 2022, we presented MedNAIS™ and our innovative sampling process solutions. This exhibition provided an excellent platform to demonstrate our commitment to improving preanalytical quality in laboratory diagnostics.',
+    highlights: [
+      'MedNAIS™ / SAMPLING PROCESS presentation',
+      'Preanalytical quality solutions',
+      'Interactive product demonstrations'
+    ],
+    images: [
+      '/exhibitions/euromedlab-2022-1.jpg',
+      '/exhibitions/euromedlab-2022-2.jpg',
+      '/exhibitions/euromedlab-2022-3.jpg'
+    ]
+  },
+  {
+    id: 'preanalytical-2022',
+    name: '6th Preanalytical Conference',
+    date: 'April 2022',
+    location: 'Europe',
+    description: 'The 6th Preanalytical Conference focused on preanalytical quality as an interdisciplinary journey. We participated in this important event to share knowledge and showcase solutions for improving the preanalytical phase in laboratory diagnostics.',
+    highlights: [
+      'Preanalytical Quality focus',
+      'Interdisciplinary approach to laboratory diagnostics',
+      'Knowledge sharing and networking'
+    ],
+    images: [
+      '/exhibitions/preanalytical-2022-1.jpg',
+      '/exhibitions/preanalytical-2022-2.jpg',
+      '/exhibitions/preanalytical-2022-3.jpg'
+    ]
+  },
+  {
+    id: 'medica-2021',
+    name: 'Medica',
+    date: 'November 2021',
+    location: 'Düsseldorf, Germany',
+    description: 'Medica is the world\'s leading trade fair for the medical industry. Our participation in 2021 allowed us to showcase our products to an international audience of healthcare professionals and industry leaders.',
+    highlights: [
+      'International medical trade fair',
+      'Healthcare professionals networking',
+      'Product showcase to global audience'
+    ],
+    images: [
+      '/exhibitions/medica-2021-1.jpg',
+      '/exhibitions/medica-2021-2.jpg',
+      '/exhibitions/medica-2021-3.jpg'
+    ]
+  },
+  {
+    id: 'medlab-arabhealth-2021',
+    name: 'Medlab / ArabHealth',
+    date: 'June 2021',
+    location: 'Dubai, UAE',
+    description: 'Our participation in Medlab and ArabHealth 2021 marked our presence in the Middle Eastern market. These concurrent exhibitions provided an excellent opportunity to connect with regional healthcare professionals and showcase our laboratory solutions.',
+    highlights: [
+      'Middle Eastern market presence',
+      'Regional healthcare networking',
+      'Laboratory solutions showcase'
+    ],
+    images: [
+      '/exhibitions/medlab-arabhealth-2021-1.jpg',
+      '/exhibitions/medlab-arabhealth-2021-2.jpg',
+      '/exhibitions/medlab-arabhealth-2021-3.jpg'
+    ]
+  }
+]
 
 export default function ExhibitionsPage() {
   return (
@@ -17,25 +133,93 @@ export default function ExhibitionsPage() {
               </h1>
               <p className="mx-auto max-w-2xl text-xl text-white/90">
                 IVD Group actively participates in leading medical and laboratory
-                equipment exhibitions across Europe
+                equipment exhibitions across Europe and worldwide
               </p>
             </div>
           </div>
         </section>
 
-        {/* Content Section */}
+        {/* Exhibitions List */}
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="mx-auto max-w-md rounded-xl border border-neutral-200 bg-white p-12 shadow-lg">
-                <Calendar className="mx-auto mb-4 h-16 w-16 text-neutral-400" />
-                <h3 className="mb-2 text-2xl font-bold text-black">
-                  Coming Soon
-                </h3>
-                <p className="text-neutral-600">
-                  Exhibition information will be available here soon
-                </p>
-              </div>
+            <div className="max-w-6xl mx-auto space-y-16">
+              {exhibitions.map((exhibition, index) => (
+                <article
+                  key={exhibition.id}
+                  className="bg-white rounded-2xl border-2 border-neutral-200 shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                >
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                    {/* Images Section */}
+                    <div className="relative bg-neutral-100">
+                      <div className="grid grid-cols-2 gap-2 p-4 h-full">
+                        {exhibition.images.slice(0, 4).map((image, imgIndex) => (
+                          <div
+                            key={imgIndex}
+                            className="relative aspect-square bg-neutral-200 rounded-lg overflow-hidden"
+                          >
+                            <Image
+                              src={image}
+                              alt={`${exhibition.name} ${imgIndex + 1}`}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 1024px) 50vw, 25vw"
+                              onError={(e) => {
+                                // Fallback to placeholder if image doesn't exist
+                                const target = e.target as HTMLImageElement
+                                target.src = '/placeholder.svg'
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="p-8 lg:p-12 flex flex-col justify-center">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="flex items-center gap-2 text-neutral-600">
+                          <Calendar className="w-5 h-5" />
+                          <span className="font-semibold">{exhibition.date}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-neutral-600">
+                          <MapPin className="w-5 h-5" />
+                          <span className="font-semibold">{exhibition.location}</span>
+                        </div>
+                      </div>
+
+                      <h2 className="text-3xl lg:text-4xl font-bold text-neutral-900 mb-4">
+                        {exhibition.name}
+                      </h2>
+
+                      <p className="text-lg text-neutral-700 mb-6 leading-relaxed">
+                        {exhibition.description}
+                      </p>
+
+                      {exhibition.highlights && exhibition.highlights.length > 0 && (
+                        <div className="mb-6">
+                          <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wide mb-3">
+                            Highlights
+                          </h3>
+                          <ul className="space-y-2">
+                            {exhibition.highlights.map((highlight, highlightIndex) => (
+                              <li key={highlightIndex} className="flex items-start gap-2 text-neutral-700">
+                                <span className="text-[#333333] mt-1.5">•</span>
+                                <span>{highlight}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      <div className="mt-auto pt-4 border-t border-neutral-200">
+                        <div className="text-sm text-neutral-500">
+                          Exhibition #{exhibitions.length - index} of {exhibitions.length}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -51,7 +235,7 @@ export default function ExhibitionsPage() {
                 Discover our latest products and innovations in medical technology
               </p>
               <Link
-                href="mailto:info@ivdgroup.eu"
+                href="mailto:info@adorisgroup.com"
                 className="inline-flex items-center gap-2 rounded-lg bg-white text-black px-8 py-4 text-lg font-semibold transition-all hover:bg-neutral-100 hover:scale-105 hover:shadow-xl"
               >
                 Contact Us
