@@ -223,13 +223,13 @@ export default function ExhibitionsPage() {
               <p className="mb-8 text-xl text-white/90">
                 Discover our latest products and innovations in medical technology
               </p>
-              <Link
+              <a
                 href="mailto:info@adorisgroup.com"
                 className="inline-flex items-center gap-2 rounded-lg bg-white text-black px-8 py-4 text-lg font-semibold transition-all hover:bg-neutral-100 hover:scale-105 hover:shadow-xl"
               >
                 Contact Us
                 <ArrowRight className="h-5 w-5" />
-              </Link>
+              </a>
             </div>
           </div>
         </section>
