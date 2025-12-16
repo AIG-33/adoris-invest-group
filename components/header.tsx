@@ -222,7 +222,9 @@ export function Header() {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-bold text-[#000000] text-sm sm:text-base">€{product.price.toFixed(2)}</div>
+                      <div className="font-bold text-[#000000] text-sm sm:text-base">
+                        €{Number(product.price || 0).toFixed(2)}
+                      </div>
                       <div className="text-xs text-neutral-500 hidden sm:block">excl. VAT</div>
                     </div>
                   </button>

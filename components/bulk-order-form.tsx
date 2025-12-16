@@ -254,7 +254,7 @@ SKU003\t10`;
                           {product.requestedQuantity}x
                         </div>
                         <div className="text-xs text-neutral-500">
-                          €{(product.price * product.requestedQuantity).toFixed(2)}
+                          €{(Number(product.price || 0) * product.requestedQuantity).toFixed(2)}
                         </div>
                       </div>
                     </div>

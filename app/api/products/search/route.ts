@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     }
 
     // Search by SKU or name
-    const products = await prisma.product.findMany({
+    const productsRaw = await prisma.product.findMany({
       where: {
         OR: [
           {
@@ -44,6 +44,12 @@ export async function GET(request: Request) {
         },
       ],
     });
+
+    // Convert Decimal to number for prices
+    const products = productsRaw.map(p => ({
+      ...p,
+      price: Number(p.price),
+    }));
 
     return NextResponse.json(products);
   } catch (error) {
