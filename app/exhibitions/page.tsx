@@ -19,7 +19,7 @@ const exhibitions: Exhibition[] = [
     id: 'worldlab-2024',
     name: 'WorldLab',
     date: 'May 2024',
-    location: 'Rome, Italy',
+    location: 'Dubai, UAE',
     description: 'WorldLab is one of the most important international exhibitions for clinical laboratory diagnostics. We showcased our latest innovations in laboratory equipment and solutions.',
     highlights: [
       'Latest laboratory equipment and solutions',
@@ -70,7 +70,7 @@ const exhibitions: Exhibition[] = [
     id: 'preanalytical-2022',
     name: '6th Preanalytical Conference',
     date: 'April 2022',
-    location: 'Europe',
+    location: 'Munich, Germany',
     description: 'The 6th Preanalytical Conference focused on preanalytical quality as an interdisciplinary journey. We participated in this important event to share knowledge and showcase solutions for improving the preanalytical phase in laboratory diagnostics.',
     highlights: [
       'Preanalytical Quality focus',
