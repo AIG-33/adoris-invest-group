@@ -112,7 +112,7 @@ export function Header() {
     e?.preventDefault?.()
     if (searchQuery?.trim()) {
       setShowDropdown(false)
-      router?.push?.(`/?search=${encodeURIComponent(searchQuery?.trim() || '')}`)
+      router?.push?.(`/products?search=${encodeURIComponent(searchQuery?.trim() || '')}`)
     }
   }
 
