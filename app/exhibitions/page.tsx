@@ -132,7 +132,7 @@ export default function ExhibitionsPage() {
                 Our Exhibitions
               </h1>
               <p className="mx-auto max-w-2xl text-xl text-white/90">
-                IVD Group actively participates in leading medical and laboratory
+                Adoris Invest Group OU actively participates in leading medical and laboratory
                 equipment exhibitions across Europe and worldwide
               </p>
             </div>
