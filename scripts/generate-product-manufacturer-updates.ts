@@ -95,50 +95,90 @@ async function main() {
     updatesByManufacturer.get(manufacturerId)!.push(update.sku)
   }
   
-  // Генерируем SQL
-  const sqlLines: string[] = []
-  sqlLines.push('-- Update product manufacturers from CSV')
-  sqlLines.push('-- Run this script in Supabase SQL Editor')
-  sqlLines.push('-- This script updates products with Unknown manufacturer to correct manufacturers')
-  sqlLines.push('')
+  // Генерируем SQL файлы - разбиваем на части по производителям
+  // Каждый файл будет содержать обновления для группы производителей
+  const manufacturersArray = Array.from(updatesByManufacturer.entries())
+    .map(([manufacturerId, skus]) => ({
+      id: manufacturerId,
+      name: manufacturers.find(m => m.id === manufacturerId)?.name || 'Unknown',
+      skus
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name))
   
-  let totalUpdates = 0
+  const MAX_UPDATES_PER_FILE = 2000 // Максимум обновлений на файл
+  const files: string[][] = []
+  let currentFile: string[] = []
+  let currentFileUpdates = 0
   
-  for (const [manufacturerId, skus] of updatesByManufacturer.entries()) {
-    const manufacturer = manufacturers.find(m => m.id === manufacturerId)
-    if (!manufacturer) continue
+  // Создаем файлы
+  for (const manufacturer of manufacturersArray) {
+    const escapedSkus = manufacturer.skus.map(sku => `'${sku.replace(/'/g, "''")}'`).join(', ')
+    const updateBlock = [
+      `-- ${manufacturer.name} (${manufacturer.skus.length} products)`,
+      `UPDATE "Product"`,
+      `SET "manufacturerId" = '${manufacturer.id}'`,
+      `WHERE "sku" IN (${escapedSkus})`,
+      `  AND "manufacturerId" = '${unknownManufacturer.id}';`,
+      ''
+    ]
     
-    // Экранируем SKU для SQL (заменяем одинарные кавычки)
-    const escapedSkus = skus.map(sku => `'${sku.replace(/'/g, "''")}'`).join(', ')
+    // Если добавление этого блока превысит лимит, создаем новый файл
+    if (currentFileUpdates + manufacturer.skus.length > MAX_UPDATES_PER_FILE && currentFile.length > 0) {
+      files.push(currentFile)
+      currentFile = []
+      currentFileUpdates = 0
+    }
     
-    sqlLines.push(`-- ${manufacturer.name} (${skus.length} products)`)
-    sqlLines.push(`UPDATE "Product"`)
-    sqlLines.push(`SET "manufacturerId" = '${manufacturerId}'`)
-    sqlLines.push(`WHERE "sku" IN (${escapedSkus})`)
-    sqlLines.push(`  AND "manufacturerId" = '${unknownManufacturer.id}';`)
-    sqlLines.push('')
-    
-    totalUpdates += skus.length
+    currentFile.push(...updateBlock)
+    currentFileUpdates += manufacturer.skus.length
   }
   
-  // Добавим запрос для проверки
-  sqlLines.push('-- Verify updates')
-  sqlLines.push('SELECT p."sku", p."name", m."name" as manufacturer_name')
-  sqlLines.push('FROM "Product" p')
-  sqlLines.push('JOIN "Manufacturer" m ON p."manufacturerId" = m."id"')
-  sqlLines.push(`WHERE p."sku" IN (${updates.map(u => `'${u.sku.replace(/'/g, "''")}'`).join(', ')})`)
-  sqlLines.push('ORDER BY m."name", p."sku";')
+  // Добавляем последний файл
+  if (currentFile.length > 0) {
+    files.push(currentFile)
+  }
   
-  // Сохраняем SQL файл
-  const outputPath = path.join(process.cwd(), 'prisma', 'update-product-manufacturers.sql')
-  fs.writeFileSync(outputPath, sqlLines.join('\n'), 'utf-8')
+  // Сохраняем файлы
+  const baseOutputPath = path.join(process.cwd(), 'prisma', 'update-product-manufacturers')
   
-  console.log(`\n✅ SQL скрипт сгенерирован: ${outputPath}`)
+  for (let i = 0; i < files.length; i++) {
+    const fileNumber = i + 1
+    const sqlLines: string[] = []
+    
+    sqlLines.push('-- Update product manufacturers from CSV')
+    sqlLines.push(`-- Part ${fileNumber} of ${files.length}`)
+    sqlLines.push('-- Run this script in Supabase SQL Editor')
+    sqlLines.push('-- This script updates products with Unknown manufacturer to correct manufacturers')
+    sqlLines.push('')
+    sqlLines.push(...files[i])
+    
+    const outputPath = `${baseOutputPath}-part${fileNumber}.sql`
+    fs.writeFileSync(outputPath, sqlLines.join('\n'), 'utf-8')
+    console.log(`✅ Создан файл ${fileNumber}/${files.length}: ${path.basename(outputPath)}`)
+  }
+  
+  // Создаем также один файл с проверочным запросом
+  const verifySql = [
+    '-- Verify updates',
+    '-- Run this after executing all parts',
+    'SELECT p."sku", p."name", m."name" as manufacturer_name',
+    'FROM "Product" p',
+    'JOIN "Manufacturer" m ON p."manufacturerId" = m."id"',
+    `WHERE p."sku" IN (${updates.map(u => `'${u.sku.replace(/'/g, "''")}'`).join(', ')})`,
+    'ORDER BY m."name", p."sku";'
+  ]
+  
+  const verifyPath = `${baseOutputPath}-verify.sql`
+  fs.writeFileSync(verifyPath, verifySql.join('\n'), 'utf-8')
+  console.log(`✅ Создан файл проверки: ${path.basename(verifyPath)}`)
+  
+  console.log(`\n✅ SQL скрипты сгенерированы`)
   console.log(`📊 Статистика:`)
   console.log(`   Всего записей в CSV: ${updates.length}`)
   console.log(`   Уникальных производителей: ${updatesByManufacturer.size}`)
-  console.log(`   Продуктов для обновления: ${totalUpdates}`)
+  console.log(`   Продуктов для обновления: ${manufacturersArray.reduce((sum, m) => sum + m.skus.length, 0)}`)
   console.log(`   Производитель "Unknown" ID: ${unknownManufacturer.id}`)
+  console.log(`   Создано файлов: ${files.length}`)
   
   // Статистика по производителям
   console.log(`\n📋 Топ-10 производителей по количеству продуктов:`)
