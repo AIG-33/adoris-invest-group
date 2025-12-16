@@ -8,8 +8,9 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "migrate:order-email": "tsx --require dotenv/config scripts/migrate-order-email.ts",
-    "update:logos": "tsx --require dotenv/config scripts/update-all-manufacturer-logos.ts",
-    "update:logos:csv": "tsx --require dotenv/config scripts/update-logos-from-csv.ts"
+          "update:logos": "tsx --require dotenv/config scripts/update-all-manufacturer-logos.ts",
+          "update:logos:csv": "tsx --require dotenv/config scripts/update-logos-from-csv.ts",
+          "generate:product-manufacturer-updates": "tsx --require dotenv/config scripts/generate-product-manufacturer-updates.ts"
   },
   "prisma": {
     "seed": "tsx --require dotenv/config scripts/seed.ts"
