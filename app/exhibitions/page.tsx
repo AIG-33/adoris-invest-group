@@ -1,8 +1,8 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { ExhibitionImage } from '@/components/exhibition-image'
 import { Calendar, MapPin, ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 interface Exhibition {
   id: string
@@ -153,23 +153,12 @@ export default function ExhibitionsPage() {
                     <div className="relative bg-neutral-100">
                       <div className="grid grid-cols-2 gap-2 p-4 h-full">
                         {exhibition.images.slice(0, 4).map((image, imgIndex) => (
-                          <div
+                          <ExhibitionImage
                             key={imgIndex}
-                            className="relative aspect-square bg-neutral-200 rounded-lg overflow-hidden"
-                          >
-                            <Image
-                              src={image}
-                              alt={`${exhibition.name} ${imgIndex + 1}`}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 1024px) 50vw, 25vw"
-                              onError={(e) => {
-                                // Fallback to placeholder if image doesn't exist
-                                const target = e.target as HTMLImageElement
-                                target.src = '/placeholder.svg'
-                              }}
-                            />
-                          </div>
+                            src={image}
+                            alt={`${exhibition.name} ${imgIndex + 1}`}
+                            index={imgIndex}
+                          />
                         ))}
                       </div>
                     </div>
