@@ -971,7 +971,8 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
           </div>
         )}
       </div>
-      </>
+        </>
+      )}
     </div>
   )
 }
