@@ -10,9 +10,10 @@
   --white: #ffffff;
   --light-gray: #f5f5f5;
   
-  /* Company branding colors (set dynamically via layout) */
+  /* Company branding colors (set dynamically via layout.tsx from database) */
+  /* These defaults are overridden by inline styles in <html> element */
   --company-primary: #333333;
-  --company-secondary: #666666;
+  --company-secondary: #ffffff;
   --company-accent: #000000;
 }
 

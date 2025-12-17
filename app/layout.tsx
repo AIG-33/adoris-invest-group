@@ -38,10 +38,11 @@ export default async function RootLayout({
 }) {
   const company = await getServerCompany()
   
-  // Get company colors or use defaults
-  const primaryColor = company?.primaryColor || '#333333'
-  const secondaryColor = company?.secondaryColor || '#666666'
-  const accentColor = company?.accentColor || '#000000'
+  // Get company colors - use actual values from DB, fallback to defaults only if null/undefined
+  // Important: Empty string should be treated as valid value, only null/undefined use defaults
+  const primaryColor = company?.primaryColor ?? '#333333'
+  const secondaryColor = company?.secondaryColor ?? '#ffffff'
+  const accentColor = company?.accentColor ?? '#000000'
   const logo = company?.logo || null
 
   return (
