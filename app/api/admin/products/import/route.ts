@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db'
 import OpenAI from 'openai'
 import * as XLSX from 'xlsx'
 import { parse } from 'csv-parse/sync'
+import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 600 // 600 seconds (10 minutes) for large file processing
@@ -275,9 +276,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                 // Try exact match first
                 if (record[mappedColumn] !== undefined && record[mappedColumn] !== '') {
                   const value = String(record[mappedColumn] || '').trim()
-                  if (process.env.NODE_ENV === 'development' && index < 3) {
-                    console.log(`   ✅ Found ${dbField} via exact mapping "${mappedColumn}": "${value}"`)
-                  }
+                  logger.debug(`   ✅ Found ${dbField} via exact mapping "${mappedColumn}": "${value}"`, index < 3)
                   return value
                 }
                 
@@ -332,10 +331,10 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
             }
 
             // Debug: log first few records in development
-            if (process.env.NODE_ENV === 'development' && index < 3) {
-              console.log(`\n📋 Processing CSV record ${index + 1}:`, record)
-              console.log('   Available keys:', Object.keys(record))
-              console.log('   Column mapping:', columnMapping)
+            if (index < 3) {
+              logger.debug(`\n📋 Processing CSV record ${index + 1}: ${JSON.stringify(record)}`)
+              logger.debug(`   Available keys: ${Object.keys(record).join(', ')}`)
+              logger.debug(`   Column mapping: ${JSON.stringify(columnMapping)}`)
             }
 
             // Get SKU using mapping
@@ -550,9 +549,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                 // Try exact match first
                 if (record[mappedColumn] !== undefined && record[mappedColumn] !== '') {
                   const value = String(record[mappedColumn] || '').trim()
-                  if (process.env.NODE_ENV === 'development' && index < 3) {
-                    console.log(`   ✅ Found ${dbField} via exact mapping "${mappedColumn}": "${value}"`)
-                  }
+                  logger.debug(`   ✅ Found ${dbField} via exact mapping "${mappedColumn}": "${value}"`, index < 3)
                   return value
                 }
                 
