@@ -28,11 +28,56 @@ CREATE UNIQUE INDEX IF NOT EXISTS "Company_slug_key" ON "Company"("slug");
 CREATE UNIQUE INDEX IF NOT EXISTS "Company_domain_key" ON "Company"("domain");
 
 -- Step 2: Add priceEU and priceRU to Product
-ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "priceEU" DECIMAL(10,2);
-ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "priceRU" DECIMAL(10,2);
+-- Check if priceEU column exists, if not add it
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'Product' AND column_name = 'priceEU'
+    ) THEN
+        ALTER TABLE "Product" ADD COLUMN "priceEU" DECIMAL(10,2);
+    END IF;
+END $$;
 
--- Migrate existing price to priceEU
-UPDATE "Product" SET "priceEU" = "price" WHERE "priceEU" IS NULL;
+-- Check if priceRU column exists, if not add it
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'Product' AND column_name = 'priceRU'
+    ) THEN
+        ALTER TABLE "Product" ADD COLUMN "priceRU" DECIMAL(10,2);
+    END IF;
+END $$;
+
+-- Migrate existing price to priceEU (if price column exists)
+DO $$ 
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'Product' AND column_name = 'price'
+    ) THEN
+        UPDATE "Product" SET "priceEU" = "price" WHERE "priceEU" IS NULL AND "price" IS NOT NULL;
+        -- Set default for any remaining NULL values
+        UPDATE "Product" SET "priceEU" = 0 WHERE "priceEU" IS NULL;
+    ELSE
+        -- If price column doesn't exist, set default for priceEU
+        UPDATE "Product" SET "priceEU" = 0 WHERE "priceEU" IS NULL;
+    END IF;
+END $$;
+
+-- Make priceEU NOT NULL after migration
+DO $$ 
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'Product' 
+        AND column_name = 'priceEU' 
+        AND is_nullable = 'YES'
+    ) THEN
+        ALTER TABLE "Product" ALTER COLUMN "priceEU" SET NOT NULL;
+    END IF;
+END $$;
 
 -- Step 3: Add companyId to Product (nullable for now)
 ALTER TABLE "Product" ADD COLUMN IF NOT EXISTS "companyId" TEXT;
@@ -57,7 +102,27 @@ VALUES (
 ON CONFLICT ("domain") DO NOTHING;
 
 -- Step 6: Add foreign key constraints (after data migration)
--- Note: These will be added by Prisma migration, but we can add them manually if needed
--- ALTER TABLE "Product" ADD CONSTRAINT "Product_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
--- ALTER TABLE "Order" ADD CONSTRAINT "Order_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'Product_companyId_fkey'
+        AND table_name = 'Product'
+    ) THEN
+        ALTER TABLE "Product" ADD CONSTRAINT "Product_companyId_fkey" 
+        FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'Order_companyId_fkey'
+        AND table_name = 'Order'
+    ) THEN
+        ALTER TABLE "Order" ADD CONSTRAINT "Order_companyId_fkey" 
+        FOREIGN KEY ("companyId") REFERENCES "Company"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
 
