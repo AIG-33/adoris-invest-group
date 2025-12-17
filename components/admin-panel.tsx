@@ -431,7 +431,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
 
       {/* Orders & Products */}
       {activeTab !== 'companies' && (
-      <>
+        <>
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-neutral-200">
