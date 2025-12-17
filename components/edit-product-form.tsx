@@ -183,20 +183,39 @@ export function EditProductForm({ product, categories, manufacturers }: EditProd
                   <p className="text-xs text-neutral-500 mt-1">URL-friendly identifier</p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                    Price (€) *
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    step="0.01"
-                    min="0"
-                    required
-                    className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
-                  />
+                <div className="md:col-span-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                        Price EU (€) *
+                      </label>
+                      <input
+                        type="number"
+                        name="priceEU"
+                        value={formData.priceEU}
+                        onChange={handleChange}
+                        step="0.01"
+                        min="0"
+                        required
+                        className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                        Price RU (€) <span className="text-neutral-500 text-xs font-normal">(optional)</span>
+                      </label>
+                      <input
+                        type="number"
+                        name="priceRU"
+                        value={formData.priceRU || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, priceRU: e.target.value ? parseFloat(e.target.value) : null }))}
+                        step="0.01"
+                        min="0"
+                        placeholder="Leave empty if same as EU"
+                        className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div>
