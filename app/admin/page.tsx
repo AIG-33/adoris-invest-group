@@ -16,13 +16,12 @@ export default async function AdminPage() {
       redirect('/auth/login')
     }
 
-    const totalProducts = await prisma.product.count()
-    const totalOrders = await prisma.order.count()
-    // Use raw query to handle text status column (if enum is not properly set up)
-    const pendingResult = await prisma.$queryRaw<Array<{ count: bigint }>>`
-      SELECT COUNT(*)::int as count FROM "Order" WHERE status = 'pending'
-    `
-    const pendingOrders = Number(pendingResult[0]?.count || 0)
+    const [totalProducts, totalOrders, pendingOrdersCount] = await Promise.all([
+      prisma.product.count(),
+      prisma.order.count(),
+      prisma.order.count({ where: { status: 'pending' } }),
+    ])
+    const pendingOrders = pendingOrdersCount
 
     const recentOrders = await prisma.order.findMany({
       take: 10,
