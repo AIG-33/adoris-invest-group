@@ -65,16 +65,22 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
       </nav>
 
       {/* Product Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
         {/* Image */}
-        <div className="sticky top-24 h-fit">
-          <div className="relative w-full aspect-square bg-neutral-50 rounded-2xl border-2 border-neutral-200 p-8">
+        <div className="lg:sticky lg:top-24 h-fit">
+          <div className="relative w-full max-w-md mx-auto lg:max-w-full aspect-[4/3] bg-neutral-50 rounded-xl border-2 border-neutral-200 p-6 lg:p-8">
             <Image
-              src={product?.image && product.image.length > 0 ? product.image : '/placeholder.svg'}
+              src={
+                product?.image && product.image.length > 0
+                  ? product.image
+                  : product?.manufacturer?.logo && product.manufacturer.logo.length > 0
+                  ? product.manufacturer.logo
+                  : '/placeholder.svg'
+              }
               alt={product?.name || 'Product'}
               fill
               className="object-contain"
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              sizes="(max-width: 1024px) 100vw, 40vw"
               priority
             />
           </div>
@@ -235,7 +241,13 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               >
                 <div className="relative w-full aspect-square bg-neutral-50 p-4">
                   <Image
-                    src={relProduct?.image && relProduct.image.length > 0 ? relProduct.image : '/placeholder.svg'}
+                    src={
+                      relProduct?.image && relProduct.image.length > 0
+                        ? relProduct.image
+                        : relProduct?.manufacturer?.logo && relProduct.manufacturer.logo.length > 0
+                        ? relProduct.manufacturer.logo
+                        : '/placeholder.svg'
+                    }
                     alt={relProduct?.name || 'Product'}
                     fill
                     className="object-contain"
