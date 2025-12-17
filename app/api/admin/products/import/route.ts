@@ -483,16 +483,76 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               return `${col} (${type}, value: "${String(value || '').substring(0, 50)}")`
             }).join('; ')
 
-            return NextResponse.json(
-              { 
-                error: 'No valid products found in Excel file. Make sure Excel sheet has columns with product data.',
-                hint: `Expected columns: cat# (or sku), Product (or name), MNF (or manufacturer), price (optional).`,
-                foundColumns: foundColumns.length > 0 ? foundColumns.join(', ') : 'none',
-                columnAnalysis: columnAnalysis || 'Could not analyze columns',
-                sampleRecord: process.env.NODE_ENV === 'development' ? sampleRecord : undefined,
-              },
-              { status: 400 }
-            )
+            // If we have records but no valid products, try using ChatGPT as fallback
+            if (records.length > 0) {
+              console.log('⚠️ Direct Excel parsing failed, trying ChatGPT fallback...')
+              
+              try {
+                // Convert Excel data to text format for ChatGPT
+                const excelText = records.slice(0, 50).map((record: any, idx: number) => {
+                  const row = Object.entries(record).map(([key, value]) => `${key}: ${value}`).join(' | ')
+                  return `Row ${idx + 1}: ${row}`
+                }).join('\n')
+
+                const response = await openai.chat.completions.create({
+                  model: 'gpt-4o',
+                  messages: [
+                    {
+                      role: 'system',
+                      content: systemPrompt,
+                    },
+                    {
+                      role: 'user',
+                      content: `${userPrompt}\n\nExcel data (first 50 rows):\n${excelText}`,
+                    },
+                  ],
+                  response_format: { type: 'json_object' },
+                  temperature: 0.3,
+                })
+
+                const content = response.choices[0]?.message?.content
+                if (content) {
+                  const parsed = JSON.parse(content)
+                  const chatGPTData = Array.isArray(parsed.products) ? parsed.products : []
+                  
+                  if (chatGPTData.length > 0) {
+                    console.log(`✅ ChatGPT extracted ${chatGPTData.length} products`)
+                    extractedData = chatGPTData.map((item: any) => ({
+                      sku: String(item.sku || item.catalogNumber || item.code || item.id || item.SKU || '').trim(),
+                      name: String(item.name || item.productName || item.title || item.Name || '').trim(),
+                      description: item.description ? String(item.description).trim() : undefined,
+                      price: parseFloat(String(item.price || item.cost || item.Price || 0)),
+                      manufacturer: String(item.manufacturer || item.brand || item.maker || item.Manufacturer || '').trim(),
+                      category: item.category ? String(item.category).trim() : undefined,
+                      image: item.image ? String(item.image).trim() : undefined,
+                    })).filter((p: any) => p.sku && p.name && p.manufacturer)
+                    
+                    if (extractedData.length > 0) {
+                      // Success! Continue with ChatGPT-extracted data
+                      console.log(`✅ Using ${extractedData.length} products extracted by ChatGPT`)
+                    }
+                  }
+                }
+              } catch (chatGPTError: any) {
+                console.error('ChatGPT fallback error:', chatGPTError)
+                // Continue to return error below
+              }
+            }
+
+            // If still no data, return error
+            if (extractedData.length === 0) {
+              return NextResponse.json(
+                { 
+                  error: 'No valid products found in Excel file. Make sure Excel sheet has columns with product data.',
+                  hint: `Expected columns: cat# (or sku), Product (or name), MNF (or manufacturer), price (optional).`,
+                  foundColumns: foundColumns.length > 0 ? foundColumns.join(', ') : 'none',
+                  columnAnalysis: columnAnalysis || 'Could not analyze columns',
+                  sampleRecord: process.env.NODE_ENV === 'development' ? sampleRecord : undefined,
+                  totalRecords: records.length,
+                },
+                { status: 400 }
+              )
+            }
           }
         } catch (excelError: any) {
           console.error('Excel parse error:', excelError)
