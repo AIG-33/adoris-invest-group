@@ -3,6 +3,10 @@
 import { Award, Building2, Globe, Shield } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+interface StatsSectionProps {
+  companyName?: string
+}
+
 const stats = [
   {
     icon: Globe,
@@ -49,7 +53,7 @@ const features = [
   },
 ]
 
-export function StatsSection() {
+export function StatsSection({ companyName = 'IVD Group' }: StatsSectionProps) {
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
 
@@ -106,7 +110,7 @@ export function StatsSection() {
         {/* Features Section */}
         <div>
           <h2 className="mb-12 text-center text-3xl font-bold text-white md:text-4xl">
-            Why Choose IVD Group
+            Why Choose {companyName}
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             {features.map((feature, idx) => (

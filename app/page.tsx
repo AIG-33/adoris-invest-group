@@ -68,7 +68,7 @@ export default async function HomePage() {
         <HeroSection />
         <FeaturedProducts products={featuredProducts} />
         <CategoryShowcase categories={categories} />
-        <StatsSection />
+        <StatsSection companyName={company?.name || 'IVD Group'} />
       </main>
       <Footer />
     </>
