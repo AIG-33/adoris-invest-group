@@ -194,7 +194,11 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       
       if (response.ok) {
         const data = await response.json()
-        setFileColumns(data.columns || [])
+        const columns = data.columns || []
+        setFileColumns(columns)
+        if (process.env.NODE_ENV === 'development') {
+          console.log('📥 Received columns from analyze:', columns)
+        }
         
         // Auto-map columns based on common patterns
         const autoMapping: Record<string, string> = {}
