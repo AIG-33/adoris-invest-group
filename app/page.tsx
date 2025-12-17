@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   // Get current company
-  const company = await getServerCompany()
+  const company = await getCompany()
   const priceType = company?.priceType || 'EU'
 
   // Fetch featured products

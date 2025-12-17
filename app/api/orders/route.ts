@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { generateOrderPDF } from '@/lib/pdf-generator'
 import { sendOrderConfirmationEmail } from '@/lib/email'
+import { getCompany } from '@/lib/server-company'
+import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,6 +35,10 @@ export async function POST(request: Request) {
       userId,
     } = body
 
+    // Get company context based on domain
+    const companyContext = await getCompany()
+    const companyId = companyContext?.id || null
+
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`
 
     const billingAddressParts = []
@@ -56,6 +62,7 @@ export async function POST(request: Request) {
       data: {
         orderNumber,
         userId: userId || null,
+        companyId: companyId, // Add company context
         customerName: `${firstName} ${lastName}`,
         customerEmail: email,
         customerPhone: phone && phone.trim() !== '' ? phone : null,
@@ -97,9 +104,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, orderNumber }, { status: 201 })
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Order creation error:', error)
-    }
+    logger.error('Order creation error:', error)
     return NextResponse.json(
       { error: 'Failed to create order' },
       { status: 500 }
