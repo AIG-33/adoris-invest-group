@@ -395,30 +395,42 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               // First, try mapped column
               if (columnMapping[dbField]) {
                 const mappedColumn = columnMapping[dbField]
+                const recordKeys = Object.keys(record)
+                
                 // Try exact match first
                 if (record[mappedColumn] !== undefined && record[mappedColumn] !== '') {
                   const value = String(record[mappedColumn] || '').trim()
                   if (process.env.NODE_ENV === 'development' && index < 3) {
-                    console.log(`   ✅ Found ${dbField} via mapping "${mappedColumn}": "${value}"`)
+                    console.log(`   ✅ Found ${dbField} via exact mapping "${mappedColumn}": "${value}"`)
                   }
                   return value
                 }
-                // Try case-insensitive match
-                const recordKeys = Object.keys(record)
-                const caseInsensitiveMatch = recordKeys.find(key => key.toLowerCase() === mappedColumn.toLowerCase())
+                
+                // Try case-insensitive and trimmed match
+                const normalizedMapped = mappedColumn.toLowerCase().trim()
+                const caseInsensitiveMatch = recordKeys.find(key => {
+                  const normalizedKey = key.toLowerCase().trim()
+                  return normalizedKey === normalizedMapped
+                })
+                
                 if (caseInsensitiveMatch && record[caseInsensitiveMatch] !== undefined && record[caseInsensitiveMatch] !== '') {
                   const value = String(record[caseInsensitiveMatch] || '').trim()
                   if (process.env.NODE_ENV === 'development' && index < 3) {
-                    console.log(`   ✅ Found ${dbField} via case-insensitive mapping "${mappedColumn}" -> "${caseInsensitiveMatch}": "${value}"`)
+                    console.log(`   ✅ Found ${dbField} via normalized mapping "${mappedColumn}" -> "${caseInsensitiveMatch}": "${value}"`)
                   }
                   return value
                 }
+                
                 if (process.env.NODE_ENV === 'development' && index < 3) {
-                  console.log(`   ⚠️ Mapped column "${mappedColumn}" for ${dbField} not found in record`)
+                  console.log(`   ⚠️ Mapped column "${mappedColumn}" for ${dbField} not found`)
+                  console.log(`      Available keys: ${recordKeys.join(', ')}`)
+                  console.log(`      Looking for: "${mappedColumn}" (normalized: "${normalizedMapped}")`)
                 }
               }
+              
               // Then try fallback keys
               for (const key of fallbackKeys) {
+                // Try exact match
                 if (record[key] !== undefined && record[key] !== '') {
                   const value = String(record[key] || '').trim()
                   if (process.env.NODE_ENV === 'development' && index < 3) {
@@ -426,7 +438,19 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                   }
                   return value
                 }
+                // Try case-insensitive match
+                const recordKeys = Object.keys(record)
+                const normalizedKey = key.toLowerCase().trim()
+                const match = recordKeys.find(rk => rk.toLowerCase().trim() === normalizedKey)
+                if (match && record[match] !== undefined && record[match] !== '') {
+                  const value = String(record[match] || '').trim()
+                  if (process.env.NODE_ENV === 'development' && index < 3) {
+                    console.log(`   ✅ Found ${dbField} via normalized fallback "${key}" -> "${match}": "${value}"`)
+                  }
+                  return value
+                }
               }
+              
               if (process.env.NODE_ENV === 'development' && index < 3) {
                 console.log(`   ❌ No value found for ${dbField}`)
               }
