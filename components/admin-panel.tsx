@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, XCircle, Truck, RefreshCw, Trash2, Plus, Edit } from 'lucide-react'
+import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, XCircle, Truck, RefreshCw, Trash2, Plus, Edit, Building2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { CompaniesAdmin } from './companies-admin'
 
 interface AdminPanelProps {
   stats: {
@@ -14,7 +15,7 @@ interface AdminPanelProps {
 }
 
 export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
-  const [activeTab, setActiveTab] = useState<'orders' | 'products'>('orders')
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'companies'>('orders')
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
@@ -380,12 +381,56 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       <section className="relative bg-black text-white py-16 mb-12 -mx-6 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
-          <p className="text-lg text-white/90">Manage orders and products</p>
+          <p className="text-lg text-white/90">Manage orders, products, and companies</p>
         </div>
       </section>
 
+      {/* Tabs */}
+      <div className="bg-white rounded-xl shadow-sm border border-neutral-200 mb-6 overflow-hidden">
+        <div className="flex border-b border-neutral-200">
+          <button
+            onClick={() => setActiveTab('orders')}
+            className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'orders'
+                ? 'text-[#000000] border-b-2 border-[#333333] bg-neutral-50'
+                : 'text-neutral-600 hover:text-[#000000] hover:bg-neutral-50'
+            }`}
+          >
+            <ShoppingBag className="w-5 h-5" />
+            Orders
+          </button>
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'products'
+                ? 'text-[#000000] border-b-2 border-[#333333] bg-neutral-50'
+                : 'text-neutral-600 hover:text-[#000000] hover:bg-neutral-50'
+            }`}
+          >
+            <Package className="w-5 h-5" />
+            Products
+          </button>
+          <button
+            onClick={() => setActiveTab('companies')}
+            className={`flex-1 px-6 py-4 font-semibold transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'companies'
+                ? 'text-[#000000] border-b-2 border-[#333333] bg-neutral-50'
+                : 'text-neutral-600 hover:text-[#000000] hover:bg-neutral-50'
+            }`}
+          >
+            <Building2 className="w-5 h-5" />
+            Companies
+          </button>
+        </div>
+      </div>
+
+      {/* Companies Tab */}
+      {activeTab === 'companies' && (
+        <CompaniesAdmin />
+      )}
 
       {/* Orders & Products */}
+      {activeTab !== 'companies' && (
       <>
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
