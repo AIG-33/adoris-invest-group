@@ -136,8 +136,8 @@ export function HeaderClient({ company }: HeaderClientProps) {
 
   return (
     <header 
-      className="border-b border-neutral-200 sticky top-0 z-50 shadow-sm text-white"
-      style={{ backgroundColor: 'var(--company-primary, #333333)' }}
+      className="border-b border-neutral-200 sticky top-0 z-50 shadow-sm"
+      style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}
     >
       {/* Top Bar - Hidden on Mobile */}
       <div className="hidden md:block" style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}>
@@ -155,7 +155,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
       </div>
 
       {/* Main Header */}
-      <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+      <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4" style={{ color: 'var(--company-primary, #333333)' }}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           {/* Logo - Smaller on Mobile */}
           <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
