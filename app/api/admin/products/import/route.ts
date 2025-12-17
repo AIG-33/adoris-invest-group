@@ -7,7 +7,7 @@ import * as XLSX from 'xlsx'
 import { parse } from 'csv-parse/sync'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 300 // 300 seconds (5 minutes) for large file processing
+export const maxDuration = 600 // 600 seconds (10 minutes) for large file processing
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
