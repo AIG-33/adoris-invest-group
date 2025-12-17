@@ -4,6 +4,7 @@ export type PriceType = 'EU' | 'RU'
 
 /**
  * Get product price based on company price type
+ * For RU price type: priceEU * 1.1 * 1.05 = priceEU * 1.155
  */
 export function getProductPrice(
   priceEU: number | Decimal,
@@ -13,12 +14,8 @@ export function getProductPrice(
   const euPrice = typeof priceEU === 'object' ? Number(priceEU) : priceEU
   
   if (priceType === 'RU') {
-    const ruPrice = priceRU 
-      ? (typeof priceRU === 'object' ? Number(priceRU) : priceRU)
-      : null
-    
-    // If RU price is not set, fallback to EU price
-    return ruPrice ?? euPrice
+    // Calculate RU price as EU * 1.1 * 1.05 = EU * 1.155
+    return euPrice * 1.155
   }
   
   return euPrice
