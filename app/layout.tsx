@@ -40,9 +40,16 @@ export default async function RootLayout({
   
   // Get company colors - use actual values from DB, fallback to defaults only if null/undefined
   // Important: Empty string should be treated as valid value, only null/undefined use defaults
-  const primaryColor = company?.primaryColor ?? '#333333'
-  const secondaryColor = company?.secondaryColor ?? '#ffffff'
-  const accentColor = company?.accentColor ?? '#000000'
+  // Using nullish coalescing (??) ensures we only use defaults when value is null or undefined
+  const primaryColor = (company?.primaryColor != null && company.primaryColor !== '') 
+    ? company.primaryColor 
+    : '#333333'
+  const secondaryColor = (company?.secondaryColor != null && company.secondaryColor !== '') 
+    ? company.secondaryColor 
+    : '#ffffff'
+  const accentColor = (company?.accentColor != null && company.accentColor !== '') 
+    ? company.accentColor 
+    : '#000000'
   const logo = company?.logo || null
 
   return (
