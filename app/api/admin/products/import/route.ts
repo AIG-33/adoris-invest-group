@@ -448,7 +448,7 @@ Important:
       const batch = extractedData.slice(i, i + BATCH_SIZE)
       
       for (const productData of batch) {
-      try {
+        try {
         // Validate required fields
         if (!productData.sku || !productData.name || !productData.manufacturer) {
           results.errors.push(`Missing required fields for product: ${productData.name || 'Unknown'}`)
@@ -571,9 +571,10 @@ Important:
             manufacturer: productData.manufacturer,
           })
         }
-      } catch (error: any) {
-        results.errors.push(`Error processing ${productData.name || productData.sku}: ${error?.message || 'Unknown error'}`)
-        console.error('Error processing product:', error)
+        } catch (error: any) {
+          results.errors.push(`Error processing ${productData.name || productData.sku}: ${error?.message || 'Unknown error'}`)
+          console.error('Error processing product:', error)
+        }
       }
     }
 
