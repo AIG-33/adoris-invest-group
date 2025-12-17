@@ -126,8 +126,8 @@ SKU003\t10`;
       {/* Input Section */}
       <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Upload className="w-5 h-5 text-[#333333]" />
-          <h2 className="text-xl font-bold text-[#000000]">Enter Products</h2>
+          <Upload className="w-5 h-5" style={{ color: 'var(--company-primary, #333333)' }} />
+          <h2 className="text-xl font-bold" style={{ color: 'var(--company-primary, #000000)' }}>Enter Products</h2>
         </div>
 
         <div className="mb-4">
@@ -226,8 +226,8 @@ SKU003\t10`;
       {/* Results Section */}
       <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Package className="w-5 h-5 text-[#666666]" />
-          <h2 className="text-xl font-bold text-[#000000]">Results</h2>
+          <Package className="w-5 h-5" style={{ color: 'var(--company-secondary, #666666)' }} />
+          <h2 className="text-xl font-bold" style={{ color: 'var(--company-primary, #000000)' }}>Results</h2>
         </div>
 
         {!result ? (
