@@ -1,5 +1,36 @@
-// Re-export server component
-export { Header } from './header-server'
+'use client'
+
+import Link from 'next/link'
+import Image from 'next/image'
+import { useSession, signOut } from 'next-auth/react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect, useRef } from 'react'
+import { CompanyConfig } from '@/lib/company'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+
+interface SearchResult {
+  id: string
+  name: string
+  sku: string
+  slug: string
+  price: number
+  imageUrl: string | null
+  category: { name: string } | null
+  manufacturer: { name: string } | null
+}
+
+interface HeaderClientProps {
+  company: CompanyConfig | null
+}
+
+export function HeaderClient({ company }: HeaderClientProps) {
   const { data: session, status, update } = useSession() || {}
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
@@ -18,6 +49,13 @@ export { Header } from './header-server'
   const [isSearching, setIsSearching] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>()
+
+  // Get company data with defaults
+  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
+  const companyEmail = company?.email || 'ceo@adorisgroup.com'
+  const companyPhone = company?.phone || '+48793081310'
+  const companyAddress = company?.address || 'Tallinn, Estonia'
+  const companyLogo = company?.logo || '/logo.png'
 
   useEffect(() => {
     // Update cart count from localStorage
@@ -103,11 +141,11 @@ export { Header } from './header-server'
         <div className="container mx-auto px-4 sm:px-6 py-2">
           <div className="flex justify-between items-center text-xs lg:text-sm">
             <div className="flex items-center gap-2 lg:gap-4">
-              <span className="truncate">📧 ceo@adorisgroup.com</span>
-              <span className="hidden sm:inline">📞 +48793081310</span>
+              <span className="truncate">📧 {companyEmail}</span>
+              <span className="hidden sm:inline">📞 {companyPhone}</span>
             </div>
             <div className="hidden lg:flex items-center gap-4">
-              <span>ADORIS INVEST GROUP OÜ | Tallinn, Estonia</span>
+              <span>{companyName} | {companyAddress}</span>
             </div>
           </div>
         </div>
@@ -120,8 +158,8 @@ export { Header } from './header-server'
           <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
             <div className="relative w-32 h-8 sm:w-40 sm:h-10 lg:w-48 lg:h-12">
               <Image
-                src="/logo.png"
-                alt="IVD GROUP"
+                src={companyLogo}
+                alt={companyName}
                 fill
                 className="object-contain group-hover:scale-105 transition-transform"
                 priority
@@ -364,3 +402,4 @@ export { Header } from './header-server'
     </header>
   )
 }
+

@@ -4,10 +4,21 @@ import { getCompanyByDomain } from '@/lib/company'
 
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') || ''
-  const domain = host.split(':')[0].toLowerCase()
+  let domain = host.split(':')[0].toLowerCase()
 
-  // Get company by domain
-  const company = await getCompanyByDomain(domain)
+  // Support subdomains: shop.ivdgroup.eu -> try both shop.ivdgroup.eu and ivdgroup.eu
+  // Try exact domain first
+  let company = await getCompanyByDomain(domain)
+  
+  // If not found and has subdomain, try base domain (e.g., shop.ivdgroup.eu -> ivdgroup.eu)
+  if (!company && domain.includes('.')) {
+    const parts = domain.split('.')
+    if (parts.length > 2) {
+      // Remove first subdomain (e.g., shop.ivdgroup.eu -> ivdgroup.eu)
+      const baseDomain = parts.slice(1).join('.')
+      company = await getCompanyByDomain(baseDomain)
+    }
+  }
 
   // If company not found, continue with default (for development)
   if (!company) {

@@ -1,5 +1,26 @@
-// Re-export server component
-export { Footer } from './footer-server'
+'use client'
+
+import Link from 'next/link'
+import Image from 'next/image'
+import { CompanyConfig } from '@/lib/company'
+
+interface FooterClientProps {
+  company: CompanyConfig | null
+}
+
+export function FooterClient({ company }: FooterClientProps) {
+  // Get company data with defaults
+  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
+  const companyEmail = company?.email || 'ceo@adorisgroup.com'
+  const companyPhone = company?.phone || '+48793081310'
+  const companyAddress = company?.address || 'Ruunaoja tn 3-36, 11415 Tallinn, Estonia'
+  const companyLogo = company?.logo || '/logo.png'
+  
+  // Extract address parts
+  const addressParts = companyAddress.split(',').map(s => s.trim())
+  const streetAddress = addressParts[0] || 'Ruunaoja tn 3-36'
+  const cityAddress = addressParts.slice(1).join(', ') || '11415 Tallinn, Estonia'
+
   return (
     <footer className="bg-black text-white mt-12 sm:mt-20">
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -8,8 +29,8 @@ export { Footer } from './footer-server'
           <div>
             <div className="relative w-28 h-9 sm:w-32 sm:h-10 mb-3 sm:mb-4">
               <Image
-                src="/logo.png"
-                alt="ADORIS INVEST GROUP"
+                src={companyLogo}
+                alt={companyName}
                 fill
                 className="object-contain"
               />
@@ -72,14 +93,16 @@ export { Footer } from './footer-server'
             <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Contact Us</h3>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <li className="text-neutral-300">
-                <span className="font-semibold">Email:</span> ceo@adorisgroup.com
+                <span className="font-semibold">Email:</span> {companyEmail}
               </li>
               <li className="text-neutral-300">
-                <span className="font-semibold">Phone:</span> +48793081310
+                <span className="font-semibold">Phone:</span> {companyPhone}
               </li>
-              <li className="text-neutral-300 hidden sm:block">
-                <span className="font-semibold">Website:</span> www.adorisgroup.com
-              </li>
+              {company?.domain && (
+                <li className="text-neutral-300 hidden sm:block">
+                  <span className="font-semibold">Website:</span> www.{company.domain}
+                </li>
+              )}
             </ul>
           </div>
 
@@ -87,22 +110,16 @@ export { Footer } from './footer-server'
           <div>
             <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Company Info</h3>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-neutral-300">
-              <li>ADORIS INVEST GROUP OÜ</li>
-              <li>Ruunaoja tn 3-36</li>
-              <li>11415 Tallinn, Estonia</li>
-              <li className="pt-2">
-                <span className="font-semibold">Reg. Code:</span> 12825289
-              </li>
-              <li>
-                <span className="font-semibold">VAT EE:</span> EE102079353
-              </li>
+              <li>{companyName}</li>
+              <li>{streetAddress}</li>
+              <li>{cityAddress}</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-neutral-700 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-neutral-400">
           <p>
-            © {new Date()?.getFullYear() || 2025} ADORIS INVEST GROUP OÜ. All
+            © {new Date()?.getFullYear() || 2025} {companyName}. All
             rights reserved.
           </p>
         </div>
@@ -110,3 +127,4 @@ export { Footer } from './footer-server'
     </footer>
   )
 }
+
