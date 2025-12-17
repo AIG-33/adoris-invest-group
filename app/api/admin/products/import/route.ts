@@ -464,8 +464,8 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
           }
 
           if (extractedData.length === 0) {
-            const sampleRecord = records.length > 0 ? records[0] : {}
-            const foundColumns = Object.keys(sampleRecord)
+            const sampleRecord: any = records.length > 0 ? records[0] : {}
+            const foundColumns = Object.keys(sampleRecord || {})
             
             // Try to identify what columns we have
             const columnAnalysis = foundColumns.map((col: string) => {
@@ -480,7 +480,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               } else if (col.toLowerCase().includes('price') || col.toLowerCase().includes('cost')) {
                 type = 'likely Price'
               }
-              return `${col} (${type}, value: "${String(value).substring(0, 50)}")`
+              return `${col} (${type}, value: "${String(value || '').substring(0, 50)}")`
             }).join('; ')
 
             return NextResponse.json(
