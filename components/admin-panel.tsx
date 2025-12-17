@@ -270,7 +270,12 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       const formData = new FormData()
       formData.append('file', file)
       if (Object.keys(columnMapping).length > 0) {
-        formData.append('columnMapping', JSON.stringify(columnMapping))
+        const mappingJson = JSON.stringify(columnMapping)
+        formData.append('columnMapping', mappingJson)
+        if (process.env.NODE_ENV === 'development') {
+          console.log('📤 Sending column mapping:', columnMapping)
+          console.log('📤 Mapping JSON:', mappingJson)
+        }
       }
 
       setProcessingStatus('Processing file...')
