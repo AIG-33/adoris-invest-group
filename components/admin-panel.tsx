@@ -467,12 +467,142 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
             </label>
           </div>
 
+          {/* Step 1: Analyze File Button (for Excel/CSV) */}
+          {file && !showColumnMapping && (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls') || file.name.toLowerCase().endsWith('.csv')) && (
+            <button
+              onClick={handleAnalyzeFile}
+              disabled={analyzingFile}
+              className="bg-blue-600 text-white py-4 px-8 rounded-lg hover:bg-blue-700 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {analyzingFile ? (
+                <>
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                  Analyzing File...
+                </>
+              ) : (
+                <>
+                  <FileSpreadsheet className="w-5 h-5" />
+                  Analyze File Structure
+                </>
+              )}
+            </button>
+          )}
+
+          {/* Analyzing status */}
+          {analyzingFile && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center gap-3">
+                <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
+                <p className="text-blue-900">Analyzing file structure...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Column Mapping UI */}
+          {showColumnMapping && fileColumns.length > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-blue-900">
+                  Map File Columns to Database Fields
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowColumnMapping(false)
+                    setColumnMapping({})
+                  }}
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Hide
+                </button>
+              </div>
+              
+              <div className="space-y-3">
+                {/* Required fields */}
+                <div>
+                  <p className="text-sm font-semibold text-blue-800 mb-2">Required Fields:</p>
+                  <div className="space-y-2">
+                    {[
+                      { key: 'sku', label: 'SKU / Catalog Number', required: true },
+                      { key: 'name', label: 'Product Name', required: true },
+                      { key: 'manufacturer', label: 'Manufacturer', required: true },
+                    ].map((field) => (
+                      <div key={field.key} className="flex items-center gap-3">
+                        <label className="w-48 text-sm font-medium text-neutral-700">
+                          {field.label} {field.required && <span className="text-red-500">*</span>}:
+                        </label>
+                        <select
+                          value={columnMapping[field.key] || ''}
+                          onChange={(e) => setColumnMapping({ ...columnMapping, [field.key]: e.target.value })}
+                          className="flex-1 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                          required={field.required}
+                        >
+                          <option value="">-- Select column --</option>
+                          {fileColumns.map((col) => (
+                            <option key={col} value={col}>
+                              {col}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Optional fields */}
+                <div>
+                  <p className="text-sm font-semibold text-blue-800 mb-2">Optional Fields:</p>
+                  <div className="space-y-2">
+                    {[
+                      { key: 'price', label: 'Price' },
+                      { key: 'description', label: 'Description' },
+                      { key: 'category', label: 'Category' },
+                      { key: 'image', label: 'Image URL' },
+                    ].map((field) => (
+                      <div key={field.key} className="flex items-center gap-3">
+                        <label className="w-48 text-sm font-medium text-neutral-700">
+                          {field.label}:
+                        </label>
+                        <select
+                          value={columnMapping[field.key] || ''}
+                          onChange={(e) => setColumnMapping({ ...columnMapping, [field.key]: e.target.value })}
+                          className="flex-1 px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        >
+                          <option value="">-- Select column (optional) --</option>
+                          {fileColumns.map((col) => (
+                            <option key={col} value={col}>
+                              {col}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Upload Button (show after mapping or for non-Excel/CSV files) */}
           <button
             onClick={handleUpload}
-            disabled={!file || uploading}
+            disabled={
+              !file || 
+              uploading || 
+              (file && (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls') || file.name.toLowerCase().endsWith('.csv')) && !showColumnMapping)
+            }
             className="bg-[#333333] text-white py-4 px-8 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {uploading ? 'Processing...' : 'Upload and Import'}
+            {uploading ? (
+              <>
+                <RefreshCw className="w-5 h-5 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <Upload className="w-5 h-5" />
+                Upload and Import
+              </>
+            )}
           </button>
 
           {/* Processing Status with Progress */}
