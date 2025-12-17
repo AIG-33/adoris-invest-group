@@ -212,7 +212,7 @@ export default async function AboutPage() {
         </section>
 
         {/* Growth Stats */}
-        <section className="py-16 bg-gradient-to-r from-black to-neutral-800 text-white">
+        <section className="py-16 text-white" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">

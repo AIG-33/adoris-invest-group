@@ -216,7 +216,7 @@ export default function ExhibitionsPage() {
         {/* CTA Section */}
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="rounded-2xl border border-neutral-200 bg-gradient-to-br from-black to-neutral-800 p-12 text-center text-white">
+            <div className="rounded-2xl border border-neutral-200 p-12 text-center text-white" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
               <h3 className="mb-4 text-3xl font-bold">
                 Meet Us at Our Next Event
               </h3>

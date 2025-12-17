@@ -167,7 +167,7 @@ export default function TermsPage() {
             </div>
 
             {/* Contact CTA */}
-            <div className="mt-12 bg-gradient-to-br from-black to-neutral-800 rounded-lg p-8 text-white text-center">
+            <div className="mt-12 rounded-lg p-8 text-white text-center" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
               <h2 className="text-2xl font-bold mb-4">Have Questions?</h2>
               <p className="mb-6 text-neutral-200">
                 Our team is ready to help you with any inquiries about our terms and conditions
