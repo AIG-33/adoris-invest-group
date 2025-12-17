@@ -13,7 +13,7 @@ export default async function AboutPage() {
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-white to-neutral-50">
         {/* Hero Section */}
-        <section className="relative text-white py-20" style={{ background: 'linear-gradient(to right, var(--company-primary, #333333), var(--company-primary, #333333)dd)' }}>
+        <section className="relative text-white py-20" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">

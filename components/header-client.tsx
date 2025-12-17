@@ -137,12 +137,12 @@ export function HeaderClient({ company }: HeaderClientProps) {
   return (
     <header 
       className="border-b border-neutral-200 sticky top-0 z-50 shadow-sm text-white"
-      style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+      style={{ backgroundColor: 'var(--company-primary, #333333)' }}
     >
       {/* Top Bar - Hidden on Mobile */}
-      <div className="hidden md:block" style={{ backgroundColor: 'var(--company-accent, #000000)' }}>
+      <div className="hidden md:block" style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}>
         <div className="container mx-auto px-4 sm:px-6 py-2">
-          <div className="flex justify-between items-center text-xs lg:text-sm">
+          <div className="flex justify-between items-center text-xs lg:text-sm" style={{ color: 'var(--company-primary, #333333)' }}>
             <div className="flex items-center gap-2 lg:gap-4">
               <span className="truncate">📧 {companyEmail}</span>
               <span className="hidden sm:inline">📞 {companyPhone}</span>
