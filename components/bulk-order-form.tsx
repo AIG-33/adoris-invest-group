@@ -98,9 +98,13 @@ export default function BulkOrderForm() {
           sku: product.sku,
           slug: product.slug,
           price: product.price,
+          image: product.imageUrl || '',
           imageUrl: product.imageUrl,
           category: product.category?.name,
-          manufacturer: product.manufacturer?.name,
+          manufacturer: {
+            name: product.manufacturer?.name || '',
+            logo: product.manufacturer?.logo || null,
+          },
           quantity: product.requestedQuantity,
         });
       }

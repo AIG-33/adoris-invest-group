@@ -14,7 +14,7 @@ interface CartItem {
   price: number
   image: string
   quantity: number
-  manufacturer: { name: string }
+  manufacturer: { name: string; logo?: string }
 }
 
 export function CartContent() {
@@ -124,7 +124,13 @@ export function CartContent() {
               <Link href={`/product/${item?.slug}`} className="flex-shrink-0 mx-auto sm:mx-0">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 bg-neutral-50 rounded-lg overflow-hidden">
                   <Image
-                    src={item?.image && item.image.length > 0 ? item.image : '/placeholder.svg'}
+                    src={
+                      item?.image && item.image.length > 0
+                        ? item.image
+                        : item?.manufacturer?.logo && item.manufacturer.logo.length > 0
+                        ? item.manufacturer.logo
+                        : '/placeholder.svg'
+                    }
                     alt={item?.name || 'Product'}
                     fill
                     className="object-contain p-2"
