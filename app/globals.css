@@ -9,6 +9,11 @@
   --accent-light: #666666;
   --white: #ffffff;
   --light-gray: #f5f5f5;
+  
+  /* Company branding colors (set dynamically via layout) */
+  --company-primary: #333333;
+  --company-secondary: #666666;
+  --company-accent: #000000;
 }
 
 @layer base {

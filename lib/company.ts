@@ -11,6 +11,9 @@ export interface CompanyConfig {
   email: string | null
   phone: string | null
   address: string | null
+  primaryColor: string | null
+  secondaryColor: string | null
+  accentColor: string | null
 }
 
 /**
@@ -37,6 +40,9 @@ export async function getCompanyByDomain(domain: string): Promise<CompanyConfig 
       email: company.email,
       phone: company.phone,
       address: company.address,
+      primaryColor: company.primaryColor,
+      secondaryColor: company.secondaryColor,
+      accentColor: company.accentColor,
     }
   } catch (error) {
     console.error('Error fetching company by domain:', error)

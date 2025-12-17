@@ -20,6 +20,10 @@ export async function middleware(request: NextRequest) {
   requestHeaders.set('x-company-slug', company.slug)
   requestHeaders.set('x-company-language', company.language)
   requestHeaders.set('x-company-price-type', company.priceType)
+  requestHeaders.set('x-company-logo', company.logo || '')
+  requestHeaders.set('x-company-primary-color', company.primaryColor || '#333333')
+  requestHeaders.set('x-company-secondary-color', company.secondaryColor || '#666666')
+  requestHeaders.set('x-company-accent-color', company.accentColor || '#000000')
 
   return NextResponse.next({
     request: {
