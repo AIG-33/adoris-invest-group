@@ -101,33 +101,59 @@ export async function POST(request: Request) {
     }
 
     // Use OpenAI to extract product information
-    const systemPrompt = `You are an expert at extracting product information from documents. 
-Extract all products from the document and return them as a JSON object with a "products" array.
-Each product should have: sku (catalog number), name, description, price (number in EUR), manufacturer, category (optional), image (optional).
-If price is not found, use 0. Extract manufacturer name exactly as written.`
+    const systemPrompt = `You are an expert at extracting and normalizing product information from various document formats (spreadsheets, catalogs, price lists, images, PDFs).
 
-    const userPrompt = `Extract all product information from this document. Return a JSON object with this structure:
+Your task is to analyze the document structure, identify product data columns/fields, and extract all products into a standardized JSON format that matches our database schema.
+
+Key requirements:
+1. SKU/Catalog Number: Look for columns/fields like: "cat#", "SKU", "catalog number", "code", "product code", "item number", "ID", "artikelnummer". This is CRITICAL - it's used to match existing products.
+2. Product Name: Look for: "Product", "name", "title", "description", "product name", "item name". Extract the FULL product name.
+3. Manufacturer: Look for: "MNF", "manufacturer", "brand", "maker", "producer", "supplier", "vendor". Extract manufacturer name EXACTLY as written (case-sensitive).
+4. Price: Look for: "price", "cost", "EUR", "€", "amount". Handle European format (comma as decimal: "358,00 €" → 358.00). If price is "no offer", "N/A", "on request", or missing, use 0.
+5. Description: Optional field. Can be in "description", "details", "specifications", "notes" columns.
+6. Category: Optional field. Can be in "category", "type", "group", "class" columns.
+7. Image URL: Optional field. Look for image links or URLs.
+
+CRITICAL RULES:
+- Analyze the document structure FIRST - identify column headers, table layouts, or data patterns
+- Adapt to different column name formats (case variations, abbreviations, different languages)
+- Handle various data formats (European number format with commas, currency symbols, etc.)
+- Extract ALL products from the document, even if some fields are missing
+- For missing required fields (sku, name, manufacturer), try to infer from context or leave empty (will be reported as error)
+- Return ONLY valid JSON - no markdown, no explanations, just the JSON object`
+
+    const userPrompt = `Analyze this document and extract all product information. 
+
+First, identify the document structure:
+- What type of document is this? (spreadsheet, catalog, price list, image, etc.)
+- What are the column names or field labels?
+- How is the data organized? (rows, columns, tables, lists)
+
+Then, extract ALL products and return them in this EXACT JSON structure:
 {
   "products": [
     {
-      "sku": "catalog number or product code",
-      "name": "product name",
-      "description": "detailed product description",
-      "price": numeric price in EUR (0 if not found),
-      "manufacturer": "manufacturer name",
+      "sku": "catalog number or product code (REQUIRED)",
+      "name": "full product name (REQUIRED)",
+      "description": "detailed product description (optional)",
+      "price": numeric price in EUR as number, 0 if not available (REQUIRED - use 0 for "no offer", "N/A", etc.)",
+      "manufacturer": "manufacturer name exactly as written (REQUIRED)",
       "category": "product category (optional)",
       "image": "image URL if available (optional)"
     }
   ]
 }
 
-Important:
-- Extract the catalog number/SKU/code as "sku" - this is critical for matching existing products
-- Extract the full product name as "name"
-- Extract price in EUR, convert to number (0 if not found)
-- Extract manufacturer name exactly as written
-- If multiple products are in the document, return all of them
-- Return ONLY valid JSON`
+SPECIFIC INSTRUCTIONS:
+1. SKU extraction: Find the catalog number/SKU column. Common names: "cat#", "SKU", "catalog number", "code", "ID". Extract the exact value.
+2. Name extraction: Find the product name column. Common names: "Product", "name", "title", "description". Extract the complete product name.
+3. Manufacturer extraction: Find the manufacturer column. Common names: "MNF", "manufacturer", "brand", "maker". Extract exactly as written.
+4. Price extraction: Find the price column. Handle formats like "358,00 €", "358.00", "€358", "no offer" → convert to number (358.00 or 0).
+5. If a column name is unclear, analyze the data pattern and infer the correct mapping.
+6. Extract EVERY product row/item from the document.
+7. If a product is missing required fields (sku, name, or manufacturer), still include it but mark missing fields as empty strings (they will be reported as errors).
+
+Return ONLY the JSON object - no additional text, no markdown formatting, just pure JSON.`
 
     let extractedData: ExtractedProduct[] = []
 
