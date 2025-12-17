@@ -7,6 +7,7 @@ import { ProductsActionButtons } from '@/components/products-action-buttons'
 import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
+import { getDictionary } from '@/lib/translations'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
@@ -36,6 +37,8 @@ export default async function ProductsPage({ searchParams }: Props) {
   const company = await getServerCompany()
   const priceType = company?.priceType || 'EU'
   const priceField = priceType === 'RU' ? 'priceRU' : 'priceEU'
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
 
   // Build where clause
   const where: any = {}
@@ -133,7 +136,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             <main className="flex-1">
               <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <p className="text-neutral-400 text-sm">
-                  Showing {products.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, totalProducts)} of {totalProducts} products
+                  {dict.products.showing} {products.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, totalProducts)} {dict.products.of} {totalProducts} {dict.products.results}
                 </p>
                 <div className="flex items-center gap-3">
                   <ProductsActionButtons />
@@ -152,7 +155,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                       className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-neutral-100 transition-colors"
                     >
                       <ChevronLeft className="w-4 h-4" />
-                      <span>Previous</span>
+                      <span>{dict.common.previous}</span>
                     </Link>
                   )}
                   
@@ -190,7 +193,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                       href={buildPageUrl(currentPage + 1)}
                       className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-neutral-100 transition-colors"
                     >
-                      <span>Next</span>
+                      <span>{dict.common.next}</span>
                       <ChevronRight className="w-4 h-4" />
                     </Link>
                   )}

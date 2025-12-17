@@ -20,12 +20,25 @@ interface Product {
   manufacturer: { name: string; slug: string; logo: string | null }
 }
 
+interface ProductTranslations {
+  sku: string
+  description: string
+  manufacturer: string
+  category: string
+  b2bPrice: string
+  availableByOrder: string
+  deliveryInfo: string
+  addToCart: string
+  edit: string
+}
+
 interface ProductDetailProps {
   product: Product
   relatedProducts: Product[]
+  translations: ProductTranslations
 }
 
-export function ProductDetail({ product, relatedProducts }: ProductDetailProps) {
+export function ProductDetail({ product, relatedProducts, translations }: ProductDetailProps) {
   const { data: session } = useSession()
   const isAdmin = session?.user && (session.user as any)?.role === 'admin'
   const [quantity, setQuantity] = useState(1)
@@ -53,9 +66,9 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
     <div className="container mx-auto px-6 py-8">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-sm text-neutral-600 mb-8">
-        <Link href="/" className="hover:text-[#333333]">Home</Link>
+        <Link href="/" className="hover:text-[#333333]">{translations.nav?.home || 'Home'}</Link>
         <span>/</span>
-        <Link href="/" className="hover:text-[#333333]">Products</Link>
+        <Link href="/" className="hover:text-[#333333]">{translations.nav?.products || 'Products'}</Link>
         <span>/</span>
         <Link href={`/?category=${product?.category?.slug}`} className="hover:text-[#333333]">
           {product?.category?.name}
@@ -102,12 +115,12 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
             {product?.name}
           </h1>
 
-          <p className="text-neutral-600 font-mono">SKU: {product?.sku}</p>
+          <p className="text-neutral-600 font-mono">{translations.sku}: {product?.sku}</p>
 
           {/* Price */}
           <div className="bg-neutral-50 p-6 rounded-2xl border-2 border-neutral-200">
             <div className="text-sm text-neutral-600 uppercase tracking-wide font-semibold mb-2">
-              B2B Price
+              {translations.b2bPrice}
             </div>
             <div className="text-5xl font-bold text-[#000000]">
               €{product?.price?.toLocaleString?.('en-US', {
@@ -121,9 +134,9 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           <div className="bg-blue-50 border-l-4 border-[#333333] p-4 rounded-lg flex items-start gap-3">
             <Truck className="w-6 h-6 text-[#333333] flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-semibold text-[#333333] mb-1">Available by Order Only</h4>
+              <h4 className="font-semibold text-[#333333] mb-1">{translations.availableByOrder}</h4>
               <p className="text-sm text-neutral-600">
-                Delivery to our warehouse in Vilnius takes 4-7 weeks. Products sourced directly from European manufacturers.
+                {translations.deliveryInfo}
               </p>
             </div>
           </div>
@@ -173,7 +186,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
               }}
             >
               <ShoppingCart className="w-5 h-5" />
-              Add to Cart
+              {translations.addToCart}
             </button>
             {isAdmin && (
               <Link
@@ -186,7 +199,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
                 }}
               >
                 <Edit className="w-5 h-5" />
-                Edit
+                {translations.edit}
               </Link>
             )}
           </div>
@@ -200,7 +213,7 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
             onClick={() => setActiveTab('description')}
             className={`flex-1 py-4 px-6 font-semibold transition-all ${activeTab === 'description' ? 'bg-white text-[#333333] border-b-2 border-[#333333]' : 'text-neutral-600 hover:text-neutral-900'}`}
           >
-            Description
+            {translations.description}
           </button>
           <button
             onClick={() => setActiveTab('specifications')}
@@ -222,15 +235,15 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           {activeTab === 'specifications' && (
             <div className="grid gap-3">
               <div className="flex border-b border-neutral-200 py-3">
-                <span className="w-1/3 font-semibold text-neutral-900">SKU</span>
+                <span className="w-1/3 font-semibold text-neutral-900">{translations.sku}</span>
                 <span className="flex-1 text-neutral-700">{product?.sku}</span>
               </div>
               <div className="flex border-b border-neutral-200 py-3">
-                <span className="w-1/3 font-semibold text-neutral-900">Manufacturer</span>
+                <span className="w-1/3 font-semibold text-neutral-900">{translations.manufacturer}</span>
                 <span className="flex-1 text-neutral-700">{product?.manufacturer?.name}</span>
               </div>
               <div className="flex py-3">
-                <span className="w-1/3 font-semibold text-neutral-900">Category</span>
+                <span className="w-1/3 font-semibold text-neutral-900">{translations.category}</span>
                 <span className="flex-1 text-neutral-700">{product?.category?.name}</span>
               </div>
             </div>

@@ -17,7 +17,29 @@ interface CartItem {
   manufacturer: { name: string; logo?: string }
 }
 
-export function CartContent() {
+interface CartTranslations {
+  title: string
+  empty: string
+  emptyDescription: string
+  browseProducts: string
+  items: string
+  subtotal: string
+  shipping: string
+  free: string
+  discount: string
+  total: string
+  proceedToCheckout: string
+  continueShopping: string
+  common?: {
+    loading?: string
+  }
+}
+
+interface CartContentProps {
+  translations: CartTranslations
+}
+
+export function CartContent({ translations }: CartContentProps) {
   const router = useRouter()
   const [cart, setCart] = useState<CartItem[]>([])
   const [mounted, setMounted] = useState(false)
@@ -52,7 +74,7 @@ export function CartContent() {
   if (!mounted) {
     return (
       <div className="container mx-auto px-6 py-16">
-        <div className="text-center text-neutral-600">Loading cart...</div>
+        <div className="text-center text-neutral-600">{translations.common?.loading || 'Loading...'}</div>
       </div>
     )
   }
@@ -79,9 +101,9 @@ export function CartContent() {
         <div className="max-w-2xl mx-auto text-center">
           <div className="bg-white rounded-2xl shadow-lg p-12 border border-neutral-200">
             <div className="text-6xl mb-4">🛒</div>
-            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Your cart is empty</h2>
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">{translations.empty}</h2>
             <p className="text-neutral-600 mb-8">
-              Browse our products and add items to your cart to get started.
+              {translations.emptyDescription}
             </p>
             <Link
               href="/"
@@ -99,7 +121,7 @@ export function CartContent() {
                 e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
               }}
             >
-              Browse Products
+              {translations.browseProducts}
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
@@ -113,7 +135,7 @@ export function CartContent() {
       {/* Hero Section */}
       <section className="relative text-white py-16 mb-12 -mx-4 sm:-mx-6 px-4 sm:px-6" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Shopping Cart</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{translations.title}</h1>
           <p className="text-white/90">Review your items before checkout</p>
         </div>
       </section>
@@ -122,7 +144,7 @@ export function CartContent() {
       <nav className="flex items-center gap-2 text-xs sm:text-sm text-neutral-600 mb-6 sm:mb-8">
         <Link href="/" className="hover:text-[#333333]">Home</Link>
         <span>/</span>
-        <span className="text-neutral-900 font-medium">Shopping Cart</span>
+        <span className="text-neutral-900 font-medium">{translations.title}</span>
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -211,7 +233,7 @@ export function CartContent() {
 
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-sm sm:text-base">
               <div className="flex justify-between text-neutral-700">
-                <span>Subtotal ({cart?.length} items)</span>
+                <span>{translations.subtotal} ({cart?.length} {translations.items})</span>
                 <span className="font-semibold">
                   €{subtotal?.toLocaleString?.('en-US', {
                     minimumFractionDigits: 2,
@@ -220,8 +242,8 @@ export function CartContent() {
                 </span>
               </div>
               <div className="flex justify-between text-neutral-700">
-                <span>Shipping</span>
-                <span className="font-semibold text-[#666666]">FREE</span>
+                <span>{translations.shipping}</span>
+                <span className="font-semibold text-[#666666]">{translations.free}</span>
               </div>
               {discountRate > 0 && (
                 <div className="flex justify-between text-[#666666]">
@@ -247,7 +269,7 @@ export function CartContent() {
 
             <div className="border-t-2 border-neutral-900 pt-3 sm:pt-4 mb-4 sm:mb-6">
               <div className="flex justify-between items-center">
-                <span className="text-lg sm:text-xl font-bold text-neutral-900">Total</span>
+                <span className="text-lg sm:text-xl font-bold text-neutral-900">{translations.total}</span>
                 <span className="text-2xl sm:text-3xl font-bold text-[#000000]">
                   €{total?.toLocaleString?.('en-US', {
                     minimumFractionDigits: 2,
@@ -261,7 +283,7 @@ export function CartContent() {
               onClick={() => router?.push?.('/checkout')}
               className="w-full bg-[#333333] text-white py-3 sm:py-4 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold text-base sm:text-lg flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-0.5"
             >
-              Proceed to Checkout
+              {translations.proceedToCheckout}
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>

@@ -4,11 +4,31 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { CompanyConfig } from '@/lib/company-types'
 
-interface FooterClientProps {
-  company: CompanyConfig | null
+interface NavTranslations {
+  home: string
+  products: string
+  catalog: string
+  company: string
+  about: string
+  team: string
+  exhibitions: string
+  terms: string
+  account: string
+  cart: string
+  checkout: string
+  login: string
+  logout: string
+  admin: string
+  bulkOrder: string
+  search: string
 }
 
-export function FooterClient({ company }: FooterClientProps) {
+interface FooterClientProps {
+  company: CompanyConfig | null
+  translations: NavTranslations
+}
+
+export function FooterClient({ company, translations }: FooterClientProps) {
   // Get company data with defaults
   const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
   const companyEmail = company?.email || 'ceo@adorisgroup.com'
@@ -63,7 +83,7 @@ export function FooterClient({ company }: FooterClientProps) {
                     e.currentTarget.style.color = ''
                   }}
                 >
-                  Products
+                  {translations.products}
                 </Link>
               </li>
               <li>
@@ -81,7 +101,7 @@ export function FooterClient({ company }: FooterClientProps) {
                     e.currentTarget.style.color = ''
                   }}
                 >
-                  Bulk Order
+                  {translations.bulkOrder}
                 </Link>
               </li>
               <li>
@@ -99,7 +119,7 @@ export function FooterClient({ company }: FooterClientProps) {
                     e.currentTarget.style.color = ''
                   }}
                 >
-                  Exhibitions
+                  {translations.exhibitions}
                 </Link>
               </li>
               <li>
@@ -117,7 +137,7 @@ export function FooterClient({ company }: FooterClientProps) {
                     e.currentTarget.style.color = ''
                   }}
                 >
-                  Terms & Conditions
+                  {translations.terms}
                 </Link>
               </li>
               <li>
@@ -135,7 +155,7 @@ export function FooterClient({ company }: FooterClientProps) {
                     e.currentTarget.style.color = ''
                   }}
                 >
-                  Shopping Cart
+                  {translations.cart}
                 </Link>
               </li>
             </ul>

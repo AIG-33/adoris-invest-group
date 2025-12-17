@@ -5,6 +5,7 @@ import { ProductDetail } from '@/components/product-detail'
 import { notFound } from 'next/navigation'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
+import { getDictionary } from '@/lib/translations'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +19,8 @@ export default async function ProductPage({
   // Get current company
   const company = await getServerCompany()
   const priceType = company?.priceType || 'EU'
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
 
   const product = await prisma.product.findUnique({
     where: { slug },
