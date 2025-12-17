@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, XCircle, Truck, RefreshCw, Trash2 } from 'lucide-react'
+import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, XCircle, Truck, RefreshCw, Trash2, Plus, Edit } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface AdminPanelProps {
@@ -22,6 +22,19 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
   const [loadingOrders, setLoadingOrders] = useState(false)
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
   const [deletingOrder, setDeletingOrder] = useState<string | null>(null)
+  const [importResults, setImportResults] = useState<{
+    created: number
+    updated: number
+    errors: string[]
+    products: Array<{
+      action: 'created' | 'updated'
+      product: any
+      sku: string
+      name: string
+      price: number
+      manufacturer: string
+    }>
+  } | null>(null)
 
   // Load all orders
   useEffect(() => {
@@ -166,7 +179,13 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       }
 
       if (data.results) {
-        const { created, updated, errors } = data.results
+        const { created, updated, errors, products } = data.results
+        setImportResults({
+          created,
+          updated,
+          errors,
+          products: products || [],
+        })
         let message = `✅ Successfully processed: ${created} created, ${updated} updated`
         if (errors.length > 0) {
           message += `\n⚠️ Errors: ${errors.length}`
@@ -179,6 +198,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       } else {
         setMessage('✅ ' + (data.message || 'File processed successfully'))
         toast.success('Products imported successfully')
+        setImportResults(null)
       }
       
       setFile(null)
@@ -315,6 +335,128 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
               }`}
             >
               {message}
+            </div>
+          )}
+
+          {/* Import Results */}
+          {importResults && importResults.products.length > 0 && (
+            <div className="mt-6 space-y-4">
+              <h3 className="text-lg font-semibold text-neutral-900">
+                Import Results
+              </h3>
+              
+              {/* Summary */}
+              <div className="grid grid-cols-2 gap-4">
+                {importResults.created > 0 && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Plus className="w-5 h-5 text-green-600" />
+                      <span className="font-semibold text-green-900">New Products</span>
+                    </div>
+                    <p className="text-2xl font-bold text-green-700">{importResults.created}</p>
+                  </div>
+                )}
+                {importResults.updated > 0 && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Edit className="w-5 h-5 text-blue-600" />
+                      <span className="font-semibold text-blue-900">Updated Products</span>
+                    </div>
+                    <p className="text-2xl font-bold text-blue-700">{importResults.updated}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Products List */}
+              <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden">
+                <div className="max-h-96 overflow-y-auto">
+                  <table className="w-full">
+                    <thead className="bg-neutral-50 sticky top-0">
+                      <tr className="border-b border-neutral-200">
+                        <th className="text-left py-3 px-4 font-semibold text-neutral-700 text-sm">Status</th>
+                        <th className="text-left py-3 px-4 font-semibold text-neutral-700 text-sm">SKU</th>
+                        <th className="text-left py-3 px-4 font-semibold text-neutral-700 text-sm">Name</th>
+                        <th className="text-left py-3 px-4 font-semibold text-neutral-700 text-sm">Manufacturer</th>
+                        <th className="text-left py-3 px-4 font-semibold text-neutral-700 text-sm">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {importResults.products.map((item, index) => (
+                        <tr
+                          key={index}
+                          className={`border-b border-neutral-100 hover:bg-neutral-50 ${
+                            item.action === 'created' ? 'bg-green-50/30' : 'bg-blue-50/30'
+                          }`}
+                        >
+                          <td className="py-3 px-4">
+                            <span
+                              className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${
+                                item.action === 'created'
+                                  ? 'bg-green-100 text-green-700 border border-green-200'
+                                  : 'bg-blue-100 text-blue-700 border border-blue-200'
+                              }`}
+                            >
+                              {item.action === 'created' ? (
+                                <>
+                                  <Plus className="w-3 h-3" />
+                                  New
+                                </>
+                              ) : (
+                                <>
+                                  <Edit className="w-3 h-3" />
+                                  Updated
+                                </>
+                              )}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 font-mono text-sm text-neutral-900">
+                            {item.sku}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-neutral-900 font-medium">
+                            {item.name}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-neutral-600">
+                            {item.manufacturer}
+                          </td>
+                          <td className="py-3 px-4 text-sm font-semibold text-neutral-900">
+                            €{Number(item.price || 0).toFixed(2)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Errors */}
+              {importResults.errors.length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-red-900 mb-2 flex items-center gap-2">
+                    <XCircle className="w-5 h-5" />
+                    Errors ({importResults.errors.length})
+                  </h4>
+                  <ul className="space-y-1 text-sm text-red-700">
+                    {importResults.errors.slice(0, 10).map((error, index) => (
+                      <li key={index} className="list-disc list-inside">
+                        {error}
+                      </li>
+                    ))}
+                    {importResults.errors.length > 10 && (
+                      <li className="text-red-600 italic">
+                        ... and {importResults.errors.length - 10} more errors
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+
+              {/* Clear Results Button */}
+              <button
+                onClick={() => setImportResults(null)}
+                className="w-full py-2 px-4 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors text-sm font-medium text-neutral-700"
+              >
+                Clear Results
+              </button>
             </div>
           )}
         </div>

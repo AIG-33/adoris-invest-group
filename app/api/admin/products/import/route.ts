@@ -195,7 +195,14 @@ Important:
       created: 0,
       updated: 0,
       errors: [] as string[],
-      products: [] as any[],
+      products: [] as Array<{
+        action: 'created' | 'updated'
+        product: any
+        sku: string
+        name: string
+        price: number
+        manufacturer: string
+      }>,
     }
 
     for (const productData of extractedData) {
@@ -266,7 +273,14 @@ Important:
             },
           })
           results.updated++
-          results.products.push(updated)
+          results.products.push({
+            action: 'updated',
+            product: updated,
+            sku: productData.sku,
+            name: productData.name,
+            price,
+            manufacturer: productData.manufacturer,
+          })
         } else {
           // Create new product
           const created = await prisma.product.create({
@@ -286,7 +300,14 @@ Important:
             },
           })
           results.created++
-          results.products.push(created)
+          results.products.push({
+            action: 'created',
+            product: created,
+            sku: productData.sku,
+            name: productData.name,
+            price,
+            manufacturer: productData.manufacturer,
+          })
         }
       } catch (error: any) {
         results.errors.push(`Error processing ${productData.name || productData.sku}: ${error?.message || 'Unknown error'}`)
