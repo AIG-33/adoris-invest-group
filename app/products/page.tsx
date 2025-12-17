@@ -4,7 +4,7 @@ import { Sidebar } from '@/components/sidebar'
 import { ProductGrid } from '@/components/product-grid'
 import { SortDropdown } from '@/components/sort-dropdown'
 import { prisma } from '@/lib/db'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
