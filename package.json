@@ -11,7 +11,8 @@
     "update:logos": "tsx --require dotenv/config scripts/update-all-manufacturer-logos.ts",
     "update:logos:csv": "tsx --require dotenv/config scripts/update-logos-from-csv.ts",
     "generate:product-manufacturer-updates": "tsx --require dotenv/config scripts/generate-product-manufacturer-updates.ts",
-    "generate:product-manufacturer-updates:csv": "tsx --require dotenv/config scripts/generate-product-manufacturer-updates-from-csv.ts"
+    "generate:product-manufacturer-updates:csv": "tsx --require dotenv/config scripts/generate-product-manufacturer-updates-from-csv.ts",
+    "seed:companies": "tsx --require dotenv/config scripts/seed-companies.ts"
   },
   "prisma": {
     "seed": "tsx --require dotenv/config scripts/seed.ts"

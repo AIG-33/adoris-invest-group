@@ -42,12 +42,12 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  
+
   // --- Добавленные поля ---
-  role          String    @default("user")
-  updatedAt     DateTime  @default(now()) @updatedAt
+  role      String   @default("user")
+  updatedAt DateTime @default(now()) @updatedAt
   // ------------------------
-  
+
   // --- Profile fields for orders ---
   firstName     String?
   lastName      String?
@@ -57,16 +57,16 @@ model User {
   address       String?
   city          String?
   postalCode    String?
-  country       String?   @default("Poland")
+  country       String? @default("Poland")
   department    String?
-  paymentMethod String?   @default("bank_transfer")
+  paymentMethod String? @default("bank_transfer")
   // --------------------------------
 
-  createdAt     DateTime  @default(now())
-  
-  accounts      Account[]
-  sessions      Session[]
-  orders        Order[]
+  createdAt DateTime @default(now())
+
+  accounts Account[]
+  sessions Session[]
+  orders   Order[]
 }
 
 model VerificationToken {
@@ -77,6 +77,23 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Company {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  domain    String    @unique
+  logo      String?
+  language  String    @default("en") // "en" or "ru"
+  priceType String    @default("EU") // "EU" or "RU"
+  email     String?
+  phone     String?
+  address   String?   @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  products  Product[]
+  orders    Order[]
+}
+
 model Category {
   id       String    @id @default(cuid())
   name     String    @unique
@@ -85,13 +102,13 @@ model Category {
 }
 
 model Manufacturer {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  slug     String    @unique
-  logo     String?
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  logo      String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
-  products Product[]
+  products  Product[]
 }
 
 enum StockStatus {
@@ -106,12 +123,15 @@ model Product {
   name           String
   slug           String       @unique
   description    String?      @db.Text
-  price          Decimal      @db.Decimal(10, 2)
+  priceEU        Decimal      @db.Decimal(10, 2) // Price for EU companies
+  priceRU        Decimal?     @db.Decimal(10, 2) // Price for RU companies (optional)
   image          String?
   category       Category     @relation(fields: [categoryId], references: [id])
   categoryId     String
   manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id])
   manufacturerId String
+  company        Company?     @relation(fields: [companyId], references: [id])
+  companyId      String?
   stockStatus    StockStatus  @default(in_stock)
   stockQuantity  Int          @default(0)
   featured       Boolean      @default(false)
@@ -133,6 +153,8 @@ model Order {
   orderNumber    String      @unique
   userId         String?
   user           User?       @relation(fields: [userId], references: [id])
+  company        Company?    @relation(fields: [companyId], references: [id])
+  companyId      String?
   customerName   String
   customerEmail  String
   customerPhone  String?
@@ -155,4 +177,3 @@ model OrderItem {
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
 }
-
