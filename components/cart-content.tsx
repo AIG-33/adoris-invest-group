@@ -125,8 +125,8 @@ export function CartContent() {
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 bg-neutral-50 rounded-lg overflow-hidden">
                   <Image
                     src={
-                      item?.image && item.image.length > 0
-                        ? item.image
+                      (item?.image && item.image.length > 0) || (item?.imageUrl && item.imageUrl.length > 0)
+                        ? (item.image || item.imageUrl)
                         : item?.manufacturer?.logo && item.manufacturer.logo.length > 0
                         ? item.manufacturer.logo
                         : '/placeholder.svg'
