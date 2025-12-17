@@ -62,7 +62,7 @@ export default function AboutPage() {
                   <div className="text-neutral-600 font-medium">Years Experience</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
-                  <div className="text-4xl font-bold text-black mb-2">5</div>
+                  <div className="text-4xl font-bold text-black mb-2">60+</div>
                   <div className="text-neutral-600 font-medium">Countries Served</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
@@ -70,8 +70,8 @@ export default function AboutPage() {
                   <div className="text-neutral-600 font-medium">Global Partners</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
-                  <div className="text-4xl font-bold text-black mb-2">€781K</div>
-                  <div className="text-neutral-600 font-medium">Annual Revenue (2018)</div>
+                  <div className="text-4xl font-bold text-black mb-2">€5M+</div>
+                  <div className="text-neutral-600 font-medium">Annual Revenue (2025)</div>
                 </div>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function AboutPage() {
                   <Globe className="w-12 h-12 text-black mb-6" />
                   <h3 className="text-2xl font-bold text-black mb-4">Global Distribution</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
-                    We serve clients across Russia, Belarus, Kazakhstan, European Union, USA, and Austria with efficient logistics.
+                    We serve clients across EUEГ, EU, USA, Asia and Austria with efficient logistics.
                   </p>
                   <ul className="space-y-2 text-neutral-600">
                     <li className="flex items-start gap-2">
@@ -164,7 +164,7 @@ export default function AboutPage() {
                   <Award className="w-12 h-12 text-black mb-6" />
                   <h3 className="text-2xl font-bold text-black mb-4">Consulting Services</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
-                    As the #1 consulting company in Belarus, we offer comprehensive healthcare consulting services.
+                    We offer comprehensive healthcare consulting services.
                   </p>
                   <ul className="space-y-2 text-neutral-600">
                     <li className="flex items-start gap-2">
@@ -219,17 +219,17 @@ export default function AboutPage() {
                 <div className="text-center">
                   <TrendingUp className="w-16 h-16 mx-auto mb-4 text-white" />
                   <div className="text-5xl font-bold mb-2">160%</div>
-                  <p className="text-xl text-white/90">Revenue Growth (2018)</p>
+                  <p className="text-xl text-white/90">Revenue Growth (2025)</p>
                 </div>
                 <div className="text-center">
                   <TrendingUp className="w-16 h-16 mx-auto mb-4 text-white" />
-                  <div className="text-5xl font-bold mb-2">1553%</div>
-                  <p className="text-xl text-white/90">Profit Growth (2018)</p>
+                  <div className="text-5xl font-bold mb-2">33%</div>
+                  <p className="text-xl text-white/90">Profit Growth (2025)</p>
                 </div>
                 <div className="text-center">
                   <Globe className="w-16 h-16 mx-auto mb-4 text-white" />
-                  <div className="text-5xl font-bold mb-2">96%</div>
-                  <p className="text-xl text-white/90">Belarus Market Share</p>
+                  <div className="text-5xl font-bold mb-2">75%</div>
+                  <p className="text-xl text-white/90">Global Market Reach</p>
                 </div>
               </div>
             </div>
