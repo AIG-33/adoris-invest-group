@@ -128,6 +128,24 @@ export function Sidebar({
           Go to Bulk Order
         </Link>
       </div>
+
+      {/* Download Pricelist Card */}
+      <div className="bg-gradient-to-br from-[#333333] to-[#666666] rounded-xl p-6 text-white mt-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Download className="w-5 h-5" />
+          <h3 className="font-bold text-lg">Download Pricelist</h3>
+        </div>
+        <p className="text-sm opacity-90 mb-4">
+          Download our complete product catalog in Excel format. Get all products with prices, SKUs, and descriptions.
+        </p>
+        <a
+          href="/api/products/export-pricelist"
+          download
+          className="inline-block w-full text-center bg-white text-[#333333] font-semibold py-2.5 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          Download Excel
+        </a>
+      </div>
     </aside>
   )
 }

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import {
@@ -269,6 +269,12 @@ export function Header() {
                     <span>Exhibitions</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/terms" className="flex items-center gap-2 cursor-pointer">
+                    <FileText className="w-4 h-4" />
+                    <span>Terms</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <a href="https://mednais.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
@@ -286,13 +292,6 @@ export function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Link
-              href="/terms"
-              className="hidden md:flex items-center gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors"
-            >
-              <span>Terms</span>
-            </Link>
 
             {/* Cart Icon - Always visible */}
             <Link
@@ -343,6 +342,16 @@ export function Header() {
                         <User className="w-4 h-4" />
                         <span>My Account</span>
                       </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a
+                        href="/api/products/export-pricelist"
+                        download
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span>PriceList Download</span>
+                      </a>
                     </DropdownMenuItem>
                     {(session?.user as any)?.role === 'admin' && (
                       <>
