@@ -19,7 +19,7 @@ export default async function AdminPage() {
     const [totalProducts, totalOrders, pendingOrdersCount] = await Promise.all([
       prisma.product.count(),
       prisma.order.count(),
-      prisma.order.count({ where: { status: 'pending' } }),
+      prisma.$queryRaw`SELECT COUNT(*) FROM "Order" WHERE status = 'pending'::text`.then((result: any) => Number(result[0]?.count || 0)),
     ])
     const pendingOrders = pendingOrdersCount
 
