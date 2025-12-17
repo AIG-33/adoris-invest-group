@@ -7,15 +7,13 @@ import { getServerCompany } from '@/lib/server-company'
 
 export default async function AboutPage() {
   const company = await getServerCompany()
-  const primaryColor = company?.primaryColor || '#333333'
-  const accentColor = company?.accentColor || '#000000'
   
   return (
     <>
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-white to-neutral-50">
         {/* Hero Section */}
-        <section className="relative text-white py-20" style={{ background: `linear-gradient(to right, ${primaryColor}, ${primaryColor}dd)` }}>
+        <section className="relative text-white py-20" style={{ background: 'linear-gradient(to right, var(--company-primary, #333333), var(--company-primary, #333333)dd)' }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
@@ -255,14 +253,15 @@ export default async function AboutPage() {
                 <Link
                   href="/products"
                   className="inline-flex items-center justify-center px-8 py-4 text-white font-semibold rounded-lg hover:shadow-xl transition-all transform hover:scale-105"
-                  style={{ backgroundColor: accentColor }}
+                  style={{ backgroundColor: 'var(--company-accent, #000000)' }}
                   onMouseEnter={(e) => {
-                    const rgb = accentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                    const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                    const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
                     const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
                     e.currentTarget.style.backgroundColor = darkened
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = accentColor
+                    e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
                   }}
                 >
                   Browse Our Catalog
@@ -271,17 +270,17 @@ export default async function AboutPage() {
                   href="/company/team"
                   className="inline-flex items-center justify-center px-8 py-4 border-2 font-semibold rounded-lg transition-all"
                   style={{ 
-                    borderColor: accentColor,
-                    color: accentColor,
+                    borderColor: 'var(--company-accent, #000000)',
+                    color: 'var(--company-accent, #000000)',
                     backgroundColor: 'transparent'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = accentColor
+                    e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
                     e.currentTarget.style.color = '#ffffff'
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent'
-                    e.currentTarget.style.color = accentColor
+                    e.currentTarget.style.color = 'var(--company-accent, #000000)'
                   }}
                 >
                   Meet Our Team

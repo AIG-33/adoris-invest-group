@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()
+  const logo = company?.logo || '/logo.png'
   
   return {
     title: company?.name || 'ADORIS INVEST GROUP - Medical Laboratory Equipment & Supplies',
@@ -17,15 +18,15 @@ export async function generateMetadata(): Promise<Metadata> {
       'Professional B2B medical laboratory equipment and supplies. High-quality analyzers, reagents, and laboratory consumables from leading manufacturers.',
     metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
     icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
-      apple: '/logo.png',
+      icon: logo,
+      shortcut: logo,
+      apple: logo,
     },
     openGraph: {
       title: company?.name || 'ADORIS INVEST GROUP - Medical Laboratory Equipment & Supplies',
       description:
         'Professional B2B medical laboratory equipment and supplies',
-      images: ['/og-image.png'],
+      images: [logo],
     },
   }
 }

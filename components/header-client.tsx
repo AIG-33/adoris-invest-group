@@ -56,8 +56,6 @@ export function HeaderClient({ company }: HeaderClientProps) {
   const companyPhone = company?.phone || '+48793081310'
   const companyAddress = company?.address || 'Tallinn, Estonia'
   const companyLogo = company?.logo || '/logo.png'
-  const primaryColor = company?.primaryColor || '#333333'
-  const accentColor = company?.accentColor || '#000000'
 
   useEffect(() => {
     // Update cart count from localStorage
@@ -139,10 +137,10 @@ export function HeaderClient({ company }: HeaderClientProps) {
   return (
     <header 
       className="border-b border-neutral-200 sticky top-0 z-50 shadow-sm text-white"
-      style={{ backgroundColor: primaryColor }}
+      style={{ backgroundColor: 'var(--company-primary, #333333)' }}
     >
       {/* Top Bar - Hidden on Mobile */}
-      <div className="hidden md:block" style={{ backgroundColor: primaryColor }}>
+      <div className="hidden md:block" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
         <div className="container mx-auto px-4 sm:px-6 py-2">
           <div className="flex justify-between items-center text-xs lg:text-sm">
             <div className="flex items-center gap-2 lg:gap-4">
@@ -193,27 +191,22 @@ export function HeaderClient({ company }: HeaderClientProps) {
                   <div className="absolute right-2 top-1/2 -translate-y-1/2">
                     <div 
                       className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-t-transparent rounded-full animate-spin" 
-                      style={{ borderColor: accentColor, borderTopColor: 'transparent' }}
+                      style={{ borderColor: 'var(--company-accent, #000000)', borderTopColor: 'transparent' }}
                     />
                   </div>
                 ) : (
                   <button
                     type="submit"
                     className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md transition-colors font-medium text-xs sm:text-sm"
-                    style={{ 
-                      backgroundColor: accentColor,
-                      '--hover-bg': accentColor + 'dd'
-                    } as React.CSSProperties & { '--hover-bg': string }}
+                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
                     onMouseEnter={(e) => {
-                      const target = e.currentTarget
-                      const currentColor = accentColor
-                      // Darken color on hover
-                      const rgb = currentColor.match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                      const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                      const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
                       const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
-                      target.style.backgroundColor = darkened
+                      e.currentTarget.style.backgroundColor = darkened
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = accentColor
+                      e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
                     }}
                   >
                     Search
@@ -338,7 +331,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                 {cartCount > 0 && (
                   <span 
                     className="absolute -top-2 -right-2 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center"
-                    style={{ backgroundColor: accentColor }}
+                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
                   >
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
@@ -370,7 +363,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                         {cartCount > 0 && (
                           <span 
                             className="ml-auto text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                            style={{ backgroundColor: accentColor }}
+                            style={{ backgroundColor: 'var(--company-accent, #000000)' }}
                           >
                             {cartCount}
                           </span>
