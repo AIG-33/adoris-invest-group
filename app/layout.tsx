@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
+import { ColorSync } from '@/components/color-sync'
 import { getServerCompany } from '@/lib/server-company'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -64,6 +65,7 @@ export default async function RootLayout({
       data-company-logo={logo || undefined}
     >
       <body className={inter.className} suppressHydrationWarning>
+        <ColorSync />
         <Providers>{children}</Providers>
       </body>
     </html>
