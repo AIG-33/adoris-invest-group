@@ -921,23 +921,18 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
     const categoryMap = new Map(categories.map(c => [c.name.toLowerCase(), c.id]))
     const manufacturerMap = new Map(manufacturers.map(m => [m.name.toLowerCase(), m.id]))
 
-    // Limit processing to prevent timeout (process in batches)
+    // Process products in batches to prevent timeout
     const MAX_PRODUCTS_PER_BATCH = 100
-    const BATCH_SIZE = 50 // Process 50 products at a time
+    const BATCH_SIZE = 50 // Process 50 products at a time within each batch
     
-    if (extractedData.length > MAX_PRODUCTS_PER_BATCH) {
-      return NextResponse.json(
-        { 
-          error: `File contains too many products (${extractedData.length}). Maximum allowed: ${MAX_PRODUCTS_PER_BATCH}. Please split the file into smaller parts.`,
-          maxAllowed: MAX_PRODUCTS_PER_BATCH,
-          found: extractedData.length
-        },
-        { status: 400 }
-      )
+    // Split products into batches of MAX_PRODUCTS_PER_BATCH
+    const batches: ExtractedProduct[][] = []
+    for (let i = 0; i < extractedData.length; i += MAX_PRODUCTS_PER_BATCH) {
+      batches.push(extractedData.slice(i, i + MAX_PRODUCTS_PER_BATCH))
     }
 
-    // Process each extracted product
-    const results = {
+    // Aggregate results from all batches
+    const totalResults = {
       created: 0,
       updated: 0,
       errors: [] as string[],
@@ -949,10 +944,36 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
         price: number
         manufacturer: string
       }>,
+      total: extractedData.length,
+      batchesProcessed: 0,
+      totalBatches: batches.length,
     }
 
-    // Get all existing products by SKU in one query for better performance
-    const allSkus = extractedData.map(p => p.sku).filter(Boolean)
+    // Process each batch sequentially
+    for (let batchIndex = 0; batchIndex < batches.length; batchIndex++) {
+      const batch = batches[batchIndex]
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`\n📦 Processing batch ${batchIndex + 1}/${batches.length} (${batch.length} products)`)
+      }
+
+      // Process each extracted product in this batch
+      const results = {
+        created: 0,
+        updated: 0,
+        errors: [] as string[],
+        products: [] as Array<{
+          action: 'created' | 'updated'
+          product: any
+          sku: string
+          name: string
+          price: number
+          manufacturer: string
+        }>,
+      }
+
+      // Get all existing products by SKU in one query for better performance (for this batch)
+      const allSkus = batch.map(p => p.sku).filter(Boolean)
     const existingProducts = await prisma.product.findMany({
       where: {
         sku: {
@@ -985,14 +1006,14 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
       }
     })
 
-    // Process products in batches to avoid timeout
-    const totalProducts = extractedData.length
+    // Process products in batches to avoid timeout (within each main batch)
+    const totalProducts = batch.length
     let processedCount = 0
     
-    for (let i = 0; i < extractedData.length; i += BATCH_SIZE) {
-      const batch = extractedData.slice(i, i + BATCH_SIZE)
+    for (let i = 0; i < batch.length; i += BATCH_SIZE) {
+      const subBatch = batch.slice(i, i + BATCH_SIZE)
       
-      for (const productData of batch) {
+      for (const productData of subBatch) {
         processedCount++
         try {
           // Validate required fields
@@ -1170,12 +1191,29 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
       }
     }
 
+      // Aggregate results from this batch
+      totalResults.created += results.created
+      totalResults.updated += results.updated
+      totalResults.errors.push(...results.errors)
+      totalResults.products.push(...results.products)
+      totalResults.batchesProcessed++
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ Batch ${batchIndex + 1}/${batches.length} completed: ${results.created} created, ${results.updated} updated`)
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      message: `Processed ${extractedData.length} products: ${results.created} created, ${results.updated} updated`,
+      message: `Processed ${totalResults.total} products in ${totalResults.totalBatches} batch(es): ${totalResults.created} created, ${totalResults.updated} updated`,
       results: {
-        ...results,
-        total: extractedData.length,
+        created: totalResults.created,
+        updated: totalResults.updated,
+        errors: totalResults.errors,
+        products: totalResults.products,
+        total: totalResults.total,
+        batchesProcessed: totalResults.batchesProcessed,
+        totalBatches: totalResults.totalBatches,
       },
     })
   } catch (error: any) {
