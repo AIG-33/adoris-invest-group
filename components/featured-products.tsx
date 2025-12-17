@@ -16,11 +16,18 @@ type Product = {
   manufacturer: { name: string; logo: string | null }
 }
 
-type Props = {
-  products: Product[]
+interface FeaturedProductsTranslations {
+  title: string
+  subtitle: string
+  viewAll: string
 }
 
-export function FeaturedProducts({ products }: Props) {
+type Props = {
+  products: Product[]
+  translations: FeaturedProductsTranslations
+}
+
+export function FeaturedProducts({ products, translations }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
@@ -66,17 +73,17 @@ export function FeaturedProducts({ products }: Props) {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold text-white md:text-4xl">
-              Featured Products
+              {translations.title}
             </h2>
             <p className="mt-2 text-lg text-gray-400">
-              Premium medical equipment from top manufacturers
+              {translations.subtitle}
             </p>
           </div>
           <Link
             href="/products"
             className="hidden text-[#666666] transition-colors hover:text-[#333333] md:block"
           >
-            View All →
+            {translations.viewAll} →
           </Link>
         </div>
 

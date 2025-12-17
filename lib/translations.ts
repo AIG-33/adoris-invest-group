@@ -45,6 +45,7 @@ export interface Translations {
     logout: string
     admin: string
     bulkOrder: string
+    search: string
   }
   
   // Common
@@ -331,6 +332,7 @@ const translations: Record<Language, Translations> = {
       logout: 'Logout',
       admin: 'Admin',
       bulkOrder: 'Bulk Order',
+      search: 'Search',
     },
     common: {
       addToCart: 'Add to Cart',
@@ -591,6 +593,7 @@ const translations: Record<Language, Translations> = {
       logout: 'Выйти',
       admin: 'Админ',
       bulkOrder: 'Массовый заказ',
+      search: 'Поиск',
     },
     common: {
       addToCart: 'Добавить в корзину',

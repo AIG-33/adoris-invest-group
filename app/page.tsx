@@ -7,6 +7,7 @@ import { StatsSection } from '@/components/stats-section'
 import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
+import { getDictionary } from '@/lib/translations'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,6 +15,8 @@ export default async function HomePage() {
   // Get current company
   const company = await getServerCompany()
   const priceType = company?.priceType || 'EU'
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
 
   // Fetch featured products
   const featuredProductsRaw = await prisma.product.findMany({
@@ -65,10 +68,10 @@ export default async function HomePage() {
     <>
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
-        <HeroSection />
-        <FeaturedProducts products={featuredProducts} />
+        <HeroSection translations={dict.homepage.hero} />
+        <FeaturedProducts products={featuredProducts} translations={dict.homepage.featuredProducts} />
         <CategoryShowcase categories={categories} />
-        <StatsSection companyName={company?.name || 'IVD Group'} />
+        <StatsSection companyName={company?.name || 'IVD Group'} translations={dict.homepage.stats} />
       </main>
       <Footer />
     </>

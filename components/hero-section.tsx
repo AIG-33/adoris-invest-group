@@ -5,26 +5,41 @@ import Link from 'next/link'
 import { ArrowRight, Play } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-const heroSlides = [
-  {
-    title: 'Reagents & Disposables',
-    subtitle: 'Premium Quality Medical Supplies',
-    description: 'Original products from top European manufacturers with full compliance',
-    image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1920&h=1080&fit=crop',
-    cta: 'Shop Now',
-    link: '/products',
-  },
-  {
-    title: 'Bulk Order',
-    subtitle: 'Save Time with Automated Ordering',
-    description: 'Simply paste catalog numbers and quantities - your order is automatically created. This feature saves time by streamlining the ordering process.',
-    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=1080&fit=crop',
-    cta: 'Try Bulk Order',
-    link: '/bulk-order',
-  },
-]
+interface HeroTranslations {
+  reagentsTitle: string
+  reagentsSubtitle: string
+  reagentsDescription: string
+  bulkOrderTitle: string
+  bulkOrderSubtitle: string
+  bulkOrderDescription: string
+  shopNow: string
+  tryBulkOrder: string
+  browseCatalog: string
+}
 
-export function HeroSection() {
+interface HeroSectionProps {
+  translations: HeroTranslations
+}
+
+export function HeroSection({ translations }: HeroSectionProps) {
+  const heroSlides = [
+    {
+      title: translations.reagentsTitle,
+      subtitle: translations.reagentsSubtitle,
+      description: translations.reagentsDescription,
+      image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1920&h=1080&fit=crop',
+      cta: translations.shopNow,
+      link: '/products',
+    },
+    {
+      title: translations.bulkOrderTitle,
+      subtitle: translations.bulkOrderSubtitle,
+      description: translations.bulkOrderDescription,
+      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=1080&fit=crop',
+      cta: translations.tryBulkOrder,
+      link: '/bulk-order',
+    },
+  ]
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -143,7 +158,7 @@ export function HeroSection() {
                 className="group flex items-center justify-center gap-2 rounded-md border-2 border-white/30 bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/20"
               >
                 <Play className="h-4 w-4 sm:h-5 sm:w-5" />
-                Browse Catalog
+                {translations.browseCatalog}
               </Link>
             </div>
           </div>

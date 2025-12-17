@@ -26,11 +26,30 @@ interface SearchResult {
   manufacturer: { name: string } | null
 }
 
-interface HeaderClientProps {
-  company: CompanyConfig | null
+interface NavTranslations {
+  home: string
+  products: string
+  catalog: string
+  company: string
+  about: string
+  team: string
+  exhibitions: string
+  terms: string
+  account: string
+  cart: string
+  checkout: string
+  login: string
+  logout: string
+  admin: string
+  bulkOrder: string
 }
 
-export function HeaderClient({ company }: HeaderClientProps) {
+interface HeaderClientProps {
+  company: CompanyConfig | null
+  translations: NavTranslations
+}
+
+export function HeaderClient({ company, translations }: HeaderClientProps) {
   const { data: session, status, update } = useSession() || {}
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
@@ -222,7 +241,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                       e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
                     }}
                   >
-                    Search
+                    {translations.search || 'Search'}
                   </button>
                 )}
               </div>
@@ -281,39 +300,39 @@ export function HeaderClient({ company }: HeaderClientProps) {
               className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
             >
               <Package className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Catalog</span>
+              <span className="hidden sm:inline">{translations.catalog}</span>
             </Link>
 
             {/* Company Dropdown Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors outline-none text-xs sm:text-sm lg:text-base">
                 <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Company</span>
+                <span className="hidden sm:inline">{translations.company}</span>
                 <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 sm:w-56">
                 <DropdownMenuItem asChild>
                   <Link href="/company/about" className="flex items-center gap-2 cursor-pointer">
                     <Building2 className="w-4 h-4" />
-                    <span>About Us</span>
+                    <span>{translations.about}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/company/team" className="flex items-center gap-2 cursor-pointer">
                     <User className="w-4 h-4" />
-                    <span>Team</span>
+                    <span>{translations.team}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/exhibitions" className="flex items-center gap-2 cursor-pointer">
                     <Calendar className="w-4 h-4" />
-                    <span>Exhibitions</span>
+                    <span>{translations.exhibitions}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/terms" className="flex items-center gap-2 cursor-pointer">
                     <FileText className="w-4 h-4" />
-                    <span>Terms</span>
+                    <span>{translations.terms}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -350,7 +369,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                   </span>
                 )}
               </div>
-              <span className="hidden sm:inline">Cart</span>
+              <span className="hidden sm:inline">{translations.cart}</span>
             </Link>
 
             {/* My Account Dropdown Menu */}
@@ -359,20 +378,20 @@ export function HeaderClient({ company }: HeaderClientProps) {
                 <DropdownMenu>
                   <DropdownMenuTrigger className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors outline-none text-xs sm:text-sm lg:text-base">
                     <User className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="hidden sm:inline">My Account</span>
+                    <span className="hidden sm:inline">{translations.account}</span>
                     <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48 sm:w-56">
                     <DropdownMenuItem asChild>
                       <Link href="/bulk-order" className="flex items-center gap-2 cursor-pointer">
                         <Package className="w-4 h-4" />
-                        <span>Bulk Order</span>
+                        <span>{translations.bulkOrder}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/cart" className="flex items-center gap-2 cursor-pointer relative">
                         <ShoppingCart className="w-4 h-4" />
-                        <span>Cart</span>
+                        <span>{translations.cart}</span>
                         {cartCount > 0 && (
                           <span 
                             className="ml-auto text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
@@ -387,7 +406,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                     <DropdownMenuItem asChild>
                       <Link href="/account" className="flex items-center gap-2 cursor-pointer">
                         <User className="w-4 h-4" />
-                        <span>My Account</span>
+                        <span>{translations.account}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -406,7 +425,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                         <DropdownMenuItem asChild>
                           <Link href="/admin" className="flex items-center gap-2 cursor-pointer text-[#000000] font-semibold">
                             <User className="w-4 h-4" />
-                            <span>Admin Panel</span>
+                            <span>{translations.admin}</span>
                           </Link>
                         </DropdownMenuItem>
                       </>
@@ -417,7 +436,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                       className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600"
                     >
                       <LogOut className="w-4 h-4" />
-                      <span>Logout</span>
+                      <span>{translations.logout}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -428,7 +447,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                 className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#333333] font-medium transition-colors text-xs sm:text-sm lg:text-base"
               >
                 <User className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Login</span>
+                <span className="hidden sm:inline">{translations.login}</span>
               </Link>
             )}
           </div>

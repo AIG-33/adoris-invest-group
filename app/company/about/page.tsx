@@ -4,9 +4,12 @@ import { AboutCTAButtons } from '@/components/about-cta-buttons'
 import Image from 'next/image'
 import { Award, Globe, Users, TrendingUp, CheckCircle2, Target, Heart, Lightbulb } from 'lucide-react'
 import { getServerCompany } from '@/lib/server-company'
+import { getDictionary } from '@/lib/translations'
 
 export default async function AboutPage() {
   const company = await getServerCompany()
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
   
   return (
     <>
@@ -17,10 +20,10 @@ export default async function AboutPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-                About US
+                {dict.about.hero.title}
               </h1>
               <p className="text-xl sm:text-2xl text-white/90 leading-relaxed">
-                Your Trusted Partner in Medical Equipment and Laboratory Supplies Since 2014
+                {dict.about.hero.subtitle}
               </p>
             </div>
           </div>
@@ -33,19 +36,16 @@ export default async function AboutPage() {
               <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
                 <div>
                   <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6">
-                    Who We Are
+                    {dict.about.whoWeAre.title}
                   </h2>
                   <p className="text-lg text-neutral-700 mb-4 leading-relaxed">
-                    We are an experienced and trusted representative of the world's largest manufacturers 
-                    of medical devices, medical equipment, and consumables for clinical and sports laboratories.
+                    {dict.about.whoWeAre.paragraph1}
                   </p>
                   <p className="text-lg text-neutral-700 mb-4 leading-relaxed">
-                    Founded in 2014 we have grown to become a leading distributor holding serving clients across 
-                    EU, EAEU, US, Asia and Midle East.
+                    {dict.about.whoWeAre.paragraph2}
                   </p>
                   <p className="text-lg text-neutral-700 leading-relaxed">
-                    Our direct contacts with manufacturers and streamlined logistics routes enable us to promptly organize 
-                    the delivery of goods under the conditions required by our customers.
+                    {dict.about.whoWeAre.paragraph3}
                   </p>
                 </div>
                 <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
@@ -62,19 +62,19 @@ export default async function AboutPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
                   <div className="text-4xl font-bold text-black mb-2">10+</div>
-                  <div className="text-neutral-600 font-medium">Years Experience</div>
+                  <div className="text-neutral-600 font-medium">{dict.about.stats.yearsExperience}</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
                   <div className="text-4xl font-bold text-black mb-2">60+</div>
-                  <div className="text-neutral-600 font-medium">Countries Served</div>
+                  <div className="text-neutral-600 font-medium">{dict.about.stats.countriesServed}</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
                   <div className="text-4xl font-bold text-black mb-2">100+</div>
-                  <div className="text-neutral-600 font-medium">Global Partners</div>
+                  <div className="text-neutral-600 font-medium">{dict.about.stats.globalPartners}</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
                   <div className="text-4xl font-bold text-black mb-2">€5M+</div>
-                  <div className="text-neutral-600 font-medium">Annual Revenue (2025)</div>
+                  <div className="text-neutral-600 font-medium">{dict.about.stats.annualRevenue}</div>
                 </div>
               </div>
             </div>
@@ -86,16 +86,16 @@ export default async function AboutPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold text-center text-black mb-12">
-                Our Core Values
+                {dict.about.values.title}
               </h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
                   <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <CheckCircle2 className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-black mb-3">Quality Assurance</h3>
+                  <h3 className="text-xl font-bold text-black mb-3">{dict.about.values.quality.title}</h3>
                   <p className="text-neutral-600 leading-relaxed">
-                    We partner only with top-tier manufacturers to ensure the highest quality standards for all products.
+                    {dict.about.values.quality.description}
                   </p>
                 </div>
 
@@ -103,9 +103,9 @@ export default async function AboutPage() {
                   <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Target className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-black mb-3">Customer Focus</h3>
+                  <h3 className="text-xl font-bold text-black mb-3">{dict.about.values.customer.title}</h3>
                   <p className="text-neutral-600 leading-relaxed">
-                    Our clients' success is our success. We tailor our services to meet specific needs and deadlines.
+                    {dict.about.values.customer.description}
                   </p>
                 </div>
 
@@ -113,9 +113,9 @@ export default async function AboutPage() {
                   <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Heart className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-black mb-3">Integrity</h3>
+                  <h3 className="text-xl font-bold text-black mb-3">{dict.about.values.integrity.title}</h3>
                   <p className="text-neutral-600 leading-relaxed">
-                    We build lasting relationships based on trust, transparency, and honest communication.
+                    {dict.about.values.integrity.description}
                   </p>
                 </div>
 
@@ -123,9 +123,9 @@ export default async function AboutPage() {
                   <div className="bg-gradient-to-br from-black to-neutral-800 w-16 h-16 rounded-lg flex items-center justify-center mb-6">
                     <Lightbulb className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-black mb-3">Innovation</h3>
+                  <h3 className="text-xl font-bold text-black mb-3">{dict.about.values.innovation.title}</h3>
                   <p className="text-neutral-600 leading-relaxed">
-                    We continuously optimize our processes to deliver cutting-edge solutions and services.
+                    {dict.about.values.innovation.description}
                   </p>
                 </div>
               </div>
@@ -138,58 +138,58 @@ export default async function AboutPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold text-center text-black mb-12">
-                What We Offer
+                {dict.about.services.title}
               </h2>
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
                   <Globe className="w-12 h-12 text-black mb-6" />
-                  <h3 className="text-2xl font-bold text-black mb-4">Global Distribution</h3>
+                  <h3 className="text-2xl font-bold text-black mb-4">{dict.about.services.distribution.title}</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
-                    We serve clients across EUEГ, EU, USA, Asia and Austria with efficient logistics.
+                    {dict.about.services.distribution.description}
                   </p>
                   <ul className="space-y-2 text-neutral-600">
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                      <span>Direct manufacturer contacts</span>
+                      <span>{dict.about.services.distribution.feature1}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                      <span>Streamlined delivery routes</span>
+                      <span>{dict.about.services.distribution.feature2}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                      <span>Flexible payment terms</span>
+                      <span>{dict.about.services.distribution.feature3}</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
                   <Award className="w-12 h-12 text-black mb-6" />
-                  <h3 className="text-2xl font-bold text-black mb-4">Consulting Services</h3>
+                  <h3 className="text-2xl font-bold text-black mb-4">{dict.about.services.consulting.title}</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
-                    We offer comprehensive healthcare consulting services.
+                    {dict.about.services.consulting.description}
                   </p>
                   <ul className="space-y-2 text-neutral-600">
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                      <span>Marketing strategy</span>
+                      <span>{dict.about.services.consulting.feature1}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                      <span>National registration</span>
+                      <span>{dict.about.services.consulting.feature2}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                      <span>Procurement support</span>
+                      <span>{dict.about.services.consulting.feature3}</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="bg-gradient-to-br from-white to-neutral-50 p-8 rounded-xl shadow-lg border border-neutral-200">
                   <Users className="w-12 h-12 text-black mb-6" />
-                  <h3 className="text-2xl font-bold text-black mb-4">Trusted Partnerships</h3>
+                  <h3 className="text-2xl font-bold text-black mb-4">{dict.about.services.partnerships.title}</h3>
                   <p className="text-neutral-600 leading-relaxed mb-4">
-                    We collaborate with global healthcare leaders and regional distributors.
+                    {dict.about.services.partnerships.description}
                   </p>
                   <ul className="space-y-2 text-neutral-600">
                     <li className="flex items-start gap-2">
@@ -216,23 +216,23 @@ export default async function AboutPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
-                Our Growth Story
+                {dict.about.growth.title}
               </h2>
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="text-center">
                   <TrendingUp className="w-16 h-16 mx-auto mb-4 text-white" />
                   <div className="text-5xl font-bold mb-2">160%</div>
-                  <p className="text-xl text-white/90">Revenue Growth (2025)</p>
+                  <p className="text-xl text-white/90">{dict.about.growth.revenueGrowth}</p>
                 </div>
                 <div className="text-center">
                   <TrendingUp className="w-16 h-16 mx-auto mb-4 text-white" />
                   <div className="text-5xl font-bold mb-2">33%</div>
-                  <p className="text-xl text-white/90">Profit Growth (2025)</p>
+                  <p className="text-xl text-white/90">{dict.about.growth.profitGrowth}</p>
                 </div>
                 <div className="text-center">
                   <Globe className="w-16 h-16 mx-auto mb-4 text-white" />
                   <div className="text-5xl font-bold mb-2">75%</div>
-                  <p className="text-xl text-white/90">Global Market Reach</p>
+                  <p className="text-xl text-white/90">{dict.about.growth.marketReach}</p>
                 </div>
               </div>
             </div>
@@ -244,15 +244,15 @@ export default async function AboutPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6">
-                Ready to Partner With Us?
+                {dict.about.cta.title}
               </h2>
               <p className="text-xl text-neutral-600 mb-8">
-                Let's discuss how we can support your medical equipment and laboratory supply needs.
+                {dict.about.cta.subtitle}
               </p>
               <AboutCTAButtons />
               <div className="mt-8 pt-8 border-t border-neutral-200">
                 <p className="text-neutral-600 mb-2">
-                  <strong>Contact Us:</strong>
+                  <strong>{dict.about.cta.contactUs}</strong>
                 </p>
                 <p className="text-neutral-700">
                   📧 {company?.email || 'ceo@adorisgroup.com'} | 📞 {company?.phone || '+48793081310'}

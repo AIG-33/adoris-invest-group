@@ -110,7 +110,7 @@ export function StatsSection({ companyName = 'IVD Group' }: StatsSectionProps) {
         {/* Features Section */}
         <div>
           <h2 className="mb-12 text-center text-3xl font-bold text-white md:text-4xl">
-            Why Choose {companyName}
+            {translations.whyChoose} {companyName}
           </h2>
           <div className="grid gap-6 md:grid-cols-2">
             {features.map((feature, idx) => (
@@ -135,23 +135,23 @@ export function StatsSection({ companyName = 'IVD Group' }: StatsSectionProps) {
         {/* CTA */}
         <div className="mt-16 text-center">
           <h3 className="mb-4 text-2xl font-bold text-white">
-            Ready to order?
+            {translations.readyToOrder}
           </h3>
           <p className="mb-8 text-gray-400">
-            Minimum order €10,000 · 100% prepayment · 4-7 weeks delivery
+            {translations.minimumOrder}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href="/products"
               className="rounded-lg bg-[#000000] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#000000]/50"
             >
-              Browse Catalog
+              {translations.browseCatalog}
             </a>
             <a
               href="/terms"
               className="rounded-lg border-2 border-[#000000] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#000000]/10"
             >
-              View Terms
+              {translations.viewTerms}
             </a>
           </div>
         </div>
