@@ -65,6 +65,16 @@ export async function POST(request: Request) {
 
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const columnMappingStr = formData.get('columnMapping') as string | null
+    let columnMapping: Record<string, string> = {}
+    
+    if (columnMappingStr) {
+      try {
+        columnMapping = JSON.parse(columnMappingStr)
+      } catch (e) {
+        console.error('Failed to parse column mapping:', e)
+      }
+    }
 
     if (!file) {
       return NextResponse.json(

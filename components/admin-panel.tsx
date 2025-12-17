@@ -25,6 +25,10 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
   const [processingStatus, setProcessingStatus] = useState<string>('')
   const [progress, setProgress] = useState({ current: 0, total: 0 })
   const [liveErrors, setLiveErrors] = useState<string[]>([])
+  const [fileColumns, setFileColumns] = useState<string[]>([])
+  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({})
+  const [analyzingFile, setAnalyzingFile] = useState(false)
+  const [showColumnMapping, setShowColumnMapping] = useState(false)
   const [importResults, setImportResults] = useState<{
     created: number
     updated: number
@@ -38,6 +42,12 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       manufacturer: string
     }>
   } | null>(null)
+  
+  // Column mapping state
+  const [fileColumns, setFileColumns] = useState<string[]>([])
+  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({})
+  const [analyzingFile, setAnalyzingFile] = useState(false)
+  const [showColumnMapping, setShowColumnMapping] = useState(false)
 
   // Load all orders
   useEffect(() => {
@@ -149,17 +159,94 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
     }
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e?.target?.files?.[0]
     if (selectedFile) {
       setFile(selectedFile)
       setMessage('')
+      setLiveErrors([])
+      setImportResults(null)
+      setShowColumnMapping(false)
+      setColumnMapping({})
+      
+      // Analyze file to get columns (only for Excel/CSV)
+      const fileName = selectedFile.name.toLowerCase()
+      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.csv')) {
+        setAnalyzingFile(true)
+        try {
+          const formData = new FormData()
+          formData.append('file', selectedFile)
+          
+          const response = await fetch('/api/admin/products/import/analyze', {
+            method: 'POST',
+            body: formData,
+          })
+          
+          if (response.ok) {
+            const data = await response.json()
+            setFileColumns(data.columns || [])
+            
+            // Auto-map columns based on common patterns
+            const autoMapping: Record<string, string> = {}
+            data.columns.forEach((col: string) => {
+              const colLower = col.toLowerCase().trim()
+              // SKU mapping
+              if (colLower.includes('cat#') || colLower.includes('sku') || colLower.includes('catalog') || colLower.includes('code')) {
+                if (!autoMapping.sku) autoMapping.sku = col
+              }
+              // Name mapping
+              else if (colLower.includes('product') || colLower.includes('name') || colLower.includes('title')) {
+                if (!autoMapping.name) autoMapping.name = col
+              }
+              // Manufacturer mapping
+              else if (colLower.includes('mnf') || colLower.includes('manufacturer') || colLower.includes('brand') || colLower.includes('maker')) {
+                if (!autoMapping.manufacturer) autoMapping.manufacturer = col
+              }
+              // Price mapping
+              else if (colLower.includes('price') || colLower.includes('cost')) {
+                if (!autoMapping.price) autoMapping.price = col
+              }
+              // Description mapping
+              else if (colLower.includes('description') || colLower.includes('desc')) {
+                if (!autoMapping.description) autoMapping.description = col
+              }
+              // Category mapping
+              else if (colLower.includes('category') || colLower.includes('cat')) {
+                if (!autoMapping.category) autoMapping.category = col
+              }
+              // Image mapping
+              else if (colLower.includes('image') || colLower.includes('img') || colLower.includes('photo')) {
+                if (!autoMapping.image) autoMapping.image = col
+              }
+            })
+            
+            setColumnMapping(autoMapping)
+            setShowColumnMapping(true)
+          } else {
+            const errorData = await response.json()
+            toast.error(errorData.error || 'Failed to analyze file')
+          }
+        } catch (error: any) {
+          console.error('Error analyzing file:', error)
+          toast.error('Failed to analyze file structure')
+        } finally {
+          setAnalyzingFile(false)
+        }
+      }
     }
   }
 
   const handleUpload = async () => {
     if (!file) {
       setMessage('Please select a file first')
+      return
+    }
+
+    // Check if column mapping is complete for required fields (only for Excel/CSV)
+    const fileName = file.name.toLowerCase()
+    if ((fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.csv')) && 
+        (!columnMapping.sku || !columnMapping.name || !columnMapping.manufacturer)) {
+      toast.error('Please map all required columns: SKU, Name, and Manufacturer')
       return
     }
 
@@ -173,6 +260,9 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      if (Object.keys(columnMapping).length > 0) {
+        formData.append('columnMapping', JSON.stringify(columnMapping))
+      }
 
       setProcessingStatus('Processing file...')
 
