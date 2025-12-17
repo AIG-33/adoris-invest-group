@@ -148,24 +148,50 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
     }
 
     setUploading(true)
-    setMessage('Uploading and processing file...')
+    setMessage('Uploading and processing file with AI...')
 
     try {
-      // In a real implementation, you would:
-      // 1. Parse the CSV/Excel file
-      // 2. Validate the data
-      // 3. Send to API endpoint for batch import
-      // 4. Handle errors and conflicts
+      const formData = new FormData()
+      formData.append('file', file)
 
-      // Simulate upload
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const response = await fetch('/api/admin/products/import', {
+        method: 'POST',
+        body: formData,
+      })
 
-      setMessage(
-        '✅ File uploaded successfully! In production, this would parse and import products from the Excel/CSV file.'
-      )
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to import products')
+      }
+
+      if (data.results) {
+        const { created, updated, errors } = data.results
+        let message = `✅ Successfully processed: ${created} created, ${updated} updated`
+        if (errors.length > 0) {
+          message += `\n⚠️ Errors: ${errors.length}`
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Import errors:', errors)
+          }
+        }
+        setMessage(message)
+        toast.success(`Products imported: ${created} created, ${updated} updated`)
+      } else {
+        setMessage('✅ ' + (data.message || 'File processed successfully'))
+        toast.success('Products imported successfully')
+      }
+      
       setFile(null)
-    } catch (error) {
-      setMessage('❌ Upload failed. Please try again.')
+      
+      // Reset file input
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
+      if (fileInput) {
+        fileInput.value = ''
+      }
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Upload failed. Please try again.'
+      setMessage('❌ ' + errorMessage)
+      toast.error(errorMessage)
     } finally {
       setUploading(false)
     }
@@ -232,12 +258,19 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
 
         <div className="bg-gradient-to-r from-[#333333]/10 to-[#666666]/10 rounded-xl p-6 mb-6">
           <p className="text-sm text-neutral-700 mb-4">
-            Upload an Excel (.xlsx) or CSV file to bulk import products. The file should contain
-            the following columns:
+            Upload a file (PDF, image, or text) and AI will automatically extract product information:
           </p>
-          <ul className="text-sm text-neutral-600 space-y-1 list-disc list-inside">
-            <li>name, sku, description, shortDesc, price, image (URL), category, manufacturer, stockStatus, stockQuantity</li>
+          <ul className="text-sm text-neutral-600 space-y-1 list-disc list-inside mb-4">
+            <li><strong>Catalog Number/SKU</strong> - automatically detected</li>
+            <li><strong>Product Name</strong> - extracted from document</li>
+            <li><strong>Price</strong> - found and converted to EUR</li>
+            <li><strong>Description</strong> - extracted from document</li>
+            <li><strong>Manufacturer</strong> - identified and matched to database</li>
+            <li><strong>Category</strong> - automatically categorized (if found)</li>
           </ul>
+          <p className="text-xs text-neutral-500 mt-4">
+            💡 If a product with the same catalog number already exists, it will be updated with new information.
+          </p>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -250,13 +283,13 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
                     {file ? file?.name : 'Choose a file or drag it here'}
                   </p>
                   <p className="text-sm text-neutral-500">
-                    Supported formats: .xlsx, .csv (max 10 MB)
+                    Supported formats: PDF, Images (PNG, JPG, etc.), Text files (max 20 MB)
                   </p>
                 </div>
               </div>
               <input
                 type="file"
-                accept=".xlsx,.csv"
+                accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.doc,.docx"
                 onChange={handleFileChange}
                 className="hidden"
               />
