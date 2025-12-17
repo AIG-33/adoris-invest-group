@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getCompanyByDomain } from '@/lib/company'
 
+// Use Node.js runtime for middleware to support Prisma
+export const runtime = 'nodejs'
+
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') || ''
   let domain = host.split(':')[0].toLowerCase()
