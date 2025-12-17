@@ -1,20 +1,7 @@
 import { prisma } from './db'
+import type { CompanyConfig } from './company-types'
 
-export interface CompanyConfig {
-  id: string
-  name: string
-  slug: string
-  domain: string
-  logo: string | null
-  language: 'en' | 'ru'
-  priceType: 'EU' | 'RU'
-  email: string | null
-  phone: string | null
-  address: string | null
-  primaryColor: string | null
-  secondaryColor: string | null
-  accentColor: string | null
-}
+export type { CompanyConfig }
 
 /**
  * Get company by domain

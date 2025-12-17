@@ -1,5 +1,6 @@
 import { headers } from 'next/headers'
-import { getCurrentCompany, CompanyConfig } from './company'
+import { getCurrentCompany } from './company'
+import type { CompanyConfig } from './company-types'
 import { prisma } from './db'
 
 /**

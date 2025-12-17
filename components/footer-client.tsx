@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { CompanyConfig } from '@/lib/company'
+import type { CompanyConfig } from '@/lib/company-types'
 
 interface FooterClientProps {
   company: CompanyConfig | null

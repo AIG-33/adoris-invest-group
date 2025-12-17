@@ -6,7 +6,7 @@ import { useSession, signOut } from 'next-auth/react'
 import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
-import { CompanyConfig } from '@/lib/company'
+import type { CompanyConfig } from '@/lib/company-types'
 import {
   DropdownMenu,
   DropdownMenuContent,
