@@ -360,7 +360,13 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
             console.log('Available columns:', Object.keys(records[0] || {}))
           }
 
-          extractedData = records.map((record: any) => {
+          extractedData = records.map((record: any, index: number) => {
+            // Debug: log first few records in development
+            if (process.env.NODE_ENV === 'development' && index < 3) {
+              console.log(`\n📋 Processing record ${index + 1}:`, record)
+              console.log('   Available keys:', Object.keys(record))
+            }
+
             // Handle various column name formats
             // SKU: cat#, sku, catalogNumber, code, id, SKU, Cat#, CAT#
             const sku = String(
@@ -404,16 +410,16 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
             priceStr = priceStr.replace(/[^\d.]/g, '')
             const price = parseFloat(priceStr) || 0
 
-            // Description: description, Description, desc
+            // Description: description, Description, desc (OPTIONAL)
             const description = record.description || record.Description || record.desc || record.Desc || undefined
 
-            // Category: category, Category, cat
+            // Category: category, Category, cat (OPTIONAL)
             const category = record.category || record.Category || record.cat || record.Cat || undefined
 
-            // Image: image, Image, imageUrl
+            // Image: image, Image, imageUrl (OPTIONAL)
             const image = record.image || record.Image || record.imageUrl || record.imageURL || undefined
 
-            return {
+            const product = {
               sku,
               name,
               description: description ? String(description).trim() : undefined,
@@ -422,13 +428,68 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               category: category ? String(category).trim() : undefined,
               image: image ? String(image).trim() : undefined,
             }
-          }).filter((p: any) => p.sku && p.name && p.manufacturer)
+
+            // Debug: log extracted product
+            if (process.env.NODE_ENV === 'development' && index < 3) {
+              console.log(`   ✅ Extracted:`, {
+                sku: product.sku || '(empty)',
+                name: product.name || '(empty)',
+                manufacturer: product.manufacturer || '(empty)',
+                price: product.price,
+              })
+            }
+
+            return product
+          })
+
+          // Filter: only require sku, name, and manufacturer (description is optional)
+          const beforeFilter = extractedData.length
+          extractedData = extractedData.filter((p: any) => {
+            const hasRequired = p.sku && p.name && p.manufacturer
+            if (!hasRequired && process.env.NODE_ENV === 'development') {
+              console.log(`   ❌ Filtered out product:`, {
+                sku: p.sku || '(missing)',
+                name: p.name || '(missing)',
+                manufacturer: p.manufacturer || '(missing)',
+              })
+            }
+            return hasRequired
+          })
+
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`\n📊 Excel parsing results:`)
+            console.log(`   Total records: ${records.length}`)
+            console.log(`   Before filter: ${beforeFilter}`)
+            console.log(`   After filter: ${extractedData.length}`)
+          }
 
           if (extractedData.length === 0) {
+            const sampleRecord = records.length > 0 ? records[0] : {}
+            const foundColumns = Object.keys(sampleRecord)
+            
+            // Try to identify what columns we have
+            const columnAnalysis = foundColumns.map((col: string) => {
+              const value = sampleRecord[col]
+              let type = 'unknown'
+              if (col.toLowerCase().includes('cat') || col.toLowerCase().includes('sku') || col.toLowerCase().includes('code')) {
+                type = 'likely SKU'
+              } else if (col.toLowerCase().includes('product') || col.toLowerCase().includes('name') || col.toLowerCase().includes('title')) {
+                type = 'likely Name'
+              } else if (col.toLowerCase().includes('mnf') || col.toLowerCase().includes('manufacturer') || col.toLowerCase().includes('brand')) {
+                type = 'likely Manufacturer'
+              } else if (col.toLowerCase().includes('price') || col.toLowerCase().includes('cost')) {
+                type = 'likely Price'
+              }
+              return `${col} (${type}, value: "${String(value).substring(0, 50)}")`
+            }).join('; ')
+
             return NextResponse.json(
               { 
                 error: 'No valid products found in Excel file. Make sure Excel sheet has columns with product data.',
-                hint: 'Expected columns: cat# (or sku), Product (or name), MNF (or manufacturer), price (optional). Found columns: ' + (records.length > 0 ? Object.keys(records[0] || {}).join(', ') : 'none')
+                hint: `Expected columns: cat# (or sku), Product (or name), MNF (or manufacturer), price (optional).`,
+                foundColumns: foundColumns.length > 0 ? foundColumns.join(', ') : 'none',
+                columnAnalysis: columnAnalysis || 'Could not analyze columns',
+                sampleRecord: process.env.NODE_ENV === 'development' ? sampleRecord : undefined,
               },
               { status: 400 }
             )
