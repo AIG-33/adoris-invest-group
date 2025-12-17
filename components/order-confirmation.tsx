@@ -193,8 +193,8 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
             If you have any questions about your order, please don't hesitate to contact us.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
-            <a href="mailto:info@adorisgroup.com" className="text-[#333333] hover:underline">
-              📧 info@adorisgroup.com
+            <a href={`mailto:${companyEmail}`} className="text-[#333333] hover:underline">
+              📧 {companyEmail}
             </a>
             <a href="tel:+48793081310" className="text-[#333333] hover:underline">
               📞 +48793081310
