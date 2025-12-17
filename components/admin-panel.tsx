@@ -23,6 +23,8 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
   const [deletingOrder, setDeletingOrder] = useState<string | null>(null)
   const [processingStatus, setProcessingStatus] = useState<string>('')
+  const [progress, setProgress] = useState({ current: 0, total: 0 })
+  const [liveErrors, setLiveErrors] = useState<string[]>([])
   const [importResults, setImportResults] = useState<{
     created: number
     updated: number
@@ -165,6 +167,8 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
     setMessage('')
     setProcessingStatus('Uploading file...')
     setImportResults(null)
+    setLiveErrors([])
+    setProgress({ current: 0, total: 0 })
 
     try {
       const formData = new FormData()

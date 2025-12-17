@@ -444,14 +444,24 @@ Important:
     const existingProductsMap = new Map(existingProducts.map(p => [p.sku, p.id]))
 
     // Process products in batches to avoid timeout
+    const totalProducts = extractedData.length
+    let processedCount = 0
+    
     for (let i = 0; i < extractedData.length; i += BATCH_SIZE) {
       const batch = extractedData.slice(i, i + BATCH_SIZE)
       
       for (const productData of batch) {
+        processedCount++
         try {
           // Validate required fields
           if (!productData.sku || !productData.name || !productData.manufacturer) {
-            results.errors.push(`Missing required fields for product: ${productData.name || 'Unknown'}`)
+            const missingFields = []
+            if (!productData.sku) missingFields.push('SKU')
+            if (!productData.name) missingFields.push('name')
+            if (!productData.manufacturer) missingFields.push('manufacturer')
+            
+            const errorMsg = `Missing required fields (${missingFields.join(', ')}) for product: ${productData.name || productData.sku || 'Unknown'}`
+            results.errors.push(errorMsg)
             continue
           }
 
@@ -581,7 +591,10 @@ Important:
     return NextResponse.json({
       success: true,
       message: `Processed ${extractedData.length} products: ${results.created} created, ${results.updated} updated`,
-      results,
+      results: {
+        ...results,
+        total: extractedData.length,
+      },
     })
   } catch (error: any) {
     console.error('Import error:', error)
