@@ -9,3 +9,8 @@ export async function getServerCompany(): Promise<CompanyConfig | null> {
   return getCurrentCompany(headersList)
 }
 
+/**
+ * Alias for getServerCompany for consistency
+ */
+export const getCompany = getServerCompany
+
