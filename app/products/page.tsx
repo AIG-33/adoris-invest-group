@@ -140,7 +140,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                 </p>
                 <div className="flex items-center gap-3">
                   <ProductsActionButtons />
-                  <SortDropdown currentSort={sort} />
+                  <SortDropdown currentSort={sort} translations={dict.products.sort} />
                 </div>
               </div>
               

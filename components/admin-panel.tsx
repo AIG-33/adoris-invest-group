@@ -5,6 +5,19 @@ import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, XCir
 import toast from 'react-hot-toast'
 import { CompaniesAdmin } from './companies-admin'
 
+interface AdminTranslations {
+  dashboard: string
+  orders: string
+  products: string
+  companies: string
+  totalProducts: string
+  totalOrders: string
+  pendingOrders: string
+  allOrders: string
+  importProducts: string
+  [key: string]: any
+}
+
 interface AdminPanelProps {
   stats: {
     totalProducts: number
@@ -12,9 +25,10 @@ interface AdminPanelProps {
     pendingOrders: number
   }
   recentOrders: any[]
+  translations: AdminTranslations
 }
 
-export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
+export function AdminPanel({ stats, recentOrders, translations }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'companies'>('orders')
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -380,7 +394,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       {/* Hero Section */}
       <section className="relative bg-black text-white py-16 mb-12 -mx-6 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-4">Admin Dashboard</h1>
+          <h1 className="text-4xl font-bold mb-4">{translations.dashboard}</h1>
           <p className="text-lg text-white/90">Manage orders, products, and companies</p>
         </div>
       </section>
@@ -397,7 +411,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
             }`}
           >
             <ShoppingBag className="w-5 h-5" />
-            Orders
+            {translations.orders}
           </button>
           <button
             onClick={() => setActiveTab('products')}
@@ -408,7 +422,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
             }`}
           >
             <Package className="w-5 h-5" />
-            Products
+            {translations.products}
           </button>
           <button
             onClick={() => setActiveTab('companies')}
@@ -419,7 +433,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
             }`}
           >
             <Building2 className="w-5 h-5" />
-            Companies
+            {translations.companies}
           </button>
         </div>
       </div>
@@ -440,7 +454,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
               <Package className="w-7 h-7 text-[#333333]" />
             </div>
             <div>
-              <p className="text-sm text-neutral-600 font-medium">Total Products</p>
+              <p className="text-sm text-neutral-600 font-medium">{translations.totalProducts}</p>
               <p className="text-3xl font-bold text-neutral-900">{stats?.totalProducts || 0}</p>
             </div>
           </div>
@@ -452,7 +466,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
               <ShoppingBag className="w-7 h-7 text-[#666666]" />
             </div>
             <div>
-              <p className="text-sm text-neutral-600 font-medium">Total Orders</p>
+              <p className="text-sm text-neutral-600 font-medium">{translations.totalOrders}</p>
               <p className="text-3xl font-bold text-neutral-900">{stats?.totalOrders || 0}</p>
             </div>
           </div>
@@ -464,7 +478,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
               <Clock className="w-7 h-7 text-orange-500" />
             </div>
             <div>
-              <p className="text-sm text-neutral-600 font-medium">Pending Orders</p>
+              <p className="text-sm text-neutral-600 font-medium">{translations.pendingOrders}</p>
               <p className="text-3xl font-bold text-neutral-900">{stats?.pendingOrders || 0}</p>
             </div>
           </div>
@@ -475,7 +489,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200 mb-12">
         <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
           <FileSpreadsheet className="w-7 h-7 text-[#333333]" />
-          Import Products from Excel/CSV
+          {translations.importProducts}
         </h2>
 
         <div className="bg-gradient-to-r from-[#333333]/10 to-[#666666]/10 rounded-xl p-6 mb-6">
@@ -864,7 +878,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       {/* All Orders */}
       <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-neutral-900">All Orders</h2>
+          <h2 className="text-2xl font-bold text-neutral-900">{translations.allOrders || 'All Orders'}</h2>
           <button
             onClick={loadAllOrders}
             disabled={loadingOrders}

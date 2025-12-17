@@ -273,6 +273,7 @@ export interface Translations {
     process: string
     results: string
     addAllToCart: string
+    items?: string
   }
   
   // Admin
@@ -538,6 +539,7 @@ const translations: Record<Language, Translations> = {
       process: 'Process Items',
       results: 'Results',
       addAllToCart: 'Add All to Cart',
+      items: 'items',
     },
     admin: {
       title: 'Admin Panel',
@@ -799,6 +801,7 @@ const translations: Record<Language, Translations> = {
       process: 'Обработать элементы',
       results: 'Результаты',
       addAllToCart: 'Добавить все в корзину',
+      items: 'товаров',
     },
     admin: {
       title: 'Панель администратора',

@@ -1,10 +1,15 @@
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import BulkOrderForm from '@/components/bulk-order-form';
+import { getServerCompany } from '@/lib/server-company';
+import { getDictionary } from '@/lib/translations';
 
 export const dynamic = 'force-dynamic';
 
-export default function BulkOrderPage() {
+export default async function BulkOrderPage() {
+  const company = await getServerCompany()
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
   return (
     <>
       <Header />
@@ -14,10 +19,10 @@ export default function BulkOrderPage() {
           <div className="container mx-auto px-6">
             <div className="max-w-6xl mx-auto text-center">
               <h1 className="text-4xl font-bold mb-2">
-                Bulk Order
+                {dict.bulkOrder.title}
               </h1>
               <p className="text-lg text-white/90">
-                Quickly add multiple products to your cart by pasting SKUs and quantities
+                {dict.bulkOrder.subtitle}
               </p>
             </div>
           </div>
@@ -26,7 +31,7 @@ export default function BulkOrderPage() {
         <div className="container mx-auto px-6 py-12">
           <div className="max-w-6xl mx-auto">
 
-            <BulkOrderForm />
+            <BulkOrderForm translations={{...dict.bulkOrder, items: dict.cart.items}} />
           </div>
         </div>
       </main>

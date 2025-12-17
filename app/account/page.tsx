@@ -5,6 +5,8 @@ import { prisma } from '@/lib/db'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { AccountContent } from '@/components/account-content'
+import { getServerCompany } from '@/lib/server-company'
+import { getDictionary } from '@/lib/translations'
 
 export const dynamic = 'force-dynamic'
 
@@ -61,6 +63,10 @@ export default async function AccountPage() {
     pendingOrders: pendingOrdersCount,
   }
 
+  const company = await getServerCompany()
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
+
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -69,7 +75,7 @@ export default async function AccountPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-              My Account
+              {dict.account.title}
             </h1>
             <p className="text-xl sm:text-2xl text-white/90">
               Manage your orders and profile settings
@@ -77,7 +83,7 @@ export default async function AccountPage() {
           </div>
         </div>
       </section>
-      <AccountContent orders={orders} stats={stats} user={session.user} />
+      <AccountContent orders={orders} stats={stats} user={session.user} translations={dict.account} />
       <Footer />
     </div>
   )

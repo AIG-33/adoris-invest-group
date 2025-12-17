@@ -5,6 +5,8 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { AdminPanel } from '@/components/admin-panel'
 import { prisma } from '@/lib/db'
+import { getServerCompany } from '@/lib/server-company'
+import { getDictionary } from '@/lib/translations'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,6 +49,10 @@ export default async function AdminPage() {
       },
     })
 
+    const company = await getServerCompany()
+    const language = (company?.language || 'en') as 'en' | 'ru'
+    const dict = getDictionary(language)
+
     return (
       <div className="min-h-screen flex flex-col bg-white">
         <Header />
@@ -58,6 +64,7 @@ export default async function AdminPage() {
               pendingOrders,
             }}
             recentOrders={recentOrders || []}
+            translations={dict.admin}
           />
         </main>
         <Footer />

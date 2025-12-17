@@ -1,10 +1,15 @@
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { CheckCircle, ShieldCheck, Truck, CreditCard, Clock, ThermometerSnowflake, PackageCheck } from 'lucide-react';
+import { getServerCompany } from '@/lib/server-company';
+import { getDictionary } from '@/lib/translations';
 
 export const dynamic = 'force-dynamic';
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const company = await getServerCompany()
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
   return (
     <>
       <Header />
@@ -35,11 +40,10 @@ export default function TermsPage() {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-[#000000] mb-3">
-                      Original Products Guarantee
+                      {dict.terms.originalProducts.title}
                     </h2>
                     <p className="text-neutral-700 leading-relaxed">
-                      We supply <strong>only original products</strong> sourced directly from European manufacturers' warehouses. 
-                      All products come with manufacturer warranties and certificates of authenticity.
+                      {dict.terms.originalProducts.description}
                     </p>
                   </div>
                 </div>
@@ -53,15 +57,14 @@ export default function TermsPage() {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-[#000000] mb-3">
-                      Minimum Order Value
+                      {dict.terms.minimumOrder.title}
                     </h2>
                     <p className="text-neutral-700 leading-relaxed mb-3">
-                      The minimum order value is <strong>€10,000</strong>.
+                      {dict.terms.minimumOrder.description}
                     </p>
                     <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                       <p className="text-sm text-amber-800">
-                        <strong>Please note:</strong> Orders below €10,000 will incur additional delivery charges 
-                        from suppliers' warehouses to our warehouse in Vilnius, approximately <strong>€300-€500</strong>.
+                        {dict.terms.minimumOrder.note}
                       </p>
                     </div>
                   </div>
@@ -76,18 +79,13 @@ export default function TermsPage() {
                   </div>
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-[#000000] mb-3">
-                      Payment Terms
+                      {dict.terms.payment.title}
                     </h2>
                     <p className="text-neutral-700 leading-relaxed mb-3">
-                      We require <strong>100% prepayment</strong> for all orders.
-                    </p>
-                    <p className="text-neutral-700 leading-relaxed">
-                      We work on <strong>EXW Vilnius</strong> (Ex Works) terms. This means that goods are available for pickup 
-                      at our warehouse in Vilnius, Lithuania. Buyers are responsible for all transportation costs and risks 
-                      from that point forward.
+                      {dict.terms.payment.description}
                     </p>
                     <div className="mt-4 bg-neutral-100 rounded-lg p-4">
-                      <h3 className="font-semibold text-black mb-2">Bank Details:</h3>
+                      <h3 className="font-semibold text-black mb-2">{dict.terms.payment.bankDetails}</h3>
                       <ul className="space-y-1 text-sm text-neutral-700">
                         <li><strong>Bank:</strong> PKO Bank Polski, Oddzial 18</li>
                         <li><strong>SWIFT:</strong> BPKOPLPW</li>

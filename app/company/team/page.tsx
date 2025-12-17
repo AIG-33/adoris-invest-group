@@ -3,6 +3,8 @@ import { Footer } from '@/components/footer'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Mail, Linkedin, Quote } from 'lucide-react'
+import { getServerCompany } from '@/lib/server-company'
+import { getDictionary } from '@/lib/translations'
 
 const teamMembers = [
   {
@@ -47,7 +49,11 @@ const teamMembers = [
   },
 ]
 
-export default function TeamPage() {
+export default async function TeamPage() {
+  const company = await getServerCompany()
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
+  
   return (
     <>
       <Header />
@@ -57,10 +63,10 @@ export default function TeamPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
-                Meet Our Team
+                {dict.team.title}
               </h1>
               <p className="text-xl sm:text-2xl text-white/90 leading-relaxed">
-                Dedicated professionals committed to excellence in medical equipment distribution
+                {dict.team.subtitle}
               </p>
             </div>
           </div>
@@ -74,7 +80,7 @@ export default function TeamPage() {
                 <Quote className="absolute top-8 left-8 w-16 h-16 text-black/10" />
                 <div className="relative z-10">
                   <h2 className="text-3xl sm:text-4xl font-bold text-black mb-8">
-                    A Message from the CEO
+                    {dict.team.messageTitle}
                   </h2>
                   
                   <div className="prose prose-lg max-w-none text-neutral-700 leading-relaxed space-y-4 prose-headings:text-black prose-strong:text-black">

@@ -16,7 +16,21 @@ interface CartItem {
   quantity: number
 }
 
-export function CheckoutForm() {
+interface CheckoutTranslations {
+  title: string
+  billingInfo: string
+  orderSummary: string
+  placeOrder: string
+  processing: string
+  secure: string
+  gdpr: string
+}
+
+interface CheckoutFormProps {
+  translations: CheckoutTranslations
+}
+
+export function CheckoutForm({ translations }: CheckoutFormProps) {
   const router = useRouter()
   const { data: session } = useSession() || {}
   const [cart, setCart] = useState<CartItem[]>([])
@@ -91,7 +105,7 @@ export function CheckoutForm() {
   if (!mounted) {
     return (
       <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-        <div className="text-center text-neutral-600">Loading...</div>
+        <div className="text-center text-neutral-600">{translations.processing}</div>
       </div>
     )
   }
@@ -168,7 +182,7 @@ export function CheckoutForm() {
         <span>/</span>
         <Link href="/cart" className="hover:text-[#333333]">Cart</Link>
         <span>/</span>
-        <span className="text-neutral-900 font-medium">Checkout</span>
+        <span className="text-neutral-900 font-medium">{translations.title}</span>
       </nav>
 
       {/* Progress Steps - Compact on Mobile */}
@@ -184,7 +198,7 @@ export function CheckoutForm() {
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0" style={{ backgroundColor: 'var(--company-accent, #000000)' }}>
             2
           </div>
-          <span className="font-semibold text-[#333333] text-xs sm:text-base whitespace-nowrap">Checkout</span>
+          <span className="font-semibold text-[#333333] text-xs sm:text-base whitespace-nowrap">{translations.title}</span>
         </div>
         <div className="w-8 sm:w-16 h-0.5 bg-neutral-200"></div>
         <div className="flex items-center gap-1.5 sm:gap-3">
@@ -202,7 +216,7 @@ export function CheckoutForm() {
           <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-neutral-200">
             <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
               <Building2 className="w-6 h-6 sm:w-7 sm:h-7 text-[#333333]" />
-              Billing Information
+              {translations.billingInfo}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div className="md:col-span-2">
@@ -433,7 +447,7 @@ export function CheckoutForm() {
         {/* Right Column - Order Summary */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg border-2 border-neutral-200 lg:sticky lg:top-24">
-            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6">Order Summary</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6">{translations.orderSummary}</h2>
 
             {/* Cart Items Mini */}
             <div className="max-h-[250px] sm:max-h-[300px] overflow-y-auto mb-4 sm:mb-6 space-y-2 sm:space-y-3">
@@ -508,17 +522,17 @@ export function CheckoutForm() {
                 }
               }}
             >
-              {loading ? 'Processing...' : 'Place Order'}
+              {loading ? translations.processing : translations.placeOrder}
             </button>
 
             <div className="mt-6 space-y-2 text-xs text-neutral-600">
               <div className="flex items-center gap-2">
                 <span>🔒</span>
-                <span>Secure SSL encrypted transactions</span>
+                <span>{translations.secure}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span>✅</span>
-                <span>GDPR compliant data protection</span>
+                <span>{translations.gdpr}</span>
               </div>
             </div>
           </div>

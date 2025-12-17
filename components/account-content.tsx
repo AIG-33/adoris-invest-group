@@ -25,6 +25,20 @@ import {
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
+interface AccountTranslations {
+  title: string
+  orders: string
+  profile: string
+  totalOrders: string
+  totalSpent: string
+  orderNumber: string
+  orderDate: string
+  status: string
+  details: string
+  reorder: string
+  save?: string
+}
+
 interface AccountContentProps {
   orders: any[]
   stats: {
@@ -33,9 +47,10 @@ interface AccountContentProps {
     pendingOrders: number
   }
   user: any
+  translations: AccountTranslations
 }
 
-export function AccountContent({ orders, stats, user }: AccountContentProps) {
+export function AccountContent({ orders, stats, user, translations }: AccountContentProps) {
   const router = useRouter()
   const [reordering, setReordering] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'orders' | 'profile'>('orders')
@@ -241,14 +256,14 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
           <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-2">
               <Package className="w-5 h-5" />
-              <span className="text-sm font-medium">Total Orders</span>
+              <span className="text-sm font-medium">{translations.totalOrders}</span>
             </div>
             <p className="text-3xl font-bold">{stats.totalOrders}</p>
           </div>
           <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
             <div className="flex items-center gap-3 mb-2">
               <Euro className="w-5 h-5" />
-              <span className="text-sm font-medium">Total Spent</span>
+              <span className="text-sm font-medium">{translations.totalSpent}</span>
             </div>
             <p className="text-3xl font-bold">
               €{Number(stats.totalSpent).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -276,7 +291,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
             }`}
           >
             <ShoppingCart className="w-5 h-5" />
-            My Orders
+            {translations.orders}
           </button>
           <button
             onClick={() => setActiveTab('profile')}
@@ -287,7 +302,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
             }`}
           >
             <Settings className="w-5 h-5" />
-            Profile
+            {translations.profile}
           </button>
         </div>
       </div>
@@ -510,7 +525,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                   ) : (
                     <>
                       <Save className="w-5 h-5" />
-                      Save Profile
+                      {translations.save || 'Save'} {translations.profile}
                     </>
                   )}
                 </button>
@@ -526,7 +541,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
         <div className="px-6 py-4 bg-gradient-to-r from-[#333333]/10 to-[#666666]/5 border-b border-neutral-200">
           <h2 className="text-2xl font-bold text-[#000000] flex items-center gap-2">
             <ShoppingCart className="w-6 h-6" />
-            My Orders
+            {translations.orders}
           </h2>
         </div>
 
@@ -605,7 +620,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       }}
                     >
                       <Eye className="w-4 h-4" />
-                      Details
+                      {translations.details}
                     </Link>
                     <button
                       onClick={() => handleReorder(order.id)}
@@ -634,7 +649,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                       ) : (
                         <>
                           <RefreshCw className="w-4 h-4" />
-                          Reorder
+                          {translations.reorder}
                         </>
                       )}
                     </button>

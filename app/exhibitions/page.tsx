@@ -3,6 +3,8 @@ import { Footer } from '@/components/footer'
 import { ExhibitionImage } from '@/components/exhibition-image'
 import { Calendar, MapPin, ArrowRight, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import { getServerCompany } from '@/lib/server-company'
+import { getDictionary } from '@/lib/translations'
 
 interface Exhibition {
   id: string

@@ -22,7 +22,22 @@ interface BulkOrderResult {
   notFound: string[];
 }
 
-export default function BulkOrderForm() {
+interface BulkOrderTranslations {
+  title: string
+  subtitle: string
+  enterProducts: string
+  instructions: string
+  process: string
+  results: string
+  addAllToCart: string
+  items?: string
+}
+
+interface BulkOrderFormProps {
+  translations: BulkOrderTranslations
+}
+
+export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
   const router = useRouter();
   const [inputText, setInputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -127,15 +142,12 @@ SKU003\t10`;
       <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Upload className="w-5 h-5" style={{ color: 'var(--company-primary, #333333)' }} />
-          <h2 className="text-xl font-bold" style={{ color: 'var(--company-primary, #000000)' }}>Enter Products</h2>
+          <h2 className="text-xl font-bold" style={{ color: 'var(--company-primary, #000000)' }}>{translations.enterProducts}</h2>
         </div>
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-neutral-700 mb-2">
-            Paste SKUs and Quantities
-            <span className="text-neutral-500 ml-2">
-              (one per line, separated by tab, comma, or space)
-            </span>
+            {translations.instructions}
           </label>
           <textarea
             value={inputText}
@@ -188,7 +200,7 @@ SKU003\t10`;
             ) : (
               <>
                 <CheckCircle className="w-5 h-5" />
-                Process Items
+                {translations.process}
               </>
             )}
           </button>
@@ -227,13 +239,13 @@ SKU003\t10`;
       <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <Package className="w-5 h-5" style={{ color: 'var(--company-secondary, #666666)' }} />
-          <h2 className="text-xl font-bold" style={{ color: 'var(--company-primary, #000000)' }}>Results</h2>
+          <h2 className="text-xl font-bold" style={{ color: 'var(--company-primary, #000000)' }}>{translations.results}</h2>
         </div>
 
         {!result ? (
           <div className="flex flex-col items-center justify-center h-64 text-neutral-400">
             <Package className="w-16 h-16 mb-4" />
-            <p className="text-center">Enter SKUs and click &quot;Process Items&quot; to see results</p>
+            <p className="text-center">{translations.instructions}</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -309,7 +321,7 @@ SKU003\t10`;
                   }}
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  Add All to Cart ({result.found.length} items)
+                  {translations.addAllToCart} ({result.found.length} {translations.items || 'items'})
                 </button>
               </div>
             )}

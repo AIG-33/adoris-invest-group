@@ -3,7 +3,29 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowUpDown } from 'lucide-react'
 
-export function SortDropdown({ currentSort }: { currentSort?: string }) {
+interface SortTranslations {
+  default: string
+  priceAsc: string
+  priceDesc: string
+  nameAsc: string
+  nameDesc: string
+}
+
+interface SortDropdownProps {
+  currentSort?: string
+  translations?: SortTranslations
+}
+
+export function SortDropdown({ currentSort, translations }: SortDropdownProps) {
+  const defaultTranslations: SortTranslations = {
+    default: 'Default',
+    priceAsc: 'Price: Low to High',
+    priceDesc: 'Price: High to Low',
+    nameAsc: 'Name: A-Z',
+    nameDesc: 'Name: Z-A',
+  }
+  
+  const t = translations || defaultTranslations
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -27,9 +49,9 @@ export function SortDropdown({ currentSort }: { currentSort?: string }) {
         onChange={(e) => handleSortChange(e.target.value)}
         className="bg-neutral-800 text-neutral-300 border border-neutral-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/20 hover:bg-neutral-700 transition-colors cursor-pointer"
       >
-        <option value="">Default</option>
-        <option value="price-desc">Price: High to Low</option>
-        <option value="price-asc">Price: Low to High</option>
+        <option value="">{t.default}</option>
+        <option value="price-desc">{t.priceDesc}</option>
+        <option value="price-asc">{t.priceAsc}</option>
       </select>
     </div>
   )
