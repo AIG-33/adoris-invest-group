@@ -36,12 +36,12 @@ export default async function AboutPage() {
                     Who We Are
                   </h2>
                   <p className="text-lg text-neutral-700 mb-4 leading-relaxed">
-                    ADORIS INVEST GROUP OÜ is an experienced and trusted representative of the world's largest manufacturers 
+                    We are an experienced and trusted representative of the world's largest manufacturers 
                     of medical devices, medical equipment, and consumables for clinical and sports laboratories.
                   </p>
                   <p className="text-lg text-neutral-700 mb-4 leading-relaxed">
-                    Founded in 2014 in Estonia, we have grown to become a leading distributor serving clients across 
-                    Russia, Belarus, Kazakhstan, and the European Union.
+                    Founded in 2014 we have grown to become a leading distributor holding serving clients across 
+                    EU, EAEU, US, Asia and Midle East.
                   </p>
                   <p className="text-lg text-neutral-700 leading-relaxed">
                     Our direct contacts with manufacturers and streamlined logistics routes enable us to promptly organize 
