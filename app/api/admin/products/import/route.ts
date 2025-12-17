@@ -466,15 +466,37 @@ Important:
           if (partialMatch) {
             manufacturerId = partialMatch.id
           } else {
-            // Create new manufacturer
-            const newManufacturer = await prisma.manufacturer.create({
-              data: {
-                name: productData.manufacturer,
-                slug: generateSlug(productData.manufacturer),
-              },
-            })
-            manufacturerId = newManufacturer.id
-            manufacturerMap.set(productData.manufacturer.toLowerCase(), manufacturerId)
+            // Create new manufacturer (with error handling for duplicates)
+            try {
+              const newManufacturer = await prisma.manufacturer.create({
+                data: {
+                  name: productData.manufacturer,
+                  slug: generateSlug(productData.manufacturer),
+                },
+              })
+              manufacturerId = newManufacturer.id
+              manufacturerMap.set(productData.manufacturer.toLowerCase(), manufacturerId)
+            } catch (createError: any) {
+              // If manufacturer was created by another request, try to find it
+              if (createError?.code === 'P2002') {
+                const found = await prisma.manufacturer.findFirst({
+                  where: {
+                    OR: [
+                      { name: { equals: productData.manufacturer, mode: 'insensitive' } },
+                      { slug: generateSlug(productData.manufacturer) },
+                    ],
+                  },
+                })
+                if (found) {
+                  manufacturerId = found.id
+                  manufacturerMap.set(productData.manufacturer.toLowerCase(), manufacturerId)
+                } else {
+                  throw createError
+                }
+              } else {
+                throw createError
+              }
+            }
           }
         }
 
