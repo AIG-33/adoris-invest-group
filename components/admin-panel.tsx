@@ -153,7 +153,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
     }
   }
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e?.target?.files?.[0]
     if (selectedFile) {
       setFile(selectedFile)
@@ -162,71 +162,86 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       setImportResults(null)
       setShowColumnMapping(false)
       setColumnMapping({})
+      setFileColumns([])
+    }
+  }
+
+  const handleAnalyzeFile = async () => {
+    if (!file) {
+      toast.error('Please select a file first')
+      return
+    }
+
+    const fileName = file.name.toLowerCase()
+    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls') && !fileName.endsWith('.csv')) {
+      toast.error('Column mapping is only available for Excel (.xlsx, .xls) and CSV (.csv) files')
+      return
+    }
+
+    setAnalyzingFile(true)
+    setMessage('')
+    setLiveErrors([])
+    setImportResults(null)
+    
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
       
-      // Analyze file to get columns (only for Excel/CSV)
-      const fileName = selectedFile.name.toLowerCase()
-      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.endsWith('.csv')) {
-        setAnalyzingFile(true)
-        try {
-          const formData = new FormData()
-          formData.append('file', selectedFile)
-          
-          const response = await fetch('/api/admin/products/import/analyze', {
-            method: 'POST',
-            body: formData,
-          })
-          
-          if (response.ok) {
-            const data = await response.json()
-            setFileColumns(data.columns || [])
-            
-            // Auto-map columns based on common patterns
-            const autoMapping: Record<string, string> = {}
-            data.columns.forEach((col: string) => {
-              const colLower = col.toLowerCase().trim()
-              // SKU mapping
-              if (colLower.includes('cat#') || colLower.includes('sku') || colLower.includes('catalog') || colLower.includes('code')) {
-                if (!autoMapping.sku) autoMapping.sku = col
-              }
-              // Name mapping
-              else if (colLower.includes('product') || colLower.includes('name') || colLower.includes('title')) {
-                if (!autoMapping.name) autoMapping.name = col
-              }
-              // Manufacturer mapping
-              else if (colLower.includes('mnf') || colLower.includes('manufacturer') || colLower.includes('brand') || colLower.includes('maker')) {
-                if (!autoMapping.manufacturer) autoMapping.manufacturer = col
-              }
-              // Price mapping
-              else if (colLower.includes('price') || colLower.includes('cost')) {
-                if (!autoMapping.price) autoMapping.price = col
-              }
-              // Description mapping
-              else if (colLower.includes('description') || colLower.includes('desc')) {
-                if (!autoMapping.description) autoMapping.description = col
-              }
-              // Category mapping
-              else if (colLower.includes('category') || colLower.includes('cat')) {
-                if (!autoMapping.category) autoMapping.category = col
-              }
-              // Image mapping
-              else if (colLower.includes('image') || colLower.includes('img') || colLower.includes('photo')) {
-                if (!autoMapping.image) autoMapping.image = col
-              }
-            })
-            
-            setColumnMapping(autoMapping)
-            setShowColumnMapping(true)
-          } else {
-            const errorData = await response.json()
-            toast.error(errorData.error || 'Failed to analyze file')
+      const response = await fetch('/api/admin/products/import/analyze', {
+        method: 'POST',
+        body: formData,
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setFileColumns(data.columns || [])
+        
+        // Auto-map columns based on common patterns
+        const autoMapping: Record<string, string> = {}
+        data.columns.forEach((col: string) => {
+          const colLower = col.toLowerCase().trim()
+          // SKU mapping
+          if (colLower.includes('cat#') || colLower.includes('sku') || colLower.includes('catalog') || colLower.includes('code')) {
+            if (!autoMapping.sku) autoMapping.sku = col
           }
-        } catch (error: any) {
-          console.error('Error analyzing file:', error)
-          toast.error('Failed to analyze file structure')
-        } finally {
-          setAnalyzingFile(false)
-        }
+          // Name mapping
+          else if (colLower.includes('product') || colLower.includes('name') || colLower.includes('title')) {
+            if (!autoMapping.name) autoMapping.name = col
+          }
+          // Manufacturer mapping
+          else if (colLower.includes('mnf') || colLower.includes('manufacturer') || colLower.includes('brand') || colLower.includes('maker')) {
+            if (!autoMapping.manufacturer) autoMapping.manufacturer = col
+          }
+          // Price mapping
+          else if (colLower.includes('price') || colLower.includes('cost')) {
+            if (!autoMapping.price) autoMapping.price = col
+          }
+          // Description mapping
+          else if (colLower.includes('description') || colLower.includes('desc')) {
+            if (!autoMapping.description) autoMapping.description = col
+          }
+          // Category mapping
+          else if (colLower.includes('category') || colLower.includes('cat')) {
+            if (!autoMapping.category) autoMapping.category = col
+          }
+          // Image mapping
+          else if (colLower.includes('image') || colLower.includes('img') || colLower.includes('photo')) {
+            if (!autoMapping.image) autoMapping.image = col
+          }
+        })
+        
+        setColumnMapping(autoMapping)
+        setShowColumnMapping(true)
+        toast.success(`Found ${data.columns.length} columns in file`)
+      } else {
+        const errorData = await response.json()
+        toast.error(errorData.error || 'Failed to analyze file')
       }
+    } catch (error: any) {
+      console.error('Error analyzing file:', error)
+      toast.error('Failed to analyze file structure')
+    } finally {
+      setAnalyzingFile(false)
     }
   }
 
