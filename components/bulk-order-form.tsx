@@ -296,7 +296,17 @@ SKU003\t10`;
 
                 <button
                   onClick={addToCart}
-                  className="w-full mt-4 bg-[#666666] text-white px-6 py-3 rounded-lg hover:bg-[#059669] transition-colors font-semibold flex items-center justify-center gap-2"
+                  className="w-full mt-4 text-white px-6 py-3 rounded-lg transition-colors font-semibold flex items-center justify-center gap-2"
+                  style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                  onMouseEnter={(e) => {
+                    const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                    const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                    const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                    e.currentTarget.style.backgroundColor = darkened
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+                  }}
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Add All to Cart ({result.found.length} items)
