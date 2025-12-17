@@ -7,7 +7,7 @@ import * as XLSX from 'xlsx'
 import { parse } from 'csv-parse/sync'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 60 // 60 seconds for OpenAI processing
+export const maxDuration = 300 // 300 seconds (5 minutes) for large file processing
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -398,6 +398,21 @@ Important:
     const categoryMap = new Map(categories.map(c => [c.name.toLowerCase(), c.id]))
     const manufacturerMap = new Map(manufacturers.map(m => [m.name.toLowerCase(), m.id]))
 
+    // Limit processing to prevent timeout (process in batches)
+    const MAX_PRODUCTS_PER_BATCH = 100
+    const BATCH_SIZE = 50 // Process 50 products at a time
+    
+    if (extractedData.length > MAX_PRODUCTS_PER_BATCH) {
+      return NextResponse.json(
+        { 
+          error: `File contains too many products (${extractedData.length}). Maximum allowed: ${MAX_PRODUCTS_PER_BATCH}. Please split the file into smaller parts.`,
+          maxAllowed: MAX_PRODUCTS_PER_BATCH,
+          found: extractedData.length
+        },
+        { status: 400 }
+      )
+    }
+
     // Process each extracted product
     const results = {
       created: 0,
@@ -413,7 +428,26 @@ Important:
       }>,
     }
 
-    for (const productData of extractedData) {
+    // Get all existing products by SKU in one query for better performance
+    const allSkus = extractedData.map(p => p.sku).filter(Boolean)
+    const existingProducts = await prisma.product.findMany({
+      where: {
+        sku: {
+          in: allSkus,
+        },
+      },
+      select: {
+        id: true,
+        sku: true,
+      },
+    })
+    const existingProductsMap = new Map(existingProducts.map(p => [p.sku, p.id]))
+
+    // Process products in batches to avoid timeout
+    for (let i = 0; i < extractedData.length; i += BATCH_SIZE) {
+      const batch = extractedData.slice(i, i + BATCH_SIZE)
+      
+      for (const productData of batch) {
       try {
         // Validate required fields
         if (!productData.sku || !productData.name || !productData.manufacturer) {
@@ -454,18 +488,16 @@ Important:
           }
         }
 
-        // Check if product exists by SKU
-        const existingProduct = await prisma.product.findUnique({
-          where: { sku: productData.sku },
-        })
+        // Check if product exists by SKU (using pre-fetched map)
+        const existingProductId = existingProductsMap.get(productData.sku)
 
         const slug = generateSlug(productData.name)
         const price = parseFloat(String(productData.price || 0))
 
-        if (existingProduct) {
+        if (existingProductId) {
           // Update existing product
           const updated = await prisma.product.update({
-            where: { id: existingProduct.id },
+            where: { id: existingProductId },
             data: {
               name: productData.name,
               slug,

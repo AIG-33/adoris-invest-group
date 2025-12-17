@@ -323,6 +323,9 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
           <p className="text-xs text-neutral-500 mt-4">
             💡 If a product with the same catalog number already exists, it will be updated with new information.
           </p>
+          <p className="text-xs text-orange-600 mt-2 font-semibold">
+            ⚠️ Large files: Maximum 100 products per file. For larger files, please split them into smaller parts.
+          </p>
         </div>
 
         <div className="flex flex-col gap-4">
