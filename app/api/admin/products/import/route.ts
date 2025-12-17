@@ -323,17 +323,90 @@ Important:
           const workbook = XLSX.read(buffer, { type: 'buffer' })
           const firstSheetName = workbook.SheetNames[0]
           const worksheet = workbook.Sheets[firstSheetName]
-          const records = XLSX.utils.sheet_to_json(worksheet)
-          
-          extractedData = records.map((record: any) => ({
-            sku: record.sku || record.catalogNumber || record.code || record.id || record.SKU || '',
-            name: record.name || record.productName || record.title || record.Name || '',
-            description: record.description || record.desc || record.Description || '',
-            price: parseFloat(String(record.price || record.cost || record.Price || 0)),
-            manufacturer: record.manufacturer || record.brand || record.maker || record.Manufacturer || '',
-            category: record.category || record.type || record.Category || '',
-            image: record.image || record.imageUrl || record.photo || record.Image || '',
-          })).filter((p: any) => p.sku && p.name && p.manufacturer)
+          const records = XLSX.utils.sheet_to_json(worksheet, { 
+            defval: '', // Default value for empty cells
+            raw: false, // Convert all values to strings
+          })
+
+          // Debug: log first record to see structure
+          if (process.env.NODE_ENV === 'development' && records.length > 0) {
+            console.log('First Excel record:', records[0])
+            console.log('Available columns:', Object.keys(records[0] || {}))
+          }
+
+          extractedData = records.map((record: any) => {
+            // Handle various column name formats
+            // SKU: cat#, sku, catalogNumber, code, id, SKU, Cat#, CAT#
+            const sku = String(
+              record['cat#'] || record['Cat#'] || record['CAT#'] ||
+              record.sku || record.SKU || record.Sku ||
+              record.catalogNumber || record['Catalog Number'] ||
+              record.code || record.Code || record.CODE ||
+              record.id || record.ID || record.Id ||
+              ''
+            ).trim()
+
+            // Name: Product, name, productName, title, Name, Product Name
+            const name = String(
+              record.Product || record.product ||
+              record.name || record.Name || record.NAME ||
+              record.productName || record['Product Name'] ||
+              record.title || record.Title || record.TITLE ||
+              ''
+            ).trim()
+
+            // Manufacturer: MNF, manufacturer, Manufacturer, brand, maker, MNF
+            const manufacturer = String(
+              record.MNF || record.mnf || record.Mnf ||
+              record.manufacturer || record.Manufacturer || record.MANUFACTURER ||
+              record.brand || record.Brand || record.BRAND ||
+              record.maker || record.Maker || record.MAKER ||
+              ''
+            ).trim()
+
+            // Price: price, Price, PRICE, cost, Cost
+            // Handle European format with comma as decimal separator
+            let priceStr = String(
+              record.price || record.Price || record.PRICE ||
+              record.cost || record.Cost || record.COST ||
+              '0'
+            ).trim()
+            
+            // Remove Euro symbol and spaces, replace comma with dot
+            priceStr = priceStr.replace(/€/g, '').replace(/\s/g, '').replace(/,/g, '.')
+            // Remove any non-numeric characters except dot
+            priceStr = priceStr.replace(/[^\d.]/g, '')
+            const price = parseFloat(priceStr) || 0
+
+            // Description: description, Description, desc
+            const description = record.description || record.Description || record.desc || record.Desc || undefined
+
+            // Category: category, Category, cat
+            const category = record.category || record.Category || record.cat || record.Cat || undefined
+
+            // Image: image, Image, imageUrl
+            const image = record.image || record.Image || record.imageUrl || record.imageURL || undefined
+
+            return {
+              sku,
+              name,
+              description: description ? String(description).trim() : undefined,
+              price,
+              manufacturer,
+              category: category ? String(category).trim() : undefined,
+              image: image ? String(image).trim() : undefined,
+            }
+          }).filter((p: any) => p.sku && p.name && p.manufacturer)
+
+          if (extractedData.length === 0) {
+            return NextResponse.json(
+              { 
+                error: 'No valid products found in Excel file. Make sure Excel sheet has columns with product data.',
+                hint: 'Expected columns: cat# (or sku), Product (or name), MNF (or manufacturer), price (optional). Found columns: ' + (records.length > 0 ? Object.keys(records[0] || {}).join(', ') : 'none')
+              },
+              { status: 400 }
+            )
+          }
         } catch (excelError: any) {
           console.error('Excel parse error:', excelError)
           return NextResponse.json(
