@@ -1,42 +1,25 @@
--- Migration to add color fields to Company table
--- Run this in Supabase SQL Editor if colors are not already in the schema
+-- Add color fields to Company table
+-- Execute this in Supabase SQL Editor
 
--- Add color columns if they don't exist
-DO $$ 
-BEGIN
-    -- Primary Color
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'Company' AND column_name = 'primaryColor'
-    ) THEN
-        ALTER TABLE "Company" ADD COLUMN "primaryColor" TEXT DEFAULT '#333333';
-    END IF;
+-- Add primaryColor column
+ALTER TABLE "Company" 
+ADD COLUMN IF NOT EXISTS "primaryColor" TEXT DEFAULT '#333333';
 
-    -- Secondary Color
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'Company' AND column_name = 'secondaryColor'
-    ) THEN
-        ALTER TABLE "Company" ADD COLUMN "secondaryColor" TEXT DEFAULT '#666666';
-    END IF;
+-- Add secondaryColor column
+ALTER TABLE "Company" 
+ADD COLUMN IF NOT EXISTS "secondaryColor" TEXT DEFAULT '#666666';
 
-    -- Accent Color
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'Company' AND column_name = 'accentColor'
-    ) THEN
-        ALTER TABLE "Company" ADD COLUMN "accentColor" TEXT DEFAULT '#000000';
-    END IF;
-END $$;
+-- Add accentColor column
+ALTER TABLE "Company" 
+ADD COLUMN IF NOT EXISTS "accentColor" TEXT DEFAULT '#000000';
 
--- Update existing companies with default colors if they are NULL
-UPDATE "Company" 
-SET 
-    "primaryColor" = COALESCE("primaryColor", '#333333'),
-    "secondaryColor" = COALESCE("secondaryColor", '#666666'),
-    "accentColor" = COALESCE("accentColor", '#000000')
-WHERE 
-    "primaryColor" IS NULL 
-    OR "secondaryColor" IS NULL 
-    OR "accentColor" IS NULL;
-
+-- Verify the columns were added
+SELECT 
+    column_name,
+    data_type,
+    column_default,
+    is_nullable
+FROM information_schema.columns
+WHERE table_name = 'Company'
+AND column_name IN ('primaryColor', 'secondaryColor', 'accentColor')
+ORDER BY column_name;
