@@ -257,13 +257,109 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
           // Also create a map for manufacturer IDs (in case manufacturerId in CSV is actually the database ID)
           const manufacturerIdToNameMap = new Map(allManufacturers.map((m: any) => [m.id, m.name]))
           
-          extractedData = records.map((record: any) => {
-            // Resolve manufacturer - check if it's an ID, slug, or name
-            let manufacturer = ''
+          extractedData = records.map((record: any, index: number) => {
+            // Helper function to get value using mapping or fallback
+            const getValue = (dbField: string, fallbackKeys: string[]): string => {
+              // First, try mapped column
+              if (columnMapping[dbField]) {
+                const mappedColumn = columnMapping[dbField]
+                const recordKeys = Object.keys(record)
+                
+                // Try exact match first
+                if (record[mappedColumn] !== undefined && record[mappedColumn] !== '') {
+                  const value = String(record[mappedColumn] || '').trim()
+                  if (process.env.NODE_ENV === 'development' && index < 3) {
+                    console.log(`   ✅ Found ${dbField} via exact mapping "${mappedColumn}": "${value}"`)
+                  }
+                  return value
+                }
+                
+                // Try case-insensitive and trimmed match
+                const normalizedMapped = mappedColumn.toLowerCase().trim()
+                const caseInsensitiveMatch = recordKeys.find(key => {
+                  const normalizedKey = key.toLowerCase().trim()
+                  return normalizedKey === normalizedMapped
+                })
+                
+                if (caseInsensitiveMatch && record[caseInsensitiveMatch] !== undefined && record[caseInsensitiveMatch] !== '') {
+                  const value = String(record[caseInsensitiveMatch] || '').trim()
+                  if (process.env.NODE_ENV === 'development' && index < 3) {
+                    console.log(`   ✅ Found ${dbField} via normalized mapping "${mappedColumn}" -> "${caseInsensitiveMatch}": "${value}"`)
+                  }
+                  return value
+                }
+                
+                if (process.env.NODE_ENV === 'development' && index < 3) {
+                  console.log(`   ⚠️ Mapped column "${mappedColumn}" for ${dbField} not found`)
+                  console.log(`      Available keys: ${recordKeys.join(', ')}`)
+                }
+              }
+              
+              // Then try fallback keys
+              for (const key of fallbackKeys) {
+                // Try exact match
+                if (record[key] !== undefined && record[key] !== '') {
+                  const value = String(record[key] || '').trim()
+                  if (process.env.NODE_ENV === 'development' && index < 3) {
+                    console.log(`   ✅ Found ${dbField} via fallback "${key}": "${value}"`)
+                  }
+                  return value
+                }
+                // Try case-insensitive match
+                const recordKeys = Object.keys(record)
+                const normalizedKey = key.toLowerCase().trim()
+                const match = recordKeys.find(rk => rk.toLowerCase().trim() === normalizedKey)
+                if (match && record[match] !== undefined && record[match] !== '') {
+                  const value = String(record[match] || '').trim()
+                  if (process.env.NODE_ENV === 'development' && index < 3) {
+                    console.log(`   ✅ Found ${dbField} via normalized fallback "${key}" -> "${match}": "${value}"`)
+                  }
+                  return value
+                }
+              }
+              
+              if (process.env.NODE_ENV === 'development' && index < 3) {
+                console.log(`   ❌ No value found for ${dbField}`)
+              }
+              return ''
+            }
+
+            // Debug: log first few records in development
+            if (process.env.NODE_ENV === 'development' && index < 3) {
+              console.log(`\n📋 Processing CSV record ${index + 1}:`, record)
+              console.log('   Available keys:', Object.keys(record))
+              console.log('   Column mapping:', columnMapping)
+            }
+
+            // Get SKU using mapping
+            const sku = getValue('sku', [
+              'cat#', 'Cat#', 'CAT#',
+              'sku', 'SKU', 'Sku',
+              'catalogNumber', 'Catalog Number',
+              'code', 'Code', 'CODE',
+              'id', 'ID', 'Id',
+            ])
+
+            // Get Name using mapping
+            const name = getValue('name', [
+              'Product', 'product',
+              'name', 'Name', 'NAME',
+              'productName', 'Product Name',
+              'title', 'Title', 'TITLE',
+            ])
+
+            // Get Manufacturer using mapping
+            let manufacturer = getValue('manufacturer', [
+              'MNF', 'mnf', 'Mnf',
+              'manufacturer', 'Manufacturer', 'MANUFACTURER',
+              'brand', 'Brand', 'BRAND',
+              'maker', 'Maker', 'MAKER',
+            ])
             let manufacturerSource = ''
-            
-            if (record.manufacturerId) {
-              const mfrId = String(record.manufacturerId).trim()
+
+            // If manufacturer is an ID, resolve it
+            if (manufacturer && (manufacturer.startsWith('mfr_') || manufacturerIdToNameMap.has(manufacturer))) {
+              const mfrId = manufacturer.trim()
               manufacturerSource = `manufacturerId: ${mfrId}`
               
               // Try multiple strategies to find manufacturer
@@ -290,23 +386,41 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               if (!manufacturer) {
                 manufacturer = manufacturerIdMap.get(mfrId) || ''
               }
-              
-              if (!manufacturer && process.env.NODE_ENV === 'development') {
-                console.log(`⚠️ Manufacturer not found for: ${mfrId}`)
-                console.log(`   Available slugs: ${Array.from(manufacturerSlugMap.keys()).slice(0, 5).join(', ')}...`)
-              }
+            } else if (manufacturer) {
+              manufacturerSource = 'mapped column'
+            }
+
+            // Get Price using mapping
+            let priceStr = getValue('price', [
+              'price', 'Price', 'PRICE',
+              'cost', 'Cost', 'COST',
+            ])
+            
+            if (!priceStr || priceStr === '') {
+              priceStr = '0'
             }
             
-            if (!manufacturer) {
-              manufacturer = String(record.manufacturer || record.brand || record.maker || record.Manufacturer || '').trim()
-              if (manufacturer) {
-                manufacturerSource = 'manufacturer field'
-              }
+            // Remove Euro symbol and spaces, replace comma with dot
+            priceStr = priceStr.replace(/€/g, '').replace(/\s/g, '').replace(/,/g, '.')
+            // Handle "no offer" and similar non-numeric strings
+            if (['no offer', 'n/a', 'on request', 'poa'].some(term => priceStr.toLowerCase().includes(term))) {
+              priceStr = '0'
+            } else {
+              // Remove any non-numeric characters except dot
+              priceStr = priceStr.replace(/[^\d.]/g, '')
             }
-            
-            // Resolve category - check if it's an ID or slug
+            const price = parseFloat(priceStr) || 0
+
+            // Get Description using mapping (optional)
+            const description = columnMapping.description && record[columnMapping.description]
+              ? String(record[columnMapping.description]).trim()
+              : (record.description || record.Description || record.desc || record.Desc || undefined)
+
+            // Get Category using mapping (optional)
             let category = ''
-            if (record.categoryId) {
+            if (columnMapping.category && record[columnMapping.category]) {
+              category = String(record[columnMapping.category]).trim()
+            } else if (record.categoryId) {
               const catId = String(record.categoryId)
               if (catId.startsWith('cat_')) {
                 const slug = catId.replace('cat_', '')
@@ -315,22 +429,26 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               } else {
                 category = categoryIdMap.get(catId) || ''
               }
+            } else if (record.category) {
+              category = String(record.category).trim()
             }
-            if (!category) {
-              category = record.category ? String(record.category) : undefined
-            }
+
+            // Get Image using mapping (optional)
+            const image = columnMapping.image && record[columnMapping.image]
+              ? String(record[columnMapping.image]).trim()
+              : (record.image || record.Image || record.imageUrl || record.imageURL || undefined)
             
             return {
-              sku: String(record.sku || record.catalogNumber || record.code || record.id || record.SKU || '').trim(),
-              name: String(record.name || record.productName || record.title || record.Name || '').trim(),
-              description: record.description ? String(record.description).trim() : undefined,
-              price: parseFloat(String(record.price || record.cost || record.Price || 0)),
+              sku: sku,
+              name: name,
+              description: description ? String(description).trim() : undefined,
+              price: price,
               manufacturer: manufacturer,
-              manufacturerSource: manufacturerSource, // Store source for debugging
+              manufacturerSource: manufacturerSource || 'not provided',
               category: category || undefined,
-              image: record.image ? String(record.image).trim() : undefined,
+              image: image ? String(image).trim() : undefined,
             }
-          })
+          }).filter((p: any) => p.sku && p.name && p.manufacturer) // Filter out products missing required fields
           
           // Don't filter here - we want to show errors for missing manufacturers
           // Filter will happen later in validation
