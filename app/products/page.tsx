@@ -4,7 +4,7 @@ import { Sidebar } from '@/components/sidebar'
 import { ProductGrid } from '@/components/product-grid'
 import { SortDropdown } from '@/components/sort-dropdown'
 import { prisma } from '@/lib/db'
-import { ChevronLeft, ChevronRight, Download } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, Package } from 'lucide-react'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -132,6 +132,13 @@ export default async function ProductsPage({ searchParams }: Props) {
                     <Download className="w-4 h-4" />
                     <span>Download Pricelist</span>
                   </a>
+                  <Link
+                    href="/bulk-order"
+                    className="flex items-center gap-2 px-4 py-2 bg-[#333333] hover:bg-[#1a1a1a] text-white rounded-lg transition-colors font-medium text-sm"
+                  >
+                    <Package className="w-4 h-4" />
+                    <span>Bulk Order</span>
+                  </Link>
                   <SortDropdown currentSort={sort} />
                 </div>
               </div>
