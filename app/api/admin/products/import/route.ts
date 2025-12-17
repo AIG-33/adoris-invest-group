@@ -1034,6 +1034,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                   data: {
                     name: productData.manufacturer,
                     slug: generateSlug(productData.manufacturer),
+                    updatedAt: new Date(), // Explicitly set updatedAt to avoid null constraint violation
                   },
                 })
                 manufacturerId = newManufacturer.id
@@ -1089,7 +1090,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               data: {
                 name: productData.name,
                 slug,
-                description: productData.description || null,
+                description: productData.description && productData.description.trim() ? productData.description.trim() : undefined,
                 price,
                 image: productData.image && productData.image.trim() ? productData.image.trim() : '',
                 categoryId,
@@ -1122,7 +1123,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                     sku: productData.sku,
                     name: productData.name,
                     slug: currentSlug,
-                    description: productData.description || null,
+                    description: productData.description && productData.description.trim() ? productData.description.trim() : undefined,
                     price,
                     image: productData.image && productData.image.trim() ? productData.image.trim() : '',
                     categoryId,
