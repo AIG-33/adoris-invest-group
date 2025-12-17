@@ -8,7 +8,7 @@ export default function BulkOrderPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen" style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}>
         {/* Hero Section */}
         <section className="relative text-white py-20" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
           <div className="container mx-auto px-6">

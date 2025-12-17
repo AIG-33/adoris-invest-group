@@ -141,7 +141,20 @@ SKU003\t10`;
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={`Example:\n${exampleText}`}
-            className="w-full h-64 px-4 py-3 border-2 border-neutral-200 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-4 focus:ring-[#333333]/10 transition-all font-mono text-sm"
+            className="w-full h-64 px-4 py-3 border-2 border-neutral-200 rounded-lg focus:outline-none focus:ring-4 transition-all font-mono text-sm"
+            style={{
+              '--focus-border': 'var(--company-primary, #333333)',
+              '--focus-ring': 'var(--company-primary, #333333)',
+            } as React.CSSProperties & Record<string, string>}
+            onFocus={(e) => {
+              const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-primary').trim() || '#333333'
+              e.currentTarget.style.borderColor = primaryColor
+              e.currentTarget.style.boxShadow = `0 0 0 4px ${primaryColor}1a`
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = ''
+              e.currentTarget.style.boxShadow = ''
+            }}
           />
         </div>
 
@@ -264,13 +277,13 @@ SKU003\t10`;
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm text-[#000000] truncate">
+                        <div className="font-semibold text-sm truncate" style={{ color: 'var(--company-primary, #000000)' }}>
                           {product.name}
                         </div>
                         <div className="text-xs text-neutral-600 font-mono">{product.sku}</div>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <div className="text-sm font-bold text-[#000000]">
+                        <div className="text-sm font-bold" style={{ color: 'var(--company-primary, #000000)' }}>
                           {product.requestedQuantity}x
                         </div>
                         <div className="text-xs text-neutral-500">
