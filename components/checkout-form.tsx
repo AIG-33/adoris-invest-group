@@ -179,9 +179,9 @@ export function CheckoutForm() {
           </div>
           <span className="font-semibold text-[#666666] text-xs sm:text-base whitespace-nowrap">Cart</span>
         </div>
-        <div className="w-8 sm:w-16 h-0.5 bg-[#333333]"></div>
+        <div className="w-8 sm:w-16 h-0.5" style={{ backgroundColor: 'var(--company-accent, #000000)' }}></div>
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#333333] text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full text-white flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0" style={{ backgroundColor: 'var(--company-accent, #000000)' }}>
             2
           </div>
           <span className="font-semibold text-[#333333] text-xs sm:text-base whitespace-nowrap">Checkout</span>
@@ -411,7 +411,7 @@ export function CheckoutForm() {
               <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 text-[#333333]" />
               Payment Method
             </h2>
-            <label className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 border-2 border-[#333333] rounded-lg bg-[#333333]/5 cursor-pointer">
+            <label className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 border-2 rounded-lg cursor-pointer" style={{ borderColor: 'var(--company-accent, #000000)', backgroundColor: 'var(--company-accent, #000000)0d' }}>
               <input
                 type="radio"
                 name="paymentMethod"
@@ -490,7 +490,23 @@ export function CheckoutForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#333333] text-white py-4 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
+              className="w-full text-white py-4 rounded-lg transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
+              style={{
+                backgroundColor: 'var(--company-accent, #000000)',
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                  const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                  const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                  e.currentTarget.style.backgroundColor = darkened
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+                }
+              }}
             >
               {loading ? 'Processing...' : 'Place Order'}
             </button>

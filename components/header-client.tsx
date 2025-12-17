@@ -56,6 +56,8 @@ export function HeaderClient({ company }: HeaderClientProps) {
   const companyPhone = company?.phone || '+48793081310'
   const companyAddress = company?.address || 'Tallinn, Estonia'
   const companyLogo = company?.logo || '/logo.png'
+  const primaryColor = company?.primaryColor || '#333333'
+  const accentColor = company?.accentColor || '#000000'
 
   useEffect(() => {
     // Update cart count from localStorage
@@ -135,9 +137,12 @@ export function HeaderClient({ company }: HeaderClientProps) {
   }
 
   return (
-    <header className="bg-white border-b border-neutral-200 sticky top-0 z-50 shadow-sm">
+    <header 
+      className="border-b border-neutral-200 sticky top-0 z-50 shadow-sm text-white"
+      style={{ backgroundColor: primaryColor }}
+    >
       {/* Top Bar - Hidden on Mobile */}
-      <div className="bg-black text-white hidden md:block">
+      <div className="hidden md:block" style={{ backgroundColor: primaryColor }}>
         <div className="container mx-auto px-4 sm:px-6 py-2">
           <div className="flex justify-between items-center text-xs lg:text-sm">
             <div className="flex items-center gap-2 lg:gap-4">
@@ -186,12 +191,30 @@ export function HeaderClient({ company }: HeaderClientProps) {
                 <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 sm:w-5 sm:h-5" />
                 {isSearching ? (
                   <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-[#333333] border-t-transparent rounded-full animate-spin" />
+                    <div 
+                      className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-t-transparent rounded-full animate-spin" 
+                      style={{ borderColor: accentColor, borderTopColor: 'transparent' }}
+                    />
                   </div>
                 ) : (
                   <button
                     type="submit"
-                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 bg-[#333333] text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md hover:bg-[#1a1a1a] transition-colors font-medium text-xs sm:text-sm"
+                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md transition-colors font-medium text-xs sm:text-sm"
+                    style={{ 
+                      backgroundColor: accentColor,
+                      '--hover-bg': accentColor + 'dd'
+                    } as React.CSSProperties & { '--hover-bg': string }}
+                    onMouseEnter={(e) => {
+                      const target = e.currentTarget
+                      const currentColor = accentColor
+                      // Darken color on hover
+                      const rgb = currentColor.match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                      const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                      target.style.backgroundColor = darkened
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = accentColor
+                    }}
                   >
                     Search
                   </button>
@@ -313,7 +336,10 @@ export function HeaderClient({ company }: HeaderClientProps) {
               <div className="relative">
                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-[#333333] text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
+                  <span 
+                    className="absolute -top-2 -right-2 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center"
+                    style={{ backgroundColor: accentColor }}
+                  >
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
@@ -342,7 +368,10 @@ export function HeaderClient({ company }: HeaderClientProps) {
                         <ShoppingCart className="w-4 h-4" />
                         <span>Cart</span>
                         {cartCount > 0 && (
-                          <span className="ml-auto bg-[#333333] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                          <span 
+                            className="ml-auto text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                            style={{ backgroundColor: accentColor }}
+                          >
                             {cartCount}
                           </span>
                         )}

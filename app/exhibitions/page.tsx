@@ -125,7 +125,7 @@ export default function ExhibitionsPage() {
       <Header />
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="relative bg-black text-white py-20">
+        <section className="relative text-white py-20" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="mb-4 text-5xl font-bold md:text-6xl">

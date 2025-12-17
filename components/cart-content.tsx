@@ -85,7 +85,19 @@ export function CartContent() {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-[#333333] text-white px-8 py-4 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold"
+              className="inline-flex items-center gap-2 text-white px-8 py-4 rounded-lg transition-all font-semibold"
+              style={{
+                backgroundColor: 'var(--company-accent, #000000)',
+              }}
+              onMouseEnter={(e) => {
+                const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                e.currentTarget.style.backgroundColor = darkened
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+              }}
             >
               Browse Products
               <ArrowRight className="w-5 h-5" />
@@ -99,7 +111,7 @@ export function CartContent() {
   return (
     <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
       {/* Hero Section */}
-      <section className="relative bg-black text-white py-16 mb-12 -mx-4 sm:-mx-6 px-4 sm:px-6">
+      <section className="relative text-white py-16 mb-12 -mx-4 sm:-mx-6 px-4 sm:px-6" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">Shopping Cart</h1>
           <p className="text-white/90">Review your items before checkout</p>

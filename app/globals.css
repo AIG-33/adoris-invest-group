@@ -21,7 +21,8 @@
     @apply border-border;
   }
   body {
-    @apply bg-neutral-50 text-neutral-900;
+    background-color: var(--company-secondary, #ffffff);
+    color: var(--neutral-900, #171717);
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }

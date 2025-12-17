@@ -107,7 +107,22 @@ export function HeroSection() {
             >
               <Link
                 href={slide.link}
-                className="group flex items-center justify-center gap-2 rounded-md bg-[#000000] px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#000000]/50"
+                className="group flex items-center justify-center gap-2 rounded-md px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold text-white transition-all hover:scale-105 hover:shadow-xl"
+                style={{
+                  backgroundColor: 'var(--company-accent, #000000)',
+                  boxShadow: '0 0 0 0 var(--company-accent, #000000)',
+                }}
+                onMouseEnter={(e) => {
+                  const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                  const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                  const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                  e.currentTarget.style.backgroundColor = darkened
+                  e.currentTarget.style.boxShadow = `0 20px 25px -5px ${currentColor}50, 0 10px 10px -5px ${currentColor}40`
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+                  e.currentTarget.style.boxShadow = '0 0 0 0 var(--company-accent, #000000)'
+                }}
               >
                 {slide.cta}
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
@@ -133,9 +148,10 @@ export function HeroSection() {
             onClick={() => setCurrentSlide(idx)}
             className={`h-1 rounded-full transition-all ${
               idx === currentSlide
-                ? 'w-8 sm:w-12 bg-[#000000]'
+                ? 'w-8 sm:w-12'
                 : 'w-6 sm:w-8 bg-white/30 hover:bg-white/50'
             }`}
+            style={idx === currentSlide ? { backgroundColor: 'var(--company-accent, #000000)' } : undefined}
             aria-label={`Go to slide ${idx + 1}`}
           />
         ))}

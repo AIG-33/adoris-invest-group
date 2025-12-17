@@ -149,7 +149,23 @@ SKU003\t10`;
           <button
             onClick={handleProcess}
             disabled={isProcessing || !inputText.trim()}
-            className="flex-1 bg-[#333333] text-white px-6 py-3 rounded-lg hover:bg-[#1a1a1a] transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 text-white px-6 py-3 rounded-lg transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            style={{
+              backgroundColor: 'var(--company-accent, #000000)',
+            }}
+            onMouseEnter={(e) => {
+              if (!e.currentTarget.disabled) {
+                const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                e.currentTarget.style.backgroundColor = darkened
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!e.currentTarget.disabled) {
+                e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+              }
+            }}
           >
             {isProcessing ? (
               <>

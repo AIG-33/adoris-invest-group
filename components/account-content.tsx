@@ -590,7 +590,19 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/order-confirmation/${order.orderNumber}`}
-                      className="px-4 py-2 bg-white border-2 border-[#333333] text-[#333333] rounded-lg hover:bg-[#333333] hover:text-white transition-all font-semibold flex items-center gap-2"
+                      className="px-4 py-2 bg-white border-2 rounded-lg transition-all font-semibold flex items-center gap-2"
+                      style={{
+                        borderColor: 'var(--company-accent, #000000)',
+                        color: 'var(--company-accent, #000000)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+                        e.currentTarget.style.color = '#ffffff'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#ffffff'
+                        e.currentTarget.style.color = 'var(--company-accent, #000000)'
+                      }}
                     >
                       <Eye className="w-4 h-4" />
                       Details
@@ -634,7 +646,7 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                             : item.product.name}
                         </span>
                       </div>
-                      <span className="absolute top-2 right-2 bg-[#000000] text-white text-xs font-bold px-2 py-1 rounded-full">
+                      <span className="absolute top-2 right-2 text-white text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--company-accent, #000000)' }}>
                         ×{item.quantity}
                       </span>
                     </div>

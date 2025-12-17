@@ -158,7 +158,19 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
           <div className="flex gap-3">
             <button
               onClick={addToCart}
-              className="flex-1 bg-[#333333] text-white py-4 px-8 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg hover:-translate-y-0.5"
+              className="flex-1 text-white py-4 px-8 rounded-lg transition-all font-semibold text-lg flex items-center justify-center gap-3 hover:shadow-lg hover:-translate-y-0.5"
+              style={{
+                backgroundColor: 'var(--company-accent, #000000)',
+              }}
+              onMouseEnter={(e) => {
+                const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                e.currentTarget.style.backgroundColor = darkened
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+              }}
             >
               <ShoppingCart className="w-5 h-5" />
               Add to Cart

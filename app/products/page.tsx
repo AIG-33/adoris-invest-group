@@ -138,14 +138,30 @@ export default async function ProductsPage({ searchParams }: Props) {
                   <a
                     href="/api/products/export-pricelist"
                     download
-                    className="flex items-center gap-2 px-4 py-2 bg-[#333333] hover:bg-[#1a1a1a] text-white rounded-lg transition-colors font-medium text-sm"
+                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors font-medium text-sm"
+                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                    onMouseEnter={(e) => {
+                      const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                      e.currentTarget.style.backgroundColor = darkenColor(currentColor)
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+                    }}
                   >
                     <Download className="w-4 h-4" />
                     <span>Download Pricelist</span>
                   </a>
                   <Link
                     href="/bulk-order"
-                    className="flex items-center gap-2 px-4 py-2 bg-[#333333] hover:bg-[#1a1a1a] text-white rounded-lg transition-colors font-medium text-sm"
+                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors font-medium text-sm"
+                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                    onMouseEnter={(e) => {
+                      const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                      e.currentTarget.style.backgroundColor = darkenColor(currentColor)
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+                    }}
                   >
                     <Package className="w-4 h-4" />
                     <span>Bulk Order</span>

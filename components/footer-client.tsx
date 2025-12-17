@@ -15,6 +15,7 @@ export function FooterClient({ company }: FooterClientProps) {
   const companyPhone = company?.phone || '+48793081310'
   const companyAddress = company?.address || 'Ruunaoja tn 3-36, 11415 Tallinn, Estonia'
   const companyLogo = company?.logo || '/logo.png'
+  const primaryColor = company?.primaryColor || '#333333'
   
   // Extract address parts
   const addressParts = companyAddress.split(',').map(s => s.trim())
@@ -22,7 +23,10 @@ export function FooterClient({ company }: FooterClientProps) {
   const cityAddress = addressParts.slice(1).join(', ') || '11415 Tallinn, Estonia'
 
   return (
-    <footer className="bg-black text-white mt-12 sm:mt-20">
+    <footer 
+      className="text-white mt-12 sm:mt-20"
+      style={{ backgroundColor: primaryColor }}
+    >
       <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Company Info */}
