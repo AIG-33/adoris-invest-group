@@ -199,18 +199,34 @@ Important:
           extractedData = records.map((record: any) => {
             // Resolve manufacturer - check if it's an ID, slug, or name
             let manufacturer = ''
+            let manufacturerSource = ''
+            
             if (record.manufacturerId) {
-              const mfrId = String(record.manufacturerId)
+              const mfrId = String(record.manufacturerId).trim()
+              manufacturerSource = `manufacturerId: ${mfrId}`
+              
               // Check if it's a full ID or slug (e.g., mfr_sysmex)
               if (mfrId.startsWith('mfr_')) {
                 const slug = mfrId.replace('mfr_', '')
                 manufacturer = manufacturerSlugMap.get(slug) || manufacturerIdMap.get(mfrId) || ''
+                
+                if (!manufacturer && process.env.NODE_ENV === 'development') {
+                  console.log(`⚠️ Manufacturer not found for slug: ${slug} (from ${mfrId})`)
+                }
               } else {
                 manufacturer = manufacturerIdMap.get(mfrId) || ''
+                
+                if (!manufacturer && process.env.NODE_ENV === 'development') {
+                  console.log(`⚠️ Manufacturer not found for ID: ${mfrId}`)
+                }
               }
             }
+            
             if (!manufacturer) {
-              manufacturer = String(record.manufacturer || record.brand || record.maker || record.Manufacturer || '')
+              manufacturer = String(record.manufacturer || record.brand || record.maker || record.Manufacturer || '').trim()
+              if (manufacturer) {
+                manufacturerSource = 'manufacturer field'
+              }
             }
             
             // Resolve category - check if it's an ID or slug
@@ -230,15 +246,19 @@ Important:
             }
             
             return {
-              sku: String(record.sku || record.catalogNumber || record.code || record.id || record.SKU || ''),
-              name: String(record.name || record.productName || record.title || record.Name || ''),
-              description: record.description ? String(record.description) : undefined,
+              sku: String(record.sku || record.catalogNumber || record.code || record.id || record.SKU || '').trim(),
+              name: String(record.name || record.productName || record.title || record.Name || '').trim(),
+              description: record.description ? String(record.description).trim() : undefined,
               price: parseFloat(String(record.price || record.cost || record.Price || 0)),
               manufacturer: manufacturer,
+              manufacturerSource: manufacturerSource, // Store source for debugging
               category: category || undefined,
-              image: record.image ? String(record.image) : undefined,
+              image: record.image ? String(record.image).trim() : undefined,
             }
-          }).filter((p: any) => p.sku && p.name && p.manufacturer)
+          })
+          
+          // Don't filter here - we want to show errors for missing manufacturers
+          // Filter will happen later in validation
           
           if (extractedData.length === 0) {
             return NextResponse.json(
@@ -456,11 +476,17 @@ Important:
           // Validate required fields
           if (!productData.sku || !productData.name || !productData.manufacturer) {
             const missingFields = []
-            if (!productData.sku) missingFields.push('SKU')
-            if (!productData.name) missingFields.push('name')
-            if (!productData.manufacturer) missingFields.push('manufacturer')
+            if (!productData.sku || productData.sku.trim() === '') missingFields.push('SKU')
+            if (!productData.name || productData.name.trim() === '') missingFields.push('name')
+            if (!productData.manufacturer || productData.manufacturer.trim() === '') missingFields.push('manufacturer')
             
-            const errorMsg = `Missing required fields (${missingFields.join(', ')}) for product: ${productData.name || productData.sku || 'Unknown'}`
+            const productIdentifier = productData.name || productData.sku || 'Unknown'
+            const skuInfo = productData.sku ? `SKU: ${productData.sku}` : 'SKU: missing'
+            const manufacturerInfo = (productData as any).manufacturerSource 
+              ? ` (${(productData as any).manufacturerSource})` 
+              : ''
+            
+            const errorMsg = `❌ Product "${productIdentifier}" [${skuInfo}]: Missing required fields: ${missingFields.join(', ')}${manufacturerInfo ? `. Manufacturer source: ${manufacturerInfo}` : ''}`
             results.errors.push(errorMsg)
             continue
           }
