@@ -13,6 +13,10 @@ export default async function ProductPage({
 }) {
   const { slug } = await params
 
+  // Get current company
+  const company = await getServerCompany()
+  const priceType = company?.priceType || 'EU'
+
   const product = await prisma.product.findUnique({
     where: { slug },
     include: {
@@ -38,15 +42,23 @@ export default async function ProductPage({
     },
   })
 
-  // Convert Decimal to number for prices
+  // Convert Decimal to number and apply correct price
   const productWithNumber = {
     ...product,
-    price: Number(product.price),
+    price: getProductPrice(
+      product.priceEU,
+      product.priceRU,
+      priceType as 'EU' | 'RU'
+    ),
   }
 
   const relatedProducts = relatedProductsRaw.map(p => ({
     ...p,
-    price: Number(p.price),
+    price: getProductPrice(
+      p.priceEU,
+      p.priceRU,
+      priceType as 'EU' | 'RU'
+    ),
   }))
 
   return (

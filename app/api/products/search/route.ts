@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { getCurrentCompany } from '@/lib/company';
+import { getProductPrice } from '@/lib/product-price';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,10 +47,19 @@ export async function GET(request: Request) {
       ],
     });
 
-    // Convert Decimal to number for prices
+    // Get current company for pricing
+    const headers = new Headers(request.headers);
+    const company = await getCurrentCompany(headers);
+    const priceType = company?.priceType || 'EU';
+
+    // Convert Decimal to number and apply correct price
     const products = productsRaw.map(p => ({
       ...p,
-      price: Number(p.price),
+      price: getProductPrice(
+        p.priceEU,
+        p.priceRU,
+        priceType as 'EU' | 'RU'
+      ),
     }));
 
     return NextResponse.json(products);

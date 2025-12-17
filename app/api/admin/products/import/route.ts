@@ -18,7 +18,9 @@ interface ExtractedProduct {
   sku: string
   name: string
   description?: string
-  price: number
+  price: number // Will be used for both priceEU and priceRU initially
+  priceEU?: number // Optional: specific EU price
+  priceRU?: number // Optional: specific RU price
   manufacturer: string
   category?: string
   image?: string
@@ -1099,7 +1101,13 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
           const slug = await generateUniqueSlug(baseSlug, productData.sku, existingSlugs)
           existingSlugs.add(slug) // Add to set to avoid conflicts in same batch
           
-          const price = parseFloat(String(productData.price || 0))
+          // Handle prices: if priceEU/priceRU are provided, use them; otherwise use price for both
+          const priceEU = productData.priceEU !== undefined 
+            ? parseFloat(String(productData.priceEU || 0))
+            : parseFloat(String(productData.price || 0))
+          const priceRU = productData.priceRU !== undefined
+            ? parseFloat(String(productData.priceRU || 0))
+            : null // Optional, can be null
 
           if (existingProductId) {
             // Update existing product
@@ -1109,7 +1117,8 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                 name: productData.name,
                 slug,
                 description: productData.description && productData.description.trim() ? productData.description.trim() : '',
-                price,
+                priceEU,
+                priceRU,
                 image: productData.image && productData.image.trim() ? productData.image.trim() : '',
                 categoryId,
                 manufacturerId,
@@ -1125,7 +1134,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               product: updated,
               sku: productData.sku,
               name: productData.name,
-              price,
+              price: priceEU, // Use priceEU for display
               manufacturer: productData.manufacturer,
             })
           } else {
@@ -1142,7 +1151,8 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                     name: productData.name,
                     slug: currentSlug,
                     description: productData.description && productData.description.trim() ? productData.description.trim() : '',
-                    price,
+                    priceEU,
+                    priceRU,
                     image: productData.image && productData.image.trim() ? productData.image.trim() : '',
                     categoryId,
                     manufacturerId,

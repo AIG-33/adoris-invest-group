@@ -4,6 +4,8 @@ import { Sidebar } from '@/components/sidebar'
 import { ProductGrid } from '@/components/product-grid'
 import { SortDropdown } from '@/components/sort-dropdown'
 import { prisma } from '@/lib/db'
+import { getServerCompany } from '@/lib/server-company'
+import { getProductPrice } from '@/lib/product-price'
 import { ChevronLeft, ChevronRight, Download, Package } from 'lucide-react'
 import Link from 'next/link'
 
@@ -29,6 +31,11 @@ export default async function ProductsPage({ searchParams }: Props) {
   const { search, category, manufacturer, minPrice, maxPrice, page, sort } = searchParams
   const currentPage = parseInt(page || '1')
 
+  // Get current company
+  const company = await getServerCompany()
+  const priceType = company?.priceType || 'EU'
+  const priceField = priceType === 'RU' ? 'priceRU' : 'priceEU'
+
   // Build where clause
   const where: any = {}
 
@@ -48,17 +55,17 @@ export default async function ProductsPage({ searchParams }: Props) {
   }
 
   if (minPrice || maxPrice) {
-    where.price = {}
-    if (minPrice) where.price.gte = parseFloat(minPrice)
-    if (maxPrice) where.price.lte = parseFloat(maxPrice)
+    where[priceField] = {}
+    if (minPrice) where[priceField].gte = parseFloat(minPrice)
+    if (maxPrice) where[priceField].lte = parseFloat(maxPrice)
   }
 
   // Build orderBy clause
   let orderBy: any = { createdAt: 'desc' }
   if (sort === 'price-asc') {
-    orderBy = { price: 'asc' }
+    orderBy = { [priceField]: 'asc' }
   } else if (sort === 'price-desc') {
-    orderBy = { price: 'desc' }
+    orderBy = { [priceField]: 'desc' }
   }
 
   // Get total count for pagination
@@ -77,10 +84,14 @@ export default async function ProductsPage({ searchParams }: Props) {
     take: ITEMS_PER_PAGE,
   })
 
-  // Convert Decimal to number for prices
+  // Convert Decimal to number and apply correct price
   const products = productsRaw.map(p => ({
     ...p,
-    price: Number(p.price),
+    price: getProductPrice(
+      p.priceEU,
+      p.priceRU,
+      priceType as 'EU' | 'RU'
+    ),
   }))
 
   // Fetch manufacturers for filters with product counts

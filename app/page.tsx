@@ -5,10 +5,16 @@ import { FeaturedProducts } from '@/components/featured-products'
 import { CategoryShowcase } from '@/components/category-showcase'
 import { StatsSection } from '@/components/stats-section'
 import { prisma } from '@/lib/db'
+import { getServerCompany } from '@/lib/server-company'
+import { getProductPrice } from '@/lib/product-price'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
+  // Get current company
+  const company = await getServerCompany()
+  const priceType = company?.priceType || 'EU'
+
   // Fetch featured products
   const featuredProductsRaw = await prisma.product.findMany({
     where: { featured: true },
@@ -20,10 +26,14 @@ export default async function HomePage() {
     orderBy: { createdAt: 'desc' },
   })
 
-  // Convert Decimal to number for featuredProducts
+  // Convert Decimal to number and apply correct price
   const featuredProducts = featuredProductsRaw.map(p => ({
     ...p,
-    price: Number(p.price),
+    price: getProductPrice(
+      p.priceEU,
+      p.priceRU,
+      priceType as 'EU' | 'RU'
+    ),
   }))
 
   // Fetch products by category for showcase
@@ -38,12 +48,16 @@ export default async function HomePage() {
     },
   })
 
-  // Convert Decimal to number for categories
+  // Convert Decimal to number and apply correct price
   const categories = categoriesRaw.map(cat => ({
     ...cat,
     products: cat.products.map(p => ({
       ...p,
-      price: Number(p.price),
+      price: getProductPrice(
+        p.priceEU,
+        p.priceRU,
+        priceType as 'EU' | 'RU'
+      ),
     })),
   }))
 
