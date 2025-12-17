@@ -1090,7 +1090,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               data: {
                 name: productData.name,
                 slug,
-                description: productData.description && productData.description.trim() ? productData.description.trim() : null,
+                description: productData.description && productData.description.trim() ? productData.description.trim() : '',
                 price,
                 image: productData.image && productData.image.trim() ? productData.image.trim() : '',
                 categoryId,
@@ -1123,7 +1123,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                     sku: productData.sku,
                     name: productData.name,
                     slug: currentSlug,
-                    description: productData.description && productData.description.trim() ? productData.description.trim() : null,
+                    description: productData.description && productData.description.trim() ? productData.description.trim() : '',
                     price,
                     image: productData.image && productData.image.trim() ? productData.image.trim() : '',
                     categoryId,
