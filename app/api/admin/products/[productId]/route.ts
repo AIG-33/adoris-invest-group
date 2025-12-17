@@ -85,13 +85,17 @@ export async function PUT(
       slug,
       description,
       price,
+      priceEU,
+      priceRU,
       image,
       categoryId,
       manufacturerId,
     } = body
 
     // Validate required fields
-    if (!name || !sku || !slug || price === undefined || price === null || !categoryId || !manufacturerId) {
+    // priceEU is required, priceRU is optional
+    const finalPriceEU = priceEU !== undefined ? priceEU : (price !== undefined ? price : null)
+    if (!name || !sku || !slug || finalPriceEU === null || finalPriceEU === undefined || !categoryId || !manufacturerId) {
       return NextResponse.json(
         { 
           error: 'Missing required fields',
@@ -99,7 +103,7 @@ export async function PUT(
             name: !!name,
             sku: !!sku,
             slug: !!slug,
-            price: price !== undefined && price !== null,
+            priceEU: finalPriceEU !== null && finalPriceEU !== undefined,
             categoryId: !!categoryId,
             manufacturerId: !!manufacturerId,
           }
@@ -204,7 +208,8 @@ export async function PUT(
       sku,
       slug,
       description: description || null,
-      price: priceNum,
+      priceEU: priceEUNum,
+      priceRU: priceRUNum,
       categoryId,
       manufacturerId,
     }
