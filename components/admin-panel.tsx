@@ -42,12 +42,6 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       manufacturer: string
     }>
   } | null>(null)
-  
-  // Column mapping state
-  const [fileColumns, setFileColumns] = useState<string[]>([])
-  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({})
-  const [analyzingFile, setAnalyzingFile] = useState(false)
-  const [showColumnMapping, setShowColumnMapping] = useState(false)
 
   // Load all orders
   useEffect(() => {
