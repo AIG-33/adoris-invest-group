@@ -143,9 +143,14 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
             id: item.product.id,
             name: item.product.name,
             sku: item.product.sku,
+            slug: item.product.slug,
             price: item.product.price,
-            image: item.product.image,
+            image: item.product.image || '',
             quantity: item.quantity,
+            manufacturer: {
+              name: item.product.manufacturer?.name || '',
+              logo: item.product.manufacturer?.logo || null,
+            },
           })
         }
       })
