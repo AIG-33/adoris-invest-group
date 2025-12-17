@@ -161,22 +161,86 @@ Important:
       else if (fileType === 'csv') {
         try {
           const text = buffer.toString('utf-8')
+          
+          // Detect delimiter by checking first line
+          const firstLine = text.split('\n')[0]
+          let delimiter = ','
+          if (firstLine.includes(';')) {
+            delimiter = ';'
+          } else if (firstLine.includes('\t')) {
+            delimiter = '\t'
+          }
+          
           const records = parse(text, {
             columns: true,
             skip_empty_lines: true,
             trim: true,
-            delimiter: [',', ';', '\t'], // Try common delimiters
+            delimiter: delimiter,
+            relax_column_count: true, // Allow different column counts per row
+            relax_quotes: true, // Handle quotes more flexibly
+            skip_records_with_error: false, // Don't skip records with errors, but continue
           })
           
-          extractedData = records.map((record: any) => ({
-            sku: record.sku || record.catalogNumber || record.code || record.id || record.SKU || '',
-            name: record.name || record.productName || record.title || record.Name || '',
-            description: record.description || record.desc || record.Description || '',
-            price: parseFloat(String(record.price || record.cost || record.Price || 0)),
-            manufacturer: record.manufacturer || record.brand || record.maker || record.Manufacturer || '',
-            category: record.category || record.type || record.Category || '',
-            image: record.image || record.imageUrl || record.photo || record.Image || '',
-          })).filter((p: any) => p.sku && p.name && p.manufacturer)
+          // First, get all manufacturers and categories to resolve IDs
+          const [allCategories, allManufacturers] = await Promise.all([
+            prisma.category.findMany(),
+            prisma.manufacturer.findMany(),
+          ])
+          
+          const categoryIdMap = new Map(allCategories.map(c => [c.id, c.name]))
+          const manufacturerIdMap = new Map(allManufacturers.map(m => [m.id, m.name]))
+          const manufacturerSlugMap = new Map(allManufacturers.map(m => [m.slug, m.name]))
+          
+          extractedData = records.map((record: any) => {
+            // Resolve manufacturer - check if it's an ID, slug, or name
+            let manufacturer = ''
+            if (record.manufacturerId) {
+              const mfrId = String(record.manufacturerId)
+              // Check if it's a full ID or slug (e.g., mfr_sysmex)
+              if (mfrId.startsWith('mfr_')) {
+                const slug = mfrId.replace('mfr_', '')
+                manufacturer = manufacturerSlugMap.get(slug) || manufacturerIdMap.get(mfrId) || ''
+              } else {
+                manufacturer = manufacturerIdMap.get(mfrId) || ''
+              }
+            }
+            if (!manufacturer) {
+              manufacturer = String(record.manufacturer || record.brand || record.maker || record.Manufacturer || '')
+            }
+            
+            // Resolve category - check if it's an ID or slug
+            let category = ''
+            if (record.categoryId) {
+              const catId = String(record.categoryId)
+              if (catId.startsWith('cat_')) {
+                const slug = catId.replace('cat_', '')
+                const foundCategory = allCategories.find(c => c.slug === slug)
+                category = foundCategory?.name || ''
+              } else {
+                category = categoryIdMap.get(catId) || ''
+              }
+            }
+            if (!category) {
+              category = record.category ? String(record.category) : undefined
+            }
+            
+            return {
+              sku: String(record.sku || record.catalogNumber || record.code || record.id || record.SKU || ''),
+              name: String(record.name || record.productName || record.title || record.Name || ''),
+              description: record.description ? String(record.description) : undefined,
+              price: parseFloat(String(record.price || record.cost || record.Price || 0)),
+              manufacturer: manufacturer,
+              category: category || undefined,
+              image: record.image ? String(record.image) : undefined,
+            }
+          }).filter((p: any) => p.sku && p.name && p.manufacturer)
+          
+          if (extractedData.length === 0) {
+            return NextResponse.json(
+              { error: 'No valid products found in CSV file. Make sure CSV has columns: sku, name, manufacturer (and optionally: price, description, category, image).' },
+              { status: 400 }
+            )
+          }
         } catch (csvError: any) {
           return NextResponse.json(
             { error: 'Invalid CSV file: ' + (csvError?.message || 'Parse error') },
