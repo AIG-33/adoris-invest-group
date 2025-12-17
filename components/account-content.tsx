@@ -610,7 +610,21 @@ export function AccountContent({ orders, stats, user }: AccountContentProps) {
                     <button
                       onClick={() => handleReorder(order.id)}
                       disabled={reordering === order.id}
-                      className="px-4 py-2 bg-gradient-to-r from-[#333333] to-[#666666] text-white rounded-lg hover:from-[#000000] hover:to-[#333333] transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md"
+                      className="px-4 py-2 text-white rounded-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md"
+                      style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                      onMouseEnter={(e) => {
+                        if (!e.currentTarget.disabled) {
+                          const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                          const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                          const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                          e.currentTarget.style.backgroundColor = darkened
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!e.currentTarget.disabled) {
+                          e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+                        }
+                      }}
                     >
                       {reordering === order.id ? (
                         <>

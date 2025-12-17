@@ -184,7 +184,20 @@ export function HeaderClient({ company }: HeaderClientProps) {
                     }
                   }}
                   placeholder="Search products..."
-                  className="w-full px-3 py-2 sm:py-3 pl-10 sm:pl-12 pr-20 sm:pr-24 text-sm sm:text-base border-2 border-neutral-200 rounded-lg focus:border-[#333333] focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-[#333333]/10 transition-all"
+                  className="w-full px-3 py-2 sm:py-3 pl-10 sm:pl-12 pr-20 sm:pr-24 text-sm sm:text-base border-2 border-neutral-200 rounded-lg focus:outline-none focus:ring-2 sm:focus:ring-4 transition-all"
+                  style={{
+                    '--focus-border': 'var(--company-primary, #333333)',
+                    '--focus-ring': 'var(--company-primary, #333333)',
+                  } as React.CSSProperties & Record<string, string>}
+                  onFocus={(e) => {
+                    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-primary').trim() || '#333333'
+                    e.currentTarget.style.borderColor = primaryColor
+                    e.currentTarget.style.boxShadow = `0 0 0 2px ${primaryColor}1a`
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = ''
+                    e.currentTarget.style.boxShadow = ''
+                  }}
                 />
                 <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 sm:w-5 sm:h-5" />
                 {isSearching ? (
@@ -250,7 +263,7 @@ export function HeaderClient({ company }: HeaderClientProps) {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-bold text-[#000000] text-sm sm:text-base">
+                      <div className="font-bold text-sm sm:text-base" style={{ color: 'var(--company-primary, #000000)' }}>
                         €{Number(product.price || 0).toFixed(2)}
                       </div>
                       <div className="text-xs text-neutral-500 hidden sm:block">excl. VAT</div>

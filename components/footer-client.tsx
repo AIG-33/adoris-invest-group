@@ -51,7 +51,17 @@ export function FooterClient({ company }: FooterClientProps) {
               <li>
                 <Link
                   href="/products"
-                  className="text-neutral-300 hover:text-[#cccccc] transition-colors text-xs sm:text-sm"
+                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
+                  style={{
+                    '--hover-color': 'var(--company-secondary, #cccccc)',
+                  } as React.CSSProperties & Record<string, string>}
+                  onMouseEnter={(e) => {
+                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
+                    e.currentTarget.style.color = secondaryColor
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = ''
+                  }}
                 >
                   Products
                 </Link>
@@ -59,7 +69,17 @@ export function FooterClient({ company }: FooterClientProps) {
               <li>
                 <Link
                   href="/bulk-order"
-                  className="text-neutral-300 hover:text-[#cccccc] transition-colors text-xs sm:text-sm"
+                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
+                  style={{
+                    '--hover-color': 'var(--company-secondary, #cccccc)',
+                  } as React.CSSProperties & Record<string, string>}
+                  onMouseEnter={(e) => {
+                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
+                    e.currentTarget.style.color = secondaryColor
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = ''
+                  }}
                 >
                   Bulk Order
                 </Link>
@@ -67,7 +87,17 @@ export function FooterClient({ company }: FooterClientProps) {
               <li>
                 <Link
                   href="/exhibitions"
-                  className="text-neutral-300 hover:text-[#cccccc] transition-colors text-xs sm:text-sm"
+                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
+                  style={{
+                    '--hover-color': 'var(--company-secondary, #cccccc)',
+                  } as React.CSSProperties & Record<string, string>}
+                  onMouseEnter={(e) => {
+                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
+                    e.currentTarget.style.color = secondaryColor
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = ''
+                  }}
                 >
                   Exhibitions
                 </Link>
@@ -75,7 +105,17 @@ export function FooterClient({ company }: FooterClientProps) {
               <li>
                 <Link
                   href="/terms"
-                  className="text-neutral-300 hover:text-[#cccccc] transition-colors text-xs sm:text-sm"
+                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
+                  style={{
+                    '--hover-color': 'var(--company-secondary, #cccccc)',
+                  } as React.CSSProperties & Record<string, string>}
+                  onMouseEnter={(e) => {
+                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
+                    e.currentTarget.style.color = secondaryColor
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = ''
+                  }}
                 >
                   Terms & Conditions
                 </Link>
@@ -83,7 +123,17 @@ export function FooterClient({ company }: FooterClientProps) {
               <li>
                 <Link
                   href="/cart"
-                  className="text-neutral-300 hover:text-[#cccccc] transition-colors text-xs sm:text-sm"
+                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
+                  style={{
+                    '--hover-color': 'var(--company-secondary, #cccccc)',
+                  } as React.CSSProperties & Record<string, string>}
+                  onMouseEnter={(e) => {
+                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
+                    e.currentTarget.style.color = secondaryColor
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = ''
+                  }}
                 >
                   Shopping Cart
                 </Link>

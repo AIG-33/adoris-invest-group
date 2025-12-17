@@ -113,7 +113,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                 {/* Footer */}
                 <div className="mt-auto pt-3 sm:pt-4 border-t border-neutral-100">
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
-                    <div className="text-lg sm:text-2xl font-bold text-[#000000]">
+                    <div className="text-lg sm:text-2xl font-bold" style={{ color: 'var(--company-primary, #000000)' }}>
                       €{product?.price?.toLocaleString?.('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
@@ -123,7 +123,17 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                   <div className="flex gap-2">
                     <button
                       onClick={() => addToCart(product)}
-                      className="flex-1 bg-[#333333] text-white py-2 px-3 sm:px-4 rounded-lg hover:bg-[#1a1a1a] transition-colors font-medium flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm"
+                      className="flex-1 text-white py-2 px-3 sm:px-4 rounded-lg transition-colors font-medium flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm"
+                      style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                      onMouseEnter={(e) => {
+                        const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
+                        const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
+                        const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
+                        e.currentTarget.style.backgroundColor = darkened
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
+                      }}
                     >
                       <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span className="hidden xs:inline">Add to Cart</span>
