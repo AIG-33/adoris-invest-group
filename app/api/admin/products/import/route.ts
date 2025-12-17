@@ -449,128 +449,128 @@ Important:
       
       for (const productData of batch) {
         try {
-        // Validate required fields
-        if (!productData.sku || !productData.name || !productData.manufacturer) {
-          results.errors.push(`Missing required fields for product: ${productData.name || 'Unknown'}`)
-          continue
-        }
+          // Validate required fields
+          if (!productData.sku || !productData.name || !productData.manufacturer) {
+            results.errors.push(`Missing required fields for product: ${productData.name || 'Unknown'}`)
+            continue
+          }
 
-        // Find or create manufacturer
-        let manufacturerId = manufacturerMap.get(productData.manufacturer.toLowerCase())
-        if (!manufacturerId) {
-          // Try to find by partial match
-          const partialMatch = manufacturers.find(m => 
-            m.name.toLowerCase().includes(productData.manufacturer.toLowerCase()) ||
-            productData.manufacturer.toLowerCase().includes(m.name.toLowerCase())
-          )
-          if (partialMatch) {
-            manufacturerId = partialMatch.id
-          } else {
-            // Create new manufacturer (with error handling for duplicates)
-            try {
-              const newManufacturer = await prisma.manufacturer.create({
-                data: {
-                  name: productData.manufacturer,
-                  slug: generateSlug(productData.manufacturer),
-                },
-              })
-              manufacturerId = newManufacturer.id
-              manufacturerMap.set(productData.manufacturer.toLowerCase(), manufacturerId)
-            } catch (createError: any) {
-              // If manufacturer was created by another request, try to find it
-              if (createError?.code === 'P2002') {
-                const found = await prisma.manufacturer.findFirst({
-                  where: {
-                    OR: [
-                      { name: { equals: productData.manufacturer, mode: 'insensitive' } },
-                      { slug: generateSlug(productData.manufacturer) },
-                    ],
+          // Find or create manufacturer
+          let manufacturerId = manufacturerMap.get(productData.manufacturer.toLowerCase())
+          if (!manufacturerId) {
+            // Try to find by partial match
+            const partialMatch = manufacturers.find(m => 
+              m.name.toLowerCase().includes(productData.manufacturer.toLowerCase()) ||
+              productData.manufacturer.toLowerCase().includes(m.name.toLowerCase())
+            )
+            if (partialMatch) {
+              manufacturerId = partialMatch.id
+            } else {
+              // Create new manufacturer (with error handling for duplicates)
+              try {
+                const newManufacturer = await prisma.manufacturer.create({
+                  data: {
+                    name: productData.manufacturer,
+                    slug: generateSlug(productData.manufacturer),
                   },
                 })
-                if (found) {
-                  manufacturerId = found.id
-                  manufacturerMap.set(productData.manufacturer.toLowerCase(), manufacturerId)
+                manufacturerId = newManufacturer.id
+                manufacturerMap.set(productData.manufacturer.toLowerCase(), manufacturerId)
+              } catch (createError: any) {
+                // If manufacturer was created by another request, try to find it
+                if (createError?.code === 'P2002') {
+                  const found = await prisma.manufacturer.findFirst({
+                    where: {
+                      OR: [
+                        { name: { equals: productData.manufacturer, mode: 'insensitive' } },
+                        { slug: generateSlug(productData.manufacturer) },
+                      ],
+                    },
+                  })
+                  if (found) {
+                    manufacturerId = found.id
+                    manufacturerMap.set(productData.manufacturer.toLowerCase(), manufacturerId)
+                  } else {
+                    throw createError
+                  }
                 } else {
                   throw createError
                 }
-              } else {
-                throw createError
               }
             }
           }
-        }
 
-        // Find category (optional)
-        let categoryId = categories[0]?.id // Default to first category if not found
-        if (productData.category) {
-          const foundCategory = categoryMap.get(productData.category.toLowerCase()) ||
-            categories.find(c => c.name.toLowerCase().includes(productData.category!.toLowerCase()))?.id
-          if (foundCategory) {
-            categoryId = foundCategory
+          // Find category (optional)
+          let categoryId = categories[0]?.id // Default to first category if not found
+          if (productData.category) {
+            const foundCategory = categoryMap.get(productData.category.toLowerCase()) ||
+              categories.find(c => c.name.toLowerCase().includes(productData.category!.toLowerCase()))?.id
+            if (foundCategory) {
+              categoryId = foundCategory
+            }
           }
-        }
 
-        // Check if product exists by SKU (using pre-fetched map)
-        const existingProductId = existingProductsMap.get(productData.sku)
+          // Check if product exists by SKU (using pre-fetched map)
+          const existingProductId = existingProductsMap.get(productData.sku)
 
-        const slug = generateSlug(productData.name)
-        const price = parseFloat(String(productData.price || 0))
+          const slug = generateSlug(productData.name)
+          const price = parseFloat(String(productData.price || 0))
 
-        if (existingProductId) {
-          // Update existing product
-          const updated = await prisma.product.update({
-            where: { id: existingProductId },
-            data: {
-              name: productData.name,
-              slug,
-              description: productData.description || null,
-              price,
-              image: productData.image || null,
-              categoryId,
-              manufacturerId,
-            },
-            include: {
-              category: true,
-              manufacturer: true,
-            },
-          })
-          results.updated++
-          results.products.push({
-            action: 'updated',
-            product: updated,
-            sku: productData.sku,
-            name: productData.name,
-            price,
-            manufacturer: productData.manufacturer,
-          })
-        } else {
-          // Create new product
-          const created = await prisma.product.create({
-            data: {
+          if (existingProductId) {
+            // Update existing product
+            const updated = await prisma.product.update({
+              where: { id: existingProductId },
+              data: {
+                name: productData.name,
+                slug,
+                description: productData.description || null,
+                price,
+                image: productData.image || null,
+                categoryId,
+                manufacturerId,
+              },
+              include: {
+                category: true,
+                manufacturer: true,
+              },
+            })
+            results.updated++
+            results.products.push({
+              action: 'updated',
+              product: updated,
               sku: productData.sku,
               name: productData.name,
-              slug,
-              description: productData.description || null,
               price,
-              image: productData.image || null,
-              categoryId,
-              manufacturerId,
-            },
-            include: {
-              category: true,
-              manufacturer: true,
-            },
-          })
-          results.created++
-          results.products.push({
-            action: 'created',
-            product: created,
-            sku: productData.sku,
-            name: productData.name,
-            price,
-            manufacturer: productData.manufacturer,
-          })
-        }
+              manufacturer: productData.manufacturer,
+            })
+          } else {
+            // Create new product
+            const created = await prisma.product.create({
+              data: {
+                sku: productData.sku,
+                name: productData.name,
+                slug,
+                description: productData.description || null,
+                price,
+                image: productData.image || null,
+                categoryId,
+                manufacturerId,
+              },
+              include: {
+                category: true,
+                manufacturer: true,
+              },
+            })
+            results.created++
+            results.products.push({
+              action: 'created',
+              product: created,
+              sku: productData.sku,
+              name: productData.name,
+              price,
+              manufacturer: productData.manufacturer,
+            })
+          }
         } catch (error: any) {
           results.errors.push(`Error processing ${productData.name || productData.sku}: ${error?.message || 'Unknown error'}`)
           console.error('Error processing product:', error)
