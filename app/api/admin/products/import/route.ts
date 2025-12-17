@@ -375,44 +375,58 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
             if (process.env.NODE_ENV === 'development' && index < 3) {
               console.log(`\n📋 Processing record ${index + 1}:`, record)
               console.log('   Available keys:', Object.keys(record))
+              console.log('   Column mapping:', columnMapping)
             }
 
-            // Handle various column name formats
-            // SKU: cat#, sku, catalogNumber, code, id, SKU, Cat#, CAT#
-            const sku = String(
-              record['cat#'] || record['Cat#'] || record['CAT#'] ||
-              record.sku || record.SKU || record.Sku ||
-              record.catalogNumber || record['Catalog Number'] ||
-              record.code || record.Code || record.CODE ||
-              record.id || record.ID || record.Id ||
-              ''
-            ).trim()
+            // Helper function to get value using mapping or fallback
+            const getValue = (dbField: string, fallbackKeys: string[]): string => {
+              // First, try mapped column
+              if (columnMapping[dbField] && record[columnMapping[dbField]] !== undefined && record[columnMapping[dbField]] !== '') {
+                return String(record[columnMapping[dbField]] || '').trim()
+              }
+              // Then try fallback keys
+              for (const key of fallbackKeys) {
+                if (record[key] !== undefined && record[key] !== '') {
+                  return String(record[key] || '').trim()
+                }
+              }
+              return ''
+            }
 
-            // Name: Product, name, productName, title, Name, Product Name
-            const name = String(
-              record.Product || record.product ||
-              record.name || record.Name || record.NAME ||
-              record.productName || record['Product Name'] ||
-              record.title || record.Title || record.TITLE ||
-              ''
-            ).trim()
+            // SKU: use mapping or fallback to auto-detection
+            const sku = getValue('sku', [
+              'cat#', 'Cat#', 'CAT#',
+              'sku', 'SKU', 'Sku',
+              'catalogNumber', 'Catalog Number',
+              'code', 'Code', 'CODE',
+              'id', 'ID', 'Id',
+            ])
 
-            // Manufacturer: MNF, manufacturer, Manufacturer, brand, maker, MNF
-            const manufacturer = String(
-              record.MNF || record.mnf || record.Mnf ||
-              record.manufacturer || record.Manufacturer || record.MANUFACTURER ||
-              record.brand || record.Brand || record.BRAND ||
-              record.maker || record.Maker || record.MAKER ||
-              ''
-            ).trim()
+            // Name: use mapping or fallback to auto-detection
+            const name = getValue('name', [
+              'Product', 'product',
+              'name', 'Name', 'NAME',
+              'productName', 'Product Name',
+              'title', 'Title', 'TITLE',
+            ])
 
-            // Price: price, Price, PRICE, cost, Cost
-            // Handle European format with comma as decimal separator
-            let priceStr = String(
-              record.price || record.Price || record.PRICE ||
-              record.cost || record.Cost || record.COST ||
-              '0'
-            ).trim()
+            // Manufacturer: use mapping or fallback to auto-detection
+            const manufacturer = getValue('manufacturer', [
+              'MNF', 'mnf', 'Mnf',
+              'manufacturer', 'Manufacturer', 'MANUFACTURER',
+              'brand', 'Brand', 'BRAND',
+              'maker', 'Maker', 'MAKER',
+            ])
+
+            // Price: use mapping or fallback to auto-detection
+            let priceStr = getValue('price', [
+              'price', 'Price', 'PRICE',
+              'cost', 'Cost', 'COST',
+            ])
+            
+            if (!priceStr || priceStr === '') {
+              priceStr = '0'
+            }
             
             // Remove Euro symbol and spaces, replace comma with dot
             priceStr = priceStr.replace(/€/g, '').replace(/\s/g, '').replace(/,/g, '.')
@@ -420,14 +434,20 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
             priceStr = priceStr.replace(/[^\d.]/g, '')
             const price = parseFloat(priceStr) || 0
 
-            // Description: description, Description, desc (OPTIONAL)
-            const description = record.description || record.Description || record.desc || record.Desc || undefined
+            // Description: use mapping or fallback to auto-detection (OPTIONAL)
+            const description = columnMapping.description && record[columnMapping.description]
+              ? String(record[columnMapping.description]).trim()
+              : (record.description || record.Description || record.desc || record.Desc || undefined)
 
-            // Category: category, Category, cat (OPTIONAL)
-            const category = record.category || record.Category || record.cat || record.Cat || undefined
+            // Category: use mapping or fallback to auto-detection (OPTIONAL)
+            const category = columnMapping.category && record[columnMapping.category]
+              ? String(record[columnMapping.category]).trim()
+              : (record.category || record.Category || record.cat || record.Cat || undefined)
 
-            // Image: image, Image, imageUrl (OPTIONAL)
-            const image = record.image || record.Image || record.imageUrl || record.imageURL || undefined
+            // Image: use mapping or fallback to auto-detection (OPTIONAL)
+            const image = columnMapping.image && record[columnMapping.image]
+              ? String(record[columnMapping.image]).trim()
+              : (record.image || record.Image || record.imageUrl || record.imageURL || undefined)
 
             const product = {
               sku,
