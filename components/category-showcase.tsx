@@ -11,7 +11,7 @@ type Product = {
   slug: string
   price: number
   image: string | null
-  manufacturer: { name: string }
+  manufacturer: { name: string; logo: string | null }
 }
 
 type Category = {
@@ -102,10 +102,16 @@ function CategoryRow({ category }: { category: Category }) {
               {/* Image */}
               <div className="relative aspect-[3/4] overflow-hidden bg-gray-800">
                 <Image
-                  src={product.image && product.image.length > 0 ? product.image : '/placeholder.svg'}
+                  src={
+                    product.image && product.image.length > 0
+                      ? product.image
+                      : product.manufacturer?.logo && product.manufacturer.logo.length > 0
+                      ? product.manufacturer.logo
+                      : '/placeholder.svg'
+                  }
                   alt={product.name || 'Product'}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover/item:scale-110"
+                  className="object-contain transition-transform duration-500 group-hover/item:scale-110 p-4"
                 />
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />

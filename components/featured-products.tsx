@@ -122,7 +122,11 @@ export function FeaturedProducts({ products }: Props) {
                     }
                     alt={product.name || 'Product'}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover/card:scale-110"
+                    className={
+                      product.image && product.image.length > 0
+                        ? 'object-cover transition-transform duration-500 group-hover/card:scale-110'
+                        : 'object-contain transition-transform duration-500 group-hover/card:scale-110 p-4'
+                    }
                   />
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
