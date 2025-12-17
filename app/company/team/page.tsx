@@ -79,7 +79,7 @@ export default function TeamPage() {
                   
                   <div className="prose prose-lg max-w-none text-neutral-700 leading-relaxed space-y-4 prose-headings:text-black prose-strong:text-black">
                     <p>
-                      Welcome to Adoris Invest Group OÜ.
+                      Welcome.
                     </p>
                     
                     <p>
