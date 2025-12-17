@@ -93,13 +93,14 @@ export async function POST(request: Request) {
       },
     })
 
-    const pdfBuffer = await generateOrderPDF(order, body)
+    const pdfBuffer = await generateOrderPDF(order, body, companyContext)
 
     await sendOrderConfirmationEmail({
       to: email,
       orderNumber,
       customerName: `${firstName} ${lastName}`,
       pdfBuffer,
+      company: companyContext,
     })
 
     return NextResponse.json({ success: true, orderNumber }, { status: 201 })

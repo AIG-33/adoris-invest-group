@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import type { CompanyConfig } from '@/lib/company-types'
 
 // Create reusable transporter
 function createTransporter() {
@@ -18,6 +19,7 @@ interface OrderEmailOptions {
   orderNumber: string
   customerName: string
   pdfBuffer: Buffer
+  company?: CompanyConfig | null
 }
 
 interface WelcomeEmailOptions {
@@ -55,9 +57,17 @@ export async function sendOrderConfirmationEmail({
   orderNumber,
   customerName,
   pdfBuffer,
+  company,
 }: OrderEmailOptions) {
   try {
     const transporter = createTransporter()
+    
+    // Get company data with defaults
+    const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
+    const companyEmail = company?.email || 'info@adorisgroup.com'
+    const companyPhone = company?.phone || '+48793081310'
+    const companyAddress = company?.address || 'Tallinn, Estonia'
+    const companyDomain = company?.domain || 'adorisgroup.com'
 
     const mailOptions = {
       from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
@@ -215,7 +225,7 @@ export async function sendOrderConfirmationEmail({
                               Our team is ready to assist you with any questions about your order.
                             </p>
                             <p style="margin: 12px 0 0 0; color: #555; font-size: 14px;">
-                              📧 Email: <a href="mailto:info@adorisgroup.com" style="color: #20a895; text-decoration: none; font-weight: 600;">info@adorisgroup.com</a><br/>
+                              📧 Email: <a href="mailto:${companyEmail}" style="color: #20a895; text-decoration: none; font-weight: 600;">${companyEmail}</a><br/>
                               📞 Available: Monday-Friday, 9:00 AM - 6:00 PM EET
                             </p>
                           </td>
@@ -223,7 +233,7 @@ export async function sendOrderConfirmationEmail({
                       </table>
 
                       <p style="font-size: 16px; color: #555; margin: 35px 0 0 0; line-height: 1.6;">
-                        Thank you for choosing ADORIS INVEST GROUP,<br/>
+                        Thank you for choosing ${companyName},<br/>
                         <strong style="color: #1a8c7c; font-size: 18px;">Your Trusted Medical Equipment Partner</strong>
                       </p>
                     </td>
@@ -268,11 +278,14 @@ export async function sendOrderConfirmationEmail({
 
           await transporter.sendMail(mailOptions)
 
-          await transporter.sendMail({
-            ...mailOptions,
-            to: 'info@ivdgroup.eu',
-            subject: `🆕 New Order: ${orderNumber} - ${customerName}`,
-          })
+          // Send copy to company email (supplier notification)
+          if (companyEmail) {
+            await transporter.sendMail({
+              ...mailOptions,
+              to: companyEmail,
+              subject: `🆕 New Order: ${orderNumber} - ${customerName}`,
+            })
+          }
 
           return { success: true }
         } catch (error) {

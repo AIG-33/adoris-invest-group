@@ -1,7 +1,19 @@
 import jsPDF from 'jspdf'
+import type { CompanyConfig } from '@/lib/company-types'
 
-export async function generateOrderPDF(order: any, formData: any): Promise<Buffer> {
+export async function generateOrderPDF(
+  order: any, 
+  formData: any, 
+  company?: CompanyConfig | null
+): Promise<Buffer> {
   const doc = new jsPDF()
+
+  // Get company data with defaults
+  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
+  const companyEmail = company?.email || 'ceo@adorisgroup.com'
+  const companyPhone = company?.phone || '+48793081310'
+  const companyAddress = company?.address || 'Tallinn, Estonia'
+  const companyDomain = company?.domain || 'adorisgroup.com'
 
   // Colors
   const primaryColor = '#000000'
@@ -13,7 +25,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(28)
   doc.setFont('helvetica', 'bold')
-  doc.text('ADORIS INVEST GROUP', 15, 20)
+  doc.text(companyName, 15, 20)
   doc.setFontSize(12)
   doc.setFont('helvetica', 'normal')
   doc.text('Medical Laboratory Equipment & Supplies', 15, 28)
@@ -150,7 +162,7 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   y += 5
   doc.text('Payment Instructions: Bank transfer details will be provided in a separate email.', 15, y)
   y += 5
-  doc.text('For questions, contact us at ceo@adorisgroup.com or +48793081310', 15, y)
+  doc.text(`For questions, contact us at ${companyEmail} or ${companyPhone}`, 15, y)
 
   // Company Footer
   const pageHeight = doc.internal.pageSize.height
@@ -158,7 +170,8 @@ export async function generateOrderPDF(order: any, formData: any): Promise<Buffe
   doc.rect(0, pageHeight - 20, 210, 20, 'F')
   doc.setTextColor(255, 255, 255)
   doc.setFontSize(8)
-  doc.text('ADORIS INVEST GROUP OÜ | ceo@adorisgroup.com | www.adorisgroup.com', 105, pageHeight - 10, {
+  const footerText = `${companyName} | ${companyEmail} | www.${companyDomain}`
+  doc.text(footerText, 105, pageHeight - 10, {
     align: 'center',
   })
 

@@ -66,8 +66,8 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
                 We've sent a confirmation email with your order details and PDF invoice to{' '}
                 <strong>{order?.customerEmail || order?.email}</strong>. If you don't receive it within a few minutes,
                 please check your spam folder or contact us at{' '}
-                <a href="mailto:info@adorisgroup.com" className="text-[#333333] hover:underline font-semibold">
-                  info@adorisgroup.com
+                <a href={`mailto:${companyEmail}`} className="text-[#333333] hover:underline font-semibold">
+                  {companyEmail}
                 </a>
               </p>
             </div>
