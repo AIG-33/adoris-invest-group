@@ -192,9 +192,12 @@ Important:
             prisma.manufacturer.findMany(),
           ])
           
-          const categoryIdMap = new Map(allCategories.map(c => [c.id, c.name]))
-          const manufacturerIdMap = new Map(allManufacturers.map(m => [m.id, m.name]))
-          const manufacturerSlugMap = new Map(allManufacturers.map(m => [m.slug, m.name]))
+          const categoryIdMap = new Map(allCategories.map((c: any) => [c.id, c.name]))
+          const manufacturerIdMap = new Map(allManufacturers.map((m: any) => [m.id, m.name]))
+          const manufacturerSlugMap = new Map(allManufacturers.map((m: any) => [m.slug, m.name]))
+          
+          // Also create a map for manufacturer IDs (in case manufacturerId in CSV is actually the database ID)
+          const manufacturerIdToNameMap = new Map(allManufacturers.map((m: any) => [m.id, m.name]))
           
           extractedData = records.map((record: any) => {
             // Resolve manufacturer - check if it's an ID, slug, or name
@@ -205,20 +208,34 @@ Important:
               const mfrId = String(record.manufacturerId).trim()
               manufacturerSource = `manufacturerId: ${mfrId}`
               
-              // Check if it's a full ID or slug (e.g., mfr_sysmex)
-              if (mfrId.startsWith('mfr_')) {
+              // Try multiple strategies to find manufacturer
+              // 1. Check if it's a database ID (direct match)
+              manufacturer = manufacturerIdToNameMap.get(mfrId) || ''
+              
+              // 2. Check if it's a slug format (e.g., mfr_sysmex -> sysmex)
+              if (!manufacturer && mfrId.startsWith('mfr_')) {
                 const slug = mfrId.replace('mfr_', '')
-                manufacturer = manufacturerSlugMap.get(slug) || manufacturerIdMap.get(mfrId) || ''
+                manufacturer = manufacturerSlugMap.get(slug) || ''
                 
-                if (!manufacturer && process.env.NODE_ENV === 'development') {
-                  console.log(`⚠️ Manufacturer not found for slug: ${slug} (from ${mfrId})`)
+                // Try partial match on slug
+                if (!manufacturer) {
+                  const partialMatch = allManufacturers.find((m: any) => 
+                    m.slug.includes(slug) || slug.includes(m.slug)
+                  )
+                  if (partialMatch) {
+                    manufacturer = partialMatch.name
+                  }
                 }
-              } else {
+              }
+              
+              // 3. Try to find by ID map (legacy)
+              if (!manufacturer) {
                 manufacturer = manufacturerIdMap.get(mfrId) || ''
-                
-                if (!manufacturer && process.env.NODE_ENV === 'development') {
-                  console.log(`⚠️ Manufacturer not found for ID: ${mfrId}`)
-                }
+              }
+              
+              if (!manufacturer && process.env.NODE_ENV === 'development') {
+                console.log(`⚠️ Manufacturer not found for: ${mfrId}`)
+                console.log(`   Available slugs: ${Array.from(manufacturerSlugMap.keys()).slice(0, 5).join(', ')}...`)
               }
             }
             
@@ -481,12 +498,16 @@ Important:
             if (!productData.manufacturer || productData.manufacturer.trim() === '') missingFields.push('manufacturer')
             
             const productIdentifier = productData.name || productData.sku || 'Unknown'
-            const skuInfo = productData.sku ? `SKU: ${productData.sku}` : 'SKU: missing'
-            const manufacturerInfo = (productData as any).manufacturerSource 
-              ? ` (${(productData as any).manufacturerSource})` 
-              : ''
+            const skuInfo = productData.sku && productData.sku.trim() ? `SKU: ${productData.sku}` : 'SKU: missing'
+            const manufacturerSource = (productData as any).manufacturerSource || 'not provided'
             
-            const errorMsg = `❌ Product "${productIdentifier}" [${skuInfo}]: Missing required fields: ${missingFields.join(', ')}${manufacturerInfo ? `. Manufacturer source: ${manufacturerInfo}` : ''}`
+            let errorMsg = `❌ Product "${productIdentifier}" [${skuInfo}]: Missing required fields: ${missingFields.join(', ')}`
+            
+            // Add detailed info about manufacturer if it's missing
+            if (missingFields.includes('manufacturer')) {
+              errorMsg += `. Manufacturer source in CSV: ${manufacturerSource}`
+            }
+            
             results.errors.push(errorMsg)
             continue
           }
