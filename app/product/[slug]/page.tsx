@@ -3,6 +3,8 @@ import { Footer } from '@/components/footer'
 import { prisma } from '@/lib/db'
 import { ProductDetail } from '@/components/product-detail'
 import { notFound } from 'next/navigation'
+import { getServerCompany } from '@/lib/server-company'
+import { getProductPrice } from '@/lib/product-price'
 
 export const dynamic = 'force-dynamic'
 
