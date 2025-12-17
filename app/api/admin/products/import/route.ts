@@ -30,6 +30,28 @@ function generateSlug(name: string): string {
     .replace(/(^-|-$)/g, '')
 }
 
+async function generateUniqueSlug(baseSlug: string, sku: string, existingSlugs: Set<string>): Promise<string> {
+  let slug = baseSlug
+  let counter = 0
+  
+  // First, try with SKU appended
+  if (sku && sku.trim()) {
+    const skuSlug = `${baseSlug}-${generateSlug(sku)}`
+    if (!existingSlugs.has(skuSlug)) {
+      return skuSlug
+    }
+    slug = skuSlug
+  }
+  
+  // If still exists, add counter
+  while (existingSlugs.has(slug)) {
+    counter++
+    slug = `${baseSlug}-${counter}`
+  }
+  
+  return slug
+}
+
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
@@ -476,9 +498,19 @@ Important:
       select: {
         id: true,
         sku: true,
+        slug: true,
       },
     })
-    const existingProductsMap = new Map(existingProducts.map(p => [p.sku, p.id]))
+    const existingProductsMap = new Map(existingProducts.map((p: any) => [p.sku, p.id]))
+    
+    // Get all existing slugs to avoid conflicts
+    const existingSlugs = new Set(existingProducts.map((p: any) => p.slug).filter(Boolean))
+    
+    // Also fetch all slugs from database to be safe
+    const allExistingSlugs = await prisma.product.findMany({
+      select: { slug: true },
+    })
+    allExistingSlugs.forEach((p: any) => existingSlugs.add(p.slug))
 
     // Process products in batches to avoid timeout
     const totalProducts = extractedData.length
@@ -570,7 +602,11 @@ Important:
           // Check if product exists by SKU (using pre-fetched map)
           const existingProductId = existingProductsMap.get(productData.sku)
 
-          const slug = generateSlug(productData.name)
+          // Generate unique slug
+          const baseSlug = generateSlug(productData.name)
+          const slug = await generateUniqueSlug(baseSlug, productData.sku, existingSlugs)
+          existingSlugs.add(slug) // Add to set to avoid conflicts in same batch
+          
           const price = parseFloat(String(productData.price || 0))
 
           if (existingProductId) {
@@ -601,23 +637,48 @@ Important:
               manufacturer: productData.manufacturer,
             })
           } else {
-            // Create new product
-            const created = await prisma.product.create({
-              data: {
-                sku: productData.sku,
-                name: productData.name,
-                slug,
-                description: productData.description || null,
-                price,
-                image: productData.image && productData.image.trim() ? productData.image.trim() : '',
-                categoryId,
-                manufacturerId,
-              },
-              include: {
-                category: true,
-                manufacturer: true,
-              },
-            })
+            // Create new product with retry logic for slug conflicts
+            let created
+            let attempts = 0
+            let currentSlug = slug
+            
+            while (attempts < 5) {
+              try {
+                created = await prisma.product.create({
+                  data: {
+                    sku: productData.sku,
+                    name: productData.name,
+                    slug: currentSlug,
+                    description: productData.description || null,
+                    price,
+                    image: productData.image && productData.image.trim() ? productData.image.trim() : '',
+                    categoryId,
+                    manufacturerId,
+                  },
+                  include: {
+                    category: true,
+                    manufacturer: true,
+                  },
+                })
+                existingSlugs.add(currentSlug) // Add to set for future products in batch
+                break // Success, exit loop
+              } catch (createError: any) {
+                if (createError?.code === 'P2002' && createError?.meta?.target?.includes('slug')) {
+                  // Slug conflict, generate new one
+                  attempts++
+                  const baseSlug = generateSlug(productData.name)
+                  currentSlug = await generateUniqueSlug(baseSlug, `${productData.sku}-${attempts}`, existingSlugs)
+                  existingSlugs.add(currentSlug)
+                } else {
+                  throw createError // Re-throw if it's a different error
+                }
+              }
+            }
+            
+            if (!created) {
+              throw new Error(`Failed to create product after ${attempts} attempts due to slug conflicts`)
+            }
+            
             results.created++
             results.products.push({
               action: 'created',
