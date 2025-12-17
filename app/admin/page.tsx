@@ -16,12 +16,12 @@ export default async function AdminPage() {
       redirect('/auth/login')
     }
 
-    const [totalProducts, totalOrders, allOrders] = await Promise.all([
+    const [totalProducts, totalOrders, pendingOrdersCount] = await Promise.all([
       prisma.product.count(),
       prisma.order.count(),
-      prisma.order.findMany({ select: { status: true } }),
+      prisma.order.count({ where: { status: 'pending' } }),
     ])
-    const pendingOrders = allOrders.filter((o: any) => String(o.status) === 'pending').length
+    const pendingOrders = pendingOrdersCount
 
     const recentOrders = await prisma.order.findMany({
       take: 10,
@@ -64,9 +64,7 @@ export default async function AdminPage() {
       </div>
     )
   } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Admin page error:', error)
-    }
+    console.error('Admin page error:', error)
     return (
       <div className="min-h-screen flex flex-col bg-white">
         <Header />

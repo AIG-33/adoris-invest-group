@@ -17,33 +17,48 @@ export default async function AccountPage() {
 
   const userId = (session.user as any).id
 
-  // Fetch user orders with items and products
-  const orders = await prisma.order.findMany({
-    where: {
-      userId: userId,
-    },
-    include: {
-      items: {
-        include: {
-          product: true,
+  // Fetch user orders with items and products, and calculate stats in parallel
+  const [orders, statsData, pendingOrdersCount] = await Promise.all([
+    prisma.order.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
         },
       },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  })
+      orderBy: {
+        createdAt: 'desc',
+      },
+    }),
+    prisma.order.aggregate({
+      where: {
+        userId: userId,
+      },
+      _sum: {
+        total: true,
+      },
+      _count: {
+        id: true,
+      },
+    }),
+    prisma.order.count({
+      where: {
+        userId: userId,
+        status: 'pending',
+      },
+    }),
+  ])
 
-  // Calculate stats
-  const totalSpentSum = orders.reduce((sum: number, order: any) => {
-    const orderTotal = Number(order.total) || 0
-    return sum + orderTotal
-  }, 0)
+  const totalSpentSum = Number(statsData._sum.total || 0)
   
   const stats = {
-    totalOrders: orders.length,
+    totalOrders: statsData._count.id,
     totalSpent: Math.round(totalSpentSum * 100) / 100, // Round to 2 decimal places
-    pendingOrders: orders.filter((o: any) => o.status === 'pending').length,
+    pendingOrders: pendingOrdersCount,
   }
 
   return (
