@@ -22,6 +22,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
   const [loadingOrders, setLoadingOrders] = useState(false)
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
   const [deletingOrder, setDeletingOrder] = useState<string | null>(null)
+  const [processingStatus, setProcessingStatus] = useState<string>('')
   const [importResults, setImportResults] = useState<{
     created: number
     updated: number
@@ -161,22 +162,42 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
     }
 
     setUploading(true)
-    setMessage('Uploading and processing file with AI...')
+    setMessage('')
+    setProcessingStatus('Uploading file...')
+    setImportResults(null)
 
     try {
       const formData = new FormData()
       formData.append('file', file)
+
+      setProcessingStatus('Processing file...')
 
       const response = await fetch('/api/admin/products/import', {
         method: 'POST',
         body: formData,
       })
 
-      const data = await response.json()
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type')
+      let data: any
+
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json()
+      } else {
+        // If not JSON, read as text and try to parse
+        const text = await response.text()
+        try {
+          data = JSON.parse(text)
+        } catch (e) {
+          throw new Error(`Server error: ${text.substring(0, 200)}`)
+        }
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to import products')
+        throw new Error(data.error || data.message || 'Failed to import products')
       }
+
+      setProcessingStatus('Processing complete!')
 
       if (data.results) {
         const { created, updated, errors, products } = data.results
@@ -208,10 +229,21 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       if (fileInput) {
         fileInput.value = ''
       }
+      
+      // Clear processing status after a delay
+      setTimeout(() => {
+        setProcessingStatus('')
+      }, 2000)
     } catch (error: any) {
       const errorMessage = error?.message || 'Upload failed. Please try again.'
       setMessage('❌ ' + errorMessage)
+      setProcessingStatus('Error occurred')
       toast.error(errorMessage)
+      
+      // Clear processing status after a delay
+      setTimeout(() => {
+        setProcessingStatus('')
+      }, 3000)
     } finally {
       setUploading(false)
     }

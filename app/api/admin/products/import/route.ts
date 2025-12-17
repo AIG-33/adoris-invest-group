@@ -151,8 +151,13 @@ Important:
             )
           }
         } catch (jsonError: any) {
+          console.error('JSON parse error:', jsonError)
           return NextResponse.json(
-            { error: 'Invalid JSON file: ' + (jsonError?.message || 'Parse error') },
+            { 
+              error: 'Invalid JSON file',
+              details: jsonError?.message || 'Parse error',
+              message: 'Invalid JSON file: ' + (jsonError?.message || 'Parse error')
+            },
             { status: 400 }
           )
         }
@@ -242,8 +247,13 @@ Important:
             )
           }
         } catch (csvError: any) {
+          console.error('CSV parse error:', csvError)
           return NextResponse.json(
-            { error: 'Invalid CSV file: ' + (csvError?.message || 'Parse error') },
+            { 
+              error: 'Invalid CSV file',
+              details: csvError?.message || 'Parse error',
+              message: 'Invalid CSV file: ' + (csvError?.message || 'Parse error')
+            },
             { status: 400 }
           )
         }
@@ -266,8 +276,13 @@ Important:
             image: record.image || record.imageUrl || record.photo || record.Image || '',
           })).filter((p: any) => p.sku && p.name && p.manufacturer)
         } catch (excelError: any) {
+          console.error('Excel parse error:', excelError)
           return NextResponse.json(
-            { error: 'Invalid Excel file: ' + (excelError?.message || 'Parse error') },
+            { 
+              error: 'Invalid Excel file',
+              details: excelError?.message || 'Parse error',
+              message: 'Invalid Excel file: ' + (excelError?.message || 'Parse error')
+            },
             { status: 400 }
           )
         }
@@ -360,7 +375,8 @@ Important:
       return NextResponse.json(
         { 
           error: 'Failed to extract product data',
-          details: openaiError?.message || 'OpenAI API error'
+          details: openaiError?.message || 'OpenAI API error',
+          message: 'Failed to extract product data: ' + (openaiError?.message || 'OpenAI API error')
         },
         { status: 500 }
       )
