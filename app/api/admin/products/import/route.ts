@@ -257,7 +257,14 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
           // Also create a map for manufacturer IDs (in case manufacturerId in CSV is actually the database ID)
           const manufacturerIdToNameMap = new Map(allManufacturers.map((m: any) => [m.id, m.name]))
           
-          extractedData = records.map((record: any, index: number) => {
+          extractedData = records
+            .filter((record: any) => {
+              // Skip completely empty rows
+              const allValues = Object.values(record || {})
+              const hasAnyValue = allValues.some((val: any) => val !== undefined && val !== null && String(val).trim() !== '')
+              return hasAnyValue
+            })
+            .map((record: any, index: number) => {
             // Helper function to get value using mapping or fallback
             const getValue = (dbField: string, fallbackKeys: string[]): string => {
               // First, try mapped column
