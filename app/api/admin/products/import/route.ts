@@ -504,13 +504,22 @@ Important:
     const existingProductsMap = new Map(existingProducts.map((p: any) => [p.sku, p.id]))
     
     // Get all existing slugs to avoid conflicts
-    const existingSlugs = new Set(existingProducts.map((p: any) => p.slug).filter(Boolean))
+    const existingSlugs = new Set<string>()
+    existingProducts.forEach((p: any) => {
+      if (p.slug && typeof p.slug === 'string') {
+        existingSlugs.add(p.slug)
+      }
+    })
     
     // Also fetch all slugs from database to be safe
     const allExistingSlugs = await prisma.product.findMany({
       select: { slug: true },
     })
-    allExistingSlugs.forEach((p: any) => existingSlugs.add(p.slug))
+    allExistingSlugs.forEach((p: any) => {
+      if (p.slug && typeof p.slug === 'string') {
+        existingSlugs.add(p.slug)
+      }
+    })
 
     // Process products in batches to avoid timeout
     const totalProducts = extractedData.length
