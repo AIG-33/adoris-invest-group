@@ -245,9 +245,10 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
         fileInput.value = ''
       }
       
-      // Clear processing status after a delay
+      // Clear processing status after a delay, but keep errors visible
       setTimeout(() => {
         setProcessingStatus('')
+        // Don't clear liveErrors - they should remain visible
       }, 2000)
     } catch (error: any) {
       const errorMessage = error?.message || 'Upload failed. Please try again.'
@@ -255,9 +256,10 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       setProcessingStatus('Error occurred')
       toast.error(errorMessage)
       
-      // Clear processing status after a delay
+      // Clear processing status after a delay, but keep errors visible
       setTimeout(() => {
         setProcessingStatus('')
+        // Don't clear liveErrors - they should remain visible
       }, 3000)
     } finally {
       setUploading(false)
@@ -406,30 +408,35 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
                   )}
                 </div>
               </div>
+            </div>
+          )}
 
-              {/* Live Errors Display */}
-              {liveErrors.length > 0 && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 max-h-48 overflow-y-auto">
-                  <div className="flex items-center gap-2 mb-2">
-                    <XCircle className="w-4 h-4 text-red-600" />
-                    <span className="font-semibold text-red-900 text-sm">
-                      Errors ({liveErrors.length})
-                    </span>
-                  </div>
-                  <ul className="space-y-1 text-xs text-red-700">
-                    {liveErrors.slice(-10).map((error, index) => (
-                      <li key={index} className="list-disc list-inside">
-                        {error}
-                      </li>
-                    ))}
-                    {liveErrors.length > 10 && (
-                      <li className="text-red-600 italic">
-                        ... and {liveErrors.length - 10} more errors
-                      </li>
-                    )}
-                  </ul>
+          {/* Errors Display - Always visible if there are errors */}
+          {liveErrors.length > 0 && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <XCircle className="w-5 h-5 text-red-600" />
+                  <span className="font-semibold text-red-900">
+                    Errors ({liveErrors.length})
+                  </span>
                 </div>
-              )}
+                <button
+                  onClick={() => setLiveErrors([])}
+                  className="text-xs text-red-600 hover:text-red-800 underline"
+                >
+                  Clear
+                </button>
+              </div>
+              <div className="max-h-64 overflow-y-auto bg-white rounded border border-red-200 p-3">
+                <ul className="space-y-1.5 text-sm text-red-700">
+                  {liveErrors.map((error, index) => (
+                    <li key={index} className="list-disc list-inside break-words">
+                      {error}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
 
