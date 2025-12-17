@@ -119,11 +119,21 @@ export default async function ProductsPage({ searchParams }: Props) {
               />
             </aside>
             <main className="flex-1">
-              <div className="mb-6 flex items-center justify-between">
+              <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <p className="text-neutral-400 text-sm">
                   Showing {products.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, totalProducts)} of {totalProducts} products
                 </p>
-                <SortDropdown currentSort={sort} />
+                <div className="flex items-center gap-3">
+                  <a
+                    href="/api/products/export-pricelist"
+                    download
+                    className="flex items-center gap-2 px-4 py-2 bg-[#333333] hover:bg-[#1a1a1a] text-white rounded-lg transition-colors font-medium text-sm"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download Pricelist</span>
+                  </a>
+                  <SortDropdown currentSort={sort} />
+                </div>
               </div>
               
               <ProductGrid products={products} />
