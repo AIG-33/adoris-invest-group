@@ -204,7 +204,18 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
       setProcessingStatus('Processing complete!')
 
       if (data.results) {
-        const { created, updated, errors, products } = data.results
+        const { created, updated, errors, products, total } = data.results
+        
+        // Update progress to 100%
+        if (total) {
+          setProgress({ current: total, total })
+        }
+        
+        // Show all errors
+        if (errors && errors.length > 0) {
+          setLiveErrors(errors)
+        }
+        
         setImportResults({
           created,
           updated,
@@ -362,6 +373,65 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
           >
             {uploading ? 'Processing...' : 'Upload and Import'}
           </button>
+
+          {/* Processing Status with Progress */}
+          {processingStatus && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
+              <div className="flex items-center gap-3">
+                {uploading ? (
+                  <RefreshCw className="w-5 h-5 text-blue-600 animate-spin" />
+                ) : (
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                )}
+                <div className="flex-1">
+                  <p className="font-semibold text-blue-900">{processingStatus}</p>
+                  {uploading && progress.total > 0 && (
+                    <div className="mt-2">
+                      <div className="flex items-center justify-between text-sm text-blue-700 mb-1">
+                        <span>Processing products...</span>
+                        <span>{progress.current} / {progress.total}</span>
+                      </div>
+                      <div className="w-full bg-blue-200 rounded-full h-2.5">
+                        <div
+                          className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min((progress.current / progress.total) * 100, 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {uploading && progress.total === 0 && (
+                    <p className="text-sm text-blue-700 mt-1">
+                      This may take a few moments depending on file size...
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Live Errors Display */}
+              {liveErrors.length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 max-h-48 overflow-y-auto">
+                  <div className="flex items-center gap-2 mb-2">
+                    <XCircle className="w-4 h-4 text-red-600" />
+                    <span className="font-semibold text-red-900 text-sm">
+                      Errors ({liveErrors.length})
+                    </span>
+                  </div>
+                  <ul className="space-y-1 text-xs text-red-700">
+                    {liveErrors.slice(-10).map((error, index) => (
+                      <li key={index} className="list-disc list-inside">
+                        {error}
+                      </li>
+                    ))}
+                    {liveErrors.length > 10 && (
+                      <li className="text-red-600 italic">
+                        ... and {liveErrors.length - 10} more errors
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
 
           {message && (
             <div
