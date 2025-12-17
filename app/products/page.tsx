@@ -3,10 +3,11 @@ import { Footer } from '@/components/footer'
 import { Sidebar } from '@/components/sidebar'
 import { ProductGrid } from '@/components/product-grid'
 import { SortDropdown } from '@/components/sort-dropdown'
+import { ProductsActionButtons } from '@/components/products-action-buttons'
 import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
-import { ChevronLeft, ChevronRight, Download, Package } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -135,37 +136,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                   Showing {products.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, totalProducts)} of {totalProducts} products
                 </p>
                 <div className="flex items-center gap-3">
-                  <a
-                    href="/api/products/export-pricelist"
-                    download
-                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors font-medium text-sm"
-                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
-                    onMouseEnter={(e) => {
-                      const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
-                      e.currentTarget.style.backgroundColor = darkenColor(currentColor)
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
-                    }}
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Download Pricelist</span>
-                  </a>
-                  <Link
-                    href="/bulk-order"
-                    className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors font-medium text-sm"
-                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
-                    onMouseEnter={(e) => {
-                      const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
-                      e.currentTarget.style.backgroundColor = darkenColor(currentColor)
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
-                    }}
-                  >
-                    <Package className="w-4 h-4" />
-                    <span>Bulk Order</span>
-                  </Link>
+                  <ProductsActionButtons />
                   <SortDropdown currentSort={sort} />
                 </div>
               </div>
