@@ -8,7 +8,7 @@ const teamMembers = [
   {
     name: 'Maksim Harbatsevich',
     role: 'Chief Executive Officer',
-    bio: 'Founder, board member, and shareholder of ADORIS INVEST GROUP OÜ. Passionate entrepreneur with extensive expertise in international sales, IT, and laboratory diagnostics. Strong leadership, communication, and teaching abilities.',
+    bio: 'Founder, board member, and shareholder. Passionate entrepreneur with extensive expertise in international sales, IT, and laboratory diagnostics. Strong leadership, communication, and teaching abilities.',
     linkedin: 'https://www.linkedin.com/in/maksim-h/',
     email: 'ceo@adorisgroup.com',
     image: '/maksim-harbatsevich.jpg',
@@ -24,7 +24,7 @@ const teamMembers = [
   {
     name: 'Anastasiya Valentsiukevich',
     role: 'Chief Strategy Officer',
-    bio: 'Chairman of the Board at IVD Group and co-founder at NewMe. Over a decade of experience in laboratory diagnostics, marketing, and research. Specializes in strategic planning and business development.',
+    bio: 'Chairman of the Board. Over a decade of experience in laboratory diagnostics, marketing, and research. Specializes in strategic planning and business development.',
     linkedin: 'https://www.linkedin.com/in/anastasiya-valentsiukevich-ab2570b4/',
     email: 'info@adorisgroup.com',
     image: '/anastasiya-valentsiukevich.jpg',
@@ -114,7 +114,7 @@ export default function TeamPage() {
                     </p>
                     
                     <p className="text-xl font-semibold text-black pt-4">
-                      Thank you for choosing Adoris Invest Group OÜ. We look forward to building a lasting, honest partnership with you.
+                      Thank you for choosing us. We look forward to building a lasting, honest partnership with you.
                     </p>
                   </div>
 
