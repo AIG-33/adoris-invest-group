@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-options'
 import { prisma } from '@/lib/db'
 import OpenAI from 'openai'
+import * as XLSX from 'xlsx'
+import { parse } from 'csv-parse/sync'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60 // 60 seconds for OpenAI processing
@@ -54,6 +56,27 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(arrayBuffer)
     const base64 = buffer.toString('base64')
     const mimeType = file.type || 'application/pdf'
+    const fileName = file.name.toLowerCase()
+    
+    // Determine file type from extension if mimeType is not reliable
+    let fileType = 'unknown'
+    if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+      fileType = 'excel'
+    } else if (fileName.endsWith('.csv')) {
+      fileType = 'csv'
+    } else if (fileName.endsWith('.json')) {
+      fileType = 'json'
+    } else if (fileName.endsWith('.txt')) {
+      fileType = 'txt'
+    } else if (mimeType.startsWith('image/')) {
+      fileType = 'image'
+    } else if (mimeType === 'application/pdf') {
+      fileType = 'pdf'
+    } else if (mimeType.includes('text')) {
+      fileType = 'txt'
+    } else if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) {
+      fileType = 'excel'
+    }
 
     // Use OpenAI to extract product information
     const systemPrompt = `You are an expert at extracting product information from documents. 
@@ -87,8 +110,106 @@ Important:
     let extractedData: ExtractedProduct[] = []
 
     try {
+      // Handle JSON files directly (no AI needed)
+      if (fileType === 'json') {
+        try {
+          const text = buffer.toString('utf-8')
+          const jsonData = JSON.parse(text)
+          
+          // Handle different JSON structures
+          if (Array.isArray(jsonData)) {
+            extractedData = jsonData.map((item: any) => ({
+              sku: String(item.sku || item.catalogNumber || item.code || item.id || item.SKU || ''),
+              name: String(item.name || item.productName || item.title || item.Name || ''),
+              description: item.description ? String(item.description) : undefined,
+              price: parseFloat(String(item.price || item.cost || item.Price || 0)),
+              manufacturer: String(item.manufacturer || item.brand || item.maker || item.Manufacturer || ''),
+              category: item.category ? String(item.category) : undefined,
+              image: item.image ? String(item.image) : undefined,
+            })).filter((p: any) => p.sku && p.name && p.manufacturer)
+          } else if (jsonData.products && Array.isArray(jsonData.products)) {
+            extractedData = jsonData.products.map((item: any) => ({
+              sku: String(item.sku || item.catalogNumber || item.code || item.id || item.SKU || ''),
+              name: String(item.name || item.productName || item.title || item.Name || ''),
+              description: item.description ? String(item.description) : undefined,
+              price: parseFloat(String(item.price || item.cost || item.Price || 0)),
+              manufacturer: String(item.manufacturer || item.brand || item.maker || item.Manufacturer || ''),
+              category: item.category ? String(item.category) : undefined,
+              image: item.image ? String(item.image) : undefined,
+            })).filter((p: any) => p.sku && p.name && p.manufacturer)
+          } else {
+            return NextResponse.json(
+              { error: 'Invalid JSON structure. Expected array or object with "products" array.' },
+              { status: 400 }
+            )
+          }
+          
+          if (extractedData.length === 0) {
+            return NextResponse.json(
+              { error: 'No valid products found in JSON file. Make sure products have sku, name, and manufacturer fields.' },
+              { status: 400 }
+            )
+          }
+        } catch (jsonError: any) {
+          return NextResponse.json(
+            { error: 'Invalid JSON file: ' + (jsonError?.message || 'Parse error') },
+            { status: 400 }
+          )
+        }
+      }
+      // Handle CSV files
+      else if (fileType === 'csv') {
+        try {
+          const text = buffer.toString('utf-8')
+          const records = parse(text, {
+            columns: true,
+            skip_empty_lines: true,
+            trim: true,
+            delimiter: [',', ';', '\t'], // Try common delimiters
+          })
+          
+          extractedData = records.map((record: any) => ({
+            sku: record.sku || record.catalogNumber || record.code || record.id || record.SKU || '',
+            name: record.name || record.productName || record.title || record.Name || '',
+            description: record.description || record.desc || record.Description || '',
+            price: parseFloat(String(record.price || record.cost || record.Price || 0)),
+            manufacturer: record.manufacturer || record.brand || record.maker || record.Manufacturer || '',
+            category: record.category || record.type || record.Category || '',
+            image: record.image || record.imageUrl || record.photo || record.Image || '',
+          })).filter((p: any) => p.sku && p.name && p.manufacturer)
+        } catch (csvError: any) {
+          return NextResponse.json(
+            { error: 'Invalid CSV file: ' + (csvError?.message || 'Parse error') },
+            { status: 400 }
+          )
+        }
+      }
+      // Handle Excel files
+      else if (fileType === 'excel') {
+        try {
+          const workbook = XLSX.read(buffer, { type: 'buffer' })
+          const firstSheetName = workbook.SheetNames[0]
+          const worksheet = workbook.Sheets[firstSheetName]
+          const records = XLSX.utils.sheet_to_json(worksheet)
+          
+          extractedData = records.map((record: any) => ({
+            sku: record.sku || record.catalogNumber || record.code || record.id || record.SKU || '',
+            name: record.name || record.productName || record.title || record.Name || '',
+            description: record.description || record.desc || record.Description || '',
+            price: parseFloat(String(record.price || record.cost || record.Price || 0)),
+            manufacturer: record.manufacturer || record.brand || record.maker || record.Manufacturer || '',
+            category: record.category || record.type || record.Category || '',
+            image: record.image || record.imageUrl || record.photo || record.Image || '',
+          })).filter((p: any) => p.sku && p.name && p.manufacturer)
+        } catch (excelError: any) {
+          return NextResponse.json(
+            { error: 'Invalid Excel file: ' + (excelError?.message || 'Parse error') },
+            { status: 400 }
+          )
+        }
+      }
       // For images, use vision API
-      if (mimeType.startsWith('image/')) {
+      else if (fileType === 'image' || mimeType.startsWith('image/')) {
         const response = await openai.chat.completions.create({
           model: 'gpt-4o',
           messages: [
@@ -118,7 +239,9 @@ Important:
           const parsed = JSON.parse(content)
           extractedData = Array.isArray(parsed.products) ? parsed.products : []
         }
-      } else {
+      } 
+      // For text files and PDFs, use ChatGPT
+      else if (fileType === 'txt' || fileType === 'pdf') {
         // For PDFs and text files, try to read as text
         // Note: For PDFs, we might need a PDF parser library in production
         let text = ''
@@ -162,6 +285,11 @@ Important:
           const parsed = JSON.parse(content)
           extractedData = Array.isArray(parsed.products) ? parsed.products : []
         }
+      } else {
+        return NextResponse.json(
+          { error: `Unsupported file type: ${fileType}. Supported formats: Excel (.xlsx, .xls), CSV (.csv), JSON (.json), TXT (.txt), Images, PDF` },
+          { status: 400 }
+        )
       }
     } catch (openaiError: any) {
       console.error('OpenAI error:', openaiError)

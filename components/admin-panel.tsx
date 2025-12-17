@@ -278,7 +278,7 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
 
         <div className="bg-gradient-to-r from-[#333333]/10 to-[#666666]/10 rounded-xl p-6 mb-6">
           <p className="text-sm text-neutral-700 mb-4">
-            Upload a file (PDF, image, or text) and AI will automatically extract product information:
+            Upload a file (Excel, CSV, JSON, TXT, PDF, or image) and AI will automatically extract product information:
           </p>
           <ul className="text-sm text-neutral-600 space-y-1 list-disc list-inside mb-4">
             <li><strong>Catalog Number/SKU</strong> - automatically detected</li>
@@ -303,13 +303,13 @@ export function AdminPanel({ stats, recentOrders }: AdminPanelProps) {
                     {file ? file?.name : 'Choose a file or drag it here'}
                   </p>
                   <p className="text-sm text-neutral-500">
-                    Supported formats: PDF, Images (PNG, JPG, etc.), Text files (max 20 MB)
+                    Supported formats: Excel (.xlsx, .xls), CSV (.csv), JSON (.json), TXT (.txt), PDF, Images (PNG, JPG, etc.) (max 20 MB)
                   </p>
                 </div>
               </div>
               <input
                 type="file"
-                accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.doc,.docx"
+                accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.doc,.docx,.xlsx,.xls,.csv,.json"
                 onChange={handleFileChange}
                 className="hidden"
               />
