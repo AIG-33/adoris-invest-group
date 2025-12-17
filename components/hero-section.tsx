@@ -58,8 +58,18 @@ export function HeroSection() {
               priority={idx === 0}
             />
             {/* Dark Gradient Overlay - Stronger on Mobile */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 md:via-black/80 to-black/50 md:to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+            <div 
+              className="absolute inset-0 opacity-90 md:opacity-80"
+              style={{ 
+                background: `linear-gradient(to right, var(--company-primary, #333333), var(--company-primary, #333333)80, transparent)`
+              }}
+            />
+            <div 
+              className="absolute inset-0"
+              style={{ 
+                background: `linear-gradient(to top, var(--company-primary, #333333), transparent)`
+              }}
+            />
           </div>
         ))}
       </div>

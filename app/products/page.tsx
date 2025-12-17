@@ -120,7 +120,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}>
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col gap-8 lg:flex-row">
             <aside className="lg:w-64">
