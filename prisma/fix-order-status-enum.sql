@@ -29,14 +29,18 @@ BEGIN
         SET "status" = 'pending' 
         WHERE "status" NOT IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled');
         
+        -- Remove default value temporarily
+        ALTER TABLE "Order" 
+        ALTER COLUMN "status" DROP DEFAULT;
+        
         -- Convert the column type
         ALTER TABLE "Order" 
         ALTER COLUMN "status" TYPE "OrderStatus" 
         USING "status"::"OrderStatus";
         
-        -- Set default value
+        -- Set default value back
         ALTER TABLE "Order" 
-        ALTER COLUMN "status" SET DEFAULT 'pending';
+        ALTER COLUMN "status" SET DEFAULT 'pending'::"OrderStatus";
         
         RAISE NOTICE '✅ Converted status column from TEXT to OrderStatus enum';
     ELSIF EXISTS (
@@ -47,11 +51,14 @@ BEGIN
         AND udt_name = 'OrderStatus'
         AND table_schema = 'public'
     ) THEN
-        RAISE NOTICE 'ℹ️ status column already uses OrderStatus enum';
+        -- Ensure default is set correctly
+        ALTER TABLE "Order" 
+        ALTER COLUMN "status" SET DEFAULT 'pending'::"OrderStatus";
+        RAISE NOTICE 'ℹ️ status column already uses OrderStatus enum, ensured default';
     ELSE
         -- Add status column if it doesn't exist
         ALTER TABLE "Order" 
-        ADD COLUMN "status" "OrderStatus" NOT NULL DEFAULT 'pending';
+        ADD COLUMN "status" "OrderStatus" NOT NULL DEFAULT 'pending'::"OrderStatus";
         RAISE NOTICE '✅ Added status column with OrderStatus enum';
     END IF;
 END $$;
