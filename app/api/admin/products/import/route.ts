@@ -359,10 +359,35 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
           const workbook = XLSX.read(buffer, { type: 'buffer' })
           const firstSheetName = workbook.SheetNames[0]
           const worksheet = workbook.Sheets[firstSheetName]
-          const records = XLSX.utils.sheet_to_json(worksheet, { 
+          
+          // Use header: 1 to get raw data first, then convert to objects
+          // This preserves exact column names including special characters (like cat#)
+          const rawRecords = XLSX.utils.sheet_to_json(worksheet, { 
             defval: '', // Default value for empty cells
             raw: false, // Convert all values to strings
+            header: 1, // Get as array of arrays first
           })
+
+          // Convert array of arrays to array of objects
+          let records: any[] = []
+          if (rawRecords.length > 0 && Array.isArray(rawRecords[0])) {
+            // First row is headers - preserve exact names
+            const headers = (rawRecords[0] as any[]).map((h: any) => {
+              const headerStr = String(h || '').trim()
+              return headerStr
+            }).filter((h: string) => h !== '')
+            
+            // Create objects with exact header names
+            records = (rawRecords.slice(1) as any[][]).map((row: any[]) => {
+              const obj: any = {}
+              headers.forEach((header: string, index: number) => {
+                obj[header] = row[index] !== undefined ? String(row[index] || '').trim() : ''
+              })
+              return obj
+            })
+          } else {
+            records = rawRecords as any[]
+          }
 
           // Debug: log first record to see structure
           if (process.env.NODE_ENV === 'development' && records.length > 0) {
