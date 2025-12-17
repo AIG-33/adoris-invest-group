@@ -366,8 +366,20 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
 
           // Debug: log first record to see structure
           if (process.env.NODE_ENV === 'development' && records.length > 0) {
+            console.log('\n📊 Excel File Analysis:')
             console.log('First Excel record:', records[0])
             console.log('Available columns:', Object.keys(records[0] || {}))
+            console.log('Column mapping received:', columnMapping)
+            if (Object.keys(columnMapping).length > 0) {
+              console.log('Mapping check:')
+              Object.entries(columnMapping).forEach(([dbField, fileColumn]) => {
+                const hasColumn = records[0] && records[0][fileColumn] !== undefined
+                console.log(`  ${dbField} -> "${fileColumn}": ${hasColumn ? '✅ Found' : '❌ Not found'}`)
+                if (hasColumn && records[0]) {
+                  console.log(`    Value: "${records[0][fileColumn]}"`)
+                }
+              })
+            }
           }
 
           extractedData = records.map((record: any, index: number) => {
@@ -381,14 +393,42 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
             // Helper function to get value using mapping or fallback
             const getValue = (dbField: string, fallbackKeys: string[]): string => {
               // First, try mapped column
-              if (columnMapping[dbField] && record[columnMapping[dbField]] !== undefined && record[columnMapping[dbField]] !== '') {
-                return String(record[columnMapping[dbField]] || '').trim()
+              if (columnMapping[dbField]) {
+                const mappedColumn = columnMapping[dbField]
+                // Try exact match first
+                if (record[mappedColumn] !== undefined && record[mappedColumn] !== '') {
+                  const value = String(record[mappedColumn] || '').trim()
+                  if (process.env.NODE_ENV === 'development' && index < 3) {
+                    console.log(`   ✅ Found ${dbField} via mapping "${mappedColumn}": "${value}"`)
+                  }
+                  return value
+                }
+                // Try case-insensitive match
+                const recordKeys = Object.keys(record)
+                const caseInsensitiveMatch = recordKeys.find(key => key.toLowerCase() === mappedColumn.toLowerCase())
+                if (caseInsensitiveMatch && record[caseInsensitiveMatch] !== undefined && record[caseInsensitiveMatch] !== '') {
+                  const value = String(record[caseInsensitiveMatch] || '').trim()
+                  if (process.env.NODE_ENV === 'development' && index < 3) {
+                    console.log(`   ✅ Found ${dbField} via case-insensitive mapping "${mappedColumn}" -> "${caseInsensitiveMatch}": "${value}"`)
+                  }
+                  return value
+                }
+                if (process.env.NODE_ENV === 'development' && index < 3) {
+                  console.log(`   ⚠️ Mapped column "${mappedColumn}" for ${dbField} not found in record`)
+                }
               }
               // Then try fallback keys
               for (const key of fallbackKeys) {
                 if (record[key] !== undefined && record[key] !== '') {
-                  return String(record[key] || '').trim()
+                  const value = String(record[key] || '').trim()
+                  if (process.env.NODE_ENV === 'development' && index < 3) {
+                    console.log(`   ✅ Found ${dbField} via fallback "${key}": "${value}"`)
+                  }
+                  return value
                 }
+              }
+              if (process.env.NODE_ENV === 'development' && index < 3) {
+                console.log(`   ❌ No value found for ${dbField}`)
               }
               return ''
             }
