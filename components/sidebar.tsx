@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { X, Package, ChevronDown, ChevronUp } from 'lucide-react'
+import { X, Package, ChevronDown, ChevronUp, Download } from 'lucide-react'
 
 interface SidebarProps {
   manufacturers: any[]
