@@ -21,8 +21,8 @@
     @apply border-border;
   }
   body {
-    background-color: var(--company-secondary, #ffffff);
-    color: var(--neutral-900, #171717);
+    background-color: var(--company-accent, #000000);
+    color: var(--neutral-100, #f5f5f5);
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }
