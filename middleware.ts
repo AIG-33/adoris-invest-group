@@ -1,54 +1,15 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getCompanyByDomain } from '@/lib/company'
 
-// Use Node.js runtime for middleware to support Prisma
-export const runtime = 'nodejs'
-
+/**
+ * Middleware - lightweight, no Prisma
+ * Company detection is done in server components via getServerCompany()
+ * This middleware only passes through the request
+ */
 export async function middleware(request: NextRequest) {
-  const host = request.headers.get('host') || ''
-  let domain = host.split(':')[0].toLowerCase()
-
-  // Support subdomains: shop.ivdgroup.eu -> try both shop.ivdgroup.eu and ivdgroup.eu
-  // Try exact domain first
-  let company = await getCompanyByDomain(domain)
-  
-  // If not found and has subdomain, try base domain (e.g., shop.ivdgroup.eu -> ivdgroup.eu)
-  if (!company && domain.includes('.')) {
-    const parts = domain.split('.')
-    if (parts.length > 2) {
-      // Remove first subdomain (e.g., shop.ivdgroup.eu -> ivdgroup.eu)
-      const baseDomain = parts.slice(1).join('.')
-      company = await getCompanyByDomain(baseDomain)
-    }
-  }
-
-  // If company not found, continue with default (for development)
-  if (!company) {
-    return NextResponse.next()
-  }
-
-  // Add company info to request headers for use in pages
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-company-id', company.id)
-  requestHeaders.set('x-company-name', company.name)
-  requestHeaders.set('x-company-slug', company.slug)
-  requestHeaders.set('x-company-domain', company.domain)
-  requestHeaders.set('x-company-language', company.language)
-  requestHeaders.set('x-company-price-type', company.priceType)
-  requestHeaders.set('x-company-email', company.email || '')
-  requestHeaders.set('x-company-phone', company.phone || '')
-  requestHeaders.set('x-company-address', company.address || '')
-  requestHeaders.set('x-company-logo', company.logo || '')
-  requestHeaders.set('x-company-primary-color', company.primaryColor || '#333333')
-  requestHeaders.set('x-company-secondary-color', company.secondaryColor || '#666666')
-  requestHeaders.set('x-company-accent-color', company.accentColor || '#000000')
-
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  })
+  // Just pass through - company detection happens in server components
+  // This avoids Prisma in Edge Runtime which doesn't support it
+  return NextResponse.next()
 }
 
 export const config = {
