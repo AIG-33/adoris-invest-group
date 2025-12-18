@@ -7,9 +7,9 @@ import { getDictionary } from '@/lib/translations';
 export const dynamic = 'force-dynamic';
 
 export default async function TermsPage() {
-  const company = await getServerCompany()
-  const language = (company?.language || 'en') as 'en' | 'ru'
-  const dict = getDictionary(language)
+  const company = await getServerCompany();
+  const language = (company?.language || 'en') as 'en' | 'ru';
+  const dict = getDictionary(language);
   return (
     <>
       <Header translations={dict.nav} />
