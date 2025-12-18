@@ -3,8 +3,17 @@
 import { Award, Building2, Globe, Shield } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+interface StatsSectionTranslations {
+  whyChoose: string
+  readyToOrder: string
+  minimumOrder: string
+  browseCatalog: string
+  viewTerms: string
+}
+
 interface StatsSectionProps {
   companyName?: string
+  translations: StatsSectionTranslations
 }
 
 const stats = [
@@ -53,7 +62,7 @@ const features = [
   },
 ]
 
-export function StatsSection({ companyName = 'IVD Group' }: StatsSectionProps) {
+export function StatsSection({ companyName = 'IVD Group', translations }: StatsSectionProps) {
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
 
