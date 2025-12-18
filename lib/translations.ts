@@ -238,6 +238,10 @@ export interface Translations {
       title: string
       description: string
       bankDetails: string
+      bank: string
+      swift: string
+      iban: string
+      bankAddress: string
     }
     fulfillment: {
       title: string
@@ -251,11 +255,15 @@ export interface Translations {
     discounts: {
       title: string
       description: string
+      order50k: string
+      order100k: string
     }
     contact: {
       title: string
       description: string
     }
+    companyInfoRegCode: string
+    companyInfoVat: string
   }
   
   // Exhibitions
@@ -611,6 +619,10 @@ const translations: Record<Language, Translations> = {
         title: 'Payment Terms',
         description: 'We require 100% prepayment for all orders. We work on EXW Vilnius (Ex Works) terms. This means that goods are available for pickup at our warehouse in Vilnius, Lithuania. Buyers are responsible for all transportation costs and risks from that point forward.',
         bankDetails: 'Bank Details:',
+        bank: 'Bank',
+        swift: 'SWIFT',
+        iban: 'IBAN',
+        bankAddress: 'Bank Address',
       },
       fulfillment: {
         title: 'Order Fulfillment & Delivery Time',
@@ -624,11 +636,15 @@ const translations: Record<Language, Translations> = {
       discounts: {
         title: 'Volume Discounts',
         description: 'We offer attractive volume discounts for larger orders:',
+        order50k: 'Orders €50,000+',
+        order100k: 'Orders €100,000+',
       },
       contact: {
         title: 'Have Questions?',
         description: 'Our team is ready to help you with any inquiries about our terms and conditions',
       },
+      companyInfoRegCode: 'Reg. Code',
+      companyInfoVat: 'VAT',
     },
     exhibitions: {
       title: 'Exhibitions',
@@ -968,6 +984,10 @@ const translations: Record<Language, Translations> = {
         title: 'Условия оплаты',
         description: 'Мы требуем 100% предоплату для всех заказов. Мы работаем на условиях EXW Вильнюс (Ex Works). Это означает, что товары доступны для получения на нашем складе в Вильнюсе, Литва. Покупатели несут ответственность за все транспортные расходы и риски с этого момента.',
         bankDetails: 'Банковские реквизиты:',
+        bank: 'Банк',
+        swift: 'SWIFT',
+        iban: 'IBAN',
+        bankAddress: 'Адрес банка',
       },
       fulfillment: {
         title: 'Выполнение заказа и время доставки',
@@ -981,11 +1001,15 @@ const translations: Record<Language, Translations> = {
       discounts: {
         title: 'Скидки за объем',
         description: 'Мы предлагаем привлекательные скидки за объем для крупных заказов:',
+        order50k: 'Заказы от €50,000',
+        order100k: 'Заказы от €100,000',
       },
       contact: {
         title: 'Есть вопросы?',
         description: 'Наша команда готова помочь вам с любыми вопросами о наших условиях и положениях',
       },
+      companyInfoRegCode: 'Рег. код',
+      companyInfoVat: 'НДС',
     },
     exhibitions: {
       title: 'Выставки',
