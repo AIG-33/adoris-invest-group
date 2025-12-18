@@ -121,21 +121,24 @@ const exhibitions: Exhibition[] = [
   }
 ]
 
-export default function ExhibitionsPage() {
+export default async function ExhibitionsPage() {
+  const company = await getServerCompany()
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
+
   return (
     <>
-      <Header />
+      <Header translations={dict.nav} />
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
         <section className="relative text-white py-20" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="mb-4 text-5xl font-bold md:text-6xl">
-                Our Exhibitions
+                {dict.exhibitions.title}
               </h1>
               <p className="mx-auto max-w-2xl text-xl text-white/90">
-                Adoris Invest Group OU actively participates in leading medical and laboratory
-                equipment exhibitions across Europe and worldwide
+                {dict.exhibitions.subtitle}
               </p>
             </div>
           </div>
@@ -189,7 +192,7 @@ export default function ExhibitionsPage() {
                       {exhibition.highlights && exhibition.highlights.length > 0 && (
                         <div className="mb-6">
                           <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wide mb-3">
-                            Highlights
+                            {dict.exhibitions.highlights}
                           </h3>
                           <ul className="space-y-2">
                             {exhibition.highlights.map((highlight, highlightIndex) => (
@@ -204,7 +207,7 @@ export default function ExhibitionsPage() {
 
                       <div className="mt-auto pt-4 border-t border-neutral-200">
                         <div className="text-sm text-neutral-500">
-                          Exhibition #{exhibitions.length - index} of {exhibitions.length}
+                          {dict.exhibitions.exhibition} #{exhibitions.length - index} {dict.exhibitions.of} {exhibitions.length}
                         </div>
                       </div>
                     </div>
@@ -220,13 +223,13 @@ export default function ExhibitionsPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="rounded-2xl border border-neutral-200 p-12 text-center text-white" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
               <h3 className="mb-4 text-3xl font-bold">
-                Meet Us at Our Next Event
+                {dict.exhibitions.meetUsTitle}
               </h3>
               <p className="mb-8 text-xl text-white/90">
-                Discover our latest products and innovations in medical technology
+                {dict.exhibitions.meetUsSubtitle}
               </p>
               <a
-                href="mailto:info@adorisgroup.com"
+                href={`mailto:${company?.email || 'info@adorisgroup.com'}`}
                 className="inline-flex items-center gap-2 rounded-lg bg-white text-black px-8 py-4 text-lg font-semibold transition-all hover:bg-neutral-100 hover:scale-105 hover:shadow-xl"
               >
                 {dict.exhibitions.contactUs}
@@ -236,7 +239,7 @@ export default function ExhibitionsPage() {
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer translations={dict.footer} />
     </>
   )
 }

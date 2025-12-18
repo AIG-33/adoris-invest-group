@@ -56,7 +56,7 @@ export default async function TeamPage() {
   
   return (
     <>
-      <Header />
+      <Header translations={dict.nav} />
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
         <section className="relative text-white py-20" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
@@ -85,42 +85,31 @@ export default async function TeamPage() {
                   
                   <div className="prose prose-lg max-w-none text-neutral-700 leading-relaxed space-y-4 prose-headings:text-black prose-strong:text-black">
                     <p>
-                      Welcome.
+                      {dict.team.messageWelcome}
                     </p>
                     
                     <p>
-                      For over a decade, we have been navigating the complex world of medical and laboratory wholesale with 
-                      a singular, unwavering principle: <strong className="text-black">business is about people, not just products</strong>.
+                      {dict.team.messageParagraph1}
                     </p>
                     
                     <p>
-                      When we founded this company more than 10 years ago, we set out to do more than simply move boxes from 
-                      a warehouse to a clinic. We wanted to build a bridge between the world’s leading manufacturers and the 
-                      professionals who rely on their tools every day. Today, I am proud to say that we have curated one of the 
-                      most comprehensive catalogs in the industry, featuring top-tier equipment and supplies from the most 
-                      respected global brands.
+                      {dict.team.messageParagraph2}
                     </p>
                     
                     <p>
-                      However, our extensive inventory is not our greatest asset—<strong className="text-black">our reputation is</strong>.
+                      {dict.team.messageParagraph3}
                     </p>
                     
                     <p>
-                      In an industry often defined by cold transactions and rigid contracts, we have chosen a different path. 
-                      We believe in the power of honest, human relationships. We understand that behind every order is a person, 
-                      a patient, or a researcher depending on us. That is why transparency and integrity are not just buzzwords 
-                      for us; they are the foundation of every interaction we have.
+                      {dict.team.messageParagraph4}
                     </p>
                     
                     <p>
-                      We do not just want to be your supplier; we want to be a partner you can trust implicitly. Whether you are 
-                      a long-standing client or visiting us for the first time, I want you to know that we value your trust above 
-                      all else. We are committed to maintaining that trust through fair practices, open communication, and a genuine 
-                      dedication to your success.
+                      {dict.team.messageParagraph5}
                     </p>
                     
                     <p className="text-xl font-semibold text-black pt-4">
-                      Thank you for choosing us. We look forward to building a lasting, honest partnership with you.
+                      {dict.team.messageThankYou || 'Thank you for choosing us. We look forward to building a lasting, honest partnership with you.'}
                     </p>
                   </div>
 
@@ -144,7 +133,7 @@ export default async function TeamPage() {
                           className="inline-flex items-center gap-2 text-black hover:text-neutral-700 transition-colors mt-1"
                         >
                           <Linkedin className="w-4 h-4" />
-                          <span className="text-sm">Connect on LinkedIn</span>
+                          <span className="text-sm">{dict.team.connectLinkedIn}</span>
                         </a>
                       </div>
                     </div>
@@ -160,11 +149,10 @@ export default async function TeamPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold text-center text-black mb-4">
-                Leadership Team
+                {dict.team.leadershipTeam}
               </h2>
               <p className="text-center text-neutral-600 text-lg mb-12 max-w-2xl mx-auto">
-                Our experienced team brings together decades of expertise in medical equipment distribution, 
-                logistics, and healthcare consulting.
+                {dict.team.leadershipDescription}
               </p>
 
               <div className="grid md:grid-cols-2 gap-8">
@@ -201,7 +189,7 @@ export default async function TeamPage() {
                             className="inline-flex items-center justify-center gap-2 px-4 py-2 border-2 border-neutral-300 text-neutral-700 rounded-lg hover:border-black hover:text-black transition-colors text-sm font-medium"
                           >
                             <Mail className="w-4 h-4" />
-                            Email
+                            {dict.team.email}
                           </a>
                         </div>
                       </div>
@@ -218,31 +206,30 @@ export default async function TeamPage() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl sm:text-4xl font-bold text-black mb-6">
-                Work With a Team You Can Trust
+                {dict.team.workWithTeam}
               </h2>
               <p className="text-xl text-neutral-600 mb-8 leading-relaxed">
-                Our team is dedicated to providing exceptional service and building lasting partnerships. 
-                Let's discuss how we can support your needs.
+                {dict.team.workWithTeamDescription}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/products"
                   className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-black to-neutral-800 text-white font-semibold rounded-lg hover:shadow-xl transition-all transform hover:scale-105"
                 >
-                  View Our Products
+                  {dict.team.viewProducts}
                 </Link>
                 <Link
                   href="/company/about"
                   className="inline-flex items-center justify-center px-8 py-4 border-2 border-black text-black font-semibold rounded-lg hover:bg-black hover:text-white transition-all"
                 >
-                  Learn More About Us
+                  {dict.team.learnMore}
                 </Link>
               </div>
             </div>
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer translations={dict.footer} />
     </>
   )
 }

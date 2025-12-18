@@ -263,6 +263,11 @@ export interface Translations {
     title: string
     subtitle: string
     contactUs: string
+    highlights: string
+    exhibition: string
+    of: string
+    meetUsTitle: string
+    meetUsSubtitle: string
   }
   
   // Team
@@ -270,6 +275,21 @@ export interface Translations {
     title: string
     subtitle: string
     messageTitle: string
+    messageWelcome: string
+    messageParagraph1: string
+    messageParagraph2: string
+    messageParagraph3: string
+    messageParagraph4: string
+    messageParagraph5: string
+    messageThankYou: string
+    leadershipTeam: string
+    leadershipDescription: string
+    workWithTeam: string
+    workWithTeamDescription: string
+    viewProducts: string
+    learnMore: string
+    email: string
+    connectLinkedIn: string
   }
   
   // Bulk Order
@@ -614,11 +634,31 @@ const translations: Record<Language, Translations> = {
       title: 'Exhibitions',
       subtitle: 'Adoris Invest Group OU actively participates in leading medical and laboratory equipment exhibitions across Europe and worldwide',
       contactUs: 'Contact Us',
+      highlights: 'Highlights',
+      exhibition: 'Exhibition',
+      of: 'of',
+      meetUsTitle: 'Meet Us at Our Next Event',
+      meetUsSubtitle: 'Discover our latest products and innovations in medical technology',
     },
     team: {
       title: 'Meet Our Team',
       subtitle: 'The professionals behind our success',
       messageTitle: 'A Message from the CEO',
+      messageWelcome: 'Welcome.',
+      messageParagraph1: 'For over a decade, we have been navigating the complex world of medical and laboratory wholesale with a singular, unwavering principle: business is about people, not just products.',
+      messageParagraph2: 'When we founded this company more than 10 years ago, we set out to do more than simply move boxes from a warehouse to a clinic. We wanted to build a bridge between the world\'s leading manufacturers and the professionals who rely on their tools every day. Today, I am proud to say that we have curated one of the most comprehensive catalogs in the industry, featuring top-tier equipment and supplies from the most respected global brands.',
+      messageParagraph3: 'However, our extensive inventory is not our greatest asset—our reputation is.',
+      messageParagraph4: 'In an industry often defined by cold transactions and rigid contracts, we have chosen a different path. We believe in the power of honest, human relationships. We understand that behind every order is a person, a patient, or a researcher depending on us. That is why transparency and integrity are not just buzzwords for us; they are the foundation of every interaction we have.',
+      messageParagraph5: 'We do not just want to be your supplier; we want to be a partner you can trust implicitly. Whether you are a long-standing client or visiting us for the first time, I want you to know that we value your trust above all else. We are committed to maintaining that trust through fair practices, open communication, and a genuine dedication to your success.',
+      messageThankYou: 'Thank you for choosing us. We look forward to building a lasting, honest partnership with you.',
+      leadershipTeam: 'Leadership Team',
+      leadershipDescription: 'Our experienced team brings together decades of expertise in medical equipment distribution, logistics, and healthcare consulting.',
+      workWithTeam: 'Work With a Team You Can Trust',
+      workWithTeamDescription: 'Our team is dedicated to providing exceptional service and building lasting partnerships. Let\'s discuss how we can support your needs.',
+      viewProducts: 'View Our Products',
+      learnMore: 'Learn More About Us',
+      email: 'Email',
+      connectLinkedIn: 'Connect on LinkedIn',
     },
     bulkOrder: {
       title: 'Bulk Order',
@@ -951,11 +991,31 @@ const translations: Record<Language, Translations> = {
       title: 'Выставки',
       subtitle: 'Adoris Invest Group OU активно участвует в ведущих выставках медицинского и лабораторного оборудования в Европе и по всему миру',
       contactUs: 'Свяжитесь с нами',
+      highlights: 'Основные моменты',
+      exhibition: 'Выставка',
+      of: 'из',
+      meetUsTitle: 'Встретьтесь с нами на нашем следующем мероприятии',
+      meetUsSubtitle: 'Откройте для себя наши последние продукты и инновации в медицинских технологиях',
     },
     team: {
       title: 'Наша команда',
       subtitle: 'Профессионалы, стоящие за нашим успехом',
       messageTitle: 'Послание от генерального директора',
+      messageWelcome: 'Добро пожаловать.',
+      messageParagraph1: 'Более десяти лет мы работаем в сложном мире оптовой торговли медицинским и лабораторным оборудованием, следуя одному непоколебимому принципу: бизнес — это о людях, а не только о продуктах.',
+      messageParagraph2: 'Когда мы основали эту компанию более 10 лет назад, мы хотели сделать больше, чем просто перемещать коробки со склада в клинику. Мы хотели построить мост между ведущими производителями мира и профессионалами, которые полагаются на их инструменты каждый день. Сегодня я с гордостью могу сказать, что мы создали один из самых полных каталогов в отрасли, включающий оборудование и расходные материалы высочайшего качества от самых уважаемых мировых брендов.',
+      messageParagraph3: 'Однако наш обширный ассортимент — не наш главный актив; наша репутация — это то, что действительно важно.',
+      messageParagraph4: 'В отрасли, часто определяемой холодными сделками и жесткими контрактами, мы выбрали другой путь. Мы верим в силу честных, человеческих отношений. Мы понимаем, что за каждым заказом стоит человек, пациент или исследователь, который зависит от нас. Вот почему прозрачность и честность для нас — не просто модные слова; они являются основой каждого нашего взаимодействия.',
+      messageParagraph5: 'Мы не просто хотим быть вашим поставщиком; мы хотим быть партнером, которому вы можете полностью доверять. Независимо от того, являетесь ли вы давним клиентом или посещаете нас впервые, я хочу, чтобы вы знали, что мы ценим ваше доверие превыше всего. Мы стремимся поддерживать это доверие через справедливые практики, открытое общение и искреннюю преданность вашему успеху.',
+      messageThankYou: 'Спасибо, что выбрали нас. Мы с нетерпением ждем возможности построить долгосрочное, честное партнерство с вами.',
+      leadershipTeam: 'Команда руководителей',
+      leadershipDescription: 'Наша опытная команда объединяет десятилетия опыта в области распределения медицинского оборудования, логистики и консультирования в сфере здравоохранения.',
+      workWithTeam: 'Работайте с командой, которой можно доверять',
+      workWithTeamDescription: 'Наша команда стремится предоставлять исключительный сервис и строить долгосрочные партнерства. Давайте обсудим, как мы можем поддержать ваши потребности.',
+      viewProducts: 'Посмотреть наши продукты',
+      learnMore: 'Узнать больше о нас',
+      email: 'Email',
+      connectLinkedIn: 'Связаться в LinkedIn',
     },
     bulkOrder: {
       title: 'Массовый заказ',
