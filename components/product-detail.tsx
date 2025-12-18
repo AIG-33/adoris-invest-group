@@ -255,7 +255,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
       {relatedProducts?.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-neutral-900">Related Products</h2>
+            <h2 className="text-3xl font-bold text-neutral-900">{translations.relatedProducts || 'Related Products'}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {relatedProducts?.map?.((relProduct) => (

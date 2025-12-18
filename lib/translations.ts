@@ -175,6 +175,7 @@ export interface Translations {
     deliveryInfo: string
     addToCart: string
     edit: string
+    relatedProducts: string
   }
   
   // Cart
@@ -221,6 +222,7 @@ export interface Translations {
   // Terms
   terms: {
     title: string
+    intro: string
     originalProducts: {
       title: string
       description: string
@@ -245,6 +247,10 @@ export interface Translations {
       description: string
     }
     discounts: {
+      title: string
+      description: string
+    }
+    contact: {
       title: string
       description: string
     }
@@ -279,14 +285,87 @@ export interface Translations {
   // Admin
   admin: {
     title: string
+    dashboard: string
     orders: string
     products: string
     companies: string
-    stats: {
-      totalProducts: string
-      totalOrders: string
-      pendingOrders: string
-    }
+    totalProducts: string
+    totalOrders: string
+    pendingOrders: string
+    allOrders?: string
+    importProducts?: string
+  }
+  
+  // Order Confirmation
+  orderConfirmation: {
+    title: string
+    subtitle: string
+    thankYou: string
+    orderNumber: string
+    orderPlaced: string
+    processing: string
+    shipped: string
+    emailSent: string
+    emailSentDescription: string
+    checkSpam: string
+    orderDetails: string
+    billingInformation: string
+    paymentInformation: string
+    paymentMethod: string
+    paymentTerms: string
+    bankTransferDetails: string
+    orderItems: string
+    quantity: string
+    each: string
+    subtotal: string
+    volumeDiscount: string
+    total: string
+    continueShopping: string
+    needHelp: string
+    needHelpDescription: string
+  }
+  
+  // Auth/Login
+  auth: {
+    welcomeBack: string
+    signUp: string
+    signIn: string
+    signInToAccount: string
+    createAccount: string
+    password: string
+    magicLink: string
+    fullName: string
+    emailAddress: string
+    confirmPassword: string
+    passwordPlaceholder: string
+    signingUp: string
+    signingIn: string
+    sending: string
+    sendLink: string
+    magicLinkDescription: string
+    backToShop: string
+    invalidEmailPassword: string
+    somethingWentWrong: string
+    failedToSendEmail: string
+    checkEmail: string
+    passwordsDontMatch: string
+    passwordTooShort: string
+    userExists: string
+    registrationError: string
+    registrationSuccess: string
+  }
+  
+  // Verify Request
+  verifyRequest: {
+    checkEmail: string
+    emailSent: string
+    important: string
+    checkSpam: string
+    linkValid: string
+    clickLink: string
+    problems: string
+    contactUs: string
+    backToLogin: string
   }
 }
 
@@ -455,6 +534,7 @@ const translations: Record<Language, Translations> = {
       deliveryInfo: 'Delivery to our warehouse in Vilnius takes 4-7 weeks. Products sourced directly from European manufacturers.',
       addToCart: 'Add to Cart',
       edit: 'Edit',
+      relatedProducts: 'Related Products',
     },
     cart: {
       title: 'Shopping Cart',
@@ -493,6 +573,7 @@ const translations: Record<Language, Translations> = {
     },
     terms: {
       title: 'Terms & Conditions',
+      intro: 'Please review our trading conditions before placing an order',
       originalProducts: {
         title: 'Original Products Guarantee',
         description: 'We supply only original products sourced directly from European manufacturers\' warehouses. All products come with manufacturer warranties and certificates of authenticity.',
@@ -520,6 +601,10 @@ const translations: Record<Language, Translations> = {
         title: 'Volume Discounts',
         description: 'We offer attractive volume discounts for larger orders:',
       },
+      contact: {
+        title: 'Have Questions?',
+        description: 'Our team is ready to help you with any inquiries about our terms and conditions',
+      },
     },
     exhibitions: {
       title: 'Exhibitions',
@@ -543,14 +628,81 @@ const translations: Record<Language, Translations> = {
     },
     admin: {
       title: 'Admin Panel',
+      dashboard: 'Admin Dashboard',
       orders: 'Orders',
       products: 'Products',
       companies: 'Companies',
-      stats: {
-        totalProducts: 'Total Products',
-        totalOrders: 'Total Orders',
-        pendingOrders: 'Pending Orders',
-      },
+      totalProducts: 'Total Products',
+      totalOrders: 'Total Orders',
+      pendingOrders: 'Pending Orders',
+      allOrders: 'All Orders',
+      importProducts: 'Import Products from Excel/CSV',
+    },
+    orderConfirmation: {
+      title: 'Order Confirmed!',
+      subtitle: 'Thank you for your order. We\'ve received it and are processing it now.',
+      thankYou: 'Thank you for your order',
+      orderNumber: 'Order Number',
+      orderPlaced: 'Order Placed',
+      processing: 'Processing',
+      shipped: 'Shipped',
+      emailSent: 'Order Confirmation Email Sent',
+      emailSentDescription: 'We\'ve sent a confirmation email with your order details and PDF invoice to',
+      checkSpam: 'If you don\'t receive it within a few minutes, please check your spam folder or contact us at',
+      orderDetails: 'Order Details',
+      billingInformation: 'Billing Information',
+      paymentInformation: 'Payment Information',
+      paymentMethod: 'Payment Method',
+      paymentTerms: 'Payment Terms',
+      bankTransferDetails: 'Bank transfer details will be sent to your email separately.',
+      orderItems: 'Order Items',
+      quantity: 'Qty',
+      each: 'each',
+      subtotal: 'Subtotal',
+      volumeDiscount: 'Volume Discount',
+      total: 'Total',
+      continueShopping: 'Continue Shopping',
+      needHelp: 'Need Help?',
+      needHelpDescription: 'If you have any questions about your order, please don\'t hesitate to contact us.',
+    },
+    auth: {
+      welcomeBack: 'Welcome Back',
+      signUp: 'Sign Up',
+      signIn: 'Sign In',
+      signInToAccount: 'Sign in to your account',
+      createAccount: 'Create a new account',
+      password: 'Password',
+      magicLink: 'Magic Link',
+      fullName: 'Full Name',
+      emailAddress: 'Email Address',
+      confirmPassword: 'Confirm Password',
+      passwordPlaceholder: 'minimum 6 characters',
+      signingUp: 'Signing up...',
+      signingIn: 'Signing in...',
+      sending: 'Sending...',
+      sendLink: 'Send Link',
+      magicLinkDescription: 'We\'ll send you an email with a passwordless sign-in link',
+      backToShop: '← Back to Shop',
+      invalidEmailPassword: 'Invalid email or password',
+      somethingWentWrong: 'Something went wrong',
+      failedToSendEmail: 'Failed to send email',
+      checkEmail: 'Check your email! We sent you a sign-in link.',
+      passwordsDontMatch: 'Passwords don\'t match',
+      passwordTooShort: 'Password must be at least 6 characters',
+      userExists: 'User with this email already exists',
+      registrationError: 'Registration error',
+      registrationSuccess: 'Registration successful! Please sign in.',
+    },
+    verifyRequest: {
+      checkEmail: 'Check your email',
+      emailSent: 'We\'ve sent you a sign-in link to your email address.',
+      important: 'Important:',
+      checkSpam: 'Check the "Spam" folder if the email doesn\'t arrive',
+      linkValid: 'The link is valid for 24 hours',
+      clickLink: 'Click on the link to complete sign-in',
+      problems: 'Having problems? Contact us:',
+      contactUs: 'Contact us',
+      backToLogin: '← Back to sign in',
     },
   },
   ru: {
@@ -717,6 +869,7 @@ const translations: Record<Language, Translations> = {
       deliveryInfo: 'Доставка на наш склад в Вильнюсе занимает 4-7 недель. Продукция поставляется напрямую от европейских производителей.',
       addToCart: 'Добавить в корзину',
       edit: 'Редактировать',
+      relatedProducts: 'Похожие продукты',
     },
     cart: {
       title: 'Корзина покупок',
@@ -755,6 +908,7 @@ const translations: Record<Language, Translations> = {
     },
     terms: {
       title: 'Условия и положения',
+      intro: 'Пожалуйста, ознакомьтесь с нашими торговыми условиями перед размещением заказа',
       originalProducts: {
         title: 'Гарантия оригинальных продуктов',
         description: 'Мы поставляем только оригинальную продукцию, полученную напрямую со складов европейских производителей. Все продукты поставляются с гарантиями производителя и сертификатами подлинности.',
@@ -782,6 +936,10 @@ const translations: Record<Language, Translations> = {
         title: 'Скидки за объем',
         description: 'Мы предлагаем привлекательные скидки за объем для крупных заказов:',
       },
+      contact: {
+        title: 'Есть вопросы?',
+        description: 'Наша команда готова помочь вам с любыми вопросами о наших условиях и положениях',
+      },
     },
     exhibitions: {
       title: 'Выставки',
@@ -805,14 +963,81 @@ const translations: Record<Language, Translations> = {
     },
     admin: {
       title: 'Панель администратора',
+      dashboard: 'Панель администратора',
       orders: 'Заказы',
       products: 'Продукты',
       companies: 'Компании',
-      stats: {
-        totalProducts: 'Всего продуктов',
-        totalOrders: 'Всего заказов',
-        pendingOrders: 'Ожидающие заказы',
-      },
+      totalProducts: 'Всего продуктов',
+      totalOrders: 'Всего заказов',
+      pendingOrders: 'Ожидающие заказы',
+      allOrders: 'Все заказы',
+      importProducts: 'Импорт продуктов из Excel/CSV',
+    },
+    orderConfirmation: {
+      title: 'Заказ подтвержден!',
+      subtitle: 'Спасибо за ваш заказ. Мы получили его и обрабатываем сейчас.',
+      thankYou: 'Спасибо за ваш заказ',
+      orderNumber: 'Номер заказа',
+      orderPlaced: 'Заказ размещен',
+      processing: 'Обработка',
+      shipped: 'Отправлен',
+      emailSent: 'Письмо с подтверждением заказа отправлено',
+      emailSentDescription: 'Мы отправили письмо с подтверждением, деталями заказа и PDF-счетом на',
+      checkSpam: 'Если вы не получили его в течение нескольких минут, пожалуйста, проверьте папку "Спам" или свяжитесь с нами по адресу',
+      orderDetails: 'Детали заказа',
+      billingInformation: 'Платежная информация',
+      paymentInformation: 'Информация об оплате',
+      paymentMethod: 'Способ оплаты',
+      paymentTerms: 'Условия оплаты',
+      bankTransferDetails: 'Детали банковского перевода будут отправлены вам на email отдельно.',
+      orderItems: 'Товары в заказе',
+      quantity: 'Кол-во',
+      each: 'за шт.',
+      subtotal: 'Промежуточный итог',
+      volumeDiscount: 'Скидка за объем',
+      total: 'Итого',
+      continueShopping: 'Продолжить покупки',
+      needHelp: 'Нужна помощь?',
+      needHelpDescription: 'Если у вас есть вопросы по заказу, пожалуйста, свяжитесь с нами.',
+    },
+    auth: {
+      welcomeBack: 'Добро пожаловать',
+      signUp: 'Регистрация',
+      signIn: 'Войти',
+      signInToAccount: 'Войдите в свой аккаунт',
+      createAccount: 'Создать новый аккаунт',
+      password: 'Пароль',
+      magicLink: 'Магическая ссылка',
+      fullName: 'Полное имя',
+      emailAddress: 'Адрес электронной почты',
+      confirmPassword: 'Подтвердите пароль',
+      passwordPlaceholder: 'минимум 6 символов',
+      signingUp: 'Регистрация...',
+      signingIn: 'Вход...',
+      sending: 'Отправка...',
+      sendLink: 'Отправить ссылку',
+      magicLinkDescription: 'Мы отправим вам письмо со ссылкой для входа без пароля',
+      backToShop: '← Вернуться в магазин',
+      invalidEmailPassword: 'Неверный email или пароль',
+      somethingWentWrong: 'Что-то пошло не так',
+      failedToSendEmail: 'Не удалось отправить письмо',
+      checkEmail: 'Проверьте почту! Мы отправили вам ссылку для входа.',
+      passwordsDontMatch: 'Пароли не совпадают',
+      passwordTooShort: 'Пароль должен содержать минимум 6 символов',
+      userExists: 'Пользователь с таким email уже существует',
+      registrationError: 'Ошибка регистрации',
+      registrationSuccess: 'Регистрация успешна! Пожалуйста, войдите.',
+    },
+    verifyRequest: {
+      checkEmail: 'Проверьте вашу почту',
+      emailSent: 'Мы отправили вам ссылку для входа на ваш email адрес.',
+      important: 'Важно:',
+      checkSpam: 'Проверьте папку "Спам", если письмо не пришло',
+      linkValid: 'Ссылка действительна в течение 24 часов',
+      clickLink: 'Нажмите на ссылку, чтобы завершить вход',
+      problems: 'Возникли проблемы? Свяжитесь с нами:',
+      contactUs: 'Свяжитесь с нами',
+      backToLogin: '← Вернуться к входу',
     },
   },
 }

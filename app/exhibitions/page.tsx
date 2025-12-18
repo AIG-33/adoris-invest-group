@@ -229,7 +229,7 @@ export default function ExhibitionsPage() {
                 href="mailto:info@adorisgroup.com"
                 className="inline-flex items-center gap-2 rounded-lg bg-white text-black px-8 py-4 text-lg font-semibold transition-all hover:bg-neutral-100 hover:scale-105 hover:shadow-xl"
               >
-                Contact Us
+                {dict.exhibitions.contactUs}
                 <ArrowRight className="h-5 w-5" />
               </a>
             </div>

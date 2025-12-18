@@ -1,14 +1,18 @@
-import { LoginForm } from '@/components/login-form'
-import { getServerCompany } from '@/lib/server-company'
-import { getDictionary } from '@/lib/translations'
+'use client'
 
-export default async function LoginPage() {
-  const company = await getServerCompany()
-  const language = (company?.language || 'en') as 'en' | 'ru'
-  const dict = getDictionary(language)
+import { useState } from 'react'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
+import { LogIn, Loader2, Mail, Key, UserPlus } from 'lucide-react'
+import type { Translations } from '@/lib/translations'
 
-  return <LoginForm translations={dict.auth} />
+interface LoginFormProps {
+  translations: Translations['auth']
 }
+
+export function LoginForm({ translations }: LoginFormProps) {
   const router = useRouter()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password')
@@ -34,13 +38,13 @@ export default async function LoginPage() {
       })
 
       if (result?.error) {
-        setError('Invalid email or password')
+        setError(translations.invalidEmailPassword)
       } else {
         router?.push?.('/')
         router?.refresh?.()
       }
     } catch (err) {
-      setError('Something went wrong')
+      setError(translations.somethingWentWrong)
     } finally {
       setLoading(false)
     }
@@ -60,12 +64,12 @@ export default async function LoginPage() {
       })
 
       if (result?.error) {
-        setError('Failed to send email')
+        setError(translations.failedToSendEmail)
       } else {
-        setSuccess('Check your email! We sent you a sign-in link.')
+        setSuccess(translations.checkEmail)
       }
     } catch (err) {
-      setError('Something went wrong')
+      setError(translations.somethingWentWrong)
     } finally {
       setLoading(false)
     }
@@ -78,12 +82,12 @@ export default async function LoginPage() {
 
     // Validation
     if (password !== confirmPassword) {
-      setError('Passwords don\'t match')
+      setError(translations.passwordsDontMatch)
       return
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError(translations.passwordTooShort)
       return
     }
 
@@ -101,8 +105,8 @@ export default async function LoginPage() {
 
       if (!response.ok) {
         setError(data.error === 'User already exists' 
-          ? 'User with this email already exists' 
-          : 'Registration error')
+          ? translations.userExists 
+          : translations.registrationError)
         return
       }
 
@@ -114,14 +118,14 @@ export default async function LoginPage() {
       })
 
       if (result?.error) {
-        setSuccess('Registration successful! Please sign in.')
+        setSuccess(translations.registrationSuccess)
         setMode('login')
       } else {
         router?.push?.('/')
         router?.refresh?.()
       }
     } catch (err) {
-      setError('Something went wrong')
+      setError(translations.somethingWentWrong)
     } finally {
       setLoading(false)
     }
@@ -151,10 +155,10 @@ export default async function LoginPage() {
         {/* Auth Card */}
         <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 mb-2">
-            {mode === 'login' ? 'Welcome Back' : 'Sign Up'}
+            {mode === 'login' ? translations.welcomeBack : translations.signUp}
           </h1>
           <p className="text-neutral-600 mb-6">
-            {mode === 'login' ? 'Sign in to your account' : 'Create a new account'}
+            {mode === 'login' ? translations.signInToAccount : translations.createAccount}
           </p>
 
           {/* Mode Switch */}
@@ -172,7 +176,7 @@ export default async function LoginPage() {
               }`}
             >
               <LogIn className="w-4 h-4" />
-              Sign In
+              {translations.signIn}
             </button>
             <button
               onClick={() => {
@@ -187,7 +191,7 @@ export default async function LoginPage() {
               }`}
             >
               <UserPlus className="w-4 h-4" />
-              Sign Up
+              {translations.signUp}
             </button>
           </div>
 
@@ -203,7 +207,7 @@ export default async function LoginPage() {
                 }`}
               >
                 <Key className="w-4 h-4" />
-                Password
+                {translations.password}
               </button>
               <button
                 onClick={() => setLoginMethod('magic')}
@@ -214,7 +218,7 @@ export default async function LoginPage() {
                 }`}
               >
                 <Mail className="w-4 h-4" />
-                Magic Link
+                {translations.magicLink}
               </button>
             </div>
           )}
@@ -236,7 +240,7 @@ export default async function LoginPage() {
             <form onSubmit={handleRegister} className="space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Full Name
+                  {translations.fullName}
                 </label>
                 <input
                   type="text"
@@ -250,7 +254,7 @@ export default async function LoginPage() {
 
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Email Address
+                  {translations.emailAddress}
                 </label>
                 <input
                   type="email"
@@ -264,7 +268,7 @@ export default async function LoginPage() {
 
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Password
+                  {translations.password}
                 </label>
                 <input
                   type="password"
@@ -272,13 +276,13 @@ export default async function LoginPage() {
                   onChange={(e) => setPassword(e?.target?.value || '')}
                   required
                   className="w-full px-4 py-3 border-2 border-neutral-300 rounded-lg focus:border-black focus:outline-none focus:ring-4 focus:ring-[#20a895]/10"
-                  placeholder="minimum 6 characters"
+                  placeholder={translations.passwordPlaceholder}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Confirm Password
+                  {translations.confirmPassword}
                 </label>
                 <input
                   type="password"
@@ -298,12 +302,12 @@ export default async function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Signing up...
+                    {translations.signingUp}
                   </>
                 ) : (
                   <>
                     <UserPlus className="w-5 h-5" />
-                    Sign Up
+                    {translations.signUp}
                   </>
                 )}
               </button>
@@ -315,7 +319,7 @@ export default async function LoginPage() {
             <form onSubmit={handleMagicLink} className="space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Email Address
+                  {translations.emailAddress}
                 </label>
                 <input
                   type="email"
@@ -335,18 +339,18 @@ export default async function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Sending...
+                    {translations.sending}
                   </>
                 ) : (
                   <>
                     <Mail className="w-5 h-5" />
-                    Send Link
+                    {translations.sendLink}
                   </>
                 )}
               </button>
 
               <p className="text-xs text-neutral-600 text-center">
-                We'll send you an email with a passwordless sign-in link
+                {translations.magicLinkDescription}
               </p>
             </form>
           )}
@@ -356,7 +360,7 @@ export default async function LoginPage() {
             <form onSubmit={handlePasswordLogin} className="space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Email Address
+                  {translations.emailAddress}
                 </label>
                 <input
                   type="email"
@@ -370,7 +374,7 @@ export default async function LoginPage() {
 
               <div>
                 <label className="block text-sm font-semibold text-neutral-700 mb-2">
-                  Password
+                  {translations.password}
                 </label>
                 <input
                   type="password"
@@ -390,12 +394,12 @@ export default async function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Signing in...
+                    {translations.signingIn}
                   </>
                 ) : (
                   <>
                     <LogIn className="w-5 h-5" />
-                    Sign In
+                    {translations.signIn}
                   </>
                 )}
               </button>
@@ -408,7 +412,7 @@ export default async function LoginPage() {
               href="/"
               className="text-sm text-black hover:text-[#1a8c7c] font-medium"
             >
-              ← Back to Shop
+              {translations.backToShop}
             </Link>
           </div>
         </div>
@@ -416,3 +420,4 @@ export default async function LoginPage() {
     </div>
   )
 }
+

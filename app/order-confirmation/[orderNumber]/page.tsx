@@ -3,6 +3,7 @@ import { Footer } from '@/components/footer'
 import { prisma } from '@/lib/db'
 import { OrderConfirmation } from '@/components/order-confirmation'
 import { getServerCompany } from '@/lib/server-company'
+import { getDictionary } from '@/lib/translations'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -36,14 +37,16 @@ export default async function OrderConfirmationPage({
 
   // Get company context for email display
   const company = await getServerCompany()
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header translations={dict.nav} />
       <main className="flex-1">
-        <OrderConfirmation order={order} company={company} />
+        <OrderConfirmation order={order} company={company} translations={dict.orderConfirmation} />
       </main>
-      <Footer />
+      <Footer translations={dict.footer} />
     </div>
   )
 }

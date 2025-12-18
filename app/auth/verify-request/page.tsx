@@ -1,7 +1,12 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { getServerCompany } from '@/lib/server-company'
+import { getDictionary } from '@/lib/translations'
 
-export default function VerifyRequest() {
+export default async function VerifyRequest() {
+  const company = await getServerCompany()
+  const language = (company?.language || 'en') as 'en' | 'ru'
+  const dict = getDictionary(language)
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a8c7c] via-[#1E3A8A] to-[#20a895] flex items-center justify-center p-4 sm:p-6">
       <div className="max-w-md w-full">
@@ -44,32 +49,32 @@ export default function VerifyRequest() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-bold text-[#1a8c7c] mb-4">
-              Проверьте вашу почту
+              {dict.verifyRequest.checkEmail}
             </h1>
 
             <p className="text-neutral-600 mb-6">
-              Мы отправили вам ссылку для входа на ваш email адрес.
+              {dict.verifyRequest.emailSent}
             </p>
 
             <div className="bg-black/10 border border-black/20 rounded-lg p-4 text-left">
               <p className="text-sm text-neutral-700 mb-2">
-                <strong>Важно:</strong>
+                <strong>{dict.verifyRequest.important}:</strong>
               </p>
               <ul className="text-sm text-neutral-600 space-y-1 list-disc list-inside">
-                <li>Проверьте папку "Спам", если письмо не пришло</li>
-                <li>Ссылка действительна в течение 24 часов</li>
-                <li>Нажмите на ссылку, чтобы завершить вход</li>
+                <li>{dict.verifyRequest.checkSpam}</li>
+                <li>{dict.verifyRequest.linkValid}</li>
+                <li>{dict.verifyRequest.clickLink}</li>
               </ul>
             </div>
 
             <div className="mt-8 pt-6 border-t border-neutral-200">
               <p className="text-xs text-neutral-500">
-                Возникли проблемы? Свяжитесь с нами:{' '}
+                {dict.verifyRequest.problems}{' '}
                 <a
-                  href="mailto:info@adorisgroup.com"
+                  href={`mailto:${company?.email || 'info@adorisgroup.com'}`}
                   className="text-black hover:underline"
                 >
-                  info@adorisgroup.com
+                  {company?.email || 'info@adorisgroup.com'}
                 </a>
               </p>
             </div>
@@ -79,7 +84,7 @@ export default function VerifyRequest() {
                 href="/auth/login"
                 className="text-sm text-black hover:text-[#1a8c7c] font-medium"
               >
-                ← Вернуться к входу
+                {dict.verifyRequest.backToLogin}
               </Link>
             </div>
           </div>
