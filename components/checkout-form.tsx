@@ -419,29 +419,6 @@ export function CheckoutForm({ translations }: CheckoutFormProps) {
             </div>
           </div>
 
-          {/* Payment Method */}
-          <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-neutral-200">
-            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
-              <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 text-[#333333]" />
-              Payment Method
-            </h2>
-            <label className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 border-2 rounded-lg cursor-pointer" style={{ borderColor: 'var(--company-accent, #000000)', backgroundColor: 'var(--company-accent, #000000)0d' }}>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="bank_transfer"
-                checked={formData.paymentMethod === 'bank_transfer'}
-                onChange={handleChange}
-                className="mt-1 w-5 h-5 text-[#333333]"
-              />
-              <div className="flex-1">
-                <div className="font-semibold text-neutral-900 mb-1">🏦 Bank Transfer</div>
-                <p className="text-sm text-neutral-600">
-                  Pay via bank transfer after receiving the invoice. Payment terms: Net 30
-                </p>
-              </div>
-            </label>
-          </div>
         </div>
 
         {/* Right Column - Order Summary */}

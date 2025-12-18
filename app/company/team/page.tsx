@@ -10,7 +10,7 @@ const teamMembers = [
   {
     name: 'Maksim Harbatsevich',
     role: 'Chief Executive Officer',
-    bio: 'Founder, board member, and shareholder. Passionate entrepreneur with extensive expertise in international sales, IT, and laboratory diagnostics. Strong leadership, communication, and teaching abilities.',
+    bioKey: 'maksim' as const,
     linkedin: 'https://www.linkedin.com/in/maksim-h/',
     email: 'ceo@adorisgroup.com',
     image: '/maksim-harbatsevich.jpg',
@@ -18,7 +18,7 @@ const teamMembers = [
   {
     name: 'Alexei Myshkouski',
     role: 'Chief Software Developer',
-    bio: 'Lead software architect driving digital transformation and innovation. Expert in full-stack development, system architecture, and enterprise software solutions. Spearheads development of cutting-edge platforms and internal tools.',
+    bioKey: 'alexei' as const,
     linkedin: 'https://www.linkedin.com/in/alexei-myshkouski-6788981b9/',
     email: 'dev@adorisgroup.com',
     image: '/alexei-myshkouski.jpg',
@@ -26,7 +26,7 @@ const teamMembers = [
   {
     name: 'Anastasiya Valentsiukevich',
     role: 'Chief Strategy Officer',
-    bio: 'Chairman of the Board. Over a decade of experience in laboratory diagnostics, marketing, and research. Specializes in strategic planning and business development.',
+    bioKey: 'anastasiyaV' as const,
     linkedin: 'https://www.linkedin.com/in/anastasiya-valentsiukevich-ab2570b4/',
     email: 'info@adorisgroup.com',
     image: '/anastasiya-valentsiukevich.jpg',
@@ -34,7 +34,7 @@ const teamMembers = [
   {
     name: 'Anastasiya Mokhan',
     role: 'Marketing Manager',
-    bio: 'Creative marketing professional driving brand awareness and customer engagement. Expertise in digital marketing, content strategy, and market analysis for the medical equipment industry.',
+    bioKey: 'anastasiyaM' as const,
     linkedin: 'https://www.linkedin.com/in/anastasiya-mokhan-2493391ba/',
     email: 'marketing@adorisgroup.com',
     image: '/anastasiya-mokhan.jpg',
@@ -42,7 +42,7 @@ const teamMembers = [
   {
     name: 'Kseniya Yudashkina',
     role: 'Project Manager',
-    bio: 'Results-oriented project manager with a track record of delivering complex logistics and supply chain projects on time. Ensures seamless coordination between manufacturers, distributors, and clients.',
+    bioKey: 'kseniya' as const,
     linkedin: 'https://www.linkedin.com/in/kseniya-yudashkina-7125791ab/',
     email: 'projects@adorisgroup.com',
     image: '/kseniya-yudashkina.jpg',
@@ -173,7 +173,7 @@ export default async function TeamPage() {
                       <div className="flex-1 text-center sm:text-left">
                         <h3 className="text-2xl font-bold text-black mb-2">{member.name}</h3>
                         <p className="text-black font-semibold mb-4">{member.role}</p>
-                        <p className="text-neutral-600 leading-relaxed mb-4">{member.bio}</p>
+                        <p className="text-neutral-600 leading-relaxed mb-4">{dict.team.memberBio[member.bioKey]}</p>
                         <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
                           <a
                             href={member.linkedin}

@@ -298,6 +298,13 @@ export interface Translations {
     learnMore: string
     email: string
     connectLinkedIn: string
+    memberBio: {
+      maksim: string
+      alexei: string
+      anastasiyaV: string
+      anastasiyaM: string
+      kseniya: string
+    }
   }
   
   // Bulk Order
@@ -675,6 +682,13 @@ const translations: Record<Language, Translations> = {
       learnMore: 'Learn More About Us',
       email: 'Email',
       connectLinkedIn: 'Connect on LinkedIn',
+      memberBio: {
+        maksim: 'Founder, board member, and shareholder. Passionate entrepreneur with extensive expertise in international sales, IT, and laboratory diagnostics. Strong leadership, communication, and teaching abilities.',
+        alexei: 'Lead software architect driving digital transformation and innovation. Expert in full-stack development, system architecture, and enterprise software solutions. Spearheads development of cutting-edge platforms and internal tools.',
+        anastasiyaV: 'Chairman of the Board. Over a decade of experience in laboratory diagnostics, marketing, and research. Specializes in strategic planning and business development.',
+        anastasiyaM: 'Creative marketing professional driving brand awareness and customer engagement. Expertise in digital marketing, content strategy, and market analysis for the medical equipment industry.',
+        kseniya: 'Results-oriented project manager with a track record of delivering complex logistics and supply chain projects on time. Ensures seamless coordination between manufacturers, distributors, and clients.',
+      },
     },
     bulkOrder: {
       title: 'Bulk Order',
@@ -951,7 +965,7 @@ const translations: Record<Language, Translations> = {
       title: 'Оформление заказа',
       billingInfo: 'Платежная информация',
       orderSummary: 'Сводка заказа',
-      placeOrder: 'Оформить заказ',
+      placeOrder: 'Отправить Запрос',
       processing: 'Обработка...',
       secure: 'Безопасные SSL-шифрованные транзакции',
       gdpr: 'Соответствие GDPR защите данных',
@@ -1040,6 +1054,13 @@ const translations: Record<Language, Translations> = {
       learnMore: 'Узнать больше о нас',
       email: 'Email',
       connectLinkedIn: 'Связаться в LinkedIn',
+      memberBio: {
+        maksim: 'Основатель, член совета директоров и акционер. Страстный предприниматель с обширным опытом в международных продажах, IT и лабораторной диагностике. Сильные лидерские качества, коммуникативные способности и навыки преподавания.',
+        alexei: 'Ведущий архитектор программного обеспечения, движущий цифровую трансформацию и инновации. Эксперт в области full-stack разработки, системной архитектуры и корпоративных программных решений. Возглавляет разработку передовых платформ и внутренних инструментов.',
+        anastasiyaV: 'Председатель совета директоров. Более десяти лет опыта в лабораторной диагностике, маркетинге и исследованиях. Специализируется на стратегическом планировании и развитии бизнеса.',
+        anastasiyaM: 'Креативный маркетинговый специалист, повышающий узнаваемость бренда и вовлеченность клиентов. Эксперт в области цифрового маркетинга, контент-стратегии и анализа рынка для индустрии медицинского оборудования.',
+        kseniya: 'Ориентированный на результат менеджер проектов с опытом успешной реализации сложных логистических проектов и проектов цепочки поставок в срок. Обеспечивает бесшовную координацию между производителями, дистрибьюторами и клиентами.',
+      },
     },
     bulkOrder: {
       title: 'Массовый заказ',
@@ -1064,7 +1085,7 @@ const translations: Record<Language, Translations> = {
       importProducts: 'Импорт продуктов из Excel/CSV',
     },
     orderConfirmation: {
-      title: 'Заказ подтвержден!',
+      title: 'Ваш запрос отправлен',
       subtitle: 'Спасибо за ваш заказ. Мы получили его и обрабатываем сейчас.',
       thankYou: 'Спасибо за ваш заказ',
       orderNumber: 'Номер заказа',
