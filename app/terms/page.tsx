@@ -88,8 +88,6 @@ export default async function TermsPage() {
                       <h3 className="font-semibold text-black mb-2">{dict.terms.payment.bankDetails}</h3>
                       <ul className="space-y-1 text-sm text-neutral-700">
                         <li><strong>{dict.terms.payment.bank}:</strong> PKO Bank Polski, Oddzial 18</li>
-                        <li><strong>{dict.terms.payment.swift}:</strong> BPKOPLPW</li>
-                        <li><strong>{dict.terms.payment.iban}:</strong> PL73102011850000410203665122</li>
                         <li><strong>{dict.terms.payment.bankAddress}:</strong> ul. Skierniewicka 21, Warsaw, Poland</li>
                       </ul>
                     </div>
