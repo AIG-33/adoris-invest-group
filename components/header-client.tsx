@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
@@ -42,6 +42,7 @@ interface NavTranslations {
   logout: string
   admin: string
   bulkOrder: string
+  search: string
 }
 
 interface HeaderClientProps {
@@ -66,6 +67,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [showDropdown, setShowDropdown] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
@@ -176,18 +178,34 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
       {/* Main Header */}
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4" style={{ color: 'var(--company-primary, #333333)' }}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          {/* Logo - Smaller on Mobile */}
-          <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
-            <div className="relative w-32 h-8 sm:w-40 sm:h-10 lg:w-48 lg:h-12">
-              <Image
-                src={companyLogo}
-                alt={companyName}
-                fill
-                className="object-contain group-hover:scale-105 transition-transform"
-                priority
-              />
-            </div>
-          </Link>
+          {/* Mobile Menu Button and Logo */}
+          <div className="flex items-center justify-between sm:justify-start gap-3">
+            {/* Mobile Menu Button - Only on Mobile */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="sm:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-neutral-100 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" style={{ color: 'var(--company-primary, #333333)' }} />
+              ) : (
+                <Menu className="w-6 h-6" style={{ color: 'var(--company-primary, #333333)' }} />
+              )}
+            </button>
+            
+            {/* Logo - Smaller on Mobile */}
+            <Link href="/" className="flex items-center gap-3 group flex-shrink-0" onClick={() => setMobileMenuOpen(false)}>
+              <div className="relative w-32 h-8 sm:w-40 sm:h-10 lg:w-48 lg:h-12">
+                <Image
+                  src={companyLogo}
+                  alt={companyName}
+                  fill
+                  className="object-contain group-hover:scale-105 transition-transform"
+                  priority
+                />
+              </div>
+            </Link>
+          </div>
 
           {/* Search Bar with Autocomplete */}
           <div ref={searchRef} className="flex-1 w-full sm:max-w-md lg:max-w-2xl relative order-3 sm:order-2">
@@ -202,7 +220,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                       setShowDropdown(true)
                     }
                   }}
-                  placeholder="Search products..."
+                  placeholder={translations.search}
                   className="w-full px-3 py-2 sm:py-3 pl-10 sm:pl-12 pr-20 sm:pr-24 text-sm sm:text-base border-2 border-neutral-200 rounded-lg focus:outline-none focus:ring-2 sm:focus:ring-4 transition-all"
                   style={{
                     '--focus-border': 'var(--company-primary, #333333)',
@@ -241,7 +259,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                       e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
                     }}
                   >
-                    {translations.search || 'Search'}
+                    {translations.search}
                   </button>
                 )}
               </div>
@@ -452,6 +470,157 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
             )}
           </div>
         </div>
+
+        {/* Mobile Menu - Only visible on mobile when open */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden mt-4 pb-4 border-t border-neutral-200">
+            <nav className="flex flex-col gap-1 pt-4">
+              {/* Main Navigation */}
+              <Link
+                href="/products"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <Package className="w-5 h-5" />
+                <span>{translations.catalog}</span>
+              </Link>
+
+              <Link
+                href="/company/about"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <Building2 className="w-5 h-5" />
+                <span>{translations.about}</span>
+              </Link>
+
+              <Link
+                href="/company/team"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <User className="w-5 h-5" />
+                <span>{translations.team}</span>
+              </Link>
+
+              <Link
+                href="/exhibitions"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <Calendar className="w-5 h-5" />
+                <span>{translations.exhibitions}</span>
+              </Link>
+
+              <Link
+                href="/terms"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <FileText className="w-5 h-5" />
+                <span>{translations.terms}</span>
+              </Link>
+
+              <Link
+                href="/cart"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium relative"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                <span>{translations.cart}</span>
+                {cartCount > 0 && (
+                  <span 
+                    className="ml-auto text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                  >
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
+              </Link>
+
+              {/* User Account Section */}
+              {status === 'authenticated' && session?.user ? (
+                <>
+                  <div className="border-t border-neutral-200 my-2"></div>
+                  <Link
+                    href="/bulk-order"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                  >
+                    <Package className="w-5 h-5" />
+                    <span>{translations.bulkOrder}</span>
+                  </Link>
+                  <Link
+                    href="/account"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                  >
+                    <User className="w-5 h-5" />
+                    <span>{translations.account}</span>
+                  </Link>
+                  {(session?.user as any)?.role === 'admin' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                    >
+                      <User className="w-5 h-5" />
+                      <span>{translations.admin}</span>
+                    </Link>
+                  )}
+                  <div className="border-t border-neutral-200 my-2"></div>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false)
+                      signOut()
+                    }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 transition-colors text-red-600 font-medium text-left"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span>{translations.logout}</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="border-t border-neutral-200 my-2"></div>
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                  >
+                    <User className="w-5 h-5" />
+                    <span>{translations.login}</span>
+                  </Link>
+                </>
+              )}
+
+              {/* External Links */}
+              <div className="border-t border-neutral-200 my-2"></div>
+              <a
+                href="https://mednais.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <Package className="w-5 h-5" />
+                <span>MedNAIS™</span>
+                <ExternalLink className="w-4 h-4 ml-auto" />
+              </a>
+              <a
+                href="https://ilabu.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <Package className="w-5 h-5" />
+                <span>iLabU™</span>
+                <ExternalLink className="w-4 h-4 ml-auto" />
+              </a>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   )
