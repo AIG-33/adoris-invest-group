@@ -30,6 +30,9 @@ interface ProductTranslations {
   deliveryInfo: string
   addToCart: string
   edit: string
+  relatedProducts: string
+  home: string
+  products: string
 }
 
 interface ProductDetailProps {
@@ -66,9 +69,9 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
     <div className="container mx-auto px-6 py-8">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-sm text-neutral-600 mb-8">
-        <Link href="/" className="hover:text-[#333333]">{translations.nav?.home || 'Home'}</Link>
+        <Link href="/" className="hover:text-[#333333]">{translations.home || 'Home'}</Link>
         <span>/</span>
-        <Link href="/" className="hover:text-[#333333]">{translations.nav?.products || 'Products'}</Link>
+        <Link href="/products" className="hover:text-[#333333]">{translations.products || 'Products'}</Link>
         <span>/</span>
         <Link href={`/?category=${product?.category?.slug}`} className="hover:text-[#333333]">
           {product?.category?.name}
@@ -255,7 +258,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
       {relatedProducts?.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-neutral-900">{translations.relatedProducts || 'Related Products'}</h2>
+            <h2 className="text-3xl font-bold text-neutral-900">{translations.relatedProducts}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {relatedProducts?.map?.((relProduct) => (

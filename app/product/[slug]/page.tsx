@@ -68,11 +68,11 @@ export default async function ProductPage({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header translations={dict.nav} />
       <main className="flex-1">
-        <ProductDetail product={productWithNumber} relatedProducts={relatedProducts} />
+        <ProductDetail product={productWithNumber} relatedProducts={relatedProducts} translations={dict.product} />
       </main>
-      <Footer />
+      <Footer translations={dict.footer} />
     </div>
   )
 }

@@ -176,6 +176,8 @@ export interface Translations {
     addToCart: string
     edit: string
     relatedProducts: string
+    home: string
+    products: string
   }
   
   // Cart
@@ -535,6 +537,8 @@ const translations: Record<Language, Translations> = {
       addToCart: 'Add to Cart',
       edit: 'Edit',
       relatedProducts: 'Related Products',
+      home: 'Home',
+      products: 'Products',
     },
     cart: {
       title: 'Shopping Cart',
@@ -870,6 +874,8 @@ const translations: Record<Language, Translations> = {
       addToCart: 'Добавить в корзину',
       edit: 'Редактировать',
       relatedProducts: 'Похожие продукты',
+      home: 'Главная',
+      products: 'Продукты',
     },
     cart: {
       title: 'Корзина покупок',
