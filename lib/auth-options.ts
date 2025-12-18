@@ -6,6 +6,7 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { prisma } from './db'
 import bcrypt from 'bcryptjs'
 import { sendMagicLinkEmail } from './email'
+import { getServerCompany } from './server-company'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -23,7 +24,9 @@ export const authOptions: NextAuthOptions = {
       // Custom email send function using our email utility
       async sendVerificationRequest({ identifier: email, url }) {
         try {
-          await sendMagicLinkEmail({ to: email, url })
+          // Get company data based on current domain
+          const company = await getServerCompany()
+          await sendMagicLinkEmail({ to: email, url, company })
         } catch (error) {
           if (process.env.NODE_ENV === 'development') {
             console.error('Error sending magic link email:', error)

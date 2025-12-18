@@ -30,26 +30,35 @@ interface WelcomeEmailOptions {
 interface MagicLinkEmailOptions {
   to: string
   url: string
+  company?: CompanyConfig | null
 }
 
 // Email template helpers
-const getEmailHeader = () => `
+const getEmailHeader = (company?: CompanyConfig | null) => {
+  const companyName = company?.name || 'ADORIS INVEST GROUP'
+  return `
   <div style="background: linear-gradient(135deg, #1a8c7c 0%, #20a895 100%); padding: 30px; text-align: center;">
-    <h1 style="color: white; margin: 0; font-size: 28px;">ADORIS INVEST GROUP</h1>
+    <h1 style="color: white; margin: 0; font-size: 28px;">${companyName}</h1>
     <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Medical Equipment & Laboratory Solutions</p>
   </div>
 `
+}
 
-const getEmailFooter = () => `
+const getEmailFooter = (company?: CompanyConfig | null) => {
+  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
+  const companyAddress = company?.address || 'Harju maakond, Tallinn, Kesklinna linnaosa, Narva mnt 7-634, 10117'
+  const companyEmail = company?.email || 'info@adorisgroup.com'
+  return `
   <div style="background: #f5f5f5; padding: 20px; margin-top: 30px; text-align: center; color: #666;">
-    <p style="margin: 5px 0;">ADORIS INVEST GROUP OÜ</p>
-    <p style="margin: 5px 0;">Harju maakond, Tallinn, Kesklinna linnaosa, Narva mnt 7-634, 10117</p>
-    <p style="margin: 5px 0;">Email: <a href="mailto:info@adorisgroup.com" style="color: #20a895;">info@adorisgroup.com</a></p>
+    <p style="margin: 5px 0;">${companyName}</p>
+    <p style="margin: 5px 0;">${companyAddress}</p>
+    <p style="margin: 5px 0;">Email: <a href="mailto:${companyEmail}" style="color: #20a895;">${companyEmail}</a></p>
     <p style="margin: 15px 0 5px 0; font-size: 12px; color: #999;">
-      © ${new Date().getFullYear()} ADORIS INVEST GROUP. All rights reserved.
+      © ${new Date().getFullYear()} ${companyName}. All rights reserved.
     </p>
   </div>
 `
+}
 
 // Send order confirmation email
 export async function sendOrderConfirmationEmail({
@@ -447,20 +456,24 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
 }
 
 // Send magic link email
-export async function sendMagicLinkEmail({ to, url }: MagicLinkEmailOptions) {
+export async function sendMagicLinkEmail({ to, url, company }: MagicLinkEmailOptions) {
   try {
     const transporter = createTransporter()
 
+    // Get company data with defaults
+    const companyName = company?.name || 'ADORIS INVEST GROUP'
+    const companyEmail = company?.email || 'info@adorisgroup.com'
+
     await transporter.sendMail({
-      from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
+      from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
       to,
-      subject: 'Sign in to ADORIS INVEST GROUP',
+      subject: `Sign in to ${companyName}`,
       html: `
-        ${getEmailHeader()}
+        ${getEmailHeader(company)}
         <div style="padding: 30px; background: white;">
           <h2 style="color: #1a8c7c; margin-top: 0;">Sign in to your account</h2>
           <p style="font-size: 16px; line-height: 1.6; color: #333;">
-            Click the button below to sign in to your ADORIS INVEST GROUP account.
+            Click the button below to sign in to your ${companyName} account.
           </p>
           <div style="text-align: center; margin: 40px 0;">
             <a href="${url}" 
@@ -482,14 +495,14 @@ export async function sendMagicLinkEmail({ to, url }: MagicLinkEmailOptions) {
           </div>
           <p style="font-size: 14px; color: #666; margin-top: 30px;">
             Need help? Contact us at 
-            <a href="mailto:info@adorisgroup.com" style="color: #20a895;">info@adorisgroup.com</a>
+            <a href="mailto:${companyEmail}" style="color: #20a895;">${companyEmail}</a>
           </p>
           <p style="font-size: 16px; margin-top: 30px;">
             Best regards,<br/>
-            <strong style="color: #1a8c7c;">ADORIS INVEST GROUP Team</strong>
+            <strong style="color: #1a8c7c;">${companyName} Team</strong>
           </p>
         </div>
-        ${getEmailFooter()}
+        ${getEmailFooter(company)}
       `,
     })
 
