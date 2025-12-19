@@ -105,7 +105,7 @@ export function HeroSection({ translations }: HeroSectionProps) {
 
             {/* Subtitle */}
             <h2
-              className={`text-base sm:text-xl md:text-2xl lg:text-3xl font-medium text-[#666666] transition-all duration-700 ${
+              className={`text-base sm:text-xl md:text-2xl lg:text-3xl font-medium text-black transition-all duration-700 ${
                 isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
               }`}
               style={{ transitionDelay: '400ms' }}
