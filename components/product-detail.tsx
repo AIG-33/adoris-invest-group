@@ -100,7 +100,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
               priority
             />
           </div>
-        </div>
+        </aside>
 
         {/* Info */}
         <section className="space-y-6" aria-label="Product information">
