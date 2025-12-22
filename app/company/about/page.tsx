@@ -1,18 +1,36 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { StructuredData } from '@/components/structured-data'
 import { AboutCTAButtons } from '@/components/about-cta-buttons'
 import Image from 'next/image'
 import { Award, Globe, Users, TrendingUp, CheckCircle2, Target, Heart, Lightbulb } from 'lucide-react'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
+import {
+  generateOrganizationSchema,
+  generateBreadcrumbSchema,
+} from '@/lib/seo'
 
 export default async function AboutPage() {
   const company = await getServerCompany()
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
   
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const breadcrumbs = [
+    { name: dict.nav.home, url: `${baseUrl}/` },
+    { name: dict.nav.company, url: `${baseUrl}/company/about` },
+    { name: dict.nav.about, url: `${baseUrl}/company/about` },
+  ]
+
+  const structuredData = [
+    generateOrganizationSchema(company, baseUrl),
+    generateBreadcrumbSchema(breadcrumbs),
+  ]
+
   return (
     <>
+      <StructuredData data={structuredData} />
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-white to-neutral-50">
         {/* Hero Section */}

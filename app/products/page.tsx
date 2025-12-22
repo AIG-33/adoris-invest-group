@@ -1,5 +1,6 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { StructuredData } from '@/components/structured-data'
 import { Sidebar } from '@/components/sidebar'
 import { ProductGrid } from '@/components/product-grid'
 import { SortDropdown } from '@/components/sort-dropdown'
@@ -8,6 +9,10 @@ import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
+import {
+  generateItemListSchema,
+  generateBreadcrumbSchema,
+} from '@/lib/seo'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
@@ -121,8 +126,20 @@ export default async function ProductsPage({ searchParams }: Props) {
     return `/products?${params.toString()}`
   }
 
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const breadcrumbs = [
+    { name: dict.nav.home, url: `${baseUrl}/` },
+    { name: dict.nav.products, url: `${baseUrl}/products` },
+  ]
+  
+  const structuredData = [
+    generateItemListSchema(products, baseUrl, 'Products'),
+    generateBreadcrumbSchema(breadcrumbs),
+  ]
+
   return (
     <>
+      <StructuredData data={structuredData} />
       <Header />
       <div className="min-h-screen" style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}>
         <div className="container mx-auto px-4 py-8">

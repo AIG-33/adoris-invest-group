@@ -4,10 +4,16 @@ import { HeroSection } from '@/components/hero-section'
 import { FeaturedProducts } from '@/components/featured-products'
 import { CategoryShowcase } from '@/components/category-showcase'
 import { StatsSection } from '@/components/stats-section'
+import { StructuredData } from '@/components/structured-data'
 import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
+import {
+  generateOrganizationSchema,
+  generateWebSiteSchema,
+  generateItemListSchema,
+} from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,8 +70,16 @@ export default async function HomePage() {
     })),
   }))
 
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const structuredData = [
+    generateOrganizationSchema(company, baseUrl),
+    generateWebSiteSchema(company, baseUrl),
+    generateItemListSchema(featuredProducts, baseUrl, 'Featured Products'),
+  ]
+
   return (
     <>
+      <StructuredData data={structuredData} />
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
         <HeroSection translations={dict.homepage.hero} />
