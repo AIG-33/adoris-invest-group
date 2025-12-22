@@ -182,13 +182,13 @@ export default async function TermsPage() {
             </div>
 
             {/* Company Info */}
-            <div className="mt-8 text-center text-sm text-neutral-600">
+            <address className="mt-8 text-center text-sm text-neutral-600 not-italic">
               <p className="mb-2">
                 <strong>{company?.name || 'ADORIS INVEST GROUP OÜ'}</strong>
               </p>
               <p>{company?.address || 'Ruunaoja tn 3-36, 11415 Tallinn, Estonia'}</p>
               <p>{dict.terms.companyInfoRegCode}: {company?.registrationCode || '12825289'} | {dict.terms.companyInfoVat}: {company?.vatId || 'EE102079353'}</p>
-            </div>
+            </address>
           </div>
         </div>
       </main>

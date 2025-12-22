@@ -58,9 +58,11 @@ function CategoryRow({ category }: { category: Category }) {
     <div className="mb-12">
       {/* Category Header */}
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white md:text-3xl">
-          {category.name}
-        </h2>
+        <Link href={`/products?category=${category.slug}`}>
+          <h2 className="text-2xl font-bold text-white md:text-3xl hover:text-[#666666] transition-colors">
+            {category.name}
+          </h2>
+        </Link>
         <Link
           href={`/products?category=${category.slug}`}
           className="text-[#666666] transition-colors hover:text-[#333333]"

@@ -165,7 +165,7 @@ export function CartContent({ translations }: CartContentProps) {
                         ? item.manufacturer.logo
                         : '/placeholder.svg'
                     }
-                    alt={item?.name || 'Product'}
+                    alt={`${item?.name || 'Product'} - SKU: ${item?.sku || ''} ${item?.manufacturer?.name || ''}`}
                     fill
                     className="object-contain p-2"
                     sizes="(max-width: 640px) 80px, 112px"
@@ -174,9 +174,14 @@ export function CartContent({ translations }: CartContentProps) {
               </Link>
 
               <div className="flex-1 flex flex-col">
-                <div className="text-xs sm:text-sm text-[#333333] font-semibold mb-1">
-                  {item?.manufacturer?.name}
-                </div>
+                {item?.manufacturer?.name && (
+                  <Link 
+                    href={`/products?manufacturer=${item?.manufacturer?.name?.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="text-xs sm:text-sm text-[#333333] font-semibold mb-1 hover:text-[#000000] transition-colors"
+                  >
+                    {item?.manufacturer?.name}
+                  </Link>
+                )}
                 <Link href={`/product/${item?.slug}`}>
                   <h3 className="font-semibold text-sm sm:text-lg text-neutral-900 mb-1 hover:text-[#333333] transition-colors line-clamp-2">
                     {item?.name}

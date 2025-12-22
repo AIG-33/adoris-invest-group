@@ -12,8 +12,8 @@ type Product = {
   price: number
   image: string | null
   description: string | null
-  category: { name: string }
-  manufacturer: { name: string; logo: string | null }
+  category: { name: string; slug: string }
+  manufacturer: { name: string; slug: string; logo: string | null }
 }
 
 interface FeaturedProductsTranslations {
@@ -163,9 +163,12 @@ export function FeaturedProducts({ products, translations }: Props) {
                     <span className="text-xs font-semibold text-white/80 uppercase tracking-wide">SKU:</span>
                     <span className="text-xs font-mono font-bold text-white ml-2">{product.sku}</span>
                   </div>
-                  <p className="mb-2 text-sm text-gray-400">
+                  <Link 
+                    href={`/products?manufacturer=${product.manufacturer.slug}`}
+                    className="mb-2 text-sm text-gray-400 hover:text-gray-300 transition-colors block"
+                  >
                     {product.manufacturer.name}
-                  </p>
+                  </Link>
                   {product.description && (
                     <p className="mb-3 text-sm text-gray-300 line-clamp-2">
                       {product.description}

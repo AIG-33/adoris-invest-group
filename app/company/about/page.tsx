@@ -268,17 +268,23 @@ export default async function AboutPage() {
                 {dict.about.cta.subtitle}
               </p>
               <AboutCTAButtons />
-              <div className="mt-8 pt-8 border-t border-neutral-200">
+              <address className="mt-8 pt-8 border-t border-neutral-200 not-italic">
                 <p className="text-neutral-600 mb-2">
                   <strong>{dict.about.cta.contactUs}</strong>
                 </p>
                 <p className="text-neutral-700">
-                  📧 {company?.email || 'ceo@adorisgroup.com'} | 📞 {company?.phone || '+48793081310'}
+                  <a href={`mailto:${company?.email || 'ceo@adorisgroup.com'}`} className="hover:underline">
+                    📧 {company?.email || 'ceo@adorisgroup.com'}
+                  </a>
+                  {' | '}
+                  <a href={`tel:${company?.phone || '+48793081310'}`} className="hover:underline">
+                    📞 {company?.phone || '+48793081310'}
+                  </a>
                 </p>
                 <p className="text-neutral-600 text-sm mt-2">
                   {company?.name || 'ADORIS INVEST GROUP OÜ'} | {company?.address || 'Ruunaoja tn 3-36, 11415 Tallinn, Estonia'}
                 </p>
-              </div>
+              </address>
             </div>
           </div>
         </section>

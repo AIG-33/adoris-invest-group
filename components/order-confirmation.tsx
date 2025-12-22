@@ -85,14 +85,14 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
               <h3 className="font-semibold text-neutral-700 mb-3">{translations.billingInformation}</h3>
-              <div className="text-sm text-neutral-600 space-y-1">
+              <address className="text-sm text-neutral-600 space-y-1 not-italic">
                 <p className="font-semibold text-neutral-900">{order?.company}</p>
                 <p>VAT ID: {order?.vatId}</p>
                 <p>{order?.customerName}</p>
-                <p>{order?.email}</p>
-                <p>{order?.phone}</p>
+                <p><a href={`mailto:${order?.email}`} className="hover:underline">{order?.email}</a></p>
+                <p><a href={`tel:${order?.phone}`} className="hover:underline">{order?.phone}</a></p>
                 <p>{order?.address}</p>
-              </div>
+              </address>
             </div>
             <div>
               <h3 className="font-semibold text-neutral-700 mb-3">{translations.paymentInformation}</h3>
@@ -128,10 +128,27 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
                   />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-neutral-900 mb-1">
-                    {item?.product?.name}
-                  </h4>
+                  <Link href={`/product/${item?.product?.slug}`}>
+                    <h4 className="font-semibold text-neutral-900 mb-1 hover:text-[#333333] transition-colors">
+                      {item?.product?.name}
+                    </h4>
+                  </Link>
                   <p className="text-sm text-neutral-600 mb-2">SKU: {item?.product?.sku}</p>
+                  <div className="flex gap-2 text-xs text-neutral-500 mb-2">
+                    <Link 
+                      href={`/products?category=${item?.product?.category?.slug}`}
+                      className="hover:text-neutral-700 transition-colors"
+                    >
+                      {item?.product?.category?.name}
+                    </Link>
+                    {' • '}
+                    <Link 
+                      href={`/products?manufacturer=${item?.product?.manufacturer?.slug}`}
+                      className="hover:text-neutral-700 transition-colors"
+                    >
+                      {item?.product?.manufacturer?.name}
+                    </Link>
+                  </div>
                   <div className="flex items-center gap-4 text-sm">
                     <span className="text-neutral-600">{translations.quantity}: {item?.quantity}</span>
                     <span className="text-neutral-600">

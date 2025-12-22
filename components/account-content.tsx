@@ -584,11 +584,13 @@ export function AccountContent({ orders, stats, user, translations }: AccountCon
                       <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-600">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          {new Date(order.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          })}
+                          <time dateTime={new Date(order.createdAt).toISOString()}>
+                            {new Date(order.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </time>
                         </span>
                         <span className="flex items-center gap-1">
                           <Package className="w-4 h-4" />
@@ -659,11 +661,15 @@ export function AccountContent({ orders, stats, user, translations }: AccountCon
                 {/* Order Items Preview */}
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mt-4">
                   {order.items.slice(0, 6).map((item: any) => (
-                    <div key={item.id} className="relative group">
+                    <Link 
+                      key={item.id} 
+                      href={`/product/${item.product?.slug}`}
+                      className="relative group"
+                    >
                       <div className="aspect-square bg-neutral-100 rounded-lg overflow-hidden border border-neutral-200">
                         <Image
                           src={item.product?.image && item.product.image.length > 0 ? item.product.image : '/placeholder.svg'}
-                          alt={item.product?.name || 'Product'}
+                          alt={`${item.product?.name || 'Product'} - SKU: ${item.product?.sku || ''}`}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-300"
                         />
@@ -678,7 +684,7 @@ export function AccountContent({ orders, stats, user, translations }: AccountCon
                       <span className="absolute top-2 right-2 text-white text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--company-accent, #000000)' }}>
                         ×{item.quantity}
                       </span>
-                    </div>
+                    </Link>
                   ))}
                   {order.items.length > 6 && (
                     <div className="aspect-square bg-neutral-200 rounded-lg flex items-center justify-center border border-neutral-300">

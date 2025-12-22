@@ -14,8 +14,8 @@ interface Product {
   price: number
   image: string | null
   stockStatus: string
-  category: { name: string }
-  manufacturer: { name: string; logo: string | null }
+  category: { name: string; slug: string }
+  manufacturer: { name: string; slug: string; logo: string | null }
 }
 
 interface ProductGridProps {
@@ -92,12 +92,18 @@ export function ProductGrid({ products, search }: ProductGridProps) {
 
               {/* Info */}
               <div className="p-3 sm:p-5 flex flex-col flex-1">
-                <div className="text-xs text-neutral-500 uppercase tracking-wide mb-1">
+                <Link 
+                  href={`/products?category=${product?.category?.slug}`}
+                  className="text-xs text-neutral-500 uppercase tracking-wide mb-1 hover:text-neutral-700 transition-colors"
+                >
                   {product?.category?.name}
-                </div>
-                <div className="text-xs sm:text-sm font-semibold text-[#333333] mb-2">
+                </Link>
+                <Link 
+                  href={`/products?manufacturer=${product?.manufacturer?.slug}`}
+                  className="text-xs sm:text-sm font-semibold text-[#333333] mb-2 hover:text-[#000000] transition-colors"
+                >
                   {product?.manufacturer?.name}
-                </div>
+                </Link>
                 <Link href={`/product/${product?.slug}`}>
                   <h3 className="font-semibold text-sm sm:text-base text-neutral-900 mb-2 line-clamp-2 hover:text-[#333333] transition-colors">
                     {product?.name}

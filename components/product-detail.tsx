@@ -106,12 +106,18 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
         <section className="space-y-6" aria-label="Product information">
           {/* Meta */}
           <div className="flex flex-wrap gap-2">
-            <span className="px-4 py-2 bg-neutral-100 rounded-full text-sm font-semibold text-neutral-700">
+            <Link 
+              href={`/products?category=${product?.category?.slug}`}
+              className="px-4 py-2 bg-neutral-100 rounded-full text-sm font-semibold text-neutral-700 hover:bg-neutral-200 transition-colors"
+            >
               {product?.category?.name}
-            </span>
-            <span className="px-4 py-2 bg-gradient-to-r from-[#333333] to-[#666666] text-white rounded-full text-sm font-semibold">
+            </Link>
+            <Link 
+              href={`/products?manufacturer=${product?.manufacturer?.slug}`}
+              className="px-4 py-2 bg-gradient-to-r from-[#333333] to-[#666666] text-white rounded-full text-sm font-semibold hover:opacity-90 transition-opacity"
+            >
               {product?.manufacturer?.name}
-            </span>
+            </Link>
           </div>
 
           <h1 className="text-4xl font-bold text-neutral-900 leading-tight">
@@ -240,20 +246,34 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
           )}
 
           {activeTab === 'specifications' && (
-            <div className="grid gap-3">
+            <dl className="grid gap-3">
               <div className="flex border-b border-neutral-200 py-3">
-                <span className="w-1/3 font-semibold text-neutral-900">{translations.sku}</span>
-                <span className="flex-1 text-neutral-700 font-mono font-bold text-lg">{product?.sku}</span>
+                <dt className="w-1/3 font-semibold text-neutral-900">{translations.sku}</dt>
+                <dd className="flex-1 text-neutral-700 font-mono font-bold text-lg">{product?.sku}</dd>
               </div>
               <div className="flex border-b border-neutral-200 py-3">
-                <span className="w-1/3 font-semibold text-neutral-900">{translations.manufacturer}</span>
-                <span className="flex-1 text-neutral-700">{product?.manufacturer?.name}</span>
+                <dt className="w-1/3 font-semibold text-neutral-900">{translations.manufacturer}</dt>
+                <dd className="flex-1 text-neutral-700">
+                  <Link 
+                    href={`/products?manufacturer=${product?.manufacturer?.slug}`}
+                    className="text-[#333333] hover:underline"
+                  >
+                    {product?.manufacturer?.name}
+                  </Link>
+                </dd>
               </div>
               <div className="flex py-3">
-                <span className="w-1/3 font-semibold text-neutral-900">{translations.category}</span>
-                <span className="flex-1 text-neutral-700">{product?.category?.name}</span>
+                <dt className="w-1/3 font-semibold text-neutral-900">{translations.category}</dt>
+                <dd className="flex-1 text-neutral-700">
+                  <Link 
+                    href={`/products?category=${product?.category?.slug}`}
+                    className="text-[#333333] hover:underline"
+                  >
+                    {product?.category?.name}
+                  </Link>
+                </dd>
               </div>
-            </div>
+            </dl>
           )}
         </div>
       </div>

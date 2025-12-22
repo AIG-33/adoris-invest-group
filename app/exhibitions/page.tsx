@@ -173,7 +173,9 @@ export default async function ExhibitionsPage() {
                       <div className="flex items-center gap-3 mb-4">
                         <div className="flex items-center gap-2 text-neutral-600">
                           <Calendar className="w-5 h-5" />
-                          <span className="font-semibold">{exhibition.date}</span>
+                          <time className="font-semibold" dateTime={exhibition.date}>
+                            {exhibition.date}
+                          </time>
                         </div>
                         <div className="flex items-center gap-2 text-neutral-600">
                           <MapPin className="w-5 h-5" />

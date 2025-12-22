@@ -92,7 +92,7 @@ export default async function FAQPage() {
               </div>
 
               {/* Contact Section */}
-              <div className="mt-16 bg-white rounded-lg shadow-sm border border-neutral-200 p-8 text-center">
+              <address className="mt-16 bg-white rounded-lg shadow-sm border border-neutral-200 p-8 text-center not-italic">
                 <h2 className="text-2xl font-bold text-neutral-900 mb-4">
                   {dict.faq.contactTitle}
                 </h2>
@@ -115,7 +115,7 @@ export default async function FAQPage() {
                     {company?.phone || '+48793081310'}
                   </a>
                 </div>
-              </div>
+              </address>
             </div>
           </div>
         </section>
