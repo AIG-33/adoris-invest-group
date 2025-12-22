@@ -210,7 +210,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
               </Link>
             )}
           </div>
-        </div>
+        </section>
       </div>
 
       {/* Tabs */}
