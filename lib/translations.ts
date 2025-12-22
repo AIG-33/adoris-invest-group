@@ -822,12 +822,12 @@ const translations: Record<Language, Translations> = {
         },
         {
           question: 'What is the minimum order value?',
-          answer: 'The minimum order value is €1,000. Orders below this amount may be subject to additional handling fees. For bulk orders, we offer volume discounts starting from €50,000.',
+          answer: 'The minimum order value is €5,000. Orders below this amount may be subject to additional handling fees. For bulk orders, we offer volume discounts starting from €50,000.',
           category: 'ordering',
         },
         {
           question: 'How do I place an order?',
-          answer: 'You can place an order through our website by adding products to your cart and proceeding to checkout. For bulk orders, you can use our bulk order form to upload a list of products. After placing an order, you will receive a confirmation email with order details.',
+          answer: 'You can place an Order Request through our website by adding products to your cart and proceeding to checkout. For bulk orders, you can use our bulk order form to upload a list of products. Our managers will process your request and send you a proforma invoice via email for payment. After payment confirmation, your order will be processed.',
           category: 'ordering',
         },
         {
@@ -856,19 +856,19 @@ const translations: Record<Language, Translations> = {
           category: 'ordering',
         },
         {
-          question: 'What is your return policy?',
-          answer: 'We accept returns within 30 days of delivery for unopened and unused products in original packaging. Custom orders and special items may have different return policies. Please contact us for specific return instructions.',
-          category: 'ordering',
-        },
-        {
           question: 'How do I create an account?',
           answer: 'You can create an account by clicking "Login" in the header and selecting "Create Account". You can also sign in using a magic link sent to your email address for passwordless authentication.',
           category: 'account',
         },
         {
-          question: 'Do you offer technical support?',
-          answer: 'Yes, we provide technical support for all products. Our team can assist with installation, troubleshooting, and maintenance. Contact us via email or phone for technical assistance.',
-          category: 'general',
+          question: 'Can prices change?',
+          answer: 'Yes, prices may change slightly due to price changes from manufacturers. The final price will be confirmed in the proforma invoice sent by our managers after processing your Order Request.',
+          category: 'products',
+        },
+        {
+          question: 'Who is responsible for product selection?',
+          answer: 'We are not responsible for product selection. Customers are responsible for determining which products they need. A catalog number (SKU) is required for all orders. Please ensure you have the correct catalog numbers before placing an Order Request.',
+          category: 'ordering',
         },
         {
           question: 'Can I request a quote for bulk orders?',
@@ -1272,12 +1272,12 @@ const translations: Record<Language, Translations> = {
         },
         {
           question: 'Какова минимальная сумма заказа?',
-          answer: 'Минимальная сумма заказа составляет €1,000. Заказы ниже этой суммы могут облагаться дополнительными сборами за обработку. Для крупных заказов мы предлагаем скидки за объем, начиная с €50,000.',
+          answer: 'Минимальная сумма заказа составляет €5,000. Заказы ниже этой суммы могут облагаться дополнительными сборами за обработку. Для крупных заказов мы предлагаем скидки за объем, начиная с €50,000.',
           category: 'ordering',
         },
         {
           question: 'Как оформить заказ?',
-          answer: 'Вы можете оформить заказ через наш веб-сайт, добавив товары в корзину и перейдя к оформлению заказа. Для массовых заказов вы можете использовать нашу форму массового заказа для загрузки списка продуктов. После размещения заказа вы получите подтверждающее письмо с деталями заказа.',
+          answer: 'Вы можете разместить Запрос на заказ через наш веб-сайт, добавив товары в корзину и перейдя к оформлению заказа. Для массовых заказов вы можете использовать нашу форму массового заказа для загрузки списка продуктов. Наши менеджеры обработают ваш запрос и отправят вам проформу-счет на электронную почту для оплаты. После подтверждения оплаты ваш заказ будет обработан.',
           category: 'ordering',
         },
         {
@@ -1306,19 +1306,19 @@ const translations: Record<Language, Translations> = {
           category: 'ordering',
         },
         {
-          question: 'Какова ваша политика возврата?',
-          answer: 'Мы принимаем возвраты в течение 30 дней с момента доставки для нераспечатанных и неиспользованных продуктов в оригинальной упаковке. Индивидуальные заказы и специальные товары могут иметь другую политику возврата. Пожалуйста, свяжитесь с нами для получения конкретных инструкций по возврату.',
-          category: 'ordering',
-        },
-        {
           question: 'Как создать аккаунт?',
           answer: 'Вы можете создать аккаунт, нажав "Войти" в заголовке и выбрав "Создать аккаунт". Вы также можете войти, используя магическую ссылку, отправленную на ваш адрес электронной почты для входа без пароля.',
           category: 'account',
         },
         {
-          question: 'Предоставляете ли вы техническую поддержку?',
-          answer: 'Да, мы предоставляем техническую поддержку для всех продуктов. Наша команда может помочь с установкой, устранением неполадок и обслуживанием. Свяжитесь с нами по электронной почте или телефону для технической помощи.',
-          category: 'general',
+          question: 'Могут ли цены изменяться?',
+          answer: 'Да, цены могут незначительно изменяться в связи с изменением цен у производителей. Окончательная цена будет подтверждена в проформе-счете, отправленном нашими менеджерами после обработки вашего Запроса на заказ.',
+          category: 'products',
+        },
+        {
+          question: 'Кто несет ответственность за подборку товаров?',
+          answer: 'Мы не несем ответственность за подборку товаров. Клиенты самостоятельно определяют, какие товары им необходимы. Для всех заказов обязателен каталожный номер (SKU). Пожалуйста, убедитесь, что у вас есть правильные каталожные номера перед размещением Запроса на заказ.',
+          category: 'ordering',
         },
         {
           question: 'Могу ли я запросить расценку на массовые заказы?',
