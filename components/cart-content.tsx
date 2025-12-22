@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Minus, Plus, X, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { getProductUrl } from '@/lib/product-url'
 
 interface CartItem {
   id: string
@@ -14,7 +15,7 @@ interface CartItem {
   price: number
   image: string
   quantity: number
-  manufacturer: { name: string; logo?: string }
+  manufacturer: { name: string; slug: string; logo?: string }
 }
 
 interface CartTranslations {
@@ -155,7 +156,7 @@ export function CartContent({ translations }: CartContentProps) {
               key={item?.id}
               className="bg-white rounded-xl p-3 sm:p-6 border-2 border-neutral-200 hover:border-[#333333] transition-all flex flex-col sm:flex-row gap-3 sm:gap-6"
             >
-              <Link href={`/product/${item?.slug}`} className="flex-shrink-0 mx-auto sm:mx-0">
+              <Link href={getProductUrl(item)} className="flex-shrink-0 mx-auto sm:mx-0">
                 <div className="relative w-20 h-20 sm:w-28 sm:h-28 bg-neutral-50 rounded-lg overflow-hidden">
                   <Image
                     src={
@@ -182,7 +183,7 @@ export function CartContent({ translations }: CartContentProps) {
                     {item?.manufacturer?.name}
                   </Link>
                 )}
-                <Link href={`/product/${item?.slug}`}>
+                <Link href={getProductUrl(item)}>
                   <h3 className="font-semibold text-sm sm:text-lg text-neutral-900 mb-1 hover:text-[#333333] transition-colors line-clamp-2">
                     {item?.name}
                   </h3>

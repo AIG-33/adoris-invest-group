@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
+import { getProductUrl } from '@/lib/product-url'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const company = await getServerCompany()
@@ -57,13 +58,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await prisma.product.findMany({
     select: {
       slug: true,
+      sku: true,
       updatedAt: true,
+      manufacturer: {
+        select: {
+          slug: true,
+        },
+      },
     },
     take: 10000, // Limit to prevent too large sitemap
   })
 
   const productPages = products.map((product) => ({
-    url: `${baseUrl}/product/${product.slug}`,
+    url: `${baseUrl}${getProductUrl(product as any)}`,
     lastModified: product.updatedAt,
     changeFrequency: 'weekly' as const,
     priority: 0.8,

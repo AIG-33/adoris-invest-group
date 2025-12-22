@@ -7,6 +7,7 @@ import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Bui
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
+import { getProductUrl } from '@/lib/product-url'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +24,7 @@ interface SearchResult {
   price: number
   imageUrl: string | null
   category: { name: string } | null
-  manufacturer: { name: string } | null
+  manufacturer: { name: string; slug: string } | null
 }
 
 interface NavTranslations {
@@ -150,10 +151,10 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
     }
   }
 
-  const handleResultClick = (slug: string) => {
+  const handleResultClick = (product: SearchResult) => {
     setShowDropdown(false)
     setSearchQuery('')
-    router.push(`/product/${slug}`)
+    router.push(getProductUrl(product))
   }
 
   return (
@@ -272,7 +273,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                 {searchResults.map((product) => (
                   <button
                     key={product.id}
-                    onClick={() => handleResultClick(product.slug)}
+                    onClick={() => handleResultClick(product)}
                     className="w-full flex items-center gap-2 sm:gap-4 p-2 sm:p-3 hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-b-0 text-left"
                   >
                     <div className="relative w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 bg-neutral-100 rounded-lg overflow-hidden">

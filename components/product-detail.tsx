@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { ShoppingCart, Minus, Plus, Truck, Edit } from 'lucide-react'
+import { getProductUrl } from '@/lib/product-url'
 
 interface Product {
   id: string
@@ -288,7 +289,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
             {relatedProducts?.map?.((relProduct) => (
               <Link
                 key={relProduct?.id}
-                href={`/product/${relProduct?.slug}`}
+                href={getProductUrl(relProduct)}
                 className="bg-white rounded-xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
               >
                 <div className="relative w-full aspect-square bg-neutral-50 p-4">

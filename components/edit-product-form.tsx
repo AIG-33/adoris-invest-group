@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save, Image as ImageIcon } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { getProductUrl, getProductUrlFromParts } from '@/lib/product-url'
 
 interface Product {
   id: string
@@ -87,7 +88,15 @@ export function EditProductForm({ product, categories, manufacturers }: EditProd
       }
 
       toast.success('Product updated successfully!')
-      router.push(`/product/${formData.slug}`)
+      // Get updated product data from response
+      if (data.product) {
+        router.push(getProductUrl(data.product))
+      } else {
+        // Fallback: construct URL from form data
+        const manufacturer = manufacturers.find(m => m.id === formData.manufacturerId)
+        const manufacturerSlug = manufacturer?.name?.toLowerCase().replace(/\s+/g, '-') || 'unknown'
+        router.push(getProductUrlFromParts(manufacturerSlug, formData.slug))
+      }
     } catch (error) {
       console.error('Update error:', error)
       if (error instanceof Error) {
@@ -123,7 +132,7 @@ export function EditProductForm({ product, categories, manufacturers }: EditProd
         {/* Header */}
         <div className="mb-8">
           <Link
-            href={`/product/${product.slug}`}
+            href={getProductUrl(product)}
             className="inline-flex items-center gap-2 text-neutral-600 hover:text-[#333333] mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -333,7 +342,7 @@ export function EditProductForm({ product, categories, manufacturers }: EditProd
                 )}
               </button>
               <Link
-                href={`/product/${product.slug}`}
+                href={getProductUrl(product)}
                 className="px-8 py-4 bg-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-300 transition-all font-semibold"
               >
                 Cancel

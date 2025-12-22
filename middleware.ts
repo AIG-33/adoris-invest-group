@@ -4,11 +4,12 @@ import type { NextRequest } from 'next/server'
 /**
  * Middleware - lightweight, no Prisma
  * Company detection is done in server components via getServerCompany()
- * This middleware only passes through the request
+ * Legacy product URL redirects are handled by catch-all route
  */
 export async function middleware(request: NextRequest) {
   // Just pass through - company detection happens in server components
   // This avoids Prisma in Edge Runtime which doesn't support it
+  // Legacy product URLs are handled by app/product/[...slug]/page.tsx
   return NextResponse.next()
 }
 

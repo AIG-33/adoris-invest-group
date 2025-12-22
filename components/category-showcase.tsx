@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { getProductUrl } from '@/lib/product-url'
 
 type Product = {
   id: string
@@ -98,7 +99,7 @@ function CategoryRow({ category }: { category: Category }) {
           {category.products.map((product) => (
             <Link
               key={product.id}
-              href={`/product/${product.slug}`}
+              href={getProductUrl(product)}
               className="group/item relative min-w-[200px] flex-shrink-0 overflow-hidden rounded-lg transition-all hover:scale-105 md:min-w-[240px]"
             >
               {/* Image */}

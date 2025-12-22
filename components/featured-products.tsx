@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
+import { getProductUrl } from '@/lib/product-url'
 import { useRef } from 'react'
 
 type Product = {
@@ -114,7 +115,7 @@ export function FeaturedProducts({ products, translations }: Props) {
             {products.map((product) => (
               <Link
                 key={product.id}
-                href={`/product/${product.slug}`}
+                href={getProductUrl(product)}
                 className="group/card relative min-w-[280px] flex-shrink-0 overflow-hidden rounded-xl bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm transition-all hover:scale-105 hover:shadow-2xl hover:shadow-[#000000]/20 md:min-w-[320px]"
               >
                 {/* Image Container */}

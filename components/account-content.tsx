@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { getProductUrl } from '@/lib/product-url'
 import { 
   User, 
   Package, 
@@ -663,7 +664,7 @@ export function AccountContent({ orders, stats, user, translations }: AccountCon
                   {order.items.slice(0, 6).map((item: any) => (
                     <Link 
                       key={item.id} 
-                      href={`/product/${item.product?.slug}`}
+                      href={getProductUrl(item.product)}
                       className="relative group"
                     >
                       <div className="aspect-square bg-neutral-100 rounded-lg overflow-hidden border border-neutral-200">

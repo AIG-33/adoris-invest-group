@@ -9,10 +9,17 @@ import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 600 // 600 seconds (10 minutes) for large file processing
+export const runtime = 'nodejs' // Explicitly set runtime
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Initialize OpenAI only when needed (lazy initialization)
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is not set')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 interface ExtractedProduct {
   sku: string
@@ -737,7 +744,8 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                   return `Row ${idx + 1}: ${row}`
                 }).join('\n')
 
-                const response = await openai.chat.completions.create({
+                const openai = getOpenAI()
+        const response = await openai.chat.completions.create({
                   model: 'gpt-4o',
                   messages: [
                     {
@@ -811,6 +819,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
       }
       // For images, use vision API
       else if (fileType === 'image' || mimeType.startsWith('image/')) {
+        const openai = getOpenAI()
         const response = await openai.chat.completions.create({
           model: 'gpt-4o',
           messages: [
@@ -865,6 +874,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
           )
         }
         
+        const openai = getOpenAI()
         const response = await openai.chat.completions.create({
           model: 'gpt-4o',
           messages: [

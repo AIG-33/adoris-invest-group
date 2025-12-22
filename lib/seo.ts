@@ -1,4 +1,5 @@
 import type { CompanyConfig } from './company-types'
+import { getProductUrl } from './product-url'
 
 /**
  * SEO utility functions for generating structured data (JSON-LD)
@@ -74,7 +75,7 @@ export function generateProductSchema(
   company: CompanyConfig | null,
   baseUrl: string
 ): StructuredData {
-  const productUrl = `${baseUrl}/product/${product.slug}`
+  const productUrl = `${baseUrl}${getProductUrl(product)}`
   const imageUrl = product.image ? `${baseUrl}${product.image}` : `${baseUrl}/placeholder.svg`
   const price = Number(product.price || product.priceEU || 0)
   const currency = 'EUR'
@@ -163,10 +164,10 @@ export function generateItemListSchema(
     itemListElement: products.map((product, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      item: {
-        '@type': 'Product',
-        name: product.name,
-        url: `${baseUrl}/product/${product.slug}`,
+          item: {
+            '@type': 'Product',
+            name: product.name,
+            url: `${baseUrl}${getProductUrl(product)}`,
         image: product.image ? `${baseUrl}${product.image}` : undefined,
         sku: product.sku,
         brand: {

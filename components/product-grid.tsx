@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ShoppingCart, Eye } from 'lucide-react'
 import { useState } from 'react'
+import { getProductUrl } from '@/lib/product-url'
 
 interface Product {
   id: string
@@ -72,7 +73,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
               className="bg-white rounded-xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
             >
               {/* Image */}
-              <Link href={`/product/${product?.slug}`} className="relative">
+              <Link href={getProductUrl(product)} className="relative">
                 <div className="relative w-full aspect-square bg-neutral-50 p-4 sm:p-6">
                   <Image
                     src={
@@ -104,7 +105,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                 >
                   {product?.manufacturer?.name}
                 </Link>
-                <Link href={`/product/${product?.slug}`}>
+                <Link href={getProductUrl(product)}>
                   <h3 className="font-semibold text-sm sm:text-base text-neutral-900 mb-2 line-clamp-2 hover:text-[#333333] transition-colors">
                     {product?.name}
                   </h3>
@@ -148,7 +149,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                       <span className="xs:hidden">Add</span>
                     </button>
                     <Link
-                      href={`/product/${product?.slug}`}
+                      href={getProductUrl(product)}
                       className="bg-neutral-100 text-neutral-700 p-2 rounded-lg hover:bg-neutral-200 transition-colors flex items-center justify-center"
                     >
                       <Eye className="w-4 h-4 sm:w-5 sm:h-5" />

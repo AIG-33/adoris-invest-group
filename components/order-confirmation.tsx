@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { CheckCircle, Download, Mail, Package, Truck } from 'lucide-react'
 import type { CompanyConfig } from '@/lib/company-types'
 import type { Translations } from '@/lib/translations'
+import { getProductUrl } from '@/lib/product-url'
 
 interface OrderConfirmationProps {
   order: any
@@ -128,7 +129,7 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
                   />
                 </div>
                 <div className="flex-1">
-                  <Link href={`/product/${item?.product?.slug}`}>
+                  <Link href={getProductUrl(item?.product)}>
                     <h4 className="font-semibold text-neutral-900 mb-1 hover:text-[#333333] transition-colors">
                       {item?.product?.name}
                     </h4>
