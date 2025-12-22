@@ -82,10 +82,18 @@ export default async function HomePage() {
       <StructuredData data={structuredData} />
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black">
-        <HeroSection translations={dict.homepage.hero} />
-        <FeaturedProducts products={featuredProducts} translations={dict.homepage.featuredProducts} />
-        <CategoryShowcase categories={categories} />
-        <StatsSection companyName={company?.name || 'IVD Group'} translations={dict.homepage.stats} />
+        <section aria-label="Hero section">
+          <HeroSection translations={dict.homepage.hero} />
+        </section>
+        <section aria-label="Featured products">
+          <FeaturedProducts products={featuredProducts} translations={dict.homepage.featuredProducts} />
+        </section>
+        <section aria-label="Category showcase">
+          <CategoryShowcase categories={categories} />
+        </section>
+        <section aria-label="Statistics and company information">
+          <StatsSection companyName={company?.name || 'IVD Group'} translations={dict.homepage.stats} />
+        </section>
       </main>
       <Footer />
     </>

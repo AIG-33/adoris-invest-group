@@ -83,7 +83,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
       {/* Product Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
         {/* Image */}
-        <div className="lg:sticky lg:top-24 h-fit">
+        <aside className="lg:sticky lg:top-24 h-fit" aria-label="Product image">
           <div className="relative w-full max-w-md mx-auto lg:max-w-full aspect-[4/3] bg-neutral-50 rounded-xl border-2 border-neutral-200 p-6 lg:p-8">
             <Image
               src={
@@ -93,7 +93,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
                   ? product.manufacturer.logo
                   : '/placeholder.svg'
               }
-              alt={product?.name || 'Product'}
+              alt={`${product?.name || 'Product'} - ${product?.manufacturer?.name || ''} ${product?.category?.name || 'Medical Equipment'}`}
               fill
               className="object-contain"
               sizes="(max-width: 1024px) 100vw, 40vw"
@@ -103,7 +103,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
         </div>
 
         {/* Info */}
-        <div className="space-y-6">
+        <section className="space-y-6" aria-label="Product information">
           {/* Meta */}
           <div className="flex flex-wrap gap-2">
             <span className="px-4 py-2 bg-neutral-100 rounded-full text-sm font-semibold text-neutral-700">
@@ -118,7 +118,11 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
             {product?.name}
           </h1>
 
-          <p className="text-neutral-600 font-mono">{translations.sku}: {product?.sku}</p>
+          {/* SKU - Highlighted for B2B search */}
+          <div className="bg-gradient-to-r from-[#333333] to-[#666666] text-white px-6 py-3 rounded-lg flex items-center gap-3">
+            <span className="font-semibold uppercase tracking-wide text-sm opacity-90">{translations.sku}:</span>
+            <span className="font-mono text-xl font-bold tracking-wider">{product?.sku}</span>
+          </div>
 
           {/* Price */}
           <div className="bg-neutral-50 p-6 rounded-2xl border-2 border-neutral-200">
@@ -239,7 +243,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
             <div className="grid gap-3">
               <div className="flex border-b border-neutral-200 py-3">
                 <span className="w-1/3 font-semibold text-neutral-900">{translations.sku}</span>
-                <span className="flex-1 text-neutral-700">{product?.sku}</span>
+                <span className="flex-1 text-neutral-700 font-mono font-bold text-lg">{product?.sku}</span>
               </div>
               <div className="flex border-b border-neutral-200 py-3">
                 <span className="w-1/3 font-semibold text-neutral-900">{translations.manufacturer}</span>
@@ -256,7 +260,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
 
       {/* Related Products */}
       {relatedProducts?.length > 0 && (
-        <div>
+        <aside aria-label="Related products">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold text-neutral-900">{translations.relatedProducts}</h2>
           </div>
@@ -276,7 +280,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
                         ? relProduct.manufacturer.logo
                         : '/placeholder.svg'
                     }
-                    alt={relProduct?.name || 'Product'}
+                    alt={`${relProduct?.name || 'Product'} - ${relProduct?.manufacturer?.name || ''} ${relProduct?.category?.name || 'Medical Equipment'}`}
                     fill
                     className="object-contain"
                     sizes="25vw"
@@ -286,6 +290,11 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
                   <h3 className="font-semibold text-sm text-neutral-900 line-clamp-2 mb-2">
                     {relProduct?.name}
                   </h3>
+                  {/* SKU - Highlighted for B2B search */}
+                  <div className="bg-neutral-100 px-2 py-1 rounded mb-2 inline-block">
+                    <span className="text-xs font-semibold text-neutral-600 uppercase tracking-wide">SKU:</span>
+                    <span className="text-xs font-mono font-bold text-[#333333] ml-1">{relProduct?.sku}</span>
+                  </div>
                   <div className="text-xl font-bold text-[#000000]">
                     €{relProduct?.price?.toLocaleString?.('en-US', {
                       minimumFractionDigits: 2,
@@ -296,7 +305,7 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
               </Link>
             )) || []}
           </div>
-        </div>
+        </aside>
       )}
     </div>
   )

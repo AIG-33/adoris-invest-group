@@ -82,7 +82,7 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                         ? product.manufacturer.logo
                         : '/placeholder.svg'
                     }
-                    alt={product?.name || 'Product'}
+                    alt={`${product?.name || 'Product'} - ${product?.manufacturer?.name || ''} ${product?.category?.name || 'Medical Equipment'}`}
                     fill
                     className="object-contain"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -103,9 +103,11 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                     {product?.name}
                   </h3>
                 </Link>
-                <p className="text-xs sm:text-sm text-neutral-500 mb-1 font-mono truncate">
-                  SKU: {product?.sku}
-                </p>
+                {/* SKU - Highlighted for B2B search */}
+                <div className="bg-neutral-100 px-3 py-1.5 rounded-md mb-2 inline-block">
+                  <span className="text-xs font-semibold text-neutral-600 uppercase tracking-wide">SKU:</span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-[#333333] ml-2">{product?.sku}</span>
+                </div>
                 <p className="text-xs sm:text-sm text-neutral-600 line-clamp-2 mb-3 sm:mb-4">
                   {product?.description}
                 </p>

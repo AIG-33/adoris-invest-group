@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
@@ -35,6 +35,7 @@ interface NavTranslations {
   team: string
   exhibitions: string
   terms: string
+  faq: string
   account: string
   cart: string
   checkout: string
@@ -353,6 +354,12 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                     <span>{translations.terms}</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/faq" className="flex items-center gap-2 cursor-pointer">
+                    <HelpCircle className="w-4 h-4" />
+                    <span>{translations.faq}</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <a href="https://mednais.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
@@ -519,6 +526,15 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
               >
                 <FileText className="w-5 h-5" />
                 <span>{translations.terms}</span>
+              </Link>
+
+              <Link
+                href="/faq"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <HelpCircle className="w-5 h-5" />
+                <span>{translations.faq}</span>
               </Link>
 
               <Link

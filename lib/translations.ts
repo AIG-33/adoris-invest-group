@@ -38,6 +38,7 @@ export interface Translations {
     team: string
     exhibitions: string
     terms: string
+    faq: string
     account: string
     cart: string
     checkout: string
@@ -404,6 +405,28 @@ export interface Translations {
     contactUs: string
     backToLogin: string
   }
+  
+  // FAQ
+  faq: {
+    title: string
+    subtitle: string
+    searchPlaceholder: string
+    categories: {
+      general: string
+      ordering: string
+      shipping: string
+      payment: string
+      products: string
+      account: string
+    }
+    items: Array<{
+      question: string
+      answer: string
+      category: string
+    }>
+    contactTitle: string
+    contactDescription: string
+  }
 }
 
 const translations: Record<Language, Translations> = {
@@ -442,6 +465,7 @@ const translations: Record<Language, Translations> = {
       team: 'Team',
       exhibitions: 'Exhibitions',
       terms: 'Terms',
+      faq: 'FAQ',
       account: 'My Account',
       cart: 'Cart',
       checkout: 'Checkout',
@@ -778,6 +802,83 @@ const translations: Record<Language, Translations> = {
       contactUs: 'Contact us',
       backToLogin: '← Back to sign in',
     },
+    faq: {
+      title: 'Frequently Asked Questions',
+      subtitle: 'Find answers to common questions about our products, ordering process, and services',
+      searchPlaceholder: 'Search frequently asked questions...',
+      categories: {
+        general: 'General',
+        ordering: 'Ordering',
+        shipping: 'Shipping & Delivery',
+        payment: 'Payment',
+        products: 'Products',
+        account: 'Account',
+      },
+      items: [
+        {
+          question: 'What types of medical laboratory equipment do you offer?',
+          answer: 'We offer a comprehensive range of medical laboratory equipment including analyzers, reagents, consumables, and diagnostic instruments from leading manufacturers worldwide. Our catalog includes equipment for clinical chemistry, hematology, immunology, and microbiology laboratories.',
+          category: 'general',
+        },
+        {
+          question: 'What is the minimum order value?',
+          answer: 'The minimum order value is €1,000. Orders below this amount may be subject to additional handling fees. For bulk orders, we offer volume discounts starting from €50,000.',
+          category: 'ordering',
+        },
+        {
+          question: 'How do I place an order?',
+          answer: 'You can place an order through our website by adding products to your cart and proceeding to checkout. For bulk orders, you can use our bulk order form to upload a list of products. After placing an order, you will receive a confirmation email with order details.',
+          category: 'ordering',
+        },
+        {
+          question: 'What payment methods do you accept?',
+          answer: 'We accept bank transfers. Payment details will be sent to you via email after order confirmation. All transactions are secure and processed according to international standards.',
+          category: 'payment',
+        },
+        {
+          question: 'How long does shipping take?',
+          answer: 'Shipping times vary depending on the product and destination. Standard delivery typically takes 2-4 weeks. Express shipping options are available for urgent orders. You will receive tracking information once your order ships.',
+          category: 'shipping',
+        },
+        {
+          question: 'Do you ship internationally?',
+          answer: 'Yes, we ship to multiple countries worldwide. Shipping costs and delivery times depend on the destination. Please contact us for specific shipping information to your location.',
+          category: 'shipping',
+        },
+        {
+          question: 'Are your products original and certified?',
+          answer: 'Yes, all our products are 100% original and come with full manufacturer warranties and certifications. We work directly with authorized distributors and manufacturers to ensure authenticity.',
+          category: 'products',
+        },
+        {
+          question: 'Can I track my order?',
+          answer: 'Yes, once your order ships, you will receive a tracking number via email. You can use this number to track your shipment on the carrier\'s website.',
+          category: 'ordering',
+        },
+        {
+          question: 'What is your return policy?',
+          answer: 'We accept returns within 30 days of delivery for unopened and unused products in original packaging. Custom orders and special items may have different return policies. Please contact us for specific return instructions.',
+          category: 'ordering',
+        },
+        {
+          question: 'How do I create an account?',
+          answer: 'You can create an account by clicking "Login" in the header and selecting "Create Account". You can also sign in using a magic link sent to your email address for passwordless authentication.',
+          category: 'account',
+        },
+        {
+          question: 'Do you offer technical support?',
+          answer: 'Yes, we provide technical support for all products. Our team can assist with installation, troubleshooting, and maintenance. Contact us via email or phone for technical assistance.',
+          category: 'general',
+        },
+        {
+          question: 'Can I request a quote for bulk orders?',
+          answer: 'Absolutely! Use our bulk order form to submit your requirements, or contact us directly. We offer competitive pricing for volume orders and can provide custom quotes based on your specific needs.',
+          category: 'ordering',
+        },
+      ],
+      contactTitle: 'Still have questions?',
+      contactDescription: 'Our team is here to help. Contact us and we\'ll respond as soon as possible.',
+    },
   },
   ru: {
     homepage: {
@@ -814,6 +915,7 @@ const translations: Record<Language, Translations> = {
       team: 'Команда',
       exhibitions: 'Выставки',
       terms: 'Условия',
+      faq: 'Вопросы и ответы',
       account: 'Мой аккаунт',
       cart: 'Корзина',
       checkout: 'Оформление заказа',
@@ -1149,6 +1251,83 @@ const translations: Record<Language, Translations> = {
       problems: 'Возникли проблемы? Свяжитесь с нами:',
       contactUs: 'Свяжитесь с нами',
       backToLogin: '← Вернуться к входу',
+    },
+    faq: {
+      title: 'Часто задаваемые вопросы',
+      subtitle: 'Найдите ответы на распространенные вопросы о наших продуктах, процессе заказа и услугах',
+      searchPlaceholder: 'Поиск по часто задаваемым вопросам...',
+      categories: {
+        general: 'Общие',
+        ordering: 'Заказ',
+        shipping: 'Доставка',
+        payment: 'Оплата',
+        products: 'Продукты',
+        account: 'Аккаунт',
+      },
+      items: [
+        {
+          question: 'Какие типы медицинского лабораторного оборудования вы предлагаете?',
+          answer: 'Мы предлагаем широкий ассортимент медицинского лабораторного оборудования, включая анализаторы, реагенты, расходные материалы и диагностические приборы от ведущих производителей по всему миру. Наш каталог включает оборудование для клинической химии, гематологии, иммунологии и микробиологических лабораторий.',
+          category: 'general',
+        },
+        {
+          question: 'Какова минимальная сумма заказа?',
+          answer: 'Минимальная сумма заказа составляет €1,000. Заказы ниже этой суммы могут облагаться дополнительными сборами за обработку. Для крупных заказов мы предлагаем скидки за объем, начиная с €50,000.',
+          category: 'ordering',
+        },
+        {
+          question: 'Как оформить заказ?',
+          answer: 'Вы можете оформить заказ через наш веб-сайт, добавив товары в корзину и перейдя к оформлению заказа. Для массовых заказов вы можете использовать нашу форму массового заказа для загрузки списка продуктов. После размещения заказа вы получите подтверждающее письмо с деталями заказа.',
+          category: 'ordering',
+        },
+        {
+          question: 'Какие способы оплаты вы принимаете?',
+          answer: 'Мы принимаем банковские переводы. Детали оплаты будут отправлены вам по электронной почте после подтверждения заказа. Все транзакции безопасны и обрабатываются в соответствии с международными стандартами.',
+          category: 'payment',
+        },
+        {
+          question: 'Сколько времени занимает доставка?',
+          answer: 'Время доставки зависит от продукта и места назначения. Стандартная доставка обычно занимает 2-4 недели. Для срочных заказов доступны варианты экспресс-доставки. Вы получите информацию для отслеживания, как только ваш заказ будет отправлен.',
+          category: 'shipping',
+        },
+        {
+          question: 'Вы осуществляете международную доставку?',
+          answer: 'Да, мы доставляем во многие страны по всему миру. Стоимость доставки и сроки зависят от места назначения. Пожалуйста, свяжитесь с нами для получения конкретной информации о доставке в ваше местоположение.',
+          category: 'shipping',
+        },
+        {
+          question: 'Ваши продукты оригинальные и сертифицированные?',
+          answer: 'Да, все наши продукты на 100% оригинальные и поставляются с полными гарантиями и сертификатами производителя. Мы работаем напрямую с авторизованными дистрибьюторами и производителями, чтобы гарантировать подлинность.',
+          category: 'products',
+        },
+        {
+          question: 'Могу ли я отследить мой заказ?',
+          answer: 'Да, как только ваш заказ будет отправлен, вы получите номер для отслеживания по электронной почте. Вы можете использовать этот номер для отслеживания вашей посылки на веб-сайте перевозчика.',
+          category: 'ordering',
+        },
+        {
+          question: 'Какова ваша политика возврата?',
+          answer: 'Мы принимаем возвраты в течение 30 дней с момента доставки для нераспечатанных и неиспользованных продуктов в оригинальной упаковке. Индивидуальные заказы и специальные товары могут иметь другую политику возврата. Пожалуйста, свяжитесь с нами для получения конкретных инструкций по возврату.',
+          category: 'ordering',
+        },
+        {
+          question: 'Как создать аккаунт?',
+          answer: 'Вы можете создать аккаунт, нажав "Войти" в заголовке и выбрав "Создать аккаунт". Вы также можете войти, используя магическую ссылку, отправленную на ваш адрес электронной почты для входа без пароля.',
+          category: 'account',
+        },
+        {
+          question: 'Предоставляете ли вы техническую поддержку?',
+          answer: 'Да, мы предоставляем техническую поддержку для всех продуктов. Наша команда может помочь с установкой, устранением неполадок и обслуживанием. Свяжитесь с нами по электронной почте или телефону для технической помощи.',
+          category: 'general',
+        },
+        {
+          question: 'Могу ли я запросить расценку на массовые заказы?',
+          answer: 'Абсолютно! Используйте нашу форму массового заказа для отправки ваших требований или свяжитесь с нами напрямую. Мы предлагаем конкурентоспособные цены для объемных заказов и можем предоставить индивидуальные расценки в зависимости от ваших конкретных потребностей.',
+          category: 'ordering',
+        },
+      ],
+      contactTitle: 'Все еще есть вопросы?',
+      contactDescription: 'Наша команда готова помочь. Свяжитесь с нами, и мы ответим как можно скорее.',
     },
   },
 }

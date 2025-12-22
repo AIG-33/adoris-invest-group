@@ -127,7 +127,7 @@ export function FeaturedProducts({ products, translations }: Props) {
                         ? product.manufacturer.logo
                         : '/placeholder.svg'
                     }
-                    alt={product.name || 'Product'}
+                    alt={`${product.name || 'Product'} - ${product.manufacturer?.name || ''} ${product.category?.name || 'Medical Equipment'}`}
                     fill
                     className={
                       product.image && product.image.length > 0
@@ -158,6 +158,11 @@ export function FeaturedProducts({ products, translations }: Props) {
                   <h3 className="mb-1 font-semibold text-white line-clamp-2">
                     {product.name}
                   </h3>
+                  {/* SKU - Highlighted for B2B search */}
+                  <div className="mb-2 bg-white/10 backdrop-blur-sm px-2 py-1 rounded inline-block">
+                    <span className="text-xs font-semibold text-white/80 uppercase tracking-wide">SKU:</span>
+                    <span className="text-xs font-mono font-bold text-white ml-2">{product.sku}</span>
+                  </div>
                   <p className="mb-2 text-sm text-gray-400">
                     {product.manufacturer.name}
                   </p>

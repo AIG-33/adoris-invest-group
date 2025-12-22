@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/providers'
 import { ColorSync } from '@/components/color-sync'
+import { HreflangTags } from '@/components/hreflang'
 import { getServerCompany } from '@/lib/server-company'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -41,8 +42,9 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: baseUrl,
       languages: {
-        en: baseUrl,
-        ru: baseUrl,
+        'en': baseUrl,
+        'ru': baseUrl,
+        'x-default': baseUrl,
       },
     },
     icons: {
@@ -122,6 +124,9 @@ export default async function RootLayout({
       } as React.CSSProperties & Record<string, string>}
       data-company-logo={logo || undefined}
     >
+      <head>
+        <HreflangTags />
+      </head>
       <body className={inter.className} suppressHydrationWarning>
         <ColorSync />
         <Providers>{children}</Providers>

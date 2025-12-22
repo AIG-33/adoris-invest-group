@@ -32,9 +32,9 @@ export default async function AboutPage() {
     <>
       <StructuredData data={structuredData} />
       <Header />
-      <main className="min-h-screen bg-gradient-to-b from-white to-neutral-50">
+      <main className="min-h-screen bg-gradient-to-b from-white to-neutral-50" itemScope itemType="https://schema.org/AboutPage">
         {/* Hero Section */}
-        <section className="relative text-white py-20" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
+        <section className="relative text-white py-20" style={{ backgroundColor: 'var(--company-primary, #333333)' }} aria-label="About us hero">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">

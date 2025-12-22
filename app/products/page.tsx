@@ -144,13 +144,13 @@ export default async function ProductsPage({ searchParams }: Props) {
       <div className="min-h-screen" style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}>
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col gap-8 lg:flex-row">
-            <aside className="lg:w-64">
+            <aside className="lg:w-64" aria-label="Filters sidebar">
               <Sidebar
                 manufacturers={manufacturers}
                 selectedManufacturer={manufacturer}
               />
             </aside>
-            <main className="flex-1">
+            <main className="flex-1" itemScope itemType="https://schema.org/ItemList">
               <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <p className="text-neutral-400 text-sm">
                   {dict.products.showing} {products.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, totalProducts)} {dict.products.of} {totalProducts} {dict.products.results}

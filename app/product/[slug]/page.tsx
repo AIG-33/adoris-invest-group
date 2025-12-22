@@ -47,18 +47,18 @@ export async function generateMetadata({
   const imageUrl = product.image ? `${baseUrl}${product.image}` : `${baseUrl}/placeholder.svg`
 
   return {
-    title: `${product.name} | ${company?.name || 'ADORIS INVEST GROUP'}`,
-    description: product.description || `${product.name} - Medical laboratory equipment from ${product.manufacturer?.name || 'leading manufacturers'}. SKU: ${product.sku}`,
+    title: `${product.name} (SKU: ${product.sku}) | ${company?.name || 'ADORIS INVEST GROUP'}`,
+    description: `${product.name} - SKU: ${product.sku}. ${product.description || 'Medical laboratory equipment'} from ${product.manufacturer?.name || 'leading manufacturers'}. Order now for B2B pricing.`,
     openGraph: {
-      title: product.name,
-      description: product.description || `${product.name} - Medical laboratory equipment`,
+      title: `${product.name} (SKU: ${product.sku})`,
+      description: `${product.name} - SKU: ${product.sku}. ${product.description || 'Medical laboratory equipment'} from ${product.manufacturer?.name || 'leading manufacturers'}`,
       images: [imageUrl],
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: product.name,
-      description: product.description || `${product.name} - Medical laboratory equipment`,
+      title: `${product.name} (SKU: ${product.sku})`,
+      description: `${product.name} - SKU: ${product.sku}. ${product.description || 'Medical laboratory equipment'}`,
       images: [imageUrl],
     },
     alternates: {
@@ -141,8 +141,10 @@ export default async function ProductPage({
     <div className="min-h-screen flex flex-col">
       <StructuredData data={structuredData} />
       <Header translations={dict.nav} />
-      <main className="flex-1">
-        <ProductDetail product={productWithNumber} relatedProducts={relatedProducts} translations={dict.product} />
+      <main className="flex-1" itemScope itemType="https://schema.org/Product">
+        <article>
+          <ProductDetail product={productWithNumber} relatedProducts={relatedProducts} translations={dict.product} />
+        </article>
       </main>
       <Footer translations={dict.footer} />
     </div>

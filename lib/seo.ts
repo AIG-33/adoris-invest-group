@@ -88,10 +88,15 @@ export function generateProductSchema(
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    description: product.description || `${product.name} - Medical laboratory equipment`,
+    description: `${product.description || `${product.name} - Medical laboratory equipment`}. SKU: ${product.sku}`,
     image: imageUrl,
     sku: product.sku,
     mpn: product.sku,
+    identifier: {
+      '@type': 'PropertyValue',
+      name: 'SKU',
+      value: product.sku,
+    },
     brand: {
       '@type': 'Brand',
       name: product.manufacturer?.name || 'Unknown Manufacturer',
@@ -115,6 +120,14 @@ export function generateProductSchema(
       ratingValue: '4.5',
       reviewCount: '10',
     },
+    // Emphasize SKU for B2B search
+    additionalProperty: [
+      {
+        '@type': 'PropertyValue',
+        name: 'SKU',
+        value: product.sku,
+      },
+    ],
   }
 }
 
@@ -232,6 +245,73 @@ export function generateArticleSchema(
         '@type': 'ImageObject',
         url: company?.logo ? `${url.split('/').slice(0, 3).join('/')}${company.logo}` : undefined,
       },
+    },
+  }
+}
+
+/**
+ * Generate FAQPage structured data - Critical for AI search engines
+ */
+export function generateFAQSchema(
+  faqs: Array<{ question: string; answer: string }>
+): StructuredData {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  }
+}
+
+/**
+ * Generate HowTo structured data for instructional content
+ */
+export function generateHowToSchema(
+  name: string,
+  description: string,
+  steps: Array<{ name: string; text: string; image?: string }>
+): StructuredData {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: name,
+    description: description,
+    step: steps.map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      image: step.image,
+    })),
+  }
+}
+
+/**
+ * Generate Review structured data for products
+ */
+export function generateReviewSchema(
+  productName: string,
+  rating: number,
+  reviewCount: number,
+  bestRating: number = 5,
+  worstRating: number = 1
+): StructuredData {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: productName,
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: rating.toString(),
+      reviewCount: reviewCount.toString(),
+      bestRating: bestRating.toString(),
+      worstRating: worstRating.toString(),
     },
   }
 }
