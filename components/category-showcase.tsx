@@ -11,7 +11,7 @@ type Product = {
   slug: string
   price: number
   image: string | null
-  manufacturer: { name: string; logo: string | null }
+  manufacturer: { name: string; slug: string; logo: string | null }
 }
 
 type Category = {
@@ -123,9 +123,13 @@ function CategoryRow({ category }: { category: Category }) {
                   <h3 className="mb-1 text-sm font-semibold text-white line-clamp-2">
                     {product.name}
                   </h3>
-                  <p className="mb-1 text-xs text-gray-300">
+                  <Link 
+                    href={`/products?manufacturer=${product.manufacturer.slug}`}
+                    className="mb-1 text-xs text-gray-300 hover:text-gray-200 transition-colors block"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     {product.manufacturer.name}
-                  </p>
+                  </Link>
                   <p className="text-lg font-bold text-[#666666]">
                     €{product.price.toLocaleString()}
                   </p>
