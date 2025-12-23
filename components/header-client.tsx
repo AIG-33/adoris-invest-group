@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle, Handshake } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
@@ -44,6 +44,7 @@ interface NavTranslations {
   logout: string
   admin: string
   bulkOrder: string
+  supplier: string
   search: string
 }
 
@@ -337,18 +338,22 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                     <span>{translations.about}</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/company/team" className="flex items-center gap-2 cursor-pointer">
-                    <User className="w-4 h-4" />
-                    <span>{translations.team}</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/exhibitions" className="flex items-center gap-2 cursor-pointer">
-                    <Calendar className="w-4 h-4" />
-                    <span>{translations.exhibitions}</span>
-                  </Link>
-                </DropdownMenuItem>
+                {company?.language !== 'ru' && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link href="/company/team" className="flex items-center gap-2 cursor-pointer">
+                        <User className="w-4 h-4" />
+                        <span>{translations.team}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/exhibitions" className="flex items-center gap-2 cursor-pointer">
+                        <Calendar className="w-4 h-4" />
+                        <span>{translations.exhibitions}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
                 <DropdownMenuItem asChild>
                   <Link href="/terms" className="flex items-center gap-2 cursor-pointer">
                     <FileText className="w-4 h-4" />
@@ -361,21 +366,25 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                     <span>{translations.faq}</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <a href="https://mednais.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
-                    <Package className="w-4 h-4" />
-                    <span>MedNAIS™</span>
-                    <ExternalLink className="w-3 h-3 ml-auto" />
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href="https://ilabu.io" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
-                    <Package className="w-4 h-4" />
-                    <span>iLabU™</span>
-                    <ExternalLink className="w-3 h-3 ml-auto" />
-                  </a>
-                </DropdownMenuItem>
+                {company?.language !== 'ru' && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <a href="https://mednais.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
+                        <Package className="w-4 h-4" />
+                        <span>MedNAIS™</span>
+                        <ExternalLink className="w-3 h-3 ml-auto" />
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a href="https://ilabu.io" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
+                        <Package className="w-4 h-4" />
+                        <span>iLabU™</span>
+                        <ExternalLink className="w-3 h-3 ml-auto" />
+                      </a>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -412,6 +421,12 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                       <Link href="/bulk-order" className="flex items-center gap-2 cursor-pointer">
                         <Package className="w-4 h-4" />
                         <span>{translations.bulkOrder}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/supplier" className="flex items-center gap-2 cursor-pointer">
+                        <Handshake className="w-4 h-4" />
+                        <span>{translations.supplier}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
@@ -502,23 +517,27 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                 <span>{translations.about}</span>
               </Link>
 
-              <Link
-                href="/company/team"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
-              >
-                <User className="w-5 h-5" />
-                <span>{translations.team}</span>
-              </Link>
+              {company?.language !== 'ru' && (
+                <>
+                  <Link
+                    href="/company/team"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                  >
+                    <User className="w-5 h-5" />
+                    <span>{translations.team}</span>
+                  </Link>
 
-              <Link
-                href="/exhibitions"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
-              >
-                <Calendar className="w-5 h-5" />
-                <span>{translations.exhibitions}</span>
-              </Link>
+                  <Link
+                    href="/exhibitions"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                  >
+                    <Calendar className="w-5 h-5" />
+                    <span>{translations.exhibitions}</span>
+                  </Link>
+                </>
+              )}
 
               <Link
                 href="/terms"
@@ -568,6 +587,14 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                     <span>{translations.bulkOrder}</span>
                   </Link>
                   <Link
+                    href="/supplier"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                  >
+                    <Handshake className="w-5 h-5" />
+                    <span>{translations.supplier}</span>
+                  </Link>
+                  <Link
                     href="/account"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
@@ -612,29 +639,33 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
               )}
 
               {/* External Links */}
-              <div className="border-t border-neutral-200 my-2"></div>
-              <a
-                href="https://mednais.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
-              >
-                <Package className="w-5 h-5" />
-                <span>MedNAIS™</span>
-                <ExternalLink className="w-4 h-4 ml-auto" />
-              </a>
-              <a
-                href="https://ilabu.io"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
-              >
-                <Package className="w-5 h-5" />
-                <span>iLabU™</span>
-                <ExternalLink className="w-4 h-4 ml-auto" />
-              </a>
+              {company?.language !== 'ru' && (
+                <>
+                  <div className="border-t border-neutral-200 my-2"></div>
+                  <a
+                    href="https://mednais.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                  >
+                    <Package className="w-5 h-5" />
+                    <span>MedNAIS™</span>
+                    <ExternalLink className="w-4 h-4 ml-auto" />
+                  </a>
+                  <a
+                    href="https://ilabu.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+                  >
+                    <Package className="w-5 h-5" />
+                    <span>iLabU™</span>
+                    <ExternalLink className="w-4 h-4 ml-auto" />
+                  </a>
+                </>
+              )}
             </nav>
           </div>
         )}

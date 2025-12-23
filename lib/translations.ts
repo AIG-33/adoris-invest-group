@@ -50,6 +50,7 @@ export interface Translations {
     logout: string
     admin: string
     bulkOrder: string
+    supplier: string
     search: string
   }
   
@@ -517,6 +518,7 @@ const translations: Record<Language, Translations> = {
       logout: 'Logout',
       admin: 'Admin',
       bulkOrder: 'Bulk Order',
+      supplier: 'Become Supplier',
       search: 'Search',
     },
     common: {
@@ -1005,6 +1007,7 @@ const translations: Record<Language, Translations> = {
       logout: 'Выйти',
       admin: 'Админ',
       bulkOrder: 'Массовый заказ',
+      supplier: 'Стать поставщиком',
       search: 'Поиск',
     },
     common: {
