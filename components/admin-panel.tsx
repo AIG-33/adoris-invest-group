@@ -487,10 +487,40 @@ export function AdminPanel({ stats, recentOrders, translations }: AdminPanelProp
 
       {/* Product Import */}
       <div className="bg-white rounded-2xl p-8 shadow-lg border border-neutral-200 mb-12">
-        <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-3">
-          <FileSpreadsheet className="w-7 h-7 text-[#333333]" />
-          {translations.importProducts}
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-neutral-900 flex items-center gap-3">
+            <FileSpreadsheet className="w-7 h-7 text-[#333333]" />
+            {translations.importProducts}
+          </h2>
+          {activeTab === 'products' && (
+            <button
+              onClick={async () => {
+                if (!confirm('Are you sure you want to set all products to "Price on Request"? This will set all prices to 0.')) {
+                  return
+                }
+                try {
+                  const response = await fetch('/api/admin/products/set-price-on-request', {
+                    method: 'POST',
+                  })
+                  if (response.ok) {
+                    const data = await response.json()
+                    toast.success(data.message || `Successfully set ${data.count} products to "Price on Request"`)
+                  } else {
+                    const error = await response.json()
+                    toast.error(error.error || 'Failed to set products to price on request')
+                  }
+                } catch (error) {
+                  console.error('Error setting products to price on request:', error)
+                  toast.error('Error setting products to price on request')
+                }
+              }}
+              className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Set All Products to "Price on Request"
+            </button>
+          )}
+        </div>
 
         <div className="bg-gradient-to-r from-[#333333]/10 to-[#666666]/10 rounded-xl p-6 mb-6">
           <p className="text-sm text-neutral-700 mb-4">

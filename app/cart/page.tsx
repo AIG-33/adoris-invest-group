@@ -13,7 +13,7 @@ export default async function CartPage() {
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       <main className="flex-1">
-        <CartContent translations={{...dict.cart, common: dict.common}} />
+        <CartContent translations={{...dict.cart, common: dict.common}} company={company} />
       </main>
       <Footer />
     </div>

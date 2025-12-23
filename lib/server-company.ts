@@ -28,6 +28,7 @@ export async function getServerCompany(): Promise<CompanyConfig | null> {
         primaryColor: true,
         secondaryColor: true,
         accentColor: true,
+        showPrices: true,
       },
     })
     
@@ -46,6 +47,7 @@ export async function getServerCompany(): Promise<CompanyConfig | null> {
         primaryColor: fullCompany.primaryColor,
         secondaryColor: fullCompany.secondaryColor,
         accentColor: fullCompany.accentColor,
+        showPrices: fullCompany.showPrices,
       }
     }
   }

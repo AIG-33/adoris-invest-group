@@ -161,7 +161,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                 </div>
               </div>
               
-              <ProductGrid products={products} />
+              <ProductGrid products={products} company={company} />
               
               {/* Pagination */}
               {totalPages > 1 && (

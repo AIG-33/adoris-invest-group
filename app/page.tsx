@@ -86,10 +86,10 @@ export default async function HomePage() {
           <HeroSection translations={dict.homepage.hero} />
         </section>
         <section aria-label="Featured products">
-          <FeaturedProducts products={featuredProducts} translations={dict.homepage.featuredProducts} />
+          <FeaturedProducts products={featuredProducts} translations={dict.homepage.featuredProducts} company={company} />
         </section>
         <section aria-label="Category showcase">
-          <CategoryShowcase categories={categories} />
+          <CategoryShowcase categories={categories} company={company} />
         </section>
         <section aria-label="Statistics and company information">
           <StatsSection companyName={company?.name || 'IVD Group'} translations={dict.homepage.stats} />

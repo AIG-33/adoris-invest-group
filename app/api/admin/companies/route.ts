@@ -58,6 +58,7 @@ export async function POST(request: Request) {
       primaryColor,
       secondaryColor,
       accentColor,
+      showPrices,
     } = body
 
     // Validate required fields
@@ -119,6 +120,7 @@ export async function POST(request: Request) {
         primaryColor: primaryColor || '#333333',
         secondaryColor: secondaryColor || '#666666',
         accentColor: accentColor || '#000000',
+        showPrices: showPrices !== undefined ? showPrices : true,
       },
     })
 

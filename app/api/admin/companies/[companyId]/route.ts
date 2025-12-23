@@ -75,6 +75,7 @@ export async function PUT(
       primaryColor,
       secondaryColor,
       accentColor,
+      showPrices,
     } = body
 
     // Check if company exists
@@ -140,6 +141,7 @@ export async function PUT(
     if (primaryColor !== undefined) updateData.primaryColor = primaryColor
     if (secondaryColor !== undefined) updateData.secondaryColor = secondaryColor
     if (accentColor !== undefined) updateData.accentColor = accentColor
+    if (showPrices !== undefined) updateData.showPrices = showPrices
 
     const updatedCompany = await prisma.company.update({
       where: { id: companyId },

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
+import type { CompanyConfig } from '@/lib/company-types'
 
 type Product = {
   id: string
@@ -24,23 +25,24 @@ type Category = {
 
 type Props = {
   categories: Category[]
+  company: CompanyConfig | null
 }
 
-export function CategoryShowcase({ categories }: Props) {
+export function CategoryShowcase({ categories, company }: Props) {
   if (categories.length === 0) return null
 
   return (
     <section className="py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {categories.map((category) => (
-          <CategoryRow key={category.id} category={category} />
+          <CategoryRow key={category.id} category={category} company={company} />
         ))}
       </div>
     </section>
   )
 }
 
-function CategoryRow({ category }: { category: Category }) {
+function CategoryRow({ category, company }: { category: Category; company: CompanyConfig | null }) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
@@ -131,9 +133,13 @@ function CategoryRow({ category }: { category: Category }) {
                   >
                     {product.manufacturer.name}
                   </Link>
-                  <p className="text-lg font-bold text-[#666666]">
-                    €{product.price.toLocaleString()}
-                  </p>
+                        <p className="text-lg font-bold text-[#666666]">
+                          {(!company?.showPrices || product.price === 0) ? (
+                            <span className="text-sm">Price on Request</span>
+                          ) : (
+                            `€${product.price.toLocaleString()}`
+                          )}
+                        </p>
                 </div>
               </div>
             </Link>

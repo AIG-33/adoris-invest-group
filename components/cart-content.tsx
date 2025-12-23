@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Minus, Plus, X, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getProductUrl } from '@/lib/product-url'
+import type { CompanyConfig } from '@/lib/company-types'
 
 interface CartItem {
   id: string
@@ -38,9 +39,10 @@ interface CartTranslations {
 
 interface CartContentProps {
   translations: CartTranslations
+  company: CompanyConfig | null
 }
 
-export function CartContent({ translations }: CartContentProps) {
+export function CartContent({ translations, company }: CartContentProps) {
   const router = useRouter()
   const [cart, setCart] = useState<CartItem[]>([])
   const [mounted, setMounted] = useState(false)
@@ -214,10 +216,14 @@ export function CartContent({ translations }: CartContentProps) {
 
                   <div className="flex items-center justify-between w-full sm:w-auto sm:text-right gap-3">
                     <div className="text-lg sm:text-2xl font-bold text-[#000000]">
-                      €{((item?.price || 0) * (item?.quantity || 0))?.toLocaleString?.('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }) || '0.00'}
+                      {(!company?.showPrices || item?.price === 0) ? (
+                        <span className="text-sm">Price on Request</span>
+                      ) : (
+                        `€${((item?.price || 0) * (item?.quantity || 0))?.toLocaleString?.('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }) || '0.00'}`
+                      )}
                     </div>
                     <button
                       onClick={() => removeItem(item?.id)}
@@ -241,10 +247,14 @@ export function CartContent({ translations }: CartContentProps) {
               <div className="flex justify-between text-neutral-700">
                 <span>{translations.subtotal} ({cart?.length} {translations.items})</span>
                 <span className="font-semibold">
-                  €{subtotal?.toLocaleString?.('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }) || '0.00'}
+                  {(!company?.showPrices || subtotal === 0) ? (
+                    <span className="text-sm">Price on Request</span>
+                  ) : (
+                    `€${subtotal?.toLocaleString?.('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }) || '0.00'}`
+                  )}
                 </span>
               </div>
               <div className="flex justify-between text-neutral-700">
@@ -265,10 +275,14 @@ export function CartContent({ translations }: CartContentProps) {
               <div className="flex justify-between text-neutral-700">
                 <span>Subtotal (excl. VAT)</span>
                 <span className="font-semibold">
-                  €{subtotalAfterDiscount?.toLocaleString?.('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }) || '0.00'}
+                  {(!company?.showPrices || subtotalAfterDiscount === 0) ? (
+                    <span className="text-sm">Price on Request</span>
+                  ) : (
+                    `€${subtotalAfterDiscount?.toLocaleString?.('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }) || '0.00'}`
+                  )}
                 </span>
               </div>
             </div>
@@ -277,10 +291,14 @@ export function CartContent({ translations }: CartContentProps) {
               <div className="flex justify-between items-center">
                 <span className="text-lg sm:text-xl font-bold text-neutral-900">{translations.total}</span>
                 <span className="text-2xl sm:text-3xl font-bold text-[#000000]">
-                  €{total?.toLocaleString?.('en-US', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }) || '0.00'}
+                  {(!company?.showPrices || total === 0) ? (
+                    <span className="text-base">Price on Request</span>
+                  ) : (
+                    `€${total?.toLocaleString?.('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }) || '0.00'}`
+                  )}
                 </span>
               </div>
             </div>

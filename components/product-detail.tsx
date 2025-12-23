@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { ShoppingCart, Minus, Plus, Truck, Edit } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
+import type { CompanyConfig } from '@/lib/company-types'
 
 interface Product {
   id: string
@@ -40,9 +41,10 @@ interface ProductDetailProps {
   product: Product
   relatedProducts: Product[]
   translations: ProductTranslations
+  company: CompanyConfig | null
 }
 
-export function ProductDetail({ product, relatedProducts, translations }: ProductDetailProps) {
+export function ProductDetail({ product, relatedProducts, translations, company }: ProductDetailProps) {
   const { data: session } = useSession()
   const isAdmin = session?.user && (session.user as any)?.role === 'admin'
   const [quantity, setQuantity] = useState(1)
@@ -137,10 +139,14 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
               {translations.b2bPrice}
             </div>
             <div className="text-5xl font-bold text-[#000000]">
-              €{product?.price?.toLocaleString?.('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }) || '0.00'}
+              {(!company?.showPrices || product?.price === 0) ? (
+                <span className="text-2xl">Price on Request</span>
+              ) : (
+                `€${product?.price?.toLocaleString?.('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }) || '0.00'}`
+              )}
             </div>
           </div>
 
@@ -317,10 +323,14 @@ export function ProductDetail({ product, relatedProducts, translations }: Produc
                     <span className="text-xs font-mono font-bold text-[#333333] ml-1">{relProduct?.sku}</span>
                   </div>
                   <div className="text-xl font-bold text-[#000000]">
-                    €{relProduct?.price?.toLocaleString?.('en-US', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }) || '0.00'}
+                    {(!company?.showPrices || relProduct?.price === 0) ? (
+                      <span className="text-sm">Price on Request</span>
+                    ) : (
+                      `€${relProduct?.price?.toLocaleString?.('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }) || '0.00'}`
+                    )}
                   </div>
                 </div>
               </Link>

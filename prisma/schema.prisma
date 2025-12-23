@@ -91,6 +91,7 @@ model Company {
   primaryColor   String?   @default("#333333") // Primary brand color
   secondaryColor String?   @default("#666666") // Secondary brand color
   accentColor    String?   @default("#000000") // Accent color
+  showPrices     Boolean   @default(true) // Show prices or "Price on Request"
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @default(now()) @updatedAt
   products       Product[]

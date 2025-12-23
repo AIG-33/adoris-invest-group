@@ -22,9 +22,10 @@ interface Product {
 interface ProductGridProps {
   products: Product[]
   search?: string
+  company: CompanyConfig | null
 }
 
-export function ProductGrid({ products, search }: ProductGridProps) {
+export function ProductGrid({ products, search, company }: ProductGridProps) {
   const addToCart = (product: Product) => {
     const cart = JSON.parse(localStorage?.getItem?.('cart') || '[]')
     const existingItem = cart?.find?.((item: any) => item?.id === product?.id)
@@ -123,10 +124,14 @@ export function ProductGrid({ products, search }: ProductGridProps) {
                 <div className="mt-auto pt-3 sm:pt-4 border-t border-neutral-100">
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
                     <div className="text-lg sm:text-2xl font-bold" style={{ color: 'var(--company-primary, #000000)' }}>
-                      €{product?.price?.toLocaleString?.('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      }) || '0.00'}
+                      {(!company?.showPrices || product?.price === 0) ? (
+                        <span className="text-sm">Price on Request</span>
+                      ) : (
+                        `€${product?.price?.toLocaleString?.('en-US', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }) || '0.00'}`
+                      )}
                     </div>
                   </div>
                   <div className="flex gap-2">

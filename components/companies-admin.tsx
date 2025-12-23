@@ -19,6 +19,7 @@ interface Company {
   primaryColor: string | null
   secondaryColor: string | null
   accentColor: string | null
+  showPrices: boolean
   createdAt: string
   updatedAt: string
 }
@@ -41,6 +42,7 @@ export function CompaniesAdmin() {
     primaryColor: '#333333',
     secondaryColor: '#666666',
     accentColor: '#000000',
+    showPrices: true,
   })
   const [saving, setSaving] = useState(false)
 
@@ -83,6 +85,7 @@ export function CompaniesAdmin() {
       primaryColor: company.primaryColor || '#333333',
       secondaryColor: company.secondaryColor || '#666666',
       accentColor: company.accentColor || '#000000',
+      showPrices: company.showPrices !== undefined ? company.showPrices : true,
     })
     setShowAddForm(false)
   }
@@ -343,6 +346,21 @@ export function CompaniesAdmin() {
                   <option value="EU">EU Prices</option>
                   <option value="RU">RU Prices</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.showPrices !== undefined ? formData.showPrices : true}
+                    onChange={(e) => setFormData({ ...formData, showPrices: e.target.checked })}
+                    className="w-5 h-5 text-[#333333] border-neutral-300 rounded focus:ring-[#333333]"
+                  />
+                  <div>
+                    <span className="block text-sm font-medium text-neutral-700">Show Prices</span>
+                    <span className="text-xs text-neutral-500">If disabled, all products will show "Price on Request"</span>
+                  </div>
+                </label>
               </div>
 
               <div>

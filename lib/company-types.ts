@@ -17,5 +17,6 @@ export interface CompanyConfig {
   primaryColor: string | null
   secondaryColor: string | null
   accentColor: string | null
+  showPrices: boolean
 }
 

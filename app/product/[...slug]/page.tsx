@@ -174,7 +174,7 @@ export default async function ProductPage({
         <Header translations={dict.nav} />
         <main className="flex-1" itemScope itemType="https://schema.org/Product">
           <article>
-            <ProductDetail product={productWithNumber} relatedProducts={relatedProducts} translations={dict.product} />
+            <ProductDetail product={productWithNumber} relatedProducts={relatedProducts} translations={dict.product} company={company} />
           </article>
         </main>
         <Footer translations={dict.footer} />

@@ -4,13 +4,27 @@ import type { CompanyConfig } from './company-types'
 export type { CompanyConfig }
 
 /**
- * Get company by domain
+ * Get company by domain (supports subdomains)
+ * Tries exact match first, then tries to match base domain
  */
 export async function getCompanyByDomain(domain: string): Promise<CompanyConfig | null> {
   try {
-    const company = await prisma.company.findUnique({
+    // Try exact match first
+    let company = await prisma.company.findUnique({
       where: { domain },
     })
+
+    // If not found and domain has subdomain (e.g., shop.ivdgroup.eu), try base domain
+    if (!company && domain.includes('.')) {
+      const parts = domain.split('.')
+      if (parts.length > 2) {
+        // Remove first subdomain (e.g., shop.ivdgroup.eu -> ivdgroup.eu)
+        const baseDomain = parts.slice(1).join('.')
+        company = await prisma.company.findUnique({
+          where: { domain: baseDomain },
+        })
+      }
+    }
 
     if (!company) {
       return null
@@ -30,6 +44,7 @@ export async function getCompanyByDomain(domain: string): Promise<CompanyConfig 
       primaryColor: company.primaryColor,
       secondaryColor: company.secondaryColor,
       accentColor: company.accentColor,
+      showPrices: company.showPrices !== undefined ? company.showPrices : true,
     }
   } catch (error) {
     console.error('Error fetching company by domain:', error)
@@ -43,7 +58,14 @@ export async function getCompanyByDomain(domain: string): Promise<CompanyConfig 
 export function getDomainFromRequest(headers: Headers): string {
   const host = headers.get('host') || headers.get('x-forwarded-host') || ''
   // Remove port if present
-  return host.split(':')[0].toLowerCase()
+  let domain = host.split(':')[0].toLowerCase()
+  
+  // Remove 'www.' prefix if present
+  if (domain.startsWith('www.')) {
+    domain = domain.substring(4)
+  }
+  
+  return domain
 }
 
 /**

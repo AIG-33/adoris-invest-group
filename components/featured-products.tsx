@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import { useRef } from 'react'
+import type { CompanyConfig } from '@/lib/company-types'
 
 type Product = {
   id: string
@@ -26,9 +27,10 @@ interface FeaturedProductsTranslations {
 type Props = {
   products: Product[]
   translations: FeaturedProductsTranslations
+  company: CompanyConfig | null
 }
 
-export function FeaturedProducts({ products, translations }: Props) {
+export function FeaturedProducts({ products, translations, company }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
@@ -175,12 +177,16 @@ export function FeaturedProducts({ products, translations }: Props) {
                       {product.description}
                     </p>
                   )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-[#666666]">
-                      €{product.price.toLocaleString()}
-                    </span>
-                    <span className="text-sm text-gray-400">By Order</span>
-                  </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xl font-bold text-[#666666]">
+                            {(!company?.showPrices || product.price === 0) ? (
+                              <span className="text-sm">Price on Request</span>
+                            ) : (
+                              `€${product.price.toLocaleString()}`
+                            )}
+                          </span>
+                          <span className="text-sm text-gray-400">By Order</span>
+                        </div>
                 </div>
               </Link>
             ))}
