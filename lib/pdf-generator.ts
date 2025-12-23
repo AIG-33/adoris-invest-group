@@ -91,8 +91,10 @@ export async function generateOrderPDF(
   doc.text('Product', 17, y)
   doc.text('SKU', 105, y)
   doc.text('Qty', 135, y)
-  doc.text('Price', 155, y)
-  doc.text('Total', 175, y)
+  if (company?.showPrices) {
+    doc.text('Price', 155, y)
+    doc.text('Total', 175, y)
+  }
 
   // Table Items
   doc.setFont('helvetica', 'normal')
@@ -105,8 +107,13 @@ export async function generateOrderPDF(
     doc.text(truncatedName, 17, y)
     doc.text(product?.sku || 'N/A', 105, y)
     doc.text(String(item?.quantity || 0), 135, y)
-    doc.text(`€${(item?.price || 0)?.toFixed?.(2)}`, 155, y)
-    doc.text(`€${((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}`, 175, y)
+    if (company?.showPrices && item?.price > 0) {
+      doc.text(`€${(item?.price || 0)?.toFixed?.(2)}`, 155, y)
+      doc.text(`€${((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}`, 175, y)
+    } else {
+      doc.text('Price on Request', 155, y)
+      doc.text('Price on Request', 175, y)
+    }
     y += 6
 
     // Check if we need a new page
@@ -121,33 +128,41 @@ export async function generateOrderPDF(
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
   
-  // Calculate discount from formData or order
-  const discount = formData?.discount || 0
-  const subtotal = Number(order?.subtotal || 0)
-  const discountRate = discount > 0 ? (discount / subtotal) * 100 : 0
-  const discountLabel = discountRate > 0 
-    ? `Volume Discount (${discountRate.toFixed(0)}%)` 
-    : 'Discount'
-  
-  doc.text(`Subtotal:`, 140, y)
-  doc.text(`€${subtotal?.toFixed?.(2)}`, 175, y)
-  y += 6
-  
-  if (discount > 0) {
-    doc.text(`${discountLabel}:`, 140, y)
-    doc.setTextColor(0, 0, 0)
-    doc.text(`-€${discount?.toFixed?.(2)}`, 175, y)
+  if (company?.showPrices) {
+    // Calculate discount from formData or order
+    const discount = formData?.discount || 0
+    const subtotal = Number(order?.subtotal || 0)
+    const discountRate = discount > 0 ? (discount / subtotal) * 100 : 0
+    const discountLabel = discountRate > 0 
+      ? `Volume Discount (${discountRate.toFixed(0)}%)` 
+      : 'Discount'
+    
+    doc.text(`Subtotal:`, 140, y)
+    doc.text(`€${subtotal?.toFixed?.(2)}`, 175, y)
     y += 6
+    
+    if (discount > 0) {
+      doc.text(`${discountLabel}:`, 140, y)
+      doc.setTextColor(0, 0, 0)
+      doc.text(`-€${discount?.toFixed?.(2)}`, 175, y)
+      y += 6
+    }
+    
+    doc.setTextColor(0, 0, 0)
+    doc.text(`Subtotal (excl. VAT):`, 140, y)
+    doc.text(`€${(subtotal - discount)?.toFixed?.(2)}`, 175, y)
+    y += 8
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(12)
+    doc.text(`Total:`, 140, y)
+    doc.text(`€${(order?.total || 0)?.toFixed?.(2)}`, 175, y)
+  } else {
+    // Prices are hidden - show "Price on Request"
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(12)
+    doc.text(`Total:`, 140, y)
+    doc.text(`Price on Request`, 175, y)
   }
-  
-  doc.setTextColor(0, 0, 0)
-  doc.text(`Subtotal (excl. VAT):`, 140, y)
-  doc.text(`€${(subtotal - discount)?.toFixed?.(2)}`, 175, y)
-  y += 8
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(12)
-  doc.text(`Total:`, 140, y)
-  doc.text(`€${(order?.total || 0)?.toFixed?.(2)}`, 175, y)
 
   // Footer
   y += 15

@@ -33,6 +33,18 @@ interface MagicLinkEmailOptions {
   company?: CompanyConfig | null
 }
 
+interface SupplierEmailOptions {
+  to: string
+  supplierCompanyName: string
+  supplierContactName: string
+  supplierEmail: string
+  supplierPhone: string
+  notes: string
+  fileBuffer: Buffer
+  fileName: string
+  company?: CompanyConfig | null
+}
+
 // Email template helpers
 const getEmailHeader = (company?: CompanyConfig | null) => {
   const companyName = company?.name || 'ADORIS INVEST GROUP'
@@ -510,6 +522,153 @@ export async function sendMagicLinkEmail({ to, url, company }: MagicLinkEmailOpt
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Error sending magic link email:', error)
+    }
+    throw error
+  }
+}
+
+// Send supplier application email
+export async function sendSupplierEmail({
+  to,
+  supplierCompanyName,
+  supplierContactName,
+  supplierEmail,
+  supplierPhone,
+  notes,
+  fileBuffer,
+  fileName,
+  company,
+}: SupplierEmailOptions) {
+  try {
+    const transporter = createTransporter()
+    
+    // Get company data with defaults
+    const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
+    const companyEmail = company?.email || 'info@adorisgroup.com'
+    const companyPhone = company?.phone || '+48793081310'
+    const companyAddress = company?.address || 'Tallinn, Estonia'
+
+    await transporter.sendMail({
+      from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
+      to,
+      subject: `New Supplier Application - ${supplierCompanyName}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>New Supplier Application</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background: #f4f4f4;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background: #f4f4f4; padding: 40px 20px;">
+            <tr>
+              <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                  
+                  <!-- Header -->
+                  <tr>
+                    <td style="background: linear-gradient(135deg, #1a8c7c 0%, #20a895 100%); padding: 40px; text-align: center;">
+                      <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">${companyName}</h1>
+                      <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">New Supplier Application</p>
+                    </td>
+                  </tr>
+
+                  <!-- Content -->
+                  <tr>
+                    <td style="padding: 40px;">
+                      <h2 style="color: #1a8c7c; margin-top: 0; font-size: 24px;">New Supplier Application Received</h2>
+                      
+                      <p style="font-size: 16px; color: #555; line-height: 1.6; margin: 20px 0;">
+                        A new supplier application has been submitted through the website.
+                      </p>
+
+                      <!-- Supplier Information -->
+                      <div style="background: #f9fafb; border-left: 4px solid #1a8c7c; padding: 20px; border-radius: 8px; margin: 30px 0;">
+                        <h3 style="color: #1a8c7c; margin-top: 0; font-size: 18px; margin-bottom: 15px;">Supplier Information</h3>
+                        <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px; color: #333;">
+                          <tr>
+                            <td style="padding: 8px 0; font-weight: bold; width: 150px;">Company Name:</td>
+                            <td style="padding: 8px 0;">${supplierCompanyName}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 8px 0; font-weight: bold;">Contact Name:</td>
+                            <td style="padding: 8px 0;">${supplierContactName}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 8px 0; font-weight: bold;">Email:</td>
+                            <td style="padding: 8px 0;"><a href="mailto:${supplierEmail}" style="color: #20a895; text-decoration: none;">${supplierEmail}</a></td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 8px 0; font-weight: bold;">Phone:</td>
+                            <td style="padding: 8px 0;">${supplierPhone}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 8px 0; font-weight: bold;">Product File:</td>
+                            <td style="padding: 8px 0;">${fileName}</td>
+                          </tr>
+                        </table>
+                      </div>
+
+                      ${notes && notes !== 'No additional notes' ? `
+                      <!-- Notes -->
+                      <div style="background: #fff3cd; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 30px 0;">
+                        <h3 style="color: #92400e; margin-top: 0; font-size: 18px; margin-bottom: 10px;">Additional Notes</h3>
+                        <p style="color: #856404; margin: 0; font-size: 14px; line-height: 1.6;">${notes}</p>
+                      </div>
+                      ` : ''}
+
+                      <p style="font-size: 14px; color: #666; margin: 30px 0 0 0; line-height: 1.6;">
+                        The product catalog file (${fileName}) is attached to this email. Please review the supplier application and contact them if interested.
+                      </p>
+
+                      <p style="font-size: 16px; color: #555; margin: 35px 0 0 0; line-height: 1.6;">
+                        Best regards,<br/>
+                        <strong style="color: #1a8c7c; font-size: 18px;">The ${companyName} Team</strong>
+                      </p>
+                    </td>
+                  </tr>
+
+                  <!-- Footer -->
+                  <tr>
+                    <td style="background: #f9fafb; padding: 35px 40px; border-top: 1px solid #e5e7eb;">
+                      <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td align="center">
+                            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px; font-weight: 600;">${companyName}</p>
+                            <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">${companyAddress}</p>
+                            <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 13px;">Phone: ${companyPhone}</p>
+                            <p style="margin: 0; color: #6b7280; font-size: 13px;">
+                              Email: <a href="mailto:${companyEmail}" style="color: #20a895; text-decoration: none;">${companyEmail}</a>
+                            </p>
+                            <p style="margin: 15px 0 0 0; color: #9ca3af; font-size: 12px;">
+                              © ${new Date().getFullYear()} ${companyName}. All rights reserved.
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `,
+      attachments: [
+        {
+          filename: fileName,
+          content: fileBuffer,
+        },
+      ],
+    })
+
+    return { success: true }
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error sending supplier email:', error)
     }
     throw error
   }

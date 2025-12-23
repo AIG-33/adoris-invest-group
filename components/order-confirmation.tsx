@@ -152,14 +152,20 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
                   </div>
                   <div className="flex items-center gap-4 text-sm">
                     <span className="text-neutral-600">{translations.quantity}: {item?.quantity}</span>
-                    <span className="text-neutral-600">
-                      €{item?.price?.toFixed?.(2)} {translations.each}
-                    </span>
+                    {company?.showPrices && item?.price > 0 ? (
+                      <span className="text-neutral-600">
+                        €{item?.price?.toFixed?.(2)} {translations.each}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-xl font-bold text-[#000000]">
-                    €{((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}
+                    {(!company?.showPrices || item?.price === 0) ? (
+                      <span className="text-sm">Price on Request</span>
+                    ) : (
+                      `€${((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}`
+                    )}
                   </div>
                 </div>
               </div>
@@ -171,9 +177,16 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
             <div className="space-y-2 text-sm mb-4">
               <div className="flex justify-between">
                 <span className="text-neutral-700">{translations.subtotal}</span>
-                <span className="font-semibold">€{Number(order?.subtotal || 0)?.toFixed?.(2)}</span>
+                <span className="font-semibold">
+                  {(!company?.showPrices || Number(order?.subtotal || 0) === 0) ? (
+                    <span className="text-xs">Price on Request</span>
+                  ) : (
+                    `€${Number(order?.subtotal || 0)?.toFixed?.(2)}`
+                  )}
+                </span>
               </div>
               {(() => {
+                if (!company?.showPrices) return null
                 const subtotal = Number(order?.subtotal || 0)
                 const total = Number(order?.total || 0)
                 const discount = subtotal - total
@@ -192,7 +205,13 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
             </div>
             <div className="flex justify-between items-center text-xl font-bold border-t-2 border-neutral-900 pt-4">
               <span>{translations.total}</span>
-              <span className="text-[#000000]">€{Number(order?.total || 0)?.toFixed?.(2)}</span>
+              <span className="text-[#000000]">
+                {(!company?.showPrices || Number(order?.total || 0) === 0) ? (
+                  <span className="text-sm">Price on Request</span>
+                ) : (
+                  `€${Number(order?.total || 0)?.toFixed?.(2)}`
+                )}
+              </span>
             </div>
           </div>
         </div>

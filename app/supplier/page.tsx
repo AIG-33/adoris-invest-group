@@ -1,10 +1,10 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { CheckoutForm } from '@/components/checkout-form'
+import { SupplierForm } from '@/components/supplier-form'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
 
-export default async function CheckoutPage() {
+export default async function SupplierPage() {
   const company = await getServerCompany()
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
@@ -13,9 +13,10 @@ export default async function CheckoutPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <CheckoutForm translations={dict.checkout} company={company} />
+        <SupplierForm company={company} translations={dict.supplier} />
       </main>
       <Footer />
     </div>
   )
 }
+

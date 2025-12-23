@@ -12,8 +12,12 @@ interface HeroTranslations {
   bulkOrderTitle: string
   bulkOrderSubtitle: string
   bulkOrderDescription: string
+  supplierTitle: string
+  supplierSubtitle: string
+  supplierDescription: string
   shopNow: string
   tryBulkOrder: string
+  becomeSupplier: string
   browseCatalog: string
 }
 
@@ -38,6 +42,14 @@ export function HeroSection({ translations }: HeroSectionProps) {
       image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=1080&fit=crop',
       cta: translations.tryBulkOrder,
       link: '/bulk-order',
+    },
+    {
+      title: translations.supplierTitle,
+      subtitle: translations.supplierSubtitle,
+      description: translations.supplierDescription,
+      image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1920&h=1080&fit=crop',
+      cta: translations.becomeSupplier,
+      link: '/supplier',
     },
   ]
   const [currentSlide, setCurrentSlide] = useState(0)

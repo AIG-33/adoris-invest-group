@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, CreditCard, Building2, Truck, FileText } from 'lucide-react'
+import type { CompanyConfig } from '@/lib/company-types'
 
 interface CartItem {
   id: string
@@ -28,9 +29,10 @@ interface CheckoutTranslations {
 
 interface CheckoutFormProps {
   translations: CheckoutTranslations
+  company: CompanyConfig | null
 }
 
-export function CheckoutForm({ translations }: CheckoutFormProps) {
+export function CheckoutForm({ translations, company }: CheckoutFormProps) {
   const router = useRouter()
   const { data: session } = useSession() || {}
   const [cart, setCart] = useState<CartItem[]>([])
@@ -115,16 +117,19 @@ export function CheckoutForm({ translations }: CheckoutFormProps) {
     return null
   }
 
-  const subtotal = cart?.reduce?.((sum, item) => sum + (item?.price || 0) * (item?.quantity || 0), 0) || 0
+  // Calculate subtotal - if showPrices is false, set all prices to 0
+  const subtotal = company?.showPrices 
+    ? (cart?.reduce?.((sum, item) => sum + (item?.price || 0) * (item?.quantity || 0), 0) || 0)
+    : 0
   
-  // Calculate discount based on order value
+  // Calculate discount based on order value (only if prices are shown)
   let discountRate = 0
-  if (subtotal >= 100000) {
+  if (company?.showPrices && subtotal >= 100000) {
     discountRate = 0.10 // 10% for orders €100,000+
-  } else if (subtotal >= 50000) {
+  } else if (company?.showPrices && subtotal >= 50000) {
     discountRate = 0.05 // 5% for orders €50,000+
   }
-  // 0% for orders below €50,000
+  // 0% for orders below €50,000 or if prices are hidden
   
         const discount = subtotal * discountRate
         const subtotalAfterDiscount = subtotal - discount
@@ -136,13 +141,18 @@ export function CheckoutForm({ translations }: CheckoutFormProps) {
     setLoading(true)
 
     try {
+      // If showPrices is false, set all item prices to 0 before sending to API
+      const itemsWithPrices = company?.showPrices 
+        ? cart 
+        : cart?.map(item => ({ ...item, price: 0 }))
+      
       const orderData = {
         ...formData,
-        items: cart,
-        subtotal,
-        discount,
-        vat,
-        total,
+        items: itemsWithPrices,
+        subtotal: company?.showPrices ? subtotal : 0,
+        discount: company?.showPrices ? discount : 0,
+        vat: 0,
+        total: company?.showPrices ? total : 0,
         userId: session?.user ? (session.user as any).id : null,
       }
 
@@ -445,7 +455,11 @@ export function CheckoutForm({ translations }: CheckoutFormProps) {
                     </h4>
                     <p className="text-xs text-neutral-600">Qty: {item?.quantity}</p>
                     <p className="text-sm font-bold text-[#000000] mt-1">
-                      €{((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}
+                      {(!company?.showPrices || item?.price === 0) ? (
+                        <span className="text-xs">Price on Request</span>
+                      ) : (
+                        `€${((item?.price || 0) * (item?.quantity || 0))?.toFixed?.(2)}`
+                      )}
                     </p>
                   </div>
                 </div>
@@ -455,13 +469,19 @@ export function CheckoutForm({ translations }: CheckoutFormProps) {
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-xs sm:text-sm">
               <div className="flex justify-between">
                 <span className="text-neutral-700">Subtotal</span>
-                <span className="font-semibold">€{subtotal?.toFixed?.(2)}</span>
+                <span className="font-semibold">
+                  {(!company?.showPrices || subtotal === 0) ? (
+                    <span className="text-xs">Price on Request</span>
+                  ) : (
+                    `€${subtotal?.toFixed?.(2)}`
+                  )}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-700">Shipping</span>
                 <span className="font-semibold text-[#666666]">FREE</span>
               </div>
-              {discountRate > 0 && (
+              {discountRate > 0 && company?.showPrices && subtotal > 0 && (
                 <div className="flex justify-between text-[#666666]">
                   <span>Volume Discount ({(discountRate * 100).toFixed(0)}%)</span>
                   <span className="font-semibold">-€{discount?.toFixed?.(2)}</span>
@@ -473,7 +493,11 @@ export function CheckoutForm({ translations }: CheckoutFormProps) {
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold">Total</span>
                 <span className="text-3xl font-bold text-[#000000]">
-                  €{total?.toFixed?.(2)}
+                  {(!company?.showPrices || total === 0) ? (
+                    <span className="text-sm">Price on Request</span>
+                  ) : (
+                    `€${total?.toFixed?.(2)}`
+                  )}
                 </span>
               </div>
             </div>

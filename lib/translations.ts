@@ -10,8 +10,12 @@ export interface Translations {
       bulkOrderTitle: string
       bulkOrderSubtitle: string
       bulkOrderDescription: string
+      supplierTitle: string
+      supplierSubtitle: string
+      supplierDescription: string
       shopNow: string
       tryBulkOrder: string
+      becomeSupplier: string
       browseCatalog: string
     }
     featuredProducts: {
@@ -320,6 +324,42 @@ export interface Translations {
     items?: string
   }
   
+  // Supplier
+  supplier: {
+    title: string
+    subtitle: string
+    description: string
+    fileFormat: string
+    fileFormatDescription: string
+    requiredFields: string
+    fields: {
+      manufacturer: string
+      sku: string
+      productName: string
+      productDescription: string
+      price: string
+    }
+    uploadFile: string
+    selectFile: string
+    fileName: string
+    submit: string
+    submitting: string
+    success: string
+    successMessage: string
+    error: string
+    errorMessage: string
+    companyName: string
+    companyNamePlaceholder: string
+    contactName: string
+    contactNamePlaceholder: string
+    email: string
+    emailPlaceholder: string
+    phone: string
+    phonePlaceholder: string
+    notes: string
+    notesPlaceholder: string
+  }
+  
   // Admin
   admin: {
     title: string
@@ -439,8 +479,12 @@ const translations: Record<Language, Translations> = {
         bulkOrderTitle: 'Bulk Order',
         bulkOrderSubtitle: 'Save Time with Automated Ordering',
         bulkOrderDescription: 'Simply paste catalog numbers and quantities - your order is automatically created. This feature saves time by streamlining the ordering process.',
+        supplierTitle: 'Become Our Supplier',
+        supplierSubtitle: 'Partner with Us',
+        supplierDescription: 'Have access to quality products at competitive prices? Join our supplier network and help us expand our product catalog.',
         shopNow: 'Shop Now',
         tryBulkOrder: 'Try Bulk Order',
+        becomeSupplier: 'Become Supplier',
         browseCatalog: 'Browse Catalog',
       },
       featuredProducts: {
@@ -724,6 +768,40 @@ const translations: Record<Language, Translations> = {
       addAllToCart: 'Add All to Cart',
       items: 'items',
     },
+    supplier: {
+      title: 'Become Our Supplier',
+      subtitle: 'Join Our Supplier Network',
+      description: 'If you have access to quality products at competitive prices from manufacturers, we would love to partner with you. Simply upload your product catalog in Excel format and we will review your application.',
+      fileFormat: 'File Format Requirements',
+      fileFormatDescription: 'Please upload your product catalog as an Excel file (.xlsx, .xls) or CSV file with the following columns:',
+      requiredFields: 'Required Fields',
+      fields: {
+        manufacturer: 'Manufacturer',
+        sku: 'SKU',
+        productName: 'Product Name',
+        productDescription: 'Product Description',
+        price: 'Price',
+      },
+      uploadFile: 'Upload Product Catalog',
+      selectFile: 'Click to select file or drag and drop',
+      fileName: 'Selected file',
+      submit: 'Submit Application',
+      submitting: 'Submitting...',
+      success: 'Application Submitted Successfully!',
+      successMessage: 'Thank you for your interest in becoming our supplier. We have received your application and product catalog. Our team will review it and get back to you shortly.',
+      error: 'Error',
+      errorMessage: 'Please upload a valid Excel or CSV file and fill in all required fields.',
+      companyName: 'Company Name',
+      companyNamePlaceholder: 'Enter your company name',
+      contactName: 'Contact Name',
+      contactNamePlaceholder: 'Enter your full name',
+      email: 'Email Address',
+      emailPlaceholder: 'your.email@example.com',
+      phone: 'Phone Number',
+      phonePlaceholder: '+1 (555) 123-4567',
+      notes: 'Additional Notes',
+      notesPlaceholder: 'Any additional information you would like to share...',
+    },
     admin: {
       title: 'Admin Panel',
       dashboard: 'Admin Dashboard',
@@ -889,8 +967,12 @@ const translations: Record<Language, Translations> = {
         bulkOrderTitle: 'Массовый заказ',
         bulkOrderSubtitle: 'Экономьте время с автоматизированным заказом',
         bulkOrderDescription: 'Просто вставьте каталожные номера и количества - ваш заказ создается автоматически. Эта функция экономит время, упрощая процесс заказа.',
+        supplierTitle: 'Станьте нашим поставщиком',
+        supplierSubtitle: 'Партнерство с нами',
+        supplierDescription: 'Есть доступ к качественным продуктам по конкурентоспособным ценам? Присоединяйтесь к нашей сети поставщиков и помогите нам расширить наш каталог продукции.',
         shopNow: 'Купить сейчас',
         tryBulkOrder: 'Попробовать массовый заказ',
+        becomeSupplier: 'Стать поставщиком',
         browseCatalog: 'Просмотреть каталог',
       },
       featuredProducts: {
@@ -1173,6 +1255,40 @@ const translations: Record<Language, Translations> = {
       results: 'Результаты',
       addAllToCart: 'Добавить все в корзину',
       items: 'товаров',
+    },
+    supplier: {
+      title: 'Станьте нашим поставщиком',
+      subtitle: 'Присоединяйтесь к нашей сети поставщиков',
+      description: 'Если у вас есть доступ к качественным продуктам по конкурентоспособным ценам от производителей, мы будем рады сотрудничать с вами. Просто загрузите ваш каталог продукции в формате Excel, и мы рассмотрим вашу заявку.',
+      fileFormat: 'Требования к формату файла',
+      fileFormatDescription: 'Пожалуйста, загрузите ваш каталог продукции в виде файла Excel (.xlsx, .xls) или CSV со следующими колонками:',
+      requiredFields: 'Обязательные поля',
+      fields: {
+        manufacturer: 'Производитель',
+        sku: 'Артикул',
+        productName: 'Название продукта',
+        productDescription: 'Описание продукта',
+        price: 'Цена',
+      },
+      uploadFile: 'Загрузить каталог продукции',
+      selectFile: 'Нажмите, чтобы выбрать файл или перетащите его',
+      fileName: 'Выбранный файл',
+      submit: 'Отправить заявку',
+      submitting: 'Отправка...',
+      success: 'Заявка успешно отправлена!',
+      successMessage: 'Спасибо за ваш интерес стать нашим поставщиком. Мы получили вашу заявку и каталог продукции. Наша команда рассмотрит их и свяжется с вами в ближайшее время.',
+      error: 'Ошибка',
+      errorMessage: 'Пожалуйста, загрузите действительный файл Excel или CSV и заполните все обязательные поля.',
+      companyName: 'Название компании',
+      companyNamePlaceholder: 'Введите название вашей компании',
+      contactName: 'Контактное лицо',
+      contactNamePlaceholder: 'Введите ваше полное имя',
+      email: 'Адрес электронной почты',
+      emailPlaceholder: 'ваш.email@example.com',
+      phone: 'Номер телефона',
+      phonePlaceholder: '+7 (999) 123-45-67',
+      notes: 'Дополнительные примечания',
+      notesPlaceholder: 'Любая дополнительная информация, которой вы хотели бы поделиться...',
     },
     admin: {
       title: 'Панель администратора',
