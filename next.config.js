@@ -9,8 +9,6 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: { 
-    unoptimized: false, // Enable image optimization for better performance
-    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -18,31 +16,17 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days cache
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   // Production optimizations
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
   swcMinify: true,
-  // Performance optimizations
-  experimental: {
-    optimizeCss: true,
-  },
   // Headers for caching
   async headers() {
     return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=3600, stale-while-revalidate=86400',
-          },
-        ],
-      },
       {
         source: '/_next/image',
         headers: [
@@ -53,7 +37,7 @@ const nextConfig = {
         ],
       },
       {
-        source: '/_next/static',
+        source: '/_next/static/:path*',
         headers: [
           {
             key: 'Cache-Control',
