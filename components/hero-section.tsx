@@ -83,6 +83,9 @@ export function HeroSection({ translations }: HeroSectionProps) {
               fill
               className="object-cover"
               priority={idx === 0}
+              loading={idx === 0 ? 'eager' : 'lazy'}
+              quality={85}
+              sizes="100vw"
             />
             {/* Dark Gradient Overlay - Stronger on Mobile */}
             <div 

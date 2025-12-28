@@ -15,7 +15,8 @@ import {
   generateItemListSchema,
 } from '@/lib/seo'
 
-export const dynamic = 'force-dynamic'
+// Revalidate every 60 seconds for better performance
+export const revalidate = 60
 
 export default async function HomePage() {
   // Get current company
@@ -24,12 +25,32 @@ export default async function HomePage() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
 
-  // Fetch featured products
+  // Fetch featured products - optimized query
   const featuredProductsRaw = await prisma.product.findMany({
     where: { featured: true },
-    include: {
-      category: true,
-      manufacturer: true,
+    select: {
+      id: true,
+      name: true,
+      sku: true,
+      slug: true,
+      priceEU: true,
+      priceRU: true,
+      image: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+      manufacturer: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          logo: true,
+        },
+      },
     },
     take: 8,
     orderBy: { createdAt: 'desc' },
@@ -45,14 +66,31 @@ export default async function HomePage() {
     ),
   }))
 
-  // Fetch products by category for showcase
+  // Fetch products by category for showcase - optimized query
   const categoriesRaw = await prisma.category.findMany({
-    include: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
       products: {
-        take: 6,
-        include: {
-          manufacturer: true,
+        select: {
+          id: true,
+          name: true,
+          sku: true,
+          slug: true,
+          priceEU: true,
+          priceRU: true,
+          image: true,
+          manufacturer: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              logo: true,
+            },
+          },
         },
+        take: 6,
       },
     },
   })
