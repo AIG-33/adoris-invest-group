@@ -18,5 +18,7 @@ export interface CompanyConfig {
   secondaryColor: string | null
   accentColor: string | null
   showPrices: boolean
+  googleAnalyticsId: string | null
+  yandexMetrikaId: string | null
 }
 

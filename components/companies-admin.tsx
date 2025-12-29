@@ -20,6 +20,8 @@ interface Company {
   secondaryColor: string | null
   accentColor: string | null
   showPrices: boolean
+  googleAnalyticsId: string | null
+  yandexMetrikaId: string | null
   createdAt: string
   updatedAt: string
 }
@@ -43,6 +45,8 @@ export function CompaniesAdmin() {
     secondaryColor: '#666666',
     accentColor: '#000000',
     showPrices: true,
+    googleAnalyticsId: '',
+    yandexMetrikaId: '',
   })
   const [saving, setSaving] = useState(false)
 
@@ -86,6 +90,8 @@ export function CompaniesAdmin() {
       secondaryColor: company.secondaryColor || '#666666',
       accentColor: company.accentColor || '#000000',
       showPrices: company.showPrices !== undefined ? company.showPrices : true,
+      googleAnalyticsId: company.googleAnalyticsId || '',
+      yandexMetrikaId: company.yandexMetrikaId || '',
     })
     setShowAddForm(false)
   }
@@ -106,6 +112,8 @@ export function CompaniesAdmin() {
       primaryColor: '#333333',
       secondaryColor: '#666666',
       accentColor: '#000000',
+      googleAnalyticsId: '',
+      yandexMetrikaId: '',
     })
   }
 
@@ -405,6 +413,42 @@ export function CompaniesAdmin() {
                 />
               </div>
             </div>
+
+            {/* Analytics */}
+            <div className="md:col-span-2 space-y-4">
+              <h4 className="font-semibold text-neutral-700 border-b pb-2">Analytics</h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Google Analytics ID
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.googleAnalyticsId || ''}
+                    onChange={(e) => setFormData({ ...formData, googleAnalyticsId: e.target.value })}
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#333333]/20 focus:border-[#333333]"
+                    placeholder="G-XXXXXXXXXX"
+                  />
+                  <p className="text-xs text-neutral-500 mt-1">Google Analytics 4 Measurement ID (e.g., G-XXXXXXXXXX)</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-2">
+                    Яндекс.Метрика ID
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.yandexMetrikaId || ''}
+                    onChange={(e) => setFormData({ ...formData, yandexMetrikaId: e.target.value })}
+                    className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#333333]/20 focus:border-[#333333]"
+                    placeholder="12345678"
+                  />
+                  <p className="text-xs text-neutral-500 mt-1">Яндекс.Метрика counter ID (число)</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
             {/* Brand Colors */}
             <div className="md:col-span-2 space-y-4">

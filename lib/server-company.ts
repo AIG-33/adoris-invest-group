@@ -29,6 +29,8 @@ export async function getServerCompany(): Promise<CompanyConfig | null> {
         secondaryColor: true,
         accentColor: true,
         showPrices: true,
+        googleAnalyticsId: true,
+        yandexMetrikaId: true,
       },
     })
     
@@ -48,6 +50,8 @@ export async function getServerCompany(): Promise<CompanyConfig | null> {
         secondaryColor: fullCompany.secondaryColor,
         accentColor: fullCompany.accentColor,
         showPrices: fullCompany.showPrices,
+        googleAnalyticsId: fullCompany.googleAnalyticsId,
+        yandexMetrikaId: fullCompany.yandexMetrikaId,
       }
     }
   }

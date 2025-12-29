@@ -45,6 +45,8 @@ export async function getCompanyByDomain(domain: string): Promise<CompanyConfig 
       secondaryColor: company.secondaryColor,
       accentColor: company.accentColor,
       showPrices: company.showPrices !== undefined ? company.showPrices : true,
+      googleAnalyticsId: company.googleAnalyticsId,
+      yandexMetrikaId: company.yandexMetrikaId,
     }
   } catch (error) {
     console.error('Error fetching company by domain:', error)

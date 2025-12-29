@@ -92,6 +92,8 @@ model Company {
   secondaryColor String?   @default("#666666") // Secondary brand color
   accentColor    String?   @default("#000000") // Accent color
   showPrices     Boolean   @default(true) // Show prices or "Price on Request"
+  googleAnalyticsId String? // Google Analytics Measurement ID (e.g., G-XXXXXXXXXX)
+  yandexMetrikaId  String? // Яндекс.Метрика counter ID
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @default(now()) @updatedAt
   products       Product[]

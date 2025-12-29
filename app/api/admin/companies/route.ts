@@ -59,6 +59,8 @@ export async function POST(request: Request) {
       secondaryColor,
       accentColor,
       showPrices,
+      googleAnalyticsId,
+      yandexMetrikaId,
     } = body
 
     // Validate required fields
@@ -121,6 +123,8 @@ export async function POST(request: Request) {
         secondaryColor: secondaryColor || '#666666',
         accentColor: accentColor || '#000000',
         showPrices: showPrices !== undefined ? showPrices : true,
+        googleAnalyticsId: googleAnalyticsId || null,
+        yandexMetrikaId: yandexMetrikaId || null,
       },
     })
 
