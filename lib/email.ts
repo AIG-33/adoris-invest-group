@@ -11,6 +11,14 @@ function createTransporter() {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
+    // Improve deliverability
+    tls: {
+      rejectUnauthorized: false,
+    },
+    // Add connection pooling
+    pool: true,
+    maxConnections: 1,
+    maxMessages: 3,
   })
 }
 
@@ -90,10 +98,44 @@ export async function sendOrderConfirmationEmail({
     const companyAddress = company?.address || 'Tallinn, Estonia'
     const companyDomain = company?.domain || 'adorisgroup.com'
 
+    // Generate text version for better deliverability
+    const textVersion = `
+Order Confirmation - ${orderNumber}
+
+Dear ${customerName},
+
+Your order has been successfully received and is now being processed.
+
+Order Number: ${orderNumber}
+
+What Happens Next:
+1. Review Order Confirmation - Check the attached PDF for complete order details
+2. Payment Instructions - Detailed payment information will follow in a separate email
+3. Order Fulfillment - Expected delivery: 4-7 weeks after payment confirmation
+
+Important: All products are available by order only and sourced from European manufacturers. Delivery time may vary based on availability.
+
+Need Help?
+Our team is ready to assist you with any questions about your order.
+Email: ${companyEmail}
+${companyPhone ? `Phone: ${companyPhone}\n` : ''}Available: Monday-Friday, 9:00 AM - 6:00 PM EET
+
+Thank you for choosing ${companyName},
+Your Trusted Medical Equipment Partner
+
+${companyName}
+${companyAddress || ''}
+${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
+
+© ${new Date().getFullYear()} ${companyName}. All rights reserved.
+    `.trim()
+
     const mailOptions = {
       from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
       to,
-      subject: `✅ Order Confirmation - ${orderNumber}`,
+      replyTo: companyEmail,
+      subject: `Order Confirmation - ${orderNumber}`,
+      text: textVersion,
       html: `
         <!DOCTYPE html>
         <html>
@@ -247,7 +289,8 @@ export async function sendOrderConfirmationEmail({
                             </p>
                             <p style="margin: 12px 0 0 0; color: #555; font-size: 14px;">
                               📧 Email: <a href="mailto:${companyEmail}" style="color: #20a895; text-decoration: none; font-weight: 600;">${companyEmail}</a><br/>
-                              📞 Available: Monday-Friday, 9:00 AM - 6:00 PM EET
+                              ${companyPhone ? `📞 Phone: <a href="tel:${companyPhone}" style="color: #20a895; text-decoration: none; font-weight: 600;">${companyPhone}</a><br/>` : ''}
+                              Available: Monday-Friday, 9:00 AM - 6:00 PM EET
                             </p>
                           </td>
                         </tr>
@@ -266,14 +309,14 @@ export async function sendOrderConfirmationEmail({
                       <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
                           <td align="center">
-                            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px; font-weight: 600;">ADORIS INVEST GROUP OÜ</p>
-                            <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">Harju maakond, Tallinn, Kesklinna linnaosa</p>
-                            <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 13px;">Narva mnt 7-634, 10117, Estonia</p>
+                            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px; font-weight: 600;">${companyName}</p>
+                            ${companyAddress ? `<p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">${companyAddress}</p>` : ''}
+                            ${companyPhone ? `<p style="margin: 0 0 12px 0; color: #6b7280; font-size: 13px;">Phone: ${companyPhone}</p>` : ''}
                             <p style="margin: 0; color: #6b7280; font-size: 13px;">
-                              Email: <a href="mailto:info@adorisgroup.com" style="color: #20a895; text-decoration: none;">info@adorisgroup.com</a>
+                              Email: <a href="mailto:${companyEmail}" style="color: #20a895; text-decoration: none;">${companyEmail}</a>
                             </p>
                             <p style="margin: 15px 0 0 0; color: #9ca3af; font-size: 12px;">
-                              © ${new Date().getFullYear()} ADORIS INVEST GROUP. All rights reserved.
+                              © ${new Date().getFullYear()} ${companyName}. All rights reserved.
                             </p>
                           </td>
                         </tr>
@@ -295,6 +338,15 @@ export async function sendOrderConfirmationEmail({
           contentType: 'application/pdf',
         },
       ],
+      // Add headers to improve deliverability
+      headers: {
+        'Message-ID': `<${orderNumber}-${Date.now()}@${companyDomain}>`,
+        'X-Mailer': 'Next.js Email System',
+        'X-Priority': '1',
+        'Importance': 'high',
+        'List-Unsubscribe': `<mailto:${companyEmail}?subject=Unsubscribe>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
     }
 
           await transporter.sendMail(mailOptions)
@@ -304,7 +356,11 @@ export async function sendOrderConfirmationEmail({
             await transporter.sendMail({
               ...mailOptions,
               to: companyEmail,
-              subject: `🆕 New Order: ${orderNumber} - ${customerName}`,
+              subject: `New Order: ${orderNumber} - ${customerName}`,
+              headers: {
+                ...mailOptions.headers,
+                'Message-ID': `<${orderNumber}-internal-${Date.now()}@${companyDomain}>`,
+              },
             })
           }
 
@@ -475,11 +531,32 @@ export async function sendMagicLinkEmail({ to, url, company }: MagicLinkEmailOpt
     // Get company data with defaults
     const companyName = company?.name || 'ADORIS INVEST GROUP'
     const companyEmail = company?.email || 'info@adorisgroup.com'
+    const companyDomain = company?.domain || 'adorisgroup.com'
+
+    const textVersion = `
+Sign in to ${companyName}
+
+Click the link below to sign in to your ${companyName} account:
+
+${url}
+
+Or copy and paste this URL into your browser:
+${url}
+
+Security Note: This link will expire in 24 hours. If you didn't request this email, you can safely ignore it.
+
+Need help? Contact us at ${companyEmail}
+
+Best regards,
+${companyName} Team
+    `.trim()
 
     await transporter.sendMail({
       from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
       to,
+      replyTo: companyEmail,
       subject: `Sign in to ${companyName}`,
+      text: textVersion,
       html: `
         ${getEmailHeader(company)}
         <div style="padding: 30px; background: white;">
@@ -516,6 +593,11 @@ export async function sendMagicLinkEmail({ to, url, company }: MagicLinkEmailOpt
         </div>
         ${getEmailFooter(company)}
       `,
+      headers: {
+        'Message-ID': `<magic-link-${Date.now()}@${companyDomain}>`,
+        'X-Mailer': 'Next.js Email System',
+        'List-Unsubscribe': `<mailto:${companyEmail}?subject=Unsubscribe>`,
+      },
     })
 
     return { success: true }
@@ -547,11 +629,33 @@ export async function sendSupplierEmail({
     const companyEmail = company?.email || 'info@adorisgroup.com'
     const companyPhone = company?.phone || '+48793081310'
     const companyAddress = company?.address || 'Tallinn, Estonia'
+    const companyDomain = company?.domain || 'adorisgroup.com'
+
+    const textVersion = `
+New Supplier Application - ${supplierCompanyName}
+
+A new supplier application has been submitted through the website.
+
+Supplier Information:
+Company Name: ${supplierCompanyName}
+Contact Name: ${supplierContactName}
+Email: ${supplierEmail}
+Phone: ${supplierPhone}
+Product File: ${fileName}
+
+${notes && notes !== 'No additional notes' ? `Additional Notes:\n${notes}\n\n` : ''}
+The product catalog file (${fileName}) is attached to this email. Please review the supplier application and contact them if interested.
+
+Best regards,
+The ${companyName} Team
+    `.trim()
 
     await transporter.sendMail({
       from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
       to,
+      replyTo: supplierEmail,
       subject: `New Supplier Application - ${supplierCompanyName}`,
+      text: textVersion,
       html: `
         <!DOCTYPE html>
         <html>
@@ -663,6 +767,12 @@ export async function sendSupplierEmail({
           content: fileBuffer,
         },
       ],
+      headers: {
+        'Message-ID': `<supplier-${Date.now()}@${companyDomain}>`,
+        'X-Mailer': 'Next.js Email System',
+        'X-Priority': '1',
+        'Importance': 'high',
+      },
     })
 
     return { success: true }
