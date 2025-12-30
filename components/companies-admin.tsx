@@ -448,7 +448,6 @@ export function CompaniesAdmin() {
                 </div>
               </div>
             </div>
-          </div>
 
             {/* Brand Colors */}
             <div className="md:col-span-2 space-y-4">
