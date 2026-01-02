@@ -4,7 +4,7 @@ import './globals.css'
 import { Providers } from '@/components/providers'
 import { ColorSync } from '@/components/color-sync'
 import { HreflangTags } from '@/components/hreflang'
-import { Analytics } from '@/components/analytics'
+import { AnalyticsHead } from '@/components/analytics-head'
 import { getServerCompany } from '@/lib/server-company'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -127,10 +127,10 @@ export default async function RootLayout({
     >
       <head>
         <HreflangTags />
+        <AnalyticsHead company={company} />
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <ColorSync />
-        <Analytics company={company} />
         <Providers>{children}</Providers>
       </body>
     </html>
