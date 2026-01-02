@@ -1,7 +1,4 @@
-'use client'
-
 import Script from 'next/script'
-import { useEffect } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
 
 interface AnalyticsHeadProps {
@@ -9,39 +6,13 @@ interface AnalyticsHeadProps {
 }
 
 /**
- * Client component for analytics scripts
+ * Server component for analytics scripts
  * Uses Next.js Script with beforeInteractive strategy to load in head
+ * This ensures scripts are in head section for proper Google Analytics detection
  */
 export function AnalyticsHead({ company }: AnalyticsHeadProps) {
   const googleAnalyticsId = company?.googleAnalyticsId
   const yandexMetrikaId = company?.yandexMetrikaId
-
-  // Move scripts to head using useEffect
-  useEffect(() => {
-    if (googleAnalyticsId && typeof window !== 'undefined') {
-      // Create and append gtag.js script
-      const script1 = document.createElement('script')
-      script1.async = true
-      script1.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`
-      document.head.appendChild(script1)
-
-      // Create and append config script
-      const script2 = document.createElement('script')
-      script2.innerHTML = `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '${googleAnalyticsId}');
-      `
-      document.head.appendChild(script2)
-
-      return () => {
-        // Cleanup on unmount
-        document.head.removeChild(script1)
-        document.head.removeChild(script2)
-      }
-    }
-  }, [googleAnalyticsId])
 
   if (!googleAnalyticsId && !yandexMetrikaId) {
     return null
@@ -49,7 +20,30 @@ export function AnalyticsHead({ company }: AnalyticsHeadProps) {
 
   return (
     <>
-      {/* Яндекс.Метрика - using Script component */}
+      {/* Google Analytics 4 - Use beforeInteractive to load in head */}
+      {googleAnalyticsId && (
+        <>
+          <Script
+            id="google-analytics-gtag"
+            strategy="beforeInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+          />
+          <Script
+            id="google-analytics-config"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${googleAnalyticsId}');
+              `,
+            }}
+          />
+        </>
+      )}
+
+      {/* Яндекс.Метрика */}
       {yandexMetrikaId && (
         <>
           <Script
