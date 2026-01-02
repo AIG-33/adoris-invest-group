@@ -1,3 +1,7 @@
+'use client'
+
+import Script from 'next/script'
+import { useEffect } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
 
 interface AnalyticsHeadProps {
@@ -5,12 +9,39 @@ interface AnalyticsHeadProps {
 }
 
 /**
- * Server component for analytics scripts in <head>
- * Uses direct script tags for proper Google Analytics detection
+ * Client component for analytics scripts
+ * Uses Next.js Script with beforeInteractive strategy to load in head
  */
 export function AnalyticsHead({ company }: AnalyticsHeadProps) {
   const googleAnalyticsId = company?.googleAnalyticsId
   const yandexMetrikaId = company?.yandexMetrikaId
+
+  // Move scripts to head using useEffect
+  useEffect(() => {
+    if (googleAnalyticsId && typeof window !== 'undefined') {
+      // Create and append gtag.js script
+      const script1 = document.createElement('script')
+      script1.async = true
+      script1.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`
+      document.head.appendChild(script1)
+
+      // Create and append config script
+      const script2 = document.createElement('script')
+      script2.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${googleAnalyticsId}');
+      `
+      document.head.appendChild(script2)
+
+      return () => {
+        // Cleanup on unmount
+        document.head.removeChild(script1)
+        document.head.removeChild(script2)
+      }
+    }
+  }, [googleAnalyticsId])
 
   if (!googleAnalyticsId && !yandexMetrikaId) {
     return null
@@ -18,30 +49,12 @@ export function AnalyticsHead({ company }: AnalyticsHeadProps) {
 
   return (
     <>
-      {/* Google Analytics 4 - Direct script tags in head for proper detection */}
-      {googleAnalyticsId && (
-        <>
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
-          />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${googleAnalyticsId}');
-              `,
-            }}
-          />
-        </>
-      )}
-
-      {/* Яндекс.Метрика */}
+      {/* Яндекс.Метрика - using Script component */}
       {yandexMetrikaId && (
         <>
-          <script
+          <Script
+            id="yandex-metrika"
+            strategy="afterInteractive"
             dangerouslySetInnerHTML={{
               __html: `
                 (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};

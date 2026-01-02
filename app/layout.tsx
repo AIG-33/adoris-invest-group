@@ -127,10 +127,10 @@ export default async function RootLayout({
     >
       <head>
         <HreflangTags />
-        <AnalyticsHead company={company} />
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <ColorSync />
+        <AnalyticsHead company={company} />
         <Providers>{children}</Providers>
       </body>
     </html>
