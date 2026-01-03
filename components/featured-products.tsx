@@ -137,6 +137,8 @@ export function FeaturedProducts({ products, translations, company }: Props) {
                         ? 'object-cover transition-transform duration-500 group-hover/card:scale-110'
                         : 'object-contain transition-transform duration-500 group-hover/card:scale-110 p-4'
                     }
+                    sizes="(max-width: 768px) 280px, 320px"
+                    loading="lazy"
                   />
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
