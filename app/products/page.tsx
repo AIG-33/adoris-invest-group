@@ -1,10 +1,19 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { StructuredData } from '@/components/structured-data'
-import { Sidebar } from '@/components/sidebar'
 import { ProductGrid } from '@/components/product-grid'
-import { SortDropdown } from '@/components/sort-dropdown'
-import { ProductsActionButtons } from '@/components/products-action-buttons'
+import dynamic from 'next/dynamic'
+
+// Lazy load heavy components to reduce initial bundle size
+const Sidebar = dynamic(() => import('@/components/sidebar').then(mod => ({ default: mod.Sidebar })), {
+  loading: () => <div className="lg:w-64 h-64 bg-neutral-100 animate-pulse rounded-lg" />,
+})
+const SortDropdown = dynamic(() => import('@/components/sort-dropdown').then(mod => ({ default: mod.SortDropdown })), {
+  loading: () => <div className="w-32 h-10 bg-neutral-100 animate-pulse rounded-lg" />,
+})
+const ProductsActionButtons = dynamic(() => import('@/components/products-action-buttons').then(mod => ({ default: mod.ProductsActionButtons })), {
+  loading: () => <div className="w-24 h-10 bg-neutral-100 animate-pulse rounded-lg" />,
+})
 import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
@@ -16,8 +25,8 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
-// Revalidate every 60 seconds for better performance
-export const revalidate = 60
+// ISR: Revalidate every 5 minutes (300 seconds) for better performance
+export const revalidate = 300
 
 type SearchParams = {
   search?: string

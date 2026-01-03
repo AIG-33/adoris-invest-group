@@ -117,6 +117,8 @@ function CategoryRow({ category, company }: { category: Category; company: Compa
                   alt={product.name || 'Product'}
                   fill
                   className="object-contain transition-transform duration-500 group-hover/item:scale-110 p-4"
+                  sizes="(max-width: 768px) 200px, 240px"
+                  loading="lazy"
                 />
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />

@@ -15,7 +15,8 @@ import {
 } from '@/lib/seo'
 import type { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
+// ISR: Revalidate every 5 minutes (300 seconds) for better performance
+export const revalidate = 300
 
 export async function generateMetadata({
   params,
@@ -30,6 +31,7 @@ export async function generateMetadata({
     const company = await getServerCompany()
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
+    // Optimized query for metadata generation
     const product = await prisma.product.findFirst({
       where: {
         slug: productSlug,
@@ -37,9 +39,29 @@ export async function generateMetadata({
           slug: manufacturerSlug,
         },
       },
-      include: {
-        category: true,
-        manufacturer: true,
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        slug: true,
+        description: true,
+        priceEU: true,
+        priceRU: true,
+        image: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        manufacturer: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
     })
 
@@ -106,6 +128,7 @@ export default async function ProductPage({
     const language = (company?.language || 'en') as 'en' | 'ru'
     const dict = getDictionary(language)
 
+    // Optimized query for metadata generation
     const product = await prisma.product.findFirst({
       where: {
         slug: productSlug,
@@ -113,9 +136,29 @@ export default async function ProductPage({
           slug: manufacturerSlug,
         },
       },
-      include: {
-        category: true,
-        manufacturer: true,
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        slug: true,
+        description: true,
+        priceEU: true,
+        priceRU: true,
+        image: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        manufacturer: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
     })
 
@@ -123,17 +166,37 @@ export default async function ProductPage({
       notFound()
     }
 
-    // Get related products
+    // Get related products - optimized with select
     const relatedProductsRaw = await prisma.product.findMany({
       where: {
         categoryId: product?.categoryId,
         id: { not: product?.id },
       },
-      take: 4,
-      include: {
-        category: true,
-        manufacturer: true,
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        slug: true,
+        priceEU: true,
+        priceRU: true,
+        image: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        manufacturer: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logo: true,
+          },
+        },
       },
+      take: 4,
     })
 
     const productWithNumber = {
@@ -186,10 +249,17 @@ export default async function ProductPage({
   if (slug.length === 1) {
     const productSlug = slug[0]
 
+    // Optimized query for legacy redirect
     const product = await prisma.product.findUnique({
       where: { slug: productSlug },
-      include: {
-        manufacturer: true,
+      select: {
+        id: true,
+        slug: true,
+        manufacturer: {
+          select: {
+            slug: true,
+          },
+        },
       },
     })
 

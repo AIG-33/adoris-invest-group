@@ -3,7 +3,8 @@ import { prisma } from '@/lib/db';
 import { getCurrentCompany } from '@/lib/company';
 import { getProductPrice } from '@/lib/product-price';
 
-export const dynamic = 'force-dynamic';
+// Cache search results for 60 seconds
+export const revalidate = 60;
 
 export async function GET(request: Request) {
   try {
@@ -11,10 +12,14 @@ export async function GET(request: Request) {
     const query = searchParams.get('q');
 
     if (!query || query.length < 2) {
-      return NextResponse.json([]);
+      return NextResponse.json([], {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      });
     }
 
-    // Search by SKU or name
+    // Search by SKU or name - optimized with select
     const productsRaw = await prisma.product.findMany({
       where: {
         OR: [
@@ -32,9 +37,29 @@ export async function GET(request: Request) {
           },
         ],
       },
-      include: {
-        category: true,
-        manufacturer: true,
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        slug: true,
+        priceEU: true,
+        priceRU: true,
+        image: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        manufacturer: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logo: true,
+          },
+        },
       },
       take: 10, // Limit to 10 results for autocomplete
       orderBy: [
@@ -62,7 +87,11 @@ export async function GET(request: Request) {
       ),
     }));
 
-    return NextResponse.json(products);
+    return NextResponse.json(products, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      },
+    });
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Search error:', error);

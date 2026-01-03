@@ -15,8 +15,8 @@ import {
   generateItemListSchema,
 } from '@/lib/seo'
 
-// Revalidate every 60 seconds for better performance
-export const revalidate = 60
+// ISR: Revalidate every 5 minutes (300 seconds) for better performance
+export const revalidate = 300
 
 export default async function HomePage() {
   // Get current company

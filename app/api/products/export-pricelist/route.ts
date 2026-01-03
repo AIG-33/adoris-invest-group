@@ -2,15 +2,28 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import * as XLSX from 'xlsx'
 
-export const dynamic = 'force-dynamic'
+// Cache pricelist for 1 hour (3600 seconds)
+export const revalidate = 3600;
 
 export async function GET() {
   try {
-    // Get all products with their manufacturer and category
+    // Get all products with their manufacturer and category - optimized with select
     const products = await prisma.product.findMany({
-      include: {
-        manufacturer: true,
-        category: true,
+      select: {
+        sku: true,
+        name: true,
+        description: true,
+        priceEU: true,
+        manufacturer: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            name: true,
+          },
+        },
       },
       orderBy: [
         { manufacturer: { name: 'asc' } },
@@ -55,11 +68,12 @@ export async function GET() {
     const dateStr = date.toISOString().split('T')[0] // YYYY-MM-DD
     const filename = `IVD_Pricelist_${dateStr}.xlsx`
 
-    // Return Excel file as response
+    // Return Excel file as response with caching
     return new NextResponse(excelBuffer, {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
       },
     })
   } catch (error: any) {
