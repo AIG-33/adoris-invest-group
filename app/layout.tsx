@@ -9,7 +9,8 @@ import { getServerCompany } from '@/lib/server-company'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const dynamic = 'force-dynamic'
+// Use ISR for better performance - revalidate every 60 seconds
+export const revalidate = 60
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()

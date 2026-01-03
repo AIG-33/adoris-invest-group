@@ -16,7 +16,8 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
+// Revalidate every 60 seconds for better performance
+export const revalidate = 60
 
 type SearchParams = {
   search?: string
@@ -81,12 +82,32 @@ export default async function ProductsPage({ searchParams }: Props) {
   const totalProducts = await prisma.product.count({ where })
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
 
-  // Fetch products with pagination
+  // Fetch products with pagination - optimized with select instead of include
   const productsRaw = await prisma.product.findMany({
     where,
-    include: {
-      category: true,
-      manufacturer: true,
+    select: {
+      id: true,
+      name: true,
+      sku: true,
+      slug: true,
+      priceEU: true,
+      priceRU: true,
+      image: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+      manufacturer: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          logo: true,
+        },
+      },
     },
     orderBy,
     skip: (currentPage - 1) * ITEMS_PER_PAGE,
@@ -103,14 +124,17 @@ export default async function ProductsPage({ searchParams }: Props) {
     ),
   }))
 
-  // Fetch manufacturers for filters with product counts
+  // Fetch manufacturers for filters with product counts - optimized
   const manufacturers = await prisma.manufacturer.findMany({
-    orderBy: { name: 'asc' },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
       _count: {
         select: { products: true },
       },
     },
+    orderBy: { name: 'asc' },
   })
 
   // Build pagination URL

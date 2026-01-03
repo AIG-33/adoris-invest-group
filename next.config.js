@@ -24,6 +24,10 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   swcMinify: true,
+  // Bundle optimization
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-dropdown-menu', '@radix-ui/react-dialog'],
+  },
   // Headers for caching
   async headers() {
     return [

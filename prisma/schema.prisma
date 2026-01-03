@@ -98,6 +98,9 @@ model Company {
   updatedAt      DateTime  @default(now()) @updatedAt
   products       Product[]
   orders         Order[]
+
+  @@index([domain])
+  @@index([slug])
 }
 
 model Category {
@@ -105,6 +108,8 @@ model Category {
   name     String    @unique
   slug     String    @unique
   products Product[]
+
+  @@index([slug])
 }
 
 model Manufacturer {
@@ -115,6 +120,8 @@ model Manufacturer {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   products  Product[]
+
+  @@index([slug])
 }
 
 enum StockStatus {
@@ -144,6 +151,13 @@ model Product {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @default(now()) @updatedAt
   orderItems     OrderItem[]
+
+  @@index([featured])
+  @@index([categoryId])
+  @@index([manufacturerId])
+  @@index([slug])
+  @@index([priceEU])
+  @@index([priceRU])
 }
 
 enum OrderStatus {
