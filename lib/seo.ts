@@ -245,7 +245,7 @@ export function generateArticleSchema(
       name: company?.name || 'ADORIS INVEST GROUP OÜ',
       logo: {
         '@type': 'ImageObject',
-        url: company?.logo ? `${url.split('/').slice(0, 3).join('/')}${company.logo}` : undefined,
+        url: company?.logo ? getFullLogoUrl(company.logo, url.split('/').slice(0, 3).join('/')) : undefined,
       },
     },
   }
