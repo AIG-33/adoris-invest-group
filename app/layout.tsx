@@ -114,7 +114,7 @@ export default async function RootLayout({
   const accentColor = (company?.accentColor != null && company.accentColor !== '') 
     ? company.accentColor 
     : '#000000'
-  const logo = company?.logo || null
+  const logo = company?.logo ? normalizeLogoUrl(company.logo) : null
 
   return (
     <html 
