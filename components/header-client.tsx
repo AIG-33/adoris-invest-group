@@ -94,7 +94,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
   const companyEmail = company?.email || 'ceo@adorisgroup.com'
   const companyPhone = company?.phone || '+48793081310'
   const companyAddress = company?.address || 'Tallinn, Estonia'
-  const companyLogo = company?.logo || '/logo.png'
+  const companyLogo = normalizeLogoUrl(company?.logo)
 
   useEffect(() => {
     // Update cart count from localStorage
