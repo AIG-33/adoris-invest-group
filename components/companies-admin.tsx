@@ -329,7 +329,7 @@ export function CompaniesAdmin() {
                 {formData.logo && (
                   <div className="mt-2 relative w-32 h-32 border border-neutral-200 rounded-lg overflow-hidden">
                     <Image
-                      src={formData.logo}
+                      src={normalizeLogoUrl(formData.logo)}
                       alt="Logo preview"
                       fill
                       className="object-contain p-2"
