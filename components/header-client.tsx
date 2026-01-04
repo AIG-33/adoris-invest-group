@@ -8,7 +8,21 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
 import { getProductUrl } from '@/lib/product-url'
-import { normalizeLogoUrl } from '@/lib/logo-url'
+
+// Normalize logo URL to ensure it starts with a slash
+function normalizeLogoUrl(logo: string | null | undefined): string {
+  if (!logo) {
+    return '/logo.png'
+  }
+  
+  // If logo is already a full URL, return as is
+  if (logo.startsWith('http://') || logo.startsWith('https://')) {
+    return logo
+  }
+  
+  // Ensure logo starts with a slash
+  return logo.startsWith('/') ? logo : `/${logo}`
+}
 import {
   DropdownMenu,
   DropdownMenuContent,
