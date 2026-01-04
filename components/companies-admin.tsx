@@ -5,6 +5,21 @@ import { Building2, Edit, Trash2, Plus, Save, X, Upload, Globe, Mail, Phone, Map
 import toast from 'react-hot-toast'
 import Image from 'next/image'
 
+// Normalize logo URL to ensure it starts with a slash
+function normalizeLogoUrl(logo: string | null | undefined): string {
+  if (!logo) {
+    return '/logo.png'
+  }
+  
+  // If logo is already a full URL, return as is
+  if (logo.startsWith('http://') || logo.startsWith('https://')) {
+    return logo
+  }
+  
+  // Ensure logo starts with a slash
+  return logo.startsWith('/') ? logo : `/${logo}`
+}
+
 interface Company {
   id: string
   name: string
@@ -580,7 +595,7 @@ export function CompaniesAdmin() {
                         {company.logo && (
                           <div className="relative w-10 h-10 border border-neutral-200 rounded overflow-hidden">
                             <Image
-                              src={company.logo}
+                              src={normalizeLogoUrl(company.logo)}
                               alt={company.name}
                               fill
                               className="object-contain p-1"

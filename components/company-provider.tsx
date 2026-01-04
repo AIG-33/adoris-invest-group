@@ -22,9 +22,25 @@ export function CompanyProvider({ children }: { children: ReactNode }) {
   const accentColor = typeof window !== 'undefined'
     ? document.documentElement.style.getPropertyValue('--company-accent') || '#000000'
     : '#000000'
-  const logo = typeof window !== 'undefined'
+  // Normalize logo URL to ensure it starts with a slash
+  const normalizeLogoUrl = (logo: string | null | undefined): string => {
+    if (!logo) {
+      return '/logo.png'
+    }
+    
+    // If logo is already a full URL, return as is
+    if (logo.startsWith('http://') || logo.startsWith('https://')) {
+      return logo
+    }
+    
+    // Ensure logo starts with a slash
+    return logo.startsWith('/') ? logo : `/${logo}`
+  }
+
+  const rawLogo = typeof window !== 'undefined'
     ? document.documentElement.getAttribute('data-company-logo')
     : null
+  const logo = rawLogo ? normalizeLogoUrl(rawLogo) : null
 
   const colors: CompanyColors = {
     primary: primaryColor,
