@@ -31,7 +31,8 @@ export function HeroSection({ translations }: HeroSectionProps) {
       title: translations.reagentsTitle,
       subtitle: translations.reagentsSubtitle,
       description: translations.reagentsDescription,
-      image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1920&h=1080&fit=crop',
+      // Optimized image size: reduced from 1920x1080 to 1200x675 for faster loading
+      image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=1200&h=675&fit=crop&q=80',
       cta: translations.shopNow,
       link: '/products',
     },
@@ -39,7 +40,8 @@ export function HeroSection({ translations }: HeroSectionProps) {
       title: translations.bulkOrderTitle,
       subtitle: translations.bulkOrderSubtitle,
       description: translations.bulkOrderDescription,
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1920&h=1080&fit=crop',
+      // Optimized image size: reduced from 1920x1080 to 1200x675 for faster loading
+      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=675&fit=crop&q=80',
       cta: translations.tryBulkOrder,
       link: '/bulk-order',
     },
@@ -47,7 +49,8 @@ export function HeroSection({ translations }: HeroSectionProps) {
       title: translations.supplierTitle,
       subtitle: translations.supplierSubtitle,
       description: translations.supplierDescription,
-      image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1920&h=1080&fit=crop',
+      // Optimized image size: reduced from 1920x1080 to 1200x675 for faster loading
+      image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&h=675&fit=crop&q=80',
       cta: translations.becomeSupplier,
       link: '/supplier',
     },
@@ -84,7 +87,7 @@ export function HeroSection({ translations }: HeroSectionProps) {
               className="object-cover"
               priority={idx === 0}
               loading={idx === 0 ? 'eager' : 'lazy'}
-              quality={85}
+              quality={75}
               sizes="100vw"
             />
             {/* Dark Gradient Overlay - Stronger on Mobile */}

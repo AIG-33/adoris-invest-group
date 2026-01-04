@@ -25,36 +25,72 @@ export default async function HomePage() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
 
-  // Fetch featured products - optimized query
-  const featuredProductsRaw = await prisma.product.findMany({
-    where: { featured: true },
-    select: {
-      id: true,
-      name: true,
-      sku: true,
-      slug: true,
-      priceEU: true,
-      priceRU: true,
-      image: true,
-      category: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
+  // Fetch data in parallel for better performance
+  const [featuredProductsRaw, categoriesRaw] = await Promise.all([
+    // Fetch featured products - optimized query, reduced count for faster loading
+    prisma.product.findMany({
+      where: { featured: true },
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        slug: true,
+        priceEU: true,
+        priceRU: true,
+        image: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        manufacturer: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logo: true,
+          },
         },
       },
-      manufacturer: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          logo: true,
+      take: 6, // Reduced from 8 to 6 for faster initial load
+      orderBy: { createdAt: 'desc' },
+    }),
+    // Fetch products by category for showcase - only one category for performance
+    // Only load equipment-imported category to reduce initial load time
+    prisma.category.findMany({
+      where: {
+        slug: 'equipment-imported', // Only one category to reduce load
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        products: {
+          select: {
+            id: true,
+            name: true,
+            sku: true,
+            slug: true,
+            priceEU: true,
+            priceRU: true,
+            image: true,
+            manufacturer: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                logo: true,
+              },
+            },
+          },
+          take: 4, // Reduced from 6 to 4 for faster loading
+          orderBy: { createdAt: 'desc' },
         },
       },
-    },
-    take: 8,
-    orderBy: { createdAt: 'desc' },
-  })
+    }),
+  ])
 
   // Convert Decimal to number and apply correct price
   const featuredProducts = featuredProductsRaw.map(p => ({
@@ -65,35 +101,6 @@ export default async function HomePage() {
       priceType as 'EU' | 'RU'
     ),
   }))
-
-  // Fetch products by category for showcase - optimized query
-  const categoriesRaw = await prisma.category.findMany({
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      products: {
-        select: {
-          id: true,
-          name: true,
-          sku: true,
-          slug: true,
-          priceEU: true,
-          priceRU: true,
-          image: true,
-          manufacturer: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-              logo: true,
-            },
-          },
-        },
-        take: 6,
-      },
-    },
-  })
 
   // Convert Decimal to number and apply correct price
   const categories = categoriesRaw.map(cat => ({

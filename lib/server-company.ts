@@ -1,12 +1,14 @@
 import { headers } from 'next/headers'
+import { cache } from 'react'
 import { getCurrentCompany } from './company'
 import type { CompanyConfig } from './company-types'
 import { prisma } from './db'
 
 /**
  * Get current company in server components with full details including colors
+ * Uses React.cache to deduplicate requests within the same render
  */
-export async function getServerCompany(): Promise<CompanyConfig | null> {
+export const getServerCompany = cache(async (): Promise<CompanyConfig | null> => {
   const headersList = await headers()
   const company = await getCurrentCompany(headersList)
   
@@ -57,7 +59,7 @@ export async function getServerCompany(): Promise<CompanyConfig | null> {
   }
   
   return company
-}
+})
 
 /**
  * Alias for getServerCompany for consistency
