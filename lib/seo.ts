@@ -1,4 +1,5 @@
 import type { CompanyConfig } from './company-types'
+import { getFullLogoUrl } from './logo-url'
 import { getProductUrl } from './product-url'
 
 /**

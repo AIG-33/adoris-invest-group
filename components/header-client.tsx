@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
 import { getProductUrl } from '@/lib/product-url'
+import { normalizeLogoUrl } from '@/lib/logo-url'
 import {
   DropdownMenu,
   DropdownMenuContent,

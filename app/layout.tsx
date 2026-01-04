@@ -6,6 +6,7 @@ import { ColorSync } from '@/components/color-sync'
 import { HreflangTags } from '@/components/hreflang'
 import { AnalyticsHead } from '@/components/analytics-head'
 import { getServerCompany } from '@/lib/server-company'
+import { normalizeLogoUrl } from '@/lib/logo-url'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -14,7 +15,7 @@ export const revalidate = 300
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()
-  const logo = company?.logo || '/logo.png'
+  const logo = normalizeLogoUrl(company?.logo)
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
   const fullLogoUrl = logo.startsWith('http') ? logo : `${baseUrl}${logo}`
   const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'

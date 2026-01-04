@@ -34,7 +34,7 @@ export function FooterClient({ company, translations }: FooterClientProps) {
   const companyEmail = company?.email || 'ceo@adorisgroup.com'
   const companyPhone = company?.phone || '+48793081310'
   const companyAddress = company?.address || 'Ruunaoja tn 3-36, 11415 Tallinn, Estonia'
-  const companyLogo = company?.logo || '/logo.png'
+  const companyLogo = normalizeLogoUrl(company?.logo)
   
   // Extract address parts
   const addressParts = companyAddress.split(',').map(s => s.trim())
