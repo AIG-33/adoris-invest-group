@@ -4,6 +4,21 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { CompanyConfig } from '@/lib/company-types'
 
+// Normalize logo URL to ensure it starts with a slash
+function normalizeLogoUrl(logo: string | null | undefined): string {
+  if (!logo) {
+    return '/logo.png'
+  }
+  
+  // If logo is already a full URL, return as is
+  if (logo.startsWith('http://') || logo.startsWith('https://')) {
+    return logo
+  }
+  
+  // Ensure logo starts with a slash
+  return logo.startsWith('/') ? logo : `/${logo}`
+}
+
 interface NavTranslations {
   home: string
   products: string
