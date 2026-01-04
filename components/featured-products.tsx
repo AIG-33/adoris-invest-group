@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import { useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
+import { normalizeImageUrl } from '@/lib/normalize-image-url'
 
 type Product = {
   id: string
