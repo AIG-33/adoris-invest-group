@@ -164,7 +164,7 @@ export function CartContent({ translations, company }: CartContentProps) {
                   <Image
                     src={
                       (item?.image && item.image.length > 0) || (item?.imageUrl && item.imageUrl.length > 0)
-                        ? normalizeImageUrl(item.image || item.imageUrl)
+                        ? normalizeImageUrl(item?.image || item?.imageUrl || null)
                         : item?.manufacturer?.logo && item.manufacturer.logo.length > 0
                         ? normalizeImageUrl(item.manufacturer.logo)
                         : '/placeholder.svg'

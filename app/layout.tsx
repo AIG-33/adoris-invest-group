@@ -15,7 +15,7 @@ export const revalidate = 300
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()
-  const logo = company?.logo ? normalizeLogoUrl(company.logo) : null
+  const logo = company?.logo ? normalizeLogoUrl(company.logo) : '/logo.png'
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
   const fullLogoUrl = logo.startsWith('http') ? logo : `${baseUrl}${logo}`
   const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
