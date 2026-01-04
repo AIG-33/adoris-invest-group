@@ -158,6 +158,7 @@ model Product {
   @@index([slug])
   @@index([priceEU])
   @@index([priceRU])
+  @@index([createdAt])
 }
 
 enum OrderStatus {

@@ -26,7 +26,7 @@ export default async function HomePage() {
   const dict = getDictionary(language)
 
   // Fetch data in parallel for better performance
-  const [featuredProductsRaw, categoriesRaw] = await Promise.all([
+  const [featuredProductsRaw, categoryRaw, categoryProductsRaw] = await Promise.all([
     // Fetch featured products - optimized query, reduced count for faster loading
     prisma.product.findMany({
       where: { featured: true },
@@ -57,9 +57,8 @@ export default async function HomePage() {
       take: 6, // Reduced from 8 to 6 for faster initial load
       orderBy: { createdAt: 'desc' },
     }),
-    // Fetch products by category for showcase - only one category for performance
-    // Only load equipment-imported category to reduce initial load time
-    prisma.category.findMany({
+    // Fetch category info only (without products for better performance)
+    prisma.category.findUnique({
       where: {
         slug: 'equipment-imported', // Only one category to reduce load
       },
@@ -67,28 +66,34 @@ export default async function HomePage() {
         id: true,
         name: true,
         slug: true,
-        products: {
+      },
+    }),
+    // Fetch products separately for better query performance
+    prisma.product.findMany({
+      where: {
+        category: {
+          slug: 'equipment-imported',
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        slug: true,
+        priceEU: true,
+        priceRU: true,
+        image: true,
+        manufacturer: {
           select: {
             id: true,
             name: true,
-            sku: true,
             slug: true,
-            priceEU: true,
-            priceRU: true,
-            image: true,
-            manufacturer: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                logo: true,
-              },
-            },
+            logo: true,
           },
-          take: 4, // Reduced from 6 to 4 for faster loading
-          orderBy: { createdAt: 'desc' },
         },
       },
+      take: 4, // Reduced from 6 to 4 for faster loading
+      orderBy: { createdAt: 'desc' },
     }),
   ])
 
@@ -103,17 +108,22 @@ export default async function HomePage() {
   }))
 
   // Convert Decimal to number and apply correct price
-  const categories = categoriesRaw.map(cat => ({
-    ...cat,
-    products: cat.products.map(p => ({
-      ...p,
-      price: getProductPrice(
-        p.priceEU,
-        p.priceRU,
-        priceType as 'EU' | 'RU'
-      ),
-    })),
-  }))
+  // Combine category with products
+  const categories = categoryRaw
+    ? [
+        {
+          ...categoryRaw,
+          products: categoryProductsRaw.map(p => ({
+            ...p,
+            price: getProductPrice(
+              p.priceEU,
+              p.priceRU,
+              priceType as 'EU' | 'RU'
+            ),
+          })),
+        },
+      ]
+    : []
 
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
   const structuredData = [
