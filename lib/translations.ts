@@ -29,6 +29,18 @@ export interface Translations {
       minimumOrder: string
       browseCatalog: string
       viewTerms: string
+      stats: {
+        medicalProducts: { value: string; label: string; description: string }
+        manufacturers: { value: string; label: string; description: string }
+        compliance: { value: string; label: string; description: string }
+        delivery: { value: string; label: string; description: string }
+      }
+      features: {
+        originalProducts: { title: string; description: string }
+        volumeDiscounts: { title: string; description: string }
+        coldChain: { title: string; description: string }
+        exwVilnius: { title: string; description: string }
+      }
     }
   }
   
@@ -499,6 +511,46 @@ const translations: Record<Language, Translations> = {
         minimumOrder: 'Minimum order €10,000 · 100% prepayment · 4-7 weeks delivery',
         browseCatalog: 'Browse Catalog',
         viewTerms: 'View Terms',
+        stats: {
+          medicalProducts: {
+            value: '100,000+',
+            label: 'Medical Products',
+            description: 'Comprehensive catalog',
+          },
+          manufacturers: {
+            value: '50+',
+            label: 'European Manufacturers',
+            description: 'Original products only',
+          },
+          compliance: {
+            value: '100%',
+            label: 'Compliance',
+            description: 'Full regulatory approval',
+          },
+          delivery: {
+            value: '4-7',
+            label: 'Weeks Delivery',
+            description: 'To Vilnius warehouse',
+          },
+        },
+        features: {
+          originalProducts: {
+            title: 'Original Products',
+            description: 'Only authentic products from verified European manufacturers',
+          },
+          volumeDiscounts: {
+            title: 'Volume Discounts',
+            description: '5% discount for €50k+ orders, 10% for €100k+ orders',
+          },
+          coldChain: {
+            title: 'Cold Chain Compliance',
+            description: 'Full temperature control for sensitive medical products',
+          },
+          exwVilnius: {
+            title: 'EXW Vilnius',
+            description: 'Flexible delivery terms with warehouse in Vilnius',
+          },
+        },
       },
     },
     nav: {
@@ -988,6 +1040,46 @@ const translations: Record<Language, Translations> = {
         minimumOrder: 'Минимальный заказ €10,000 · 100% предоплата · Доставка 4-7 недель',
         browseCatalog: 'Просмотреть каталог',
         viewTerms: 'Посмотреть условия',
+        stats: {
+          medicalProducts: {
+            value: '100,000+',
+            label: 'Медицинских товаров',
+            description: 'Полный каталог',
+          },
+          manufacturers: {
+            value: '50+',
+            label: 'Европейских производителей',
+            description: 'Только оригинальная продукция',
+          },
+          compliance: {
+            value: '100%',
+            label: 'Соответствие',
+            description: 'Полное нормативное одобрение',
+          },
+          delivery: {
+            value: '4-7',
+            label: 'Недель доставка',
+            description: 'На склад в Вильнюсе',
+          },
+        },
+        features: {
+          originalProducts: {
+            title: 'Оригинальная продукция',
+            description: 'Только подлинные товары от проверенных европейских производителей',
+          },
+          volumeDiscounts: {
+            title: 'Скидки за объем',
+            description: '5% скидка при заказе от €50k, 10% при заказе от €100k',
+          },
+          coldChain: {
+            title: 'Соблюдение холодовой цепи',
+            description: 'Полный контроль температуры для чувствительных медицинских товаров',
+          },
+          exwVilnius: {
+            title: 'EXW Вильнюс',
+            description: 'Гибкие условия доставки со складом в Вильнюсе',
+          },
+        },
       },
     },
     nav: {

@@ -9,6 +9,18 @@ interface StatsSectionTranslations {
   minimumOrder: string
   browseCatalog: string
   viewTerms: string
+  stats: {
+    medicalProducts: { value: string; label: string; description: string }
+    manufacturers: { value: string; label: string; description: string }
+    compliance: { value: string; label: string; description: string }
+    delivery: { value: string; label: string; description: string }
+  }
+  features: {
+    originalProducts: { title: string; description: string }
+    volumeDiscounts: { title: string; description: string }
+    coldChain: { title: string; description: string }
+    exwVilnius: { title: string; description: string }
+  }
 }
 
 interface StatsSectionProps {
@@ -16,51 +28,7 @@ interface StatsSectionProps {
   translations: StatsSectionTranslations
 }
 
-const stats = [
-  {
-    icon: Globe,
-    value: '100,000+',
-    label: 'Medical Products',
-    description: 'Comprehensive catalog',
-  },
-  {
-    icon: Building2,
-    value: '50+',
-    label: 'European Manufacturers',
-    description: 'Original products only',
-  },
-  {
-    icon: Shield,
-    value: '100%',
-    label: 'Compliance',
-    description: 'Full regulatory approval',
-  },
-  {
-    icon: Award,
-    value: '4-7',
-    label: 'Weeks Delivery',
-    description: 'To Vilnius warehouse',
-  },
-]
-
-const features = [
-  {
-    title: 'Original Products',
-    description: 'Only authentic products from verified European manufacturers',
-  },
-  {
-    title: 'Volume Discounts',
-    description: '5% discount for €50k+ orders, 10% for €100k+ orders',
-  },
-  {
-    title: 'Cold Chain Compliance',
-    description: 'Full temperature control for sensitive medical products',
-  },
-  {
-    title: 'EXW Vilnius',
-    description: 'Flexible delivery terms with warehouse in Vilnius',
-  },
-]
+// Stats will be generated from translations
 
 export function StatsSection({ companyName = 'IVD Group', translations }: StatsSectionProps) {
   const [isVisible, setIsVisible] = useState(false)
@@ -82,6 +50,34 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
 
     return () => observer.disconnect()
   }, [])
+
+  // Generate stats from translations
+  const stats = [
+    {
+      icon: Globe,
+      ...translations.stats.medicalProducts,
+    },
+    {
+      icon: Building2,
+      ...translations.stats.manufacturers,
+    },
+    {
+      icon: Shield,
+      ...translations.stats.compliance,
+    },
+    {
+      icon: Award,
+      ...translations.stats.delivery,
+    },
+  ]
+
+  // Generate features from translations
+  const features = [
+    translations.features.originalProducts,
+    translations.features.volumeDiscounts,
+    translations.features.coldChain,
+    translations.features.exwVilnius,
+  ]
 
   return (
     <section ref={sectionRef} className="relative py-20">
