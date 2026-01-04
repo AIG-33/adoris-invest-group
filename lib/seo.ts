@@ -20,7 +20,7 @@ export function generateOrganizationSchema(company: CompanyConfig | null, baseUr
   const companyEmail = company?.email || 'info@adorisgroup.com'
   const companyPhone = company?.phone || '+48793081310'
   const companyAddress = company?.address || 'Tallinn, Estonia'
-  const logo = company?.logo ? `${baseUrl}${company.logo}` : `${baseUrl}/logo.png`
+  const logo = getFullLogoUrl(company?.logo, baseUrl)
 
   return {
     '@context': 'https://schema.org',

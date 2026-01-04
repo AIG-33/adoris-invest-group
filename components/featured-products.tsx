@@ -125,9 +125,9 @@ export function FeaturedProducts({ products, translations, company }: Props) {
                   <Image
                     src={
                       product.image && product.image.length > 0
-                        ? product.image
+                        ? normalizeImageUrl(product.image)
                         : product.manufacturer?.logo && product.manufacturer.logo.length > 0
-                        ? product.manufacturer.logo
+                        ? normalizeImageUrl(product.manufacturer.logo)
                         : '/placeholder.svg'
                     }
                     alt={`${product.name || 'Product'} - ${product.manufacturer?.name || ''} ${product.category?.name || 'Medical Equipment'}`}

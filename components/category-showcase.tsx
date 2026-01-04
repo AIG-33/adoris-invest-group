@@ -6,6 +6,7 @@ import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
+import { normalizeImageUrl } from '@/lib/normalize-image-url'
 
 type Product = {
   id: string
@@ -109,9 +110,9 @@ function CategoryRow({ category, company }: { category: Category; company: Compa
                 <Image
                   src={
                     product.image && product.image.length > 0
-                      ? product.image
+                      ? normalizeImageUrl(product.image)
                       : product.manufacturer?.logo && product.manufacturer.logo.length > 0
-                      ? product.manufacturer.logo
+                      ? normalizeImageUrl(product.manufacturer.logo)
                       : '/placeholder.svg'
                   }
                   alt={product.name || 'Product'}

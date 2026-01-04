@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ShoppingCart, Eye } from 'lucide-react'
 import { useState } from 'react'
 import { getProductUrl } from '@/lib/product-url'
+import { normalizeImageUrl } from '@/lib/normalize-image-url'
 
 interface Product {
   id: string
@@ -79,9 +80,9 @@ export function ProductGrid({ products, search, company }: ProductGridProps) {
                   <Image
                     src={
                       product?.image && product.image.length > 0
-                        ? product.image
+                        ? normalizeImageUrl(product.image)
                         : product?.manufacturer?.logo && product.manufacturer.logo.length > 0
-                        ? product.manufacturer.logo
+                        ? normalizeImageUrl(product.manufacturer.logo)
                         : '/placeholder.svg'
                     }
                     alt={`${product?.name || 'Product'} - ${product?.manufacturer?.name || ''} ${product?.category?.name || 'Medical Equipment'}`}

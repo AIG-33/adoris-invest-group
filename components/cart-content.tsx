@@ -7,6 +7,7 @@ import { Minus, Plus, X, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
+import { normalizeImageUrl } from '@/lib/normalize-image-url'
 
 interface CartItem {
   id: string
@@ -163,9 +164,9 @@ export function CartContent({ translations, company }: CartContentProps) {
                   <Image
                     src={
                       (item?.image && item.image.length > 0) || (item?.imageUrl && item.imageUrl.length > 0)
-                        ? (item.image || item.imageUrl)
+                        ? normalizeImageUrl(item.image || item.imageUrl)
                         : item?.manufacturer?.logo && item.manufacturer.logo.length > 0
-                        ? item.manufacturer.logo
+                        ? normalizeImageUrl(item.manufacturer.logo)
                         : '/placeholder.svg'
                     }
                     alt={`${item?.name || 'Product'} - SKU: ${item?.sku || ''} ${item?.manufacturer?.name || ''}`}

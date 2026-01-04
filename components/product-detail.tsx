@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react'
 import { ShoppingCart, Minus, Plus, Truck, Edit } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
+import { normalizeImageUrl } from '@/lib/normalize-image-url'
 
 interface Product {
   id: string
@@ -91,9 +92,9 @@ export function ProductDetail({ product, relatedProducts, translations, company 
             <Image
               src={
                 product?.image && product.image.length > 0
-                  ? product.image
+                  ? normalizeImageUrl(product.image)
                   : product?.manufacturer?.logo && product.manufacturer.logo.length > 0
-                  ? product.manufacturer.logo
+                  ? normalizeImageUrl(product.manufacturer.logo)
                   : '/placeholder.svg'
               }
               alt={`${product?.name || 'Product'} - ${product?.manufacturer?.name || ''} ${product?.category?.name || 'Medical Equipment'}`}
@@ -302,9 +303,9 @@ export function ProductDetail({ product, relatedProducts, translations, company 
                   <Image
                     src={
                       relProduct?.image && relProduct.image.length > 0
-                        ? relProduct.image
+                        ? normalizeImageUrl(relProduct.image)
                         : relProduct?.manufacturer?.logo && relProduct.manufacturer.logo.length > 0
-                        ? relProduct.manufacturer.logo
+                        ? normalizeImageUrl(relProduct.manufacturer.logo)
                         : '/placeholder.svg'
                     }
                     alt={`${relProduct?.name || 'Product'} - ${relProduct?.manufacturer?.name || ''} ${relProduct?.category?.name || 'Medical Equipment'}`}
