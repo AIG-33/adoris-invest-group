@@ -87,41 +87,56 @@ export default async function ProductsPage({ searchParams }: Props) {
     orderBy = { [priceField]: 'desc' }
   }
 
-  // Get total count for pagination
-  const totalProducts = await prisma.product.count({ where })
-  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
+  // Execute all database queries in parallel for better performance
+  const [totalProducts, productsRaw, manufacturers] = await Promise.all([
+    // Get total count for pagination
+    prisma.product.count({ where }),
+    
+    // Fetch products with pagination - optimized with select instead of include
+    prisma.product.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        slug: true,
+        priceEU: true,
+        priceRU: true,
+        image: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        manufacturer: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            logo: true,
+          },
+        },
+      },
+      orderBy,
+      skip: (currentPage - 1) * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
+    }),
+    
+    // Fetch manufacturers for filters - removed _count for better performance
+    // Product counts can be calculated client-side if needed
+    prisma.manufacturer.findMany({
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+      orderBy: { name: 'asc' },
+    }),
+  ])
 
-  // Fetch products with pagination - optimized with select instead of include
-  const productsRaw = await prisma.product.findMany({
-    where,
-    select: {
-      id: true,
-      name: true,
-      sku: true,
-      slug: true,
-      priceEU: true,
-      priceRU: true,
-      image: true,
-      category: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-        },
-      },
-      manufacturer: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          logo: true,
-        },
-      },
-    },
-    orderBy,
-    skip: (currentPage - 1) * ITEMS_PER_PAGE,
-    take: ITEMS_PER_PAGE,
-  })
+  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
 
   // Convert Decimal to number and apply correct price
   const products = productsRaw.map(p => ({
@@ -132,19 +147,6 @@ export default async function ProductsPage({ searchParams }: Props) {
       priceType as 'EU' | 'RU'
     ),
   }))
-
-  // Fetch manufacturers for filters with product counts - optimized
-  const manufacturers = await prisma.manufacturer.findMany({
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      _count: {
-        select: { products: true },
-      },
-    },
-    orderBy: { name: 'asc' },
-  })
 
   // Build pagination URL
   const buildPageUrl = (pageNum: number) => {
