@@ -85,7 +85,7 @@ export function Sidebar({
                   {man?.name}
                 </span>
                 <span className="text-xs text-neutral-400">
-                  {man?._count?.products || 0}
+                  {/* Product count removed for performance - can be added back if needed */}
                 </span>
               </label>
             )) || []}
