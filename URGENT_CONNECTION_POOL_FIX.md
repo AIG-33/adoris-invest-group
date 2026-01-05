@@ -23,8 +23,11 @@ Current connection pool timeout: 10, connection limit: 1
 1. Откройте [Supabase Dashboard](https://app.supabase.com)
 2. Выберите ваш проект
 3. Перейдите в **Settings** → **Database**
-4. Найдите секцию **Connection Pooling**
-5. Скопируйте **Connection string** с портом **6543** (НЕ 5432!)
+4. Найдите секцию **Connection Pooling** или вкладку **Connection String**
+5. **ВАЖНО:** В выпадающем списке выберите:
+   - **Source:** "Connection Pooling" (НЕ "Primary Database")
+   - **Method:** "Connection Pooling" или "Session mode" (НЕ "Direct connection")
+6. Скопируйте **Connection string** с портом **6543** (НЕ 5432!)
 
 ### Шаг 2: Обновить DATABASE_URL в Vercel
 
