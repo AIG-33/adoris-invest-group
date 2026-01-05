@@ -23,11 +23,13 @@ Current connection pool timeout: 10, connection limit: 1
 1. Откройте [Supabase Dashboard](https://app.supabase.com)
 2. Выберите ваш проект
 3. Перейдите в **Settings** → **Database**
-4. Найдите секцию **Connection Pooling** или вкладку **Connection String**
-5. **ВАЖНО:** В выпадающем списке выберите:
-   - **Source:** "Connection Pooling" (НЕ "Primary Database")
-   - **Method:** "Connection Pooling" или "Session mode" (НЕ "Direct connection")
+4. Найдите вкладку **Connection String**
+5. **ВАЖНО:** В выпадающих списках выберите:
+   - **Type:** "URI" ✅
+   - **Source:** "Primary Database" ✅ (это единственная опция - оставьте как есть)
+   - **Method:** **"Transaction pooler"** ✅ (НЕ "Direct connection")
 6. Скопируйте **Connection string** с портом **6543** (НЕ 5432!)
+   - URL должен выглядеть: `postgres://postgres:password@db.xxx.supabase.co:6543/postgres`
 
 ### Шаг 2: Обновить DATABASE_URL в Vercel
 

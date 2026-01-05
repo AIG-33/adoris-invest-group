@@ -6,27 +6,27 @@
 
 1. **Type:** `URI` ✅ (уже правильно)
 
-2. **Source:** Выберите **"Connection Pooling"** или **"Session mode"**
-   - ❌ НЕ выбирайте "Primary Database"
-   - ✅ Выберите "Connection Pooling" или "Session mode"
+2. **Source:** Оставьте **"Primary Database"** ✅
+   - Это единственная доступная опция - это нормально
+   - Важно выбрать правильный Method
 
-3. **Method:** Выберите **"Connection Pooling"** или **"Session mode"**
+3. **Method:** Выберите **"Transaction pooler"** ✅
+   - ✅ Это правильный выбор для Vercel serverless
    - ❌ НЕ выбирайте "Direct connection"
-   - ✅ Выберите "Connection Pooling" или "Session mode"
+   - Описание: "Ideal for stateless applications like serverless functions"
 
 ### Что вы получите:
 
-После выбора Connection Pooling, URL будет выглядеть так:
+После выбора "Transaction pooler" в Method, URL будет выглядеть так:
 
 ```
-postgresql://postgres.xxxxx:[YOUR-PASSWORD]@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
+postgres://postgres:[YOUR-PASSWORD]@db.xxxxx.supabase.co:6543/postgres
 ```
 
-Или:
-
-```
-postgresql://postgres.xxxxx:[YOUR-PASSWORD]@db.xxxxx.supabase.co:6543/postgres
-```
+**Важно:** Обратите внимание на:
+- ✅ Порт **6543** (это connection pooler)
+- ✅ Хост `db.xxxxx.supabase.co` (может быть также `pooler.supabase.com`)
+- ⚠️ Примечание: "Does not support PREPARE statements" - это нормально для pooler
 
 ### Ключевые отличия:
 
@@ -43,8 +43,8 @@ postgresql://postgres.xxxxx:[YOUR-PASSWORD]@db.xxxxx.supabase.co:6543/postgres
 ### Шаги:
 
 1. В Supabase Dashboard:
-   - Измените **Source** на "Connection Pooling"
-   - Измените **Method** на "Connection Pooling" или "Session mode"
+   - **Source:** Оставьте "Primary Database" (это единственная опция)
+   - **Method:** Выберите **"Transaction pooler"** ✅
 
 2. Скопируйте полученный URL (порт должен быть **6543**)
 
@@ -55,7 +55,12 @@ postgresql://postgres.xxxxx:[YOUR-PASSWORD]@db.xxxxx.supabase.co:6543/postgres
 
 4. Итоговый URL должен быть:
    ```
-   postgresql://postgres.xxxxx:password@pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
+   postgres://postgres:password@db.xxxxx.supabase.co:6543/postgres?pgbouncer=true&connection_limit=1
+   ```
+   
+   Или если используется pooler.supabase.com:
+   ```
+   postgres://postgres:password@pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
    ```
 
 5. Вставьте этот URL в Vercel → Settings → Environment Variables → `DATABASE_URL`
