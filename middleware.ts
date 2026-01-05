@@ -5,12 +5,31 @@ import type { NextRequest } from 'next/server'
  * Middleware - lightweight, no Prisma
  * Company detection is done in server components via getServerCompany()
  * Legacy product URL redirects are handled by catch-all route
+ * Adds caching headers for better performance
  */
 export async function middleware(request: NextRequest) {
-  // Just pass through - company detection happens in server components
-  // This avoids Prisma in Edge Runtime which doesn't support it
-  // Legacy product URLs are handled by app/product/[...slug]/page.tsx
-  return NextResponse.next()
+  const response = NextResponse.next()
+  const pathname = request.nextUrl.pathname
+
+  // Add caching headers for static pages (ISR with revalidate)
+  // These pages use ISR (revalidate: 300) so they can be cached
+  if (pathname === '/' || pathname === '/products' || pathname.startsWith('/product/')) {
+    // Cache for 60 seconds, allow stale content for 120 seconds while revalidating
+    response.headers.set(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=120'
+    )
+  }
+
+  // Add long-term caching for static assets
+  if (pathname.startsWith('/_next/static') || pathname.startsWith('/_next/image')) {
+    response.headers.set(
+      'Cache-Control',
+      'public, max-age=31536000, immutable'
+    )
+  }
+
+  return response
 }
 
 export const config = {
