@@ -9,6 +9,7 @@ import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
+import { retryPrismaQuery } from '@/lib/retry-prisma'
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -25,10 +26,10 @@ export default async function HomePage() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
 
-  // Fetch data in parallel for better performance
+  // Fetch data in parallel with retry logic to handle connection pool timeouts
   const [featuredProductsRaw, categoryRaw, categoryProductsRaw] = await Promise.all([
-    // Fetch featured products - optimized query, reduced count for faster loading
-    prisma.product.findMany({
+    // Fetch featured products - optimized query, reduced count for faster loading - with retry
+    retryPrismaQuery(() => prisma.product.findMany({
       where: { featured: true },
       select: {
         id: true,
@@ -56,9 +57,9 @@ export default async function HomePage() {
       },
       take: 6, // Reduced from 8 to 6 for faster initial load
       orderBy: { createdAt: 'desc' },
-    }),
-    // Fetch category info only (without products for better performance)
-    prisma.category.findUnique({
+    })),
+    // Fetch category info only (without products for better performance) - with retry
+    retryPrismaQuery(() => prisma.category.findUnique({
       where: {
         slug: 'equipment-imported', // Only one category to reduce load
       },
@@ -67,9 +68,9 @@ export default async function HomePage() {
         name: true,
         slug: true,
       },
-    }),
-    // Fetch products separately for better query performance
-    prisma.product.findMany({
+    })),
+    // Fetch products separately for better query performance - with retry
+    retryPrismaQuery(() => prisma.product.findMany({
       where: {
         category: {
           slug: 'equipment-imported',
@@ -94,7 +95,7 @@ export default async function HomePage() {
       },
       take: 4, // Reduced from 6 to 4 for faster loading
       orderBy: { createdAt: 'desc' },
-    }),
+    })),
   ])
 
   // Convert Decimal to number and apply correct price

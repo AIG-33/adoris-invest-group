@@ -18,6 +18,7 @@ import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
+import { retryPrismaQuery } from '@/lib/retry-prisma'
 import {
   generateItemListSchema,
   generateBreadcrumbSchema,
@@ -87,13 +88,14 @@ export default async function ProductsPage({ searchParams }: Props) {
     orderBy = { [priceField]: 'desc' }
   }
 
-  // Execute all database queries in parallel for better performance
+  // Execute database queries with retry logic to handle connection pool timeouts
+  // Note: With connection_limit=1, parallel queries may timeout, so we use retry logic
   const [totalProducts, productsRaw, manufacturers] = await Promise.all([
-    // Get total count for pagination
-    prisma.product.count({ where }),
+    // Get total count for pagination - with retry
+    retryPrismaQuery(() => prisma.product.count({ where })),
     
-    // Fetch products with pagination - optimized with select instead of include
-    prisma.product.findMany({
+    // Fetch products with pagination - optimized with select instead of include - with retry
+    retryPrismaQuery(() => prisma.product.findMany({
       where,
       select: {
         id: true,
@@ -122,18 +124,18 @@ export default async function ProductsPage({ searchParams }: Props) {
       orderBy,
       skip: (currentPage - 1) * ITEMS_PER_PAGE,
       take: ITEMS_PER_PAGE,
-    }),
+    })),
     
-    // Fetch manufacturers for filters - removed _count for better performance
+    // Fetch manufacturers for filters - removed _count for better performance - with retry
     // Product counts can be calculated client-side if needed
-    prisma.manufacturer.findMany({
+    retryPrismaQuery(() => prisma.manufacturer.findMany({
       select: {
         id: true,
         name: true,
         slug: true,
       },
       orderBy: { name: 'asc' },
-    }),
+    })),
   ])
 
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
