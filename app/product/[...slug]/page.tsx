@@ -9,6 +9,7 @@ import { ProductDetail } from '@/components/product-detail'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
+import { retryPrismaQuery } from '@/lib/retry-prisma'
 import {
   generateProductSchema,
   generateBreadcrumbSchema,
@@ -31,8 +32,8 @@ export async function generateMetadata({
     const company = await getServerCompany()
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
-    // Optimized query for metadata generation
-    const product = await prisma.product.findFirst({
+    // Optimized query for metadata generation - with retry logic
+    const product = await retryPrismaQuery(() => prisma.product.findFirst({
       where: {
         slug: productSlug,
         manufacturer: {
@@ -63,7 +64,7 @@ export async function generateMetadata({
           },
         },
       },
-    })
+    }))
 
     if (!product) {
       return {
@@ -128,8 +129,8 @@ export default async function ProductPage({
     const language = (company?.language || 'en') as 'en' | 'ru'
     const dict = getDictionary(language)
 
-    // Optimized query for metadata generation
-    const product = await prisma.product.findFirst({
+    // Optimized query for product data - with retry logic
+    const product = await retryPrismaQuery(() => prisma.product.findFirst({
       where: {
         slug: productSlug,
         manufacturer: {
@@ -145,6 +146,7 @@ export default async function ProductPage({
         priceEU: true,
         priceRU: true,
         image: true,
+        categoryId: true,
         category: {
           select: {
             id: true,
@@ -160,14 +162,14 @@ export default async function ProductPage({
           },
         },
       },
-    })
+    }))
 
     if (!product) {
       notFound()
     }
 
-    // Get related products - optimized with select
-    const relatedProductsRaw = await prisma.product.findMany({
+    // Get related products - optimized with select - with retry logic
+    const relatedProductsRaw = await retryPrismaQuery(() => prisma.product.findMany({
       where: {
         categoryId: product?.categoryId,
         id: { not: product?.id },
@@ -197,7 +199,7 @@ export default async function ProductPage({
         },
       },
       take: 4,
-    })
+    }))
 
     const productWithNumber = {
       ...product,
@@ -249,8 +251,8 @@ export default async function ProductPage({
   if (slug.length === 1) {
     const productSlug = slug[0]
 
-    // Optimized query for legacy redirect
-    const product = await prisma.product.findUnique({
+    // Optimized query for legacy redirect - with retry logic
+    const product = await retryPrismaQuery(() => prisma.product.findUnique({
       where: { slug: productSlug },
       select: {
         id: true,
@@ -261,7 +263,7 @@ export default async function ProductPage({
           },
         },
       },
-    })
+    }))
 
     if (!product) {
       notFound()

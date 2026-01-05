@@ -3,6 +3,7 @@ import { cache } from 'react'
 import type { CompanyConfig } from './company-types'
 import { prisma } from './db'
 import { getDomainFromRequest } from './company'
+import { retryPrismaQuery } from './retry-prisma'
 
 /**
  * Get current company in server components with full details including colors
@@ -15,8 +16,8 @@ export const getServerCompany = cache(async (): Promise<CompanyConfig | null> =>
     const domain = getDomainFromRequest(headersList)
     
     // Single optimized query - get company by domain with all needed fields
-    // Try exact match first
-    let company = await prisma.company.findUnique({
+    // Try exact match first - with retry logic
+    let company = await retryPrismaQuery(() => prisma.company.findUnique({
       where: { domain },
       select: {
         id: true,
@@ -36,15 +37,15 @@ export const getServerCompany = cache(async (): Promise<CompanyConfig | null> =>
         googleAnalyticsId: true,
         yandexMetrikaId: true,
       },
-    })
+    }))
     
-    // If not found and domain has subdomain (e.g., shop.ivdgroup.eu), try base domain
+    // If not found and domain has subdomain (e.g., shop.ivdgroup.eu), try base domain - with retry logic
     if (!company && domain.includes('.')) {
       const parts = domain.split('.')
       if (parts.length > 2) {
         // Remove first subdomain (e.g., shop.ivdgroup.eu -> ivdgroup.eu)
         const baseDomain = parts.slice(1).join('.')
-        company = await prisma.company.findUnique({
+        company = await retryPrismaQuery(() => prisma.company.findUnique({
           where: { domain: baseDomain },
           select: {
             id: true,
@@ -64,7 +65,7 @@ export const getServerCompany = cache(async (): Promise<CompanyConfig | null> =>
             googleAnalyticsId: true,
             yandexMetrikaId: true,
           },
-        })
+        }))
       }
     }
     
