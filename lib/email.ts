@@ -364,6 +364,17 @@ ${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
             })
           }
 
+          // Send copy to info@ivdgroup.eu (central notification for all orders from all sites)
+          await transporter.sendMail({
+            ...mailOptions,
+            to: 'info@ivdgroup.eu',
+            subject: `New Order: ${orderNumber} - ${customerName} [${companyName}]`,
+            headers: {
+              ...mailOptions.headers,
+              'Message-ID': `<${orderNumber}-ivdgroup-${Date.now()}@${companyDomain}>`,
+            },
+          })
+
           return { success: true }
         } catch (error) {
           if (process.env.NODE_ENV === 'development') {
