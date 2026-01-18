@@ -75,14 +75,22 @@ export async function DELETE(
   { params }: { params: { orderId: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)    if (!session?.user || (session.user as any).role !== 'admin') {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user || (session.user as any).role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
-    }    const { orderId } = params    await prisma.order.delete({
+    }
+
+    const { orderId } = params
+
+    await prisma.order.delete({
       where: { id: orderId },
-    })    return NextResponse.json({ success: true })
+    })
+
+    return NextResponse.json({ success: true })
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Error deleting order:', error)
