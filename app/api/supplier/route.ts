@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
     // Send email with attachment
     await sendSupplierEmail({
-      to: fullCompanyContext?.email || process.env.EMAIL_FROM || 'info@adorisgroup.com',
+      to: fullCompanyContext?.email || process.env.EMAIL_FROM || '',
       supplierCompanyName: companyName,
       supplierContactName: contactName,
       supplierEmail: email,

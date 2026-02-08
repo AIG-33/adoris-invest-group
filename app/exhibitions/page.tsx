@@ -231,7 +231,7 @@ export default async function ExhibitionsPage() {
                 {dict.exhibitions.meetUsSubtitle}
               </p>
               <a
-                href={`mailto:${company?.email || 'info@adorisgroup.com'}`}
+                href={`mailto:${company?.email || ''}`}
                 className="inline-flex items-center gap-2 rounded-lg bg-white text-black px-8 py-4 text-lg font-semibold transition-all hover:bg-neutral-100 hover:scale-105 hover:shadow-xl"
               >
                 {dict.exhibitions.contactUs}

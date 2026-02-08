@@ -89,11 +89,11 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
   const searchRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
-  // Get company data with defaults
-  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
-  const companyEmail = company?.email || 'ceo@adorisgroup.com'
-  const companyPhone = company?.phone || '+48793081310'
-  const companyAddress = company?.address || 'Tallinn, Estonia'
+  // Get company data with defaults (neutral when no company matched for this domain)
+  const companyName = company?.name || 'Shop'
+  const companyEmail = company?.email || ''
+  const companyPhone = company?.phone || ''
+  const companyAddress = company?.address || ''
   const companyLogo = normalizeLogoUrl(company?.logo)
 
   useEffect(() => {

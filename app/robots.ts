@@ -16,7 +16,29 @@ export default function robots(): MetadataRoute.Robots {
           '/checkout/',
           '/order-confirmation/',
           '/auth/',
+          '/refresh-session/',
         ],
+      },
+      // Explicitly allow AI crawlers to access llms.txt and product pages
+      {
+        userAgent: 'GPTBot',
+        allow: ['/', '/llms.txt', '/sku/', '/product/', '/products'],
+      },
+      {
+        userAgent: 'ChatGPT-User',
+        allow: ['/', '/llms.txt', '/sku/', '/product/', '/products'],
+      },
+      {
+        userAgent: 'PerplexityBot',
+        allow: ['/', '/llms.txt', '/sku/', '/product/', '/products'],
+      },
+      {
+        userAgent: 'ClaudeBot',
+        allow: ['/', '/llms.txt', '/sku/', '/product/', '/products'],
+      },
+      {
+        userAgent: 'Google-Extended',
+        allow: ['/', '/llms.txt', '/sku/', '/product/', '/products'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

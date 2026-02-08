@@ -8,12 +8,12 @@ export async function generateOrderPDF(
 ): Promise<Buffer> {
   const doc = new jsPDF()
 
-  // Get company data with defaults
-  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
-  const companyEmail = company?.email || 'ceo@adorisgroup.com'
-  const companyPhone = company?.phone || '+48793081310'
-  const companyAddress = company?.address || 'Tallinn, Estonia'
-  const companyDomain = company?.domain || 'adorisgroup.com'
+  // Get company data — no hardcoded fallbacks
+  const companyName = company?.name || ''
+  const companyEmail = company?.email || ''
+  const companyPhone = company?.phone || ''
+  const companyAddress = company?.address || ''
+  const companyDomain = company?.domain || ''
 
   // Colors
   const primaryColor = '#000000'

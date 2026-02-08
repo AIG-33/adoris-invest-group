@@ -44,17 +44,17 @@ interface FooterClientProps {
 }
 
 export function FooterClient({ company, translations }: FooterClientProps) {
-  // Get company data with defaults
-  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
-  const companyEmail = company?.email || 'ceo@adorisgroup.com'
-  const companyPhone = company?.phone || '+48793081310'
-  const companyAddress = company?.address || 'Ruunaoja tn 3-36, 11415 Tallinn, Estonia'
+  // Get company data with defaults (neutral when no company matched for this domain)
+  const companyName = company?.name || 'Shop'
+  const companyEmail = company?.email || ''
+  const companyPhone = company?.phone || ''
+  const companyAddress = company?.address || ''
   const companyLogo = normalizeLogoUrl(company?.logo)
   
-  // Extract address parts
-  const addressParts = companyAddress.split(',').map(s => s.trim())
-  const streetAddress = addressParts[0] || 'Ruunaoja tn 3-36'
-  const cityAddress = addressParts.slice(1).join(', ') || '11415 Tallinn, Estonia'
+  // Extract address parts (no Adoris fallback when company not matched)
+  const addressParts = companyAddress.split(',').map(s => s.trim()).filter(Boolean)
+  const streetAddress = addressParts[0] || ''
+  const cityAddress = addressParts.slice(1).join(', ').trim() || ''
 
   return (
     <footer 

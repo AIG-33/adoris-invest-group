@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
           pass: process.env.SMTP_PASS,
         },
       },
-      from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
+      from: `${process.env.EMAIL_FROM_NAME || 'Shop'} <${process.env.EMAIL_FROM}>`,
       // Custom email send function using our email utility
       async sendVerificationRequest({ identifier: email, url }) {
         try {

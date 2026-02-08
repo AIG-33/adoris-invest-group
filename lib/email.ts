@@ -33,6 +33,7 @@ interface OrderEmailOptions {
 interface WelcomeEmailOptions {
   to: string
   name: string
+  company?: CompanyConfig | null
 }
 
 interface MagicLinkEmailOptions {
@@ -55,7 +56,7 @@ interface SupplierEmailOptions {
 
 // Email template helpers
 const getEmailHeader = (company?: CompanyConfig | null) => {
-  const companyName = company?.name || 'ADORIS INVEST GROUP'
+  const companyName = company?.name || process.env.EMAIL_FROM_NAME || 'Medical Equipment Store'
   return `
   <div style="background: linear-gradient(135deg, #1a8c7c 0%, #20a895 100%); padding: 30px; text-align: center;">
     <h1 style="color: white; margin: 0; font-size: 28px;">${companyName}</h1>
@@ -65,9 +66,9 @@ const getEmailHeader = (company?: CompanyConfig | null) => {
 }
 
 const getEmailFooter = (company?: CompanyConfig | null) => {
-  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
-  const companyAddress = company?.address || 'Harju maakond, Tallinn, Kesklinna linnaosa, Narva mnt 7-634, 10117'
-  const companyEmail = company?.email || 'info@adorisgroup.com'
+  const companyName = company?.name || process.env.EMAIL_FROM_NAME || ''
+  const companyAddress = company?.address || ''
+  const companyEmail = company?.email || process.env.EMAIL_FROM || ''
   return `
   <div style="background: #f5f5f5; padding: 20px; margin-top: 30px; text-align: center; color: #666;">
     <p style="margin: 5px 0;">${companyName}</p>
@@ -91,12 +92,12 @@ export async function sendOrderConfirmationEmail({
   try {
     const transporter = createTransporter()
     
-    // Get company data with defaults
-    const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
-    const companyEmail = company?.email || 'info@adorisgroup.com'
-    const companyPhone = company?.phone || '+48793081310'
-    const companyAddress = company?.address || 'Tallinn, Estonia'
-    const companyDomain = company?.domain || 'adorisgroup.com'
+    // Get company data — no hardcoded Adoris fallbacks
+    const companyName = company?.name || process.env.EMAIL_FROM_NAME || ''
+    const companyEmail = company?.email || process.env.EMAIL_FROM || ''
+    const companyPhone = company?.phone || ''
+    const companyAddress = company?.address || ''
+    const companyDomain = company?.domain || new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000').hostname
 
     // Generate text version for better deliverability
     const textVersion = `
@@ -131,7 +132,7 @@ ${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
     `.trim()
 
     const mailOptions = {
-      from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
+      from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
       to,
       replyTo: companyEmail,
       subject: `Order Confirmation - ${orderNumber}`,
@@ -385,21 +386,24 @@ ${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
 }
 
 // Send welcome email after registration
-export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
+export async function sendWelcomeEmail({ to, name, company }: WelcomeEmailOptions) {
   try {
     const transporter = createTransporter()
+    const companyName = company?.name || process.env.EMAIL_FROM_NAME || 'Medical Equipment Store'
+    const companyEmail = company?.email || process.env.EMAIL_FROM || ''
+    const companyAddress = company?.address || ''
 
     await transporter.sendMail({
-      from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
+      from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
       to,
-      subject: '🎉 Welcome to ADORIS INVEST GROUP',
+      subject: `Welcome to ${companyName}`,
       html: `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Welcome to ADORIS INVEST GROUP</title>
+          <title>Welcome to ${companyName}</title>
         </head>
         <body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; background: #f4f4f4;">
           <table width="100%" cellpadding="0" cellspacing="0" style="background: #f4f4f4; padding: 40px 20px;">
@@ -410,18 +414,18 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
                   <!-- Header with Gradient -->
                   <tr>
                     <td style="background: linear-gradient(135deg, #1a8c7c 0%, #20a895 100%); padding: 50px 40px; text-align: center;">
-                      <h1 style="color: white; margin: 0; font-size: 36px; font-weight: bold;">Welcome to ADORIS! 🎉</h1>
-                      <p style="color: rgba(255,255,255,0.95); margin: 12px 0 0 0; font-size: 18px;">Your medical equipment partner</p>
+                      <h1 style="color: white; margin: 0; font-size: 36px; font-weight: bold;">Welcome!</h1>
+                      <p style="color: rgba(255,255,255,0.95); margin: 12px 0 0 0; font-size: 18px;">${companyName} — Your medical equipment partner</p>
                     </td>
                   </tr>
 
                   <!-- Main Content -->
                   <tr>
                     <td style="padding: 50px 40px;">
-                      <h2 style="color: #1a8c7c; margin: 0 0 20px 0; font-size: 28px;">Hi ${name}! 👋</h2>
+                      <h2 style="color: #1a8c7c; margin: 0 0 20px 0; font-size: 28px;">Hi ${name}!</h2>
                       
                       <p style="font-size: 17px; line-height: 1.7; color: #333; margin: 0 0 25px 0;">
-                        Thank you for joining <strong style="color: #20a895;">ADORIS INVEST GROUP</strong>. Your account has been successfully created, and you're now part of our professional medical equipment network.
+                        Thank you for joining <strong style="color: #20a895;">${companyName}</strong>. Your account has been successfully created, and you're now part of our professional medical equipment network.
                       </p>
 
                       <!-- Features Grid -->
@@ -429,17 +433,17 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
                         <tr>
                           <td style="padding-right: 15px; width: 50%;">
                             <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 25px; border-radius: 10px; border-left: 4px solid #20a895;">
-                              <h3 style="margin: 0 0 10px 0; color: #1a8c7c; font-size: 18px;">📦 Extensive Catalog</h3>
+                              <h3 style="margin: 0 0 10px 0; color: #1a8c7c; font-size: 18px;">Extensive Catalog</h3>
                               <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
-                                Browse 100,000+ medical equipment products from top European manufacturers
+                                Browse medical equipment from top European manufacturers
                               </p>
                             </div>
                           </td>
                           <td style="padding-left: 15px; width: 50%;">
                             <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 25px; border-radius: 10px; border-left: 4px solid #20a895;">
-                              <h3 style="margin: 0 0 10px 0; color: #1a8c7c; font-size: 18px;">💰 Volume Discounts</h3>
+                              <h3 style="margin: 0 0 10px 0; color: #1a8c7c; font-size: 18px;">Volume Discounts</h3>
                               <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
-                                Save 5% on orders over €50K, 10% on orders over €100K
+                                Competitive B2B pricing on bulk orders
                               </p>
                             </div>
                           </td>
@@ -448,7 +452,7 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
                         <tr>
                           <td style="padding-right: 15px; width: 50%;">
                             <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 25px; border-radius: 10px; border-left: 4px solid #20a895;">
-                              <h3 style="margin: 0 0 10px 0; color: #1a8c7c; font-size: 18px;">📋 Bulk Orders</h3>
+                              <h3 style="margin: 0 0 10px 0; color: #1a8c7c; font-size: 18px;">Bulk Orders</h3>
                               <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
                                 Quick SKU-based ordering for large procurement needs
                               </p>
@@ -456,7 +460,7 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
                           </td>
                           <td style="padding-left: 15px; width: 50%;">
                             <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 25px; border-radius: 10px; border-left: 4px solid #20a895;">
-                              <h3 style="margin: 0 0 10px 0; color: #1a8c7c; font-size: 18px;">🚀 Fast Delivery</h3>
+                              <h3 style="margin: 0 0 10px 0; color: #1a8c7c; font-size: 18px;">Fast Delivery</h3>
                               <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
                                 4-7 weeks delivery from European suppliers
                               </p>
@@ -473,24 +477,26 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
                                style="display: inline-block; background: linear-gradient(135deg, #1a8c7c 0%, #20a895 100%); 
                                       color: white; padding: 18px 50px; text-decoration: none; border-radius: 8px; 
                                       font-weight: bold; font-size: 18px; box-shadow: 0 4px 15px rgba(32, 168, 149, 0.3);">
-                              Start Shopping Now →
+                              Start Shopping Now
                             </a>
                           </td>
                         </tr>
                       </table>
 
+                      ${companyEmail ? `
                       <!-- Help Section -->
                       <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 30px 0;">
                         <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6;">
-                          <strong>💡 Need Help?</strong><br/>
-                          Our team is here to assist you with product selection, pricing, or any questions. 
-                          Contact us at <a href="mailto:info@adorisgroup.com" style="color: #20a895; text-decoration: none; font-weight: bold;">info@adorisgroup.com</a>
+                          <strong>Need Help?</strong><br/>
+                          Our team is here to assist you. 
+                          Contact us at <a href="mailto:${companyEmail}" style="color: #20a895; text-decoration: none; font-weight: bold;">${companyEmail}</a>
                         </p>
                       </div>
+                      ` : ''}
 
                       <p style="font-size: 16px; color: #555; margin: 35px 0 0 0; line-height: 1.6;">
                         Best regards,<br/>
-                        <strong style="color: #1a8c7c; font-size: 18px;">The ADORIS INVEST GROUP Team</strong>
+                        <strong style="color: #1a8c7c; font-size: 18px;">The ${companyName} Team</strong>
                       </p>
                     </td>
                   </tr>
@@ -501,14 +507,11 @@ export async function sendWelcomeEmail({ to, name }: WelcomeEmailOptions) {
                       <table width="100%" cellpadding="0" cellspacing="0">
                         <tr>
                           <td align="center">
-                            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px; font-weight: 600;">ADORIS INVEST GROUP OÜ</p>
-                            <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">Harju maakond, Tallinn, Kesklinna linnaosa</p>
-                            <p style="margin: 0 0 12px 0; color: #6b7280; font-size: 13px;">Narva mnt 7-634, 10117, Estonia</p>
-                            <p style="margin: 0; color: #6b7280; font-size: 13px;">
-                              Email: <a href="mailto:info@adorisgroup.com" style="color: #20a895; text-decoration: none;">info@adorisgroup.com</a>
-                            </p>
+                            <p style="margin: 0 0 8px 0; color: #374151; font-size: 14px; font-weight: 600;">${companyName}</p>
+                            ${companyAddress ? `<p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">${companyAddress}</p>` : ''}
+                            ${companyEmail ? `<p style="margin: 0; color: #6b7280; font-size: 13px;">Email: <a href="mailto:${companyEmail}" style="color: #20a895; text-decoration: none;">${companyEmail}</a></p>` : ''}
                             <p style="margin: 15px 0 0 0; color: #9ca3af; font-size: 12px;">
-                              © ${new Date().getFullYear()} ADORIS INVEST GROUP. All rights reserved.
+                              &copy; ${new Date().getFullYear()} ${companyName}. All rights reserved.
                             </p>
                           </td>
                         </tr>
@@ -539,10 +542,10 @@ export async function sendMagicLinkEmail({ to, url, company }: MagicLinkEmailOpt
   try {
     const transporter = createTransporter()
 
-    // Get company data with defaults
-    const companyName = company?.name || 'ADORIS INVEST GROUP'
-    const companyEmail = company?.email || 'info@adorisgroup.com'
-    const companyDomain = company?.domain || 'adorisgroup.com'
+    // Get company data — no hardcoded fallbacks
+    const companyName = company?.name || process.env.EMAIL_FROM_NAME || ''
+    const companyEmail = company?.email || process.env.EMAIL_FROM || ''
+    const companyDomain = company?.domain || new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000').hostname
 
     const textVersion = `
 Sign in to ${companyName}
@@ -635,12 +638,12 @@ export async function sendSupplierEmail({
   try {
     const transporter = createTransporter()
     
-    // Get company data with defaults
-    const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
-    const companyEmail = company?.email || 'info@adorisgroup.com'
-    const companyPhone = company?.phone || '+48793081310'
-    const companyAddress = company?.address || 'Tallinn, Estonia'
-    const companyDomain = company?.domain || 'adorisgroup.com'
+    // Get company data — no hardcoded fallbacks
+    const companyName = company?.name || process.env.EMAIL_FROM_NAME || ''
+    const companyEmail = company?.email || process.env.EMAIL_FROM || ''
+    const companyPhone = company?.phone || ''
+    const companyAddress = company?.address || ''
+    const companyDomain = company?.domain || new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000').hostname
 
     const textVersion = `
 New Supplier Application - ${supplierCompanyName}
@@ -662,7 +665,7 @@ The ${companyName} Team
     `.trim()
 
     await transporter.sendMail({
-      from: `${process.env.EMAIL_FROM_NAME || 'ADORIS INVEST GROUP'} <${process.env.EMAIL_FROM}>`,
+      from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
       to,
       replyTo: supplierEmail,
       subject: `New Supplier Application - ${supplierCompanyName}`,

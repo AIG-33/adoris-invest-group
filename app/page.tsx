@@ -15,9 +15,44 @@ import {
   generateWebSiteSchema,
   generateItemListSchema,
 } from '@/lib/seo'
+import type { Metadata } from 'next'
 
 // ISR: Revalidate every 5 minutes (300 seconds) for better performance
 export const revalidate = 300
+
+export async function generateMetadata(): Promise<Metadata> {
+  const company = await getServerCompany()
+  const companyName = company?.name || 'Medical Equipment'
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const language = company?.language || 'en'
+
+  const title = language === 'ru'
+    ? `${companyName} — B2B медицинское и лабораторное оборудование`
+    : `${companyName} — B2B Medical & Laboratory Equipment`
+  const description = language === 'ru'
+    ? `${companyName} — профессиональный поставщик медицинского и лабораторного оборудования, анализаторов, реагентов и расходных материалов от ведущих мировых производителей. Поиск по артикулу.`
+    : `${companyName} — professional B2B supplier of medical laboratory equipment, analyzers, reagents, and consumables from leading global manufacturers. Search by SKU.`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: baseUrl,
+      type: 'website',
+      siteName: companyName,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+    alternates: {
+      canonical: baseUrl,
+    },
+  }
+}
 
 export default async function HomePage() {
   // Get current company

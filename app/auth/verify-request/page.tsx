@@ -2,29 +2,35 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
+import { normalizeLogoUrl } from '@/lib/logo-url'
 
 export default async function VerifyRequest() {
   const company = await getServerCompany()
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
+  const companyName = company?.name || ''
+  const companyLogo = company?.logo ? normalizeLogoUrl(company.logo) : '/logo.png'
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a8c7c] via-[#1E3A8A] to-[#20a895] flex items-center justify-center p-4 sm:p-6">
       <div className="max-w-md w-full">
-        {/* Logo */}
+        {/* Logo — dynamic per company */}
         <div className="text-center mb-6 sm:mb-8">
           <Link href="/" className="inline-flex items-center gap-2 sm:gap-3 group">
             <div className="relative w-14 h-14 sm:w-16 sm:h-16">
               <Image
-                src="/logo-adoris.png"
-                alt="ADORIS INVEST GROUP OÜ"
+                src={companyLogo}
+                alt={companyName || 'Verify'}
                 fill
                 className="object-contain"
               />
             </div>
-            <div className="flex flex-col items-start">
-              <span className="font-bold text-xl sm:text-2xl text-white">ADORIS INVEST GROUP</span>
-              <span className="text-xs sm:text-sm text-white/80">Medical Equipment</span>
-            </div>
+            {companyName && (
+              <div className="flex flex-col items-start">
+                <span className="font-bold text-xl sm:text-2xl text-white">{companyName}</span>
+                <span className="text-xs sm:text-sm text-white/80">Medical Equipment</span>
+              </div>
+            )}
           </Link>
         </div>
 
@@ -71,10 +77,10 @@ export default async function VerifyRequest() {
               <p className="text-xs text-neutral-500">
                 {dict.verifyRequest.problems}{' '}
                 <a
-                  href={`mailto:${company?.email || 'info@adorisgroup.com'}`}
+                  href={`mailto:${company?.email || ''}`}
                   className="text-black hover:underline"
                 >
-                  {company?.email || 'info@adorisgroup.com'}
+                  {company?.email || ''}
                 </a>
               </p>
             </div>

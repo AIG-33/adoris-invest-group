@@ -6,7 +6,9 @@ import { Mail, Linkedin, Quote } from 'lucide-react'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
 
-const teamMembers = [
+// Team data — shown only for Adoris group companies
+// For other companies this page will show a generic message
+const adorisTeamMembers = [
   {
     name: 'Maksim Harbatsevich',
     role: 'Chief Executive Officer',
@@ -53,6 +55,10 @@ export default async function TeamPage() {
   const company = await getServerCompany()
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
+
+  // Only show team members for Adoris-related domains
+  const isAdorisGroup = company?.domain?.includes('adorisgroup') || company?.domain?.includes('ivdgroup') || company?.domain?.includes('ivd.by')
+  const teamMembers = isAdorisGroup ? adorisTeamMembers : []
   
   return (
     <>

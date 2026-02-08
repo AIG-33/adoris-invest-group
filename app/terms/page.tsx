@@ -167,16 +167,16 @@ export default async function TermsPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a
-                  href={`mailto:${company?.email || 'ceo@adorisgroup.com'}`}
+                  href={`mailto:${company?.email || ''}`}
                   className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors"
                 >
-                  📧 {company?.email || 'ceo@adorisgroup.com'}
+                  📧 {company?.email || ''}
                 </a>
                 <a
-                  href={`tel:${company?.phone || '+48793081310'}`}
+                  href={`tel:${company?.phone || ''}`}
                   className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors"
                 >
-                  📞 {company?.phone || '+48793081310'}
+                  📞 {company?.phone || ''}
                 </a>
               </div>
             </div>
@@ -184,7 +184,7 @@ export default async function TermsPage() {
             {/* Company Info */}
             <address className="mt-8 text-center text-sm text-neutral-600 not-italic">
               <p className="mb-2">
-                <strong>{company?.name || 'ADORIS INVEST GROUP OÜ'}</strong>
+                <strong>{company?.name || ''}</strong>
               </p>
               <p>{company?.address || 'Ruunaoja tn 3-36, 11415 Tallinn, Estonia'}</p>
               <p>{dict.terms.companyInfoRegCode}: {company?.registrationCode || '12825289'} | {dict.terms.companyInfoVat}: {company?.vatId || 'EE102079353'}</p>

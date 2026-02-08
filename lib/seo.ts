@@ -16,10 +16,10 @@ export interface StructuredData {
  * Generate Organization structured data
  */
 export function generateOrganizationSchema(company: CompanyConfig | null, baseUrl: string): StructuredData {
-  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
-  const companyEmail = company?.email || 'info@adorisgroup.com'
-  const companyPhone = company?.phone || '+48793081310'
-  const companyAddress = company?.address || 'Tallinn, Estonia'
+  const companyName = company?.name || ''
+  const companyEmail = company?.email || ''
+  const companyPhone = company?.phone || ''
+  const companyAddress = company?.address || ''
   const logo = getFullLogoUrl(company?.logo, baseUrl)
 
   return {
@@ -50,7 +50,7 @@ export function generateOrganizationSchema(company: CompanyConfig | null, baseUr
  * Generate WebSite structured data with search action
  */
 export function generateWebSiteSchema(company: CompanyConfig | null, baseUrl: string): StructuredData {
-  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
+  const companyName = company?.name || ''
 
   return {
     '@context': 'https://schema.org',
@@ -114,19 +114,22 @@ export function generateProductSchema(
       itemCondition: 'https://schema.org/NewCondition',
       seller: {
         '@type': 'Organization',
-        name: company?.name || 'ADORIS INVEST GROUP OÜ',
+        name: company?.name || 'Shop',
       },
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.5',
-      reviewCount: '10',
-    },
-    // Emphasize SKU for B2B search
+    // Product identifiers for B2B search engines
+    productID: product.sku,
     additionalProperty: [
       {
         '@type': 'PropertyValue',
+        propertyID: 'SKU',
         name: 'SKU',
+        value: product.sku,
+      },
+      {
+        '@type': 'PropertyValue',
+        propertyID: 'articleNumber',
+        name: 'Article Number',
         value: product.sku,
       },
     ],
@@ -192,10 +195,10 @@ export function generateItemListSchema(
  * Generate LocalBusiness structured data (if applicable)
  */
 export function generateLocalBusinessSchema(company: CompanyConfig | null, baseUrl: string): StructuredData {
-  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
-  const companyEmail = company?.email || 'info@adorisgroup.com'
-  const companyPhone = company?.phone || '+48793081310'
-  const companyAddress = company?.address || 'Tallinn, Estonia'
+  const companyName = company?.name || ''
+  const companyEmail = company?.email || ''
+  const companyPhone = company?.phone || ''
+  const companyAddress = company?.address || ''
   const logo = getFullLogoUrl(company?.logo, baseUrl)
 
   return {
@@ -238,11 +241,11 @@ export function generateArticleSchema(
     dateModified: dateModified,
     author: {
       '@type': 'Organization',
-      name: author || company?.name || 'ADORIS INVEST GROUP OÜ',
+      name: author || company?.name || '',
     },
     publisher: {
       '@type': 'Organization',
-      name: company?.name || 'ADORIS INVEST GROUP OÜ',
+      name: company?.name || '',
       logo: {
         '@type': 'ImageObject',
         url: company?.logo ? getFullLogoUrl(company.logo, url.split('/').slice(0, 3).join('/')) : undefined,

@@ -101,18 +101,18 @@ export default async function FAQPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
-                    href={`mailto:${company?.email || 'info@adorisgroup.com'}`}
+                    href={`mailto:${company?.email || ''}`}
                     className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors border border-neutral-200"
                   >
                     <Mail className="w-5 h-5" />
-                    {company?.email || 'info@adorisgroup.com'}
+                    {company?.email || ''}
                   </a>
                   <a
-                    href={`tel:${company?.phone || '+48793081310'}`}
+                    href={`tel:${company?.phone || ''}`}
                     className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-neutral-100 transition-colors border border-neutral-200"
                   >
                     <Phone className="w-5 h-5" />
-                    {company?.phone || '+48793081310'}
+                    {company?.phone || ''}
                   </a>
                 </div>
               </address>

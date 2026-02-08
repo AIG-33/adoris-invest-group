@@ -25,6 +25,7 @@ import {
 } from '@/lib/seo'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
 // ISR: Revalidate every 5 minutes (300 seconds) for better performance
 export const revalidate = 300
@@ -44,6 +45,83 @@ type Props = {
 }
 
 const ITEMS_PER_PAGE = 9
+
+/**
+ * Dynamic metadata for /products — CRITICAL for SEO
+ * When a user searches by SKU, the page title reflects the search query,
+ * making it much more likely to appear in Google results for that SKU.
+ */
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const company = await getServerCompany()
+  const companyName = company?.name || ''
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const language = company?.language || 'en'
+
+  const { search, category, manufacturer, page } = searchParams
+
+  let title = language === 'ru'
+    ? `Каталог продукции | ${companyName}`
+    : `Product Catalog | ${companyName}`
+  let description = language === 'ru'
+    ? `Профессиональное B2B медицинское и лабораторное оборудование. Каталог продукции ${companyName}.`
+    : `Professional B2B medical laboratory equipment and supplies. Product catalog by ${companyName}.`
+
+  if (search) {
+    title = language === 'ru'
+      ? `${search} — поиск продукции | ${companyName}`
+      : `${search} — Product Search | ${companyName}`
+    description = language === 'ru'
+      ? `Результаты поиска «${search}» в каталоге ${companyName}. B2B медицинское оборудование и расходные материалы.`
+      : `Search results for "${search}" in ${companyName} catalog. B2B medical equipment and laboratory supplies.`
+  } else if (category) {
+    const categoryName = category.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    title = language === 'ru'
+      ? `${categoryName} — каталог | ${companyName}`
+      : `${categoryName} — Catalog | ${companyName}`
+    description = language === 'ru'
+      ? `${categoryName} от ведущих производителей. Каталог ${companyName}.`
+      : `${categoryName} from leading manufacturers. ${companyName} catalog.`
+  } else if (manufacturer) {
+    const manufacturerName = manufacturer.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    title = language === 'ru'
+      ? `${manufacturerName} — продукция | ${companyName}`
+      : `${manufacturerName} — Products | ${companyName}`
+    description = language === 'ru'
+      ? `Продукция ${manufacturerName}. Каталог ${companyName}. B2B медицинское оборудование.`
+      : `${manufacturerName} products. ${companyName} catalog. B2B medical equipment.`
+  }
+
+  // Build canonical URL (without page param for page 1)
+  const canonicalParams = new URLSearchParams()
+  if (search) canonicalParams.set('search', search)
+  if (category) canonicalParams.set('category', category)
+  if (manufacturer) canonicalParams.set('manufacturer', manufacturer)
+  const queryString = canonicalParams.toString()
+  const canonical = `${baseUrl}/products${queryString ? `?${queryString}` : ''}`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
+    alternates: {
+      canonical,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  }
+}
 
 export default async function ProductsPage({ searchParams }: Props) {
   const { search, category, manufacturer, minPrice, maxPrice, page, sort } = searchParams

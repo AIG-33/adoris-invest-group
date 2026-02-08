@@ -10,9 +10,11 @@ import type { Translations } from '@/lib/translations'
 
 interface LoginFormProps {
   translations: Translations['auth']
+  companyName?: string
+  companyLogo?: string
 }
 
-export function LoginForm({ translations }: LoginFormProps) {
+export function LoginForm({ translations, companyName, companyLogo }: LoginFormProps) {
   const router = useRouter()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password')
@@ -134,21 +136,23 @@ export function LoginForm({ translations }: LoginFormProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a8c7c] via-[#1E3A8A] to-[#20a895] flex items-center justify-center p-4 sm:p-6">
       <div className="max-w-md w-full">
-        {/* Logo */}
+        {/* Logo — dynamic per company */}
         <div className="text-center mb-6 sm:mb-8">
           <Link href="/" className="inline-flex items-center gap-2 sm:gap-3 group">
             <div className="relative w-14 h-14 sm:w-16 sm:h-16">
               <Image
-                src="/logo-adoris.png"
-                alt="ADORIS INVEST GROUP OÜ"
+                src={companyLogo || '/logo.png'}
+                alt={companyName || 'Login'}
                 fill
                 className="object-contain"
               />
             </div>
-            <div className="flex flex-col items-start">
-              <span className="font-bold text-xl sm:text-2xl text-white">ADORIS INVEST GROUP</span>
-              <span className="text-xs sm:text-sm text-white/80">Medical Equipment</span>
-            </div>
+            {companyName && (
+              <div className="flex flex-col items-start">
+                <span className="font-bold text-xl sm:text-2xl text-white">{companyName}</span>
+                <span className="text-xs sm:text-sm text-white/80">Medical Equipment</span>
+              </div>
+            )}
           </Link>
         </div>
 

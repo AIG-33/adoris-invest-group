@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const logo = company?.logo ? normalizeLogoUrl(company.logo) : '/logo.png'
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
   const fullLogoUrl = logo.startsWith('http') ? logo : `${baseUrl}${logo}`
-  const companyName = company?.name || 'ADORIS INVEST GROUP OÜ'
+  const companyName = company?.name || process.env.SITE_NAME || 'Shop'
   const description = company?.language === 'ru'
     ? 'Профессиональное B2B медицинское и лабораторное оборудование и расходные материалы. Высококачественные анализаторы, реагенты и лабораторные расходные материалы от ведущих производителей.'
     : 'Professional B2B medical laboratory equipment and supplies. High-quality analyzers, reagents, and laboratory consumables from leading manufacturers.'

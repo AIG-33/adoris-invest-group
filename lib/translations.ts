@@ -777,7 +777,7 @@ const translations: Record<Language, Translations> = {
     },
     exhibitions: {
       title: 'Exhibitions',
-      subtitle: 'Adoris Invest Group OU actively participates in leading medical and laboratory equipment exhibitions across Europe and worldwide',
+      subtitle: 'We actively participate in leading medical and laboratory equipment exhibitions across Europe and worldwide',
       contactUs: 'Contact Us',
       highlights: 'Highlights',
       exhibition: 'Exhibition',
@@ -1306,7 +1306,7 @@ const translations: Record<Language, Translations> = {
     },
     exhibitions: {
       title: 'Выставки',
-      subtitle: 'Adoris Invest Group OU активно участвует в ведущих выставках медицинского и лабораторного оборудования в Европе и по всему миру',
+      subtitle: 'Мы активно участвуем в ведущих выставках медицинского и лабораторного оборудования в Европе и по всему миру',
       contactUs: 'Свяжитесь с нами',
       highlights: 'Основные моменты',
       exhibition: 'Выставка',

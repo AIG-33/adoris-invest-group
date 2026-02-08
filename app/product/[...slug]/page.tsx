@@ -33,38 +33,34 @@ export async function generateMetadata({
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
     // Optimized query for metadata generation - with retry logic
-    const product = await retryPrismaQuery(() => prisma.product.findFirst({
+    let product = await retryPrismaQuery(() => prisma.product.findFirst({
       where: {
         slug: productSlug,
-        manufacturer: {
-          slug: manufacturerSlug,
-        },
+        manufacturer: { slug: manufacturerSlug },
       },
       select: {
-        id: true,
-        name: true,
-        sku: true,
-        slug: true,
-        description: true,
-        priceEU: true,
-        priceRU: true,
-        image: true,
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        manufacturer: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
+        id: true, name: true, sku: true, slug: true, description: true,
+        priceEU: true, priceRU: true, image: true,
+        category: { select: { id: true, name: true, slug: true } },
+        manufacturer: { select: { id: true, name: true, slug: true } },
       },
     }))
+
+    // Fallback: prefix match for old URLs (before SKU was added to slug)
+    if (!product) {
+      product = await retryPrismaQuery(() => prisma.product.findFirst({
+        where: {
+          slug: { startsWith: productSlug },
+          manufacturer: { slug: manufacturerSlug },
+        },
+        select: {
+          id: true, name: true, sku: true, slug: true, description: true,
+          priceEU: true, priceRU: true, image: true,
+          category: { select: { id: true, name: true, slug: true } },
+          manufacturer: { select: { id: true, name: true, slug: true } },
+        },
+      }))
+    }
 
     if (!product) {
       return {
@@ -81,19 +77,22 @@ export async function generateMetadata({
     const imageUrl = product.image ? `${baseUrl}${product.image}` : `${baseUrl}/placeholder.svg`
     const productUrl = getProductUrl(product)
 
+    const companyName = company?.name || ''
+
     return {
-      title: `${product.name} (SKU: ${product.sku}) | ${company?.name || 'ADORIS INVEST GROUP'}`,
-      description: `${product.name} - SKU: ${product.sku}. ${product.description || 'Medical laboratory equipment'} from ${product.manufacturer?.name || 'leading manufacturers'}. Order now for B2B pricing.`,
+      title: `${product.sku} — ${product.name} | ${product.manufacturer?.name || ''} | ${companyName}`,
+      description: `${product.sku} — ${product.name}. ${product.description?.slice(0, 140) || 'Medical laboratory equipment'} from ${product.manufacturer?.name || 'leading manufacturers'}. B2B order at ${companyName}.`,
       openGraph: {
-        title: `${product.name} (SKU: ${product.sku})`,
-        description: `${product.name} - SKU: ${product.sku}. ${product.description || 'Medical laboratory equipment'} from ${product.manufacturer?.name || 'leading manufacturers'}`,
+        title: `${product.sku} — ${product.name}`,
+        description: `Article ${product.sku}. ${product.name} from ${product.manufacturer?.name || 'leading manufacturers'}. ${product.description?.slice(0, 120) || ''}`,
         images: [imageUrl],
+        url: `${baseUrl}${productUrl}`,
         type: 'website',
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${product.name} (SKU: ${product.sku})`,
-        description: `${product.name} - SKU: ${product.sku}. ${product.description || 'Medical laboratory equipment'}`,
+        title: `${product.sku} — ${product.name}`,
+        description: `Article ${product.sku}. ${product.name} from ${product.manufacturer?.name || ''}. B2B medical equipment.`,
         images: [imageUrl],
       },
       alternates: {
@@ -129,40 +128,45 @@ export default async function ProductPage({
     const language = (company?.language || 'en') as 'en' | 'ru'
     const dict = getDictionary(language)
 
+    const productSelect = {
+      id: true,
+      name: true,
+      sku: true,
+      slug: true,
+      description: true,
+      priceEU: true,
+      priceRU: true,
+      image: true,
+      categoryId: true,
+      category: { select: { id: true, name: true, slug: true } },
+      manufacturer: { select: { id: true, name: true, slug: true } },
+    } as const
+
     // Optimized query for product data - with retry logic
-    const product = await retryPrismaQuery(() => prisma.product.findFirst({
+    let product = await retryPrismaQuery(() => prisma.product.findFirst({
       where: {
         slug: productSlug,
-        manufacturer: {
-          slug: manufacturerSlug,
-        },
+        manufacturer: { slug: manufacturerSlug },
       },
-      select: {
-        id: true,
-        name: true,
-        sku: true,
-        slug: true,
-        description: true,
-        priceEU: true,
-        priceRU: true,
-        image: true,
-        categoryId: true,
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        manufacturer: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-      },
+      select: productSelect,
     }))
+
+    // Fallback: if slug changed (e.g. SKU was appended), try prefix match
+    // This handles old URLs like /product/mfg/old-slug when slug is now old-slug-sku123
+    if (!product) {
+      product = await retryPrismaQuery(() => prisma.product.findFirst({
+        where: {
+          slug: { startsWith: productSlug },
+          manufacturer: { slug: manufacturerSlug },
+        },
+        select: productSelect,
+      }))
+      // If found via prefix, redirect to canonical URL
+      if (product) {
+        const canonicalUrl = getProductUrl(product)
+        permanentRedirect(canonicalUrl)
+      }
+    }
 
     if (!product) {
       notFound()
