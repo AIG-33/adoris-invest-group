@@ -1,154 +1,117 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
-import { useRef } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { getProductUrl } from '@/lib/product-url'
-import type { CompanyConfig } from '@/lib/company-types'
-import { normalizeImageUrl } from '@/lib/normalize-image-url'
-
-type Product = {
-  id: string
-  name: string
-  slug: string
-  price: number
-  image: string | null
-  manufacturer: { name: string; slug: string; logo: string | null }
-}
+import { ArrowRight, Beaker, Microscope, Pill, Syringe, TestTubes, Stethoscope, FlaskConical, Scan } from 'lucide-react'
 
 type Category = {
   id: string
   name: string
   slug: string
-  products: Product[]
+  _count: { products: number }
+}
+
+interface CategoryTranslations {
+  title: string
+  subtitle: string
+  products: string
+  viewAll: string
 }
 
 type Props = {
   categories: Category[]
-  company: CompanyConfig | null
+  translations: CategoryTranslations
 }
 
-export function CategoryShowcase({ categories, company }: Props) {
+// Map category slugs to icons for visual variety
+const categoryIcons: Record<string, any> = {
+  'reagents': Beaker,
+  'equipment': Microscope,
+  'equipment-imported': Microscope,
+  'consumables': Pill,
+  'disposables': Syringe,
+  'analyzers': Scan,
+  'diagnostics': Stethoscope,
+  'chemicals': FlaskConical,
+  'lab-supplies': TestTubes,
+}
+
+// Gradient accents for variety
+const cardAccents = [
+  'from-blue-500/10 to-cyan-500/5',
+  'from-violet-500/10 to-purple-500/5',
+  'from-emerald-500/10 to-teal-500/5',
+  'from-amber-500/10 to-orange-500/5',
+  'from-rose-500/10 to-pink-500/5',
+  'from-sky-500/10 to-indigo-500/5',
+  'from-lime-500/10 to-green-500/5',
+  'from-fuchsia-500/10 to-violet-500/5',
+]
+
+const iconAccents = [
+  'text-blue-400/60',
+  'text-violet-400/60',
+  'text-emerald-400/60',
+  'text-amber-400/60',
+  'text-rose-400/60',
+  'text-sky-400/60',
+  'text-lime-400/60',
+  'text-fuchsia-400/60',
+]
+
+export function CategoryShowcase({ categories, translations }: Props) {
   if (categories.length === 0) return null
 
   return (
-    <section className="py-16">
+    <section className="relative py-16 sm:py-20">
+      {/* Subtle separator */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {categories.map((category) => (
-          <CategoryRow key={category.id} category={category} company={company} />
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function CategoryRow({ category, company }: { category: Category; company: CompanyConfig | null }) {
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 350
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      })
-    }
-  }
-
-  if (category.products.length === 0) return null
-
-  return (
-    <div className="mb-12">
-      {/* Category Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <Link href={`/products?category=${category.slug}`}>
-          <h2 className="text-2xl font-bold text-white md:text-3xl hover:text-[#666666] transition-colors">
-            {category.name}
+        {/* Section Header */}
+        <div className="mb-10 sm:mb-12 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
+            {translations.title}
           </h2>
-        </Link>
-        <Link
-          href={`/products?category=${category.slug}`}
-          className="text-[#666666] transition-colors hover:text-[#333333]"
-        >
-          Explore All →
-        </Link>
-      </div>
+          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+            {translations.subtitle}
+          </p>
+        </div>
 
-      {/* Products Row */}
-      <div className="group relative">
-        {/* Navigation Buttons */}
-        <button
-          onClick={() => scroll('left')}
-          className="absolute -left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-2 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#000000] group-hover:opacity-100 lg:block"
-          aria-label="Scroll left"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => scroll('right')}
-          className="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-2 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#000000] group-hover:opacity-100 lg:block"
-          aria-label="Scroll right"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
+        {/* Categories Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          {categories.map((category, idx) => {
+            const Icon = categoryIcons[category.slug] || Beaker
+            const accent = cardAccents[idx % cardAccents.length]
+            const iconColor = iconAccents[idx % iconAccents.length]
 
-        {/* Scrollable Container */}
-        <div
-          ref={scrollRef}
-          className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {category.products.map((product) => (
-            <Link
-              key={product.id}
-              href={getProductUrl(product)}
-              className="group/item relative min-w-[200px] flex-shrink-0 overflow-hidden rounded-lg transition-all hover:scale-105 md:min-w-[240px]"
-            >
-              {/* Image */}
-              <div className="relative aspect-[3/4] overflow-hidden bg-gray-800">
-                <Image
-                  src={
-                    product.image && product.image.length > 0
-                      ? normalizeImageUrl(product.image)
-                      : product.manufacturer?.logo && product.manufacturer.logo.length > 0
-                      ? normalizeImageUrl(product.manufacturer.logo)
-                      : '/placeholder.svg'
-                  }
-                  alt={product.name || 'Product'}
-                  fill
-                  className="object-contain transition-transform duration-500 group-hover/item:scale-110 p-4"
-                  sizes="(max-width: 768px) 200px, 240px"
-                  loading="lazy"
-                />
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                {/* Content Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-3">
-                  <h3 className="mb-1 text-sm font-semibold text-white line-clamp-2">
-                    {product.name}
-                  </h3>
-                  <Link 
-                    href={`/products?manufacturer=${product.manufacturer.slug}`}
-                    className="mb-1 text-xs text-gray-300 hover:text-gray-200 transition-colors block"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {product.manufacturer.name}
-                  </Link>
-                        <p className="text-lg font-bold text-[#666666]">
-                          {(!company?.showPrices || product.price === 0) ? (
-                            <span className="text-sm">Price on Request</span>
-                          ) : (
-                            `€${product.price.toLocaleString()}`
-                          )}
-                        </p>
+            return (
+              <Link
+                key={category.id}
+                href={`/products?category=${category.slug}`}
+                className={`group relative rounded-xl overflow-hidden p-4 sm:p-5 bg-gradient-to-br ${accent} border border-white/[0.06] transition-all duration-500 hover:border-white/[0.12] hover:-translate-y-1 hover:shadow-lg hover:shadow-white/[0.02]`}
+              >
+                {/* Icon */}
+                <div className={`mb-3 sm:mb-4 ${iconColor} transition-transform duration-500 group-hover:scale-110`}>
+                  <Icon className="w-7 h-7 sm:w-8 sm:h-8" strokeWidth={1.5} />
                 </div>
-              </div>
-            </Link>
-          ))}
+
+                {/* Category name */}
+                <h3 className="text-sm sm:text-base font-semibold text-white mb-1 line-clamp-2 group-hover:text-white/90 transition-colors">
+                  {category.name}
+                </h3>
+
+                {/* Product count */}
+                <p className="text-xs text-white/30">
+                  {category._count.products.toLocaleString()} {translations.products}
+                </p>
+
+                {/* Arrow */}
+                <ArrowRight className="absolute bottom-4 right-4 w-4 h-4 text-white/0 transition-all duration-300 group-hover:text-white/40 group-hover:translate-x-0.5" />
+              </Link>
+            )
+          })}
         </div>
       </div>
-    </div>
+    </section>
   )
 }

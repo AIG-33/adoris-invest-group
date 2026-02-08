@@ -17,10 +17,20 @@ export interface Translations {
       tryBulkOrder: string
       becomeSupplier: string
       browseCatalog: string
+      searchPlaceholder: string
     }
     featuredProducts: {
       title: string
       subtitle: string
+      viewAll: string
+    }
+    manufacturers: {
+      title: string
+    }
+    categories: {
+      title: string
+      subtitle: string
+      products: string
       viewAll: string
     }
     stats: {
@@ -499,10 +509,20 @@ const translations: Record<Language, Translations> = {
         tryBulkOrder: 'Try Bulk Order',
         becomeSupplier: 'Become Supplier',
         browseCatalog: 'Browse Catalog',
+        searchPlaceholder: 'Search by SKU / Article Number / Product Name',
       },
       featuredProducts: {
         title: 'Featured Products',
         subtitle: 'Premium medical equipment from top manufacturers',
+        viewAll: 'View All Products',
+      },
+      manufacturers: {
+        title: 'Trusted Manufacturers',
+      },
+      categories: {
+        title: 'Product Categories',
+        subtitle: 'Browse our comprehensive catalog',
+        products: 'products',
         viewAll: 'View All',
       },
       stats: {
@@ -1028,11 +1048,21 @@ const translations: Record<Language, Translations> = {
         tryBulkOrder: 'Попробовать массовый заказ',
         becomeSupplier: 'Стать поставщиком',
         browseCatalog: 'Просмотреть каталог',
+        searchPlaceholder: 'Поиск по артикулу / каталожному номеру / названию',
       },
       featuredProducts: {
         title: 'Рекомендуемые товары',
         subtitle: 'Премиальное медицинское оборудование от ведущих производителей',
-        viewAll: 'Посмотреть все',
+        viewAll: 'Все продукты',
+      },
+      manufacturers: {
+        title: 'Проверенные производители',
+      },
+      categories: {
+        title: 'Категории продукции',
+        subtitle: 'Просмотрите наш каталог',
+        products: 'товаров',
+        viewAll: 'Все',
       },
       stats: {
         whyChoose: 'Почему выбирают',

@@ -2,19 +2,19 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
+import { ShoppingCart, ArrowRight } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
-import { useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
 import { normalizeImageUrl } from '@/lib/normalize-image-url'
 
 type Product = {
   id: string
   name: string
+  sku: string
   slug: string
   price: number
   image: string | null
-  description: string | null
+  description?: string | null
   category: { name: string; slug: string }
   manufacturer: { name: string; slug: string; logo: string | null }
 }
@@ -32,18 +32,6 @@ type Props = {
 }
 
 export function FeaturedProducts({ products, translations, company }: Props) {
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = 400
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      })
-    }
-  }
-
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -60,140 +48,115 @@ export function FeaturedProducts({ products, translations, company }: Props) {
     localStorage.setItem('cart', JSON.stringify(cart))
     window.dispatchEvent(new Event('cartUpdated'))
 
-    // Visual feedback
     const button = e.currentTarget as HTMLButtonElement
     button.classList.add('scale-90')
     setTimeout(() => button.classList.remove('scale-90'), 200)
   }
 
-  if (products.length === 0) {
-    return null
-  }
+  if (products.length === 0) return null
 
   return (
-    <section className="relative py-16">
+    <section className="relative py-16 sm:py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-white md:text-4xl">
-              {translations.title}
-            </h2>
-            <p className="mt-2 text-lg text-gray-400">
-              {translations.subtitle}
-            </p>
-          </div>
-          <Link
-            href="/products"
-            className="hidden text-[#666666] transition-colors hover:text-[#333333] md:block"
-          >
-            {translations.viewAll} →
-          </Link>
+        <div className="mb-10 sm:mb-12 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
+            {translations.title}
+          </h2>
+          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+            {translations.subtitle}
+          </p>
         </div>
 
-        {/* Products Carousel */}
-        <div className="group relative">
-          {/* Navigation Buttons */}
-          <button
-            onClick={() => scroll('left')}
-            className="absolute -left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-3 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#000000] group-hover:opacity-100 lg:block"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button
-            onClick={() => scroll('right')}
-            className="absolute -right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-black/80 p-3 text-white opacity-0 backdrop-blur-sm transition-all hover:bg-[#000000] group-hover:opacity-100 lg:block"
-            aria-label="Scroll right"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {products.map((product) => (
+            <Link
+              key={product.id}
+              href={getProductUrl(product)}
+              className="group relative rounded-xl overflow-hidden bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] transition-all duration-500 hover:bg-white/[0.07] hover:border-white/[0.12] hover:shadow-2xl hover:shadow-white/[0.03] hover:-translate-y-1"
+            >
+              {/* Image */}
+              <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-800/50 to-gray-900/50">
+                <Image
+                  src={
+                    product.image && product.image.length > 0
+                      ? normalizeImageUrl(product.image)
+                      : product.manufacturer?.logo && product.manufacturer.logo.length > 0
+                      ? normalizeImageUrl(product.manufacturer.logo)
+                      : '/placeholder.svg'
+                  }
+                  alt={`${product.name} - ${product.manufacturer?.name || ''}`}
+                  fill
+                  className={
+                    product.image && product.image.length > 0
+                      ? 'object-cover transition-transform duration-700 group-hover:scale-105'
+                      : 'object-contain transition-transform duration-700 group-hover:scale-105 p-6'
+                  }
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  loading="lazy"
+                />
+                {/* Top gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-          {/* Scrollable Container */}
-          <div
-            ref={scrollRef}
-            className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {products.map((product) => (
-              <Link
-                key={product.id}
-                href={getProductUrl(product)}
-                className="group/card relative min-w-[280px] flex-shrink-0 overflow-hidden rounded-xl bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm transition-all hover:scale-105 hover:shadow-2xl hover:shadow-[#000000]/20 md:min-w-[320px]"
-              >
-                {/* Image Container */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-gray-800">
-                  <Image
-                    src={
-                      product.image && product.image.length > 0
-                        ? normalizeImageUrl(product.image)
-                        : product.manufacturer?.logo && product.manufacturer.logo.length > 0
-                        ? normalizeImageUrl(product.manufacturer.logo)
-                        : '/placeholder.svg'
-                    }
-                    alt={`${product.name || 'Product'} - ${product.manufacturer?.name || ''} ${product.category?.name || 'Medical Equipment'}`}
-                    fill
-                    className={
-                      product.image && product.image.length > 0
-                        ? 'object-cover transition-transform duration-500 group-hover/card:scale-110'
-                        : 'object-contain transition-transform duration-500 group-hover/card:scale-110 p-4'
-                    }
-                    sizes="(max-width: 768px) 280px, 320px"
-                    loading="lazy"
-                  />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-
-                  {/* Category Badge */}
-                  <div className="absolute left-3 top-3 rounded-full bg-[#000000]/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                    {product.category.name}
-                  </div>
-
-                  {/* Quick Add Button */}
-                  <button
-                    onClick={(e) => handleAddToCart(product, e)}
-                    className="absolute bottom-3 right-3 rounded-full bg-white/90 p-2 text-[#000000] opacity-0 transition-all hover:bg-white hover:scale-110 group-hover/card:opacity-100"
-                    aria-label="Add to cart"
-                  >
-                    <ShoppingCart className="h-5 w-5" />
-                  </button>
+                {/* Category badge */}
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/10 backdrop-blur-md border border-white/10 text-[10px] sm:text-xs font-medium text-white/80">
+                  {product.category.name}
                 </div>
 
-                {/* Content */}
-                <div className="p-4">
-                  <h3 className="mb-1 font-semibold text-white line-clamp-2">
-                    {product.name}
-                  </h3>
-                  {/* SKU - Highlighted for B2B search */}
-                  <div className="mb-2 bg-white/10 backdrop-blur-sm px-2 py-1 rounded inline-block">
-                    <span className="text-xs font-semibold text-white/80 uppercase tracking-wide">SKU:</span>
-                    <span className="text-xs font-mono font-bold text-white ml-2">{product.sku}</span>
-                  </div>
-                  <Link 
-                    href={`/products?manufacturer=${product.manufacturer.slug}`}
-                    className="mb-2 text-sm text-gray-400 hover:text-gray-300 transition-colors block"
-                  >
-                    {product.manufacturer.name}
-                  </Link>
-                  {product.description && (
-                    <p className="mb-3 text-sm text-gray-300 line-clamp-2">
-                      {product.description}
-                    </p>
-                  )}
-                        <div className="flex items-center justify-between">
-                          <span className="text-2xl font-bold text-[#666666]">
-                            {(!company?.showPrices || product.price === 0) ? (
-                              <span className="text-sm">Price on Request</span>
-                            ) : (
-                              `€${product.price.toLocaleString()}`
-                            )}
-                          </span>
-                          <span className="text-sm text-gray-400">By Order</span>
-                        </div>
+                {/* Add to cart button */}
+                <button
+                  onClick={(e) => handleAddToCart(product, e)}
+                  className="absolute bottom-3 right-3 rounded-full bg-white/10 backdrop-blur-md border border-white/10 p-2.5 text-white opacity-0 transition-all duration-300 hover:bg-white/20 hover:scale-110 group-hover:opacity-100"
+                  aria-label="Add to cart"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-4 sm:p-5">
+                {/* SKU - prominent for B2B */}
+                <div className="inline-flex items-center gap-1.5 mb-2.5 px-2 py-0.5 rounded bg-white/[0.06] border border-white/[0.06]">
+                  <span className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">SKU</span>
+                  <span className="text-xs font-mono font-bold text-white/70">{product.sku}</span>
                 </div>
-              </Link>
-            ))}
-          </div>
+
+                {/* Product name */}
+                <h3 className="text-sm sm:text-base font-semibold text-white mb-1.5 line-clamp-2 group-hover:text-white/90 transition-colors">
+                  {product.name}
+                </h3>
+
+                {/* Manufacturer */}
+                <p className="text-xs text-white/40 mb-3">
+                  {product.manufacturer.name}
+                </p>
+
+                {/* Price row */}
+                <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
+                  <span className="text-lg font-bold text-white/80">
+                    {(!company?.showPrices || product.price === 0) ? (
+                      <span className="text-sm font-medium text-white/50">Price on Request</span>
+                    ) : (
+                      `€${product.price.toLocaleString()}`
+                    )}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider text-white/30 font-medium">By Order</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* View All Button */}
+        <div className="mt-10 sm:mt-12 text-center">
+          <Link
+            href="/products"
+            className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white text-sm font-semibold transition-all duration-300 hover:bg-white/[0.1] hover:border-white/[0.15]"
+          >
+            {translations.viewAll}
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
     </section>

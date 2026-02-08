@@ -1,6 +1,7 @@
 'use client'
 
-import { Award, Building2, Globe, Shield } from 'lucide-react'
+import { Award, Building2, Globe, Shield, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 interface StatsSectionTranslations {
@@ -28,8 +29,6 @@ interface StatsSectionProps {
   translations: StatsSectionTranslations
 }
 
-// Stats will be generated from translations
-
 export function StatsSection({ companyName = 'IVD Group', translations }: StatsSectionProps) {
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
@@ -37,41 +36,21 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
+        if (entry.isIntersecting) setIsVisible(true)
       },
-      { threshold: 0.2 }
+      { threshold: 0.15 }
     )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
+    if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
   }, [])
 
-  // Generate stats from translations
   const stats = [
-    {
-      icon: Globe,
-      ...translations.stats.medicalProducts,
-    },
-    {
-      icon: Building2,
-      ...translations.stats.manufacturers,
-    },
-    {
-      icon: Shield,
-      ...translations.stats.compliance,
-    },
-    {
-      icon: Award,
-      ...translations.stats.delivery,
-    },
+    { icon: Globe, ...translations.stats.medicalProducts },
+    { icon: Building2, ...translations.stats.manufacturers },
+    { icon: Shield, ...translations.stats.compliance },
+    { icon: Award, ...translations.stats.delivery },
   ]
 
-  // Generate features from translations
   const features = [
     translations.features.originalProducts,
     translations.features.volumeDiscounts,
@@ -80,84 +59,93 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
   ]
 
   return (
-    <section ref={sectionRef} className="relative py-20">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a1f1a] to-black opacity-50" />
+    <section ref={sectionRef} className="relative py-16 sm:py-20">
+      {/* Separator */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
 
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Stats Grid */}
-        <div className="mb-20 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-16 sm:mb-20">
           {stats.map((stat, idx) => {
             const Icon = stat.icon
             return (
               <div
                 key={idx}
-                className={`group rounded-2xl border border-[#000000]/20 bg-gradient-to-br from-gray-900/50 to-black/50 p-6 backdrop-blur-sm transition-all duration-700 hover:border-[#000000]/50 hover:shadow-xl hover:shadow-[#000000]/20 ${
-                  isVisible
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-10 opacity-0'
+                className={`group rounded-xl p-5 sm:p-6 bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] transition-all duration-700 hover:bg-white/[0.06] hover:border-white/[0.1] ${
+                  isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
                 }`}
                 style={{ transitionDelay: `${idx * 100}ms` }}
               >
-                <Icon className="mb-4 h-12 w-12 text-[#666666] transition-transform group-hover:scale-110" />
-                <div className="mb-2 text-4xl font-bold text-white">
+                <Icon className="mb-3 sm:mb-4 h-8 w-8 sm:h-10 sm:w-10 text-white/30 transition-colors group-hover:text-white/50" strokeWidth={1.5} />
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1">
                   {stat.value}
                 </div>
-                <div className="mb-1 text-lg font-semibold text-[#666666]">
+                <div className="text-sm font-medium text-white/60 mb-0.5">
                   {stat.label}
                 </div>
-                <div className="text-sm text-gray-400">{stat.description}</div>
+                <div className="text-xs text-white/30">{stat.description}</div>
               </div>
             )
           })}
         </div>
 
-        {/* Features Section */}
+        {/* Why Choose Us */}
         <div>
-          <h2 className="mb-12 text-center text-3xl font-bold text-white md:text-4xl">
+          <h2
+            className={`text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-10 sm:mb-12 transition-all duration-700 ${
+              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+            }`}
+            style={{ transitionDelay: '300ms' }}
+          >
             {translations.whyChoose} {companyName}
           </h2>
-          <div className="grid gap-6 md:grid-cols-2">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {features.map((feature, idx) => (
               <div
                 key={idx}
-                className={`group rounded-xl border border-[#000000]/20 bg-gradient-to-r from-gray-900/30 to-black/30 p-6 backdrop-blur-sm transition-all duration-700 hover:border-[#000000]/50 hover:bg-gradient-to-r hover:from-[#000000]/10 hover:to-[#156b5f]/10 ${
-                  isVisible
-                    ? 'translate-y-0 opacity-100'
-                    : 'translate-y-10 opacity-0'
+                className={`group rounded-xl p-5 sm:p-6 bg-white/[0.02] border border-white/[0.05] transition-all duration-700 hover:bg-white/[0.05] hover:border-white/[0.1] ${
+                  isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
                 }`}
-                style={{ transitionDelay: `${400 + idx * 100}ms` }}
+                style={{ transitionDelay: `${400 + idx * 80}ms` }}
               >
-                <h3 className="mb-2 text-xl font-bold text-white transition-colors group-hover:text-[#666666]">
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-2 group-hover:text-white/90 transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-gray-400">{feature.description}</p>
+                <p className="text-sm text-white/40 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* CTA */}
-        <div className="mt-16 text-center">
-          <h3 className="mb-4 text-2xl font-bold text-white">
+        <div
+          className={`mt-14 sm:mt-16 text-center transition-all duration-700 ${
+            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+          }`}
+          style={{ transitionDelay: '700ms' }}
+        >
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
             {translations.readyToOrder}
           </h3>
-          <p className="mb-8 text-gray-400">
+          <p className="text-sm text-white/40 mb-8 max-w-lg mx-auto">
             {translations.minimumOrder}
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
               href="/products"
-              className="rounded-lg bg-[#000000] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#156b5f] hover:scale-105 hover:shadow-xl hover:shadow-[#000000]/50"
+              className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white text-sm font-semibold transition-all hover:scale-105 hover:shadow-lg"
+              style={{ backgroundColor: 'var(--company-accent, #3b82f6)' }}
             >
               {translations.browseCatalog}
-            </a>
-            <a
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+            <Link
               href="/terms"
-              className="rounded-lg border-2 border-[#000000] px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-[#000000]/10"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-white/[0.1] text-white text-sm font-semibold transition-all hover:bg-white/[0.05] hover:border-white/[0.2]"
             >
               {translations.viewTerms}
-            </a>
+            </Link>
           </div>
         </div>
       </div>
