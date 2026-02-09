@@ -85,12 +85,11 @@ export default async function HomePage() {
       orderBy: { createdAt: 'desc' },
     })),
 
-    // Manufacturers with logos for the trust strip
+    // Manufacturers with logos for the trust strip (all)
     retryPrismaQuery(() => prisma.manufacturer.findMany({
       where: { logo: { not: null } },
       select: { name: true, slug: true, logo: true },
       orderBy: { name: 'asc' },
-      take: 30,
     })),
 
     // All categories with product counts
