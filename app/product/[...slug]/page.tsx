@@ -42,7 +42,7 @@ export async function generateMetadata({
         id: true, name: true, sku: true, slug: true, description: true,
         priceEU: true, priceRU: true, image: true,
         category: { select: { id: true, name: true, slug: true } },
-        manufacturer: { select: { id: true, name: true, slug: true } },
+        manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
       },
     }))
 
@@ -57,7 +57,7 @@ export async function generateMetadata({
           id: true, name: true, sku: true, slug: true, description: true,
           priceEU: true, priceRU: true, image: true,
           category: { select: { id: true, name: true, slug: true } },
-          manufacturer: { select: { id: true, name: true, slug: true } },
+          manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
         },
       }))
     }
@@ -74,7 +74,11 @@ export async function generateMetadata({
       product.priceRU,
       priceType as 'EU' | 'RU'
     )
-    const imageUrl = product.image ? `${baseUrl}${product.image}` : `${baseUrl}/placeholder.svg`
+    const imageUrl = (product.image && product.image.length > 0)
+      ? `${baseUrl}${product.image}`
+      : (product.manufacturer?.logo && product.manufacturer.logo.length > 0)
+      ? `${baseUrl}${product.manufacturer.logo}`
+      : `${baseUrl}/placeholder.svg`
     const productUrl = getProductUrl(product)
 
     const companyName = company?.name || ''
@@ -139,7 +143,7 @@ export default async function ProductPage({
       image: true,
       categoryId: true,
       category: { select: { id: true, name: true, slug: true } },
-      manufacturer: { select: { id: true, name: true, slug: true } },
+      manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
     } as const
 
     // Optimized query for product data - with retry logic
