@@ -71,7 +71,7 @@ export function ManufacturersStrip({ manufacturers, title }: ManufacturersStripP
   // Split: first half (A→M) scrolls left, second half (M→Z) scrolls right
   const midpoint = Math.ceil(manufacturers.length / 2)
   const topRow = manufacturers.slice(0, midpoint)        // A → middle, moves left (→ end)
-  const bottomRow = manufacturers.slice(midpoint)         // middle → Z, moves right (→ start)
+  const bottomRow = [...manufacturers.slice(midpoint)].reverse()  // Z → middle, moves right (→ start)
 
   return (
     <section className="relative py-8 sm:py-12 overflow-hidden">
