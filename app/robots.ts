@@ -1,7 +1,19 @@
 import { MetadataRoute } from 'next'
+import { headers } from 'next/headers'
 
-export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  // Determine base URL from request Host header so each domain gets correct robots.txt
+  let baseUrl = process.env.NEXTAUTH_URL || 'https://localhost:3000'
+  try {
+    const headersList = await headers()
+    const host = headersList.get('host') || headersList.get('x-forwarded-host')
+    const proto = headersList.get('x-forwarded-proto') || 'https'
+    if (host) {
+      baseUrl = `${proto}://${host}`
+    }
+  } catch {
+    // headers() not available during build
+  }
 
   return {
     rules: [
@@ -44,4 +56,3 @@ export default function robots(): MetadataRoute.Robots {
     sitemap: `${baseUrl}/sitemap.xml`,
   }
 }
-
