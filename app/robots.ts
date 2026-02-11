@@ -29,6 +29,10 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
           '/order-confirmation/',
           '/auth/',
           '/refresh-session/',
+          // Block legacy WooCommerce filter URLs (31k+ junk pages in GSC)
+          '*query_type_manufacturer*',
+          '*filter_manufacturer*',
+          '*add-to-cart*',
         ],
       },
       // Explicitly allow AI crawlers to access llms.txt and product pages
