@@ -72,7 +72,7 @@ export function CategoryShowcase({ categories, translations }: Props) {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
             {translations.title}
           </h2>
-          <p className="text-white/55 text-sm sm:text-base max-w-xl mx-auto">
+          <p className="text-white/70 text-sm sm:text-base max-w-xl mx-auto">
             {translations.subtitle}
           </p>
         </div>
@@ -101,7 +101,7 @@ export function CategoryShowcase({ categories, translations }: Props) {
                 </h3>
 
                 {/* Product count */}
-                <p className="text-xs text-white/55">
+                <p className="text-xs text-white/70 font-medium">
                   {category._count.products.toLocaleString()} {translations.products}
                 </p>
 
