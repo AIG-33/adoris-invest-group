@@ -4,6 +4,7 @@ import { retryPrismaQuery } from '@/lib/retry-prisma'
 import { getBaseUrl } from '@/lib/get-base-url'
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 30
 
 const PRODUCTS_PER_SITEMAP = 10000
 

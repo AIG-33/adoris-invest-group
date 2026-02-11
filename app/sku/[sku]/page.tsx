@@ -18,6 +18,9 @@ import type { Metadata } from 'next'
 // ISR: Revalidate every 5 minutes
 export const revalidate = 300
 
+// Allow up to 30 seconds for DB queries on cold start
+export const maxDuration = 30
+
 export async function generateMetadata({
   params,
 }: {

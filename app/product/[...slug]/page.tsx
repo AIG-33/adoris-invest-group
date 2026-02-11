@@ -19,6 +19,9 @@ import type { Metadata } from 'next'
 // ISR: Revalidate every 5 minutes (300 seconds) for better performance
 export const revalidate = 300
 
+// Allow up to 30 seconds for DB queries on cold start (Vercel Pro)
+export const maxDuration = 30
+
 export async function generateMetadata({
   params,
 }: {
@@ -176,38 +179,43 @@ export default async function ProductPage({
       notFound()
     }
 
-    // Get related products - optimized with select - with retry logic
-    const relatedProductsRaw = await retryPrismaQuery(() => prisma.product.findMany({
-      where: {
-        categoryId: product?.categoryId,
-        id: { not: product?.id },
-      },
-      select: {
-        id: true,
-        name: true,
-        sku: true,
-        slug: true,
-        priceEU: true,
-        priceRU: true,
-        image: true,
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
+    // Get related products - soft-fail: if this query fails, show page without related products
+    let relatedProductsRaw: any[] = []
+    try {
+      relatedProductsRaw = await retryPrismaQuery(() => prisma.product.findMany({
+        where: {
+          categoryId: product?.categoryId,
+          id: { not: product?.id },
+        },
+        select: {
+          id: true,
+          name: true,
+          sku: true,
+          slug: true,
+          priceEU: true,
+          priceRU: true,
+          image: true,
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+          manufacturer: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              logo: true,
+            },
           },
         },
-        manufacturer: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logo: true,
-          },
-        },
-      },
-      take: 4,
-    }))
+        take: 4,
+      }))
+    } catch {
+      // Non-critical: page renders fine without related products
+    }
 
     const productWithNumber = {
       ...product,

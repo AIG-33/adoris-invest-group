@@ -5,6 +5,7 @@ import { getProductUrl } from '@/lib/product-url'
 import { getBaseUrl } from '@/lib/get-base-url'
 
 export const dynamic = 'force-dynamic'
+export const maxDuration = 60
 
 const PRODUCTS_PER_SITEMAP = 10000
 

@@ -21,6 +21,9 @@ import type { Metadata } from 'next'
 // ISR: Revalidate every 5 minutes (300 seconds) for better performance
 export const revalidate = 300
 
+// Allow up to 30 seconds for DB queries on cold start
+export const maxDuration = 30
+
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()
   const companyName = company?.name || 'Medical Equipment'
