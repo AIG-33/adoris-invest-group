@@ -35,27 +35,38 @@ const categoryIcons: Record<string, any> = {
   'lab-supplies': TestTubes,
 }
 
-// Gradient accents for variety — increased intensity for better visibility
+// Light-theme card accent backgrounds
 const cardAccents = [
-  'from-blue-500/20 to-cyan-500/10',
-  'from-violet-500/20 to-purple-500/10',
-  'from-emerald-500/20 to-teal-500/10',
-  'from-amber-500/20 to-orange-500/10',
-  'from-rose-500/20 to-pink-500/10',
-  'from-sky-500/20 to-indigo-500/10',
-  'from-lime-500/20 to-green-500/10',
-  'from-fuchsia-500/20 to-violet-500/10',
+  'bg-blue-50 hover:bg-blue-100/80',
+  'bg-violet-50 hover:bg-violet-100/80',
+  'bg-emerald-50 hover:bg-emerald-100/80',
+  'bg-amber-50 hover:bg-amber-100/80',
+  'bg-rose-50 hover:bg-rose-100/80',
+  'bg-sky-50 hover:bg-sky-100/80',
+  'bg-lime-50 hover:bg-lime-100/80',
+  'bg-fuchsia-50 hover:bg-fuchsia-100/80',
 ]
 
 const iconAccents = [
-  'text-blue-400/80',
-  'text-violet-400/80',
-  'text-emerald-400/80',
-  'text-amber-400/80',
-  'text-rose-400/80',
-  'text-sky-400/80',
-  'text-lime-400/80',
-  'text-fuchsia-400/80',
+  'text-blue-500',
+  'text-violet-500',
+  'text-emerald-500',
+  'text-amber-500',
+  'text-rose-500',
+  'text-sky-500',
+  'text-lime-600',
+  'text-fuchsia-500',
+]
+
+const borderAccents = [
+  'border-blue-200 hover:border-blue-300',
+  'border-violet-200 hover:border-violet-300',
+  'border-emerald-200 hover:border-emerald-300',
+  'border-amber-200 hover:border-amber-300',
+  'border-rose-200 hover:border-rose-300',
+  'border-sky-200 hover:border-sky-300',
+  'border-lime-200 hover:border-lime-300',
+  'border-fuchsia-200 hover:border-fuchsia-300',
 ]
 
 export function CategoryShowcase({ categories, translations }: Props) {
@@ -63,16 +74,13 @@ export function CategoryShowcase({ categories, translations }: Props) {
 
   return (
     <section className="relative py-16 sm:py-20">
-      {/* Section separator */}
-      <div className="absolute top-0 left-0 right-0 section-divider" />
-
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="mb-10 sm:mb-12 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-900 mb-3">
             {translations.title}
           </h2>
-          <p className="text-white/70 text-sm sm:text-base max-w-xl mx-auto">
+          <p className="text-neutral-500 text-sm sm:text-base max-w-xl mx-auto">
             {translations.subtitle}
           </p>
         </div>
@@ -83,12 +91,13 @@ export function CategoryShowcase({ categories, translations }: Props) {
             const Icon = categoryIcons[category.slug] || Beaker
             const accent = cardAccents[idx % cardAccents.length]
             const iconColor = iconAccents[idx % iconAccents.length]
+            const border = borderAccents[idx % borderAccents.length]
 
             return (
               <Link
                 key={category.id}
                 href={`/products?category=${category.slug}`}
-                className={`group relative rounded-xl overflow-hidden p-4 sm:p-5 bg-gradient-to-br ${accent} border border-white/[0.10] transition-all duration-500 hover:border-white/[0.20] hover:-translate-y-1.5 hover:shadow-lg hover:shadow-white/[0.04] card-glow`}
+                className={`group relative rounded-xl overflow-hidden p-4 sm:p-5 ${accent} border ${border} transition-all duration-300 hover:-translate-y-1 hover:shadow-lg`}
               >
                 {/* Icon */}
                 <div className={`mb-3 sm:mb-4 ${iconColor} transition-transform duration-500 group-hover:scale-110`}>
@@ -96,17 +105,17 @@ export function CategoryShowcase({ categories, translations }: Props) {
                 </div>
 
                 {/* Category name */}
-                <h3 className="text-sm sm:text-base font-semibold text-white mb-1 line-clamp-2 group-hover:text-white transition-colors">
+                <h3 className="text-sm sm:text-base font-semibold text-neutral-800 mb-1 line-clamp-2 group-hover:text-neutral-900 transition-colors">
                   {category.name}
                 </h3>
 
                 {/* Product count */}
-                <p className="text-xs text-white/70 font-medium">
+                <p className="text-xs text-neutral-500 font-medium">
                   {category._count.products.toLocaleString()} {translations.products}
                 </p>
 
                 {/* Arrow */}
-                <ArrowRight className="absolute bottom-4 right-4 w-4 h-4 text-white/0 transition-all duration-300 group-hover:text-white/60 group-hover:translate-x-0.5" />
+                <ArrowRight className="absolute bottom-4 right-4 w-4 h-4 text-neutral-300 transition-all duration-300 group-hover:text-neutral-500 group-hover:translate-x-0.5" />
               </Link>
             )
           })}

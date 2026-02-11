@@ -127,19 +127,22 @@ export default async function HomePage() {
     <>
       <StructuredData data={structuredData} />
       <Header />
-      <main className="min-h-screen bg-gradient-to-b from-gray-950 via-[#0a0a0f] to-[#050508]">
+      <main className="min-h-screen">
+        {/* DARK — Hero */}
         <section aria-label="Hero section">
           <HeroSection translations={dict.homepage.hero} />
         </section>
 
-        <section aria-label="Trusted manufacturers">
+        {/* LIGHT — Trusted Manufacturers */}
+        <section aria-label="Trusted manufacturers" style={{ backgroundColor: 'var(--company-secondary)' }}>
           <ManufacturersStrip
             manufacturers={manufacturersRaw}
             title={dict.homepage.manufacturers.title}
           />
         </section>
 
-        <section aria-label="Featured products">
+        {/* DARK — Featured Products */}
+        <section aria-label="Featured products" className="bg-gradient-to-b from-gray-950 via-[#0a0a0f] to-gray-950">
           <FeaturedProducts
             products={featuredProducts}
             translations={dict.homepage.featuredProducts}
@@ -147,14 +150,16 @@ export default async function HomePage() {
           />
         </section>
 
-        <section aria-label="Product categories">
+        {/* LIGHT — Product Categories */}
+        <section aria-label="Product categories" style={{ backgroundColor: 'var(--company-secondary)' }}>
           <CategoryShowcase
             categories={categories}
             translations={dict.homepage.categories}
           />
         </section>
 
-        <section aria-label="Statistics and company information">
+        {/* DARK — Stats & CTA */}
+        <section aria-label="Statistics and company information" className="bg-gradient-to-b from-gray-950 via-[#0a0a0f] to-[#050508]">
           <StatsSection
             companyName={company?.name || 'IVD Group'}
             translations={dict.homepage.stats}
