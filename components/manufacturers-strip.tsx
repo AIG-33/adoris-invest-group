@@ -185,7 +185,7 @@ export function ManufacturersStrip({ manufacturers, title }: ManufacturersStripP
       <div className="absolute top-0 left-0 right-0 section-divider" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-5 sm:mb-6">
-        <h2 className="text-center text-sm sm:text-base font-medium uppercase tracking-widest text-white/55">
+        <h2 className="text-center text-sm sm:text-base font-medium uppercase tracking-widest text-white/70">
           {title}
         </h2>
       </div>

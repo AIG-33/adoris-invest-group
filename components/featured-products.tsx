@@ -63,7 +63,7 @@ export function FeaturedProducts({ products, translations, company }: Props) {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
             {translations.title}
           </h2>
-          <p className="text-white/55 text-sm sm:text-base max-w-xl mx-auto">
+          <p className="text-white/70 text-sm sm:text-base max-w-xl mx-auto">
             {translations.subtitle}
           </p>
         </div>
@@ -118,7 +118,7 @@ export function FeaturedProducts({ products, translations, company }: Props) {
               <div className="p-4 sm:p-5">
                 {/* SKU - prominent for B2B */}
                 <div className="inline-flex items-center gap-1.5 mb-2.5 px-2 py-0.5 rounded bg-white/[0.08] border border-white/[0.08]">
-                  <span className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">SKU</span>
+                  <span className="text-[10px] font-semibold text-white/60 uppercase tracking-wider">SKU</span>
                   <span className="text-xs font-mono font-bold text-white/80">{product.sku}</span>
                 </div>
 
@@ -128,7 +128,7 @@ export function FeaturedProducts({ products, translations, company }: Props) {
                 </h3>
 
                 {/* Manufacturer */}
-                <p className="text-xs text-white/55 mb-3">
+                <p className="text-xs text-white/65 mb-3">
                   {product.manufacturer.name}
                 </p>
 
@@ -141,7 +141,7 @@ export function FeaturedProducts({ products, translations, company }: Props) {
                       `€${product.price.toLocaleString()}`
                     )}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-white/40 font-medium">By Order</span>
+                  <span className="text-[10px] uppercase tracking-wider text-white/55 font-medium">By Order</span>
                 </div>
               </div>
             </Link>

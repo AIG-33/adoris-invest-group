@@ -83,7 +83,7 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
                 <div className="text-sm font-medium text-white/70 mb-0.5">
                   {stat.label}
                 </div>
-                <div className="text-xs text-white/45">{stat.description}</div>
+                <div className="text-xs text-white/60">{stat.description}</div>
               </div>
             )
           })}
@@ -112,7 +112,7 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
                 <h3 className="text-base sm:text-lg font-semibold text-white mb-2 group-hover:text-white transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-white/55 leading-relaxed">{feature.description}</p>
+                <p className="text-sm text-white/70 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -128,7 +128,7 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
           <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
             {translations.readyToOrder}
           </h3>
-          <p className="text-sm text-white/55 mb-8 max-w-lg mx-auto">
+          <p className="text-sm text-white/70 mb-8 max-w-lg mx-auto">
             {translations.minimumOrder}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
