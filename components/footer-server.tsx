@@ -7,6 +7,6 @@ export async function Footer() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
   
-  return <FooterClient company={company} translations={dict.nav} />
+  return <FooterClient company={company} navTranslations={dict.nav} footerTranslations={dict.footer} />
 }
 

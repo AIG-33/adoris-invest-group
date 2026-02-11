@@ -63,7 +63,7 @@ export function FeaturedProducts({ products, translations, company }: Props) {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
             {translations.title}
           </h2>
-          <p className="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">
+          <p className="text-white/55 text-sm sm:text-base max-w-xl mx-auto">
             {translations.subtitle}
           </p>
         </div>
@@ -74,7 +74,7 @@ export function FeaturedProducts({ products, translations, company }: Props) {
             <Link
               key={product.id}
               href={getProductUrl(product)}
-              className="group relative rounded-xl overflow-hidden bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] transition-all duration-500 hover:bg-white/[0.07] hover:border-white/[0.12] hover:shadow-2xl hover:shadow-white/[0.03] hover:-translate-y-1"
+              className="group relative rounded-xl overflow-hidden bg-white/[0.06] backdrop-blur-sm border border-white/[0.10] transition-all duration-500 hover:bg-white/[0.10] hover:border-white/[0.18] hover:shadow-2xl hover:shadow-white/[0.05] hover:-translate-y-1.5 card-glow"
             >
               {/* Image */}
               <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-800/50 to-gray-900/50">
@@ -100,7 +100,7 @@ export function FeaturedProducts({ products, translations, company }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                 {/* Category badge */}
-                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/10 backdrop-blur-md border border-white/10 text-[10px] sm:text-xs font-medium text-white/80">
+                <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-black/40 backdrop-blur-md border border-white/15 text-[10px] sm:text-xs font-medium text-white/90">
                   {product.category.name}
                 </div>
 
@@ -117,31 +117,31 @@ export function FeaturedProducts({ products, translations, company }: Props) {
               {/* Content */}
               <div className="p-4 sm:p-5">
                 {/* SKU - prominent for B2B */}
-                <div className="inline-flex items-center gap-1.5 mb-2.5 px-2 py-0.5 rounded bg-white/[0.06] border border-white/[0.06]">
-                  <span className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">SKU</span>
-                  <span className="text-xs font-mono font-bold text-white/70">{product.sku}</span>
+                <div className="inline-flex items-center gap-1.5 mb-2.5 px-2 py-0.5 rounded bg-white/[0.08] border border-white/[0.08]">
+                  <span className="text-[10px] font-semibold text-white/50 uppercase tracking-wider">SKU</span>
+                  <span className="text-xs font-mono font-bold text-white/80">{product.sku}</span>
                 </div>
 
                 {/* Product name */}
-                <h3 className="text-sm sm:text-base font-semibold text-white mb-1.5 line-clamp-2 group-hover:text-white/90 transition-colors">
+                <h3 className="text-sm sm:text-base font-semibold text-white mb-1.5 line-clamp-2 group-hover:text-white transition-colors">
                   {product.name}
                 </h3>
 
                 {/* Manufacturer */}
-                <p className="text-xs text-white/40 mb-3">
+                <p className="text-xs text-white/55 mb-3">
                   {product.manufacturer.name}
                 </p>
 
                 {/* Price row */}
-                <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
-                  <span className="text-lg font-bold text-white/80">
+                <div className="flex items-center justify-between pt-3 border-t border-white/[0.08]">
+                  <span className="text-lg font-bold text-white">
                     {(!company?.showPrices || product.price === 0) ? (
-                      <span className="text-sm font-medium text-white/50">Price on Request</span>
+                      <span className="text-sm font-medium text-white/60">Price on Request</span>
                     ) : (
                       `€${product.price.toLocaleString()}`
                     )}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-white/30 font-medium">By Order</span>
+                  <span className="text-[10px] uppercase tracking-wider text-white/40 font-medium">By Order</span>
                 </div>
               </div>
             </Link>
@@ -152,7 +152,7 @@ export function FeaturedProducts({ products, translations, company }: Props) {
         <div className="mt-10 sm:mt-12 text-center">
           <Link
             href="/products"
-            className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white text-sm font-semibold transition-all duration-300 hover:bg-white/[0.1] hover:border-white/[0.15]"
+            className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white/[0.07] border border-white/[0.12] text-white text-sm font-semibold transition-all duration-300 hover:bg-white/[0.14] hover:border-white/[0.22] hover:shadow-lg hover:shadow-white/[0.04]"
           >
             {translations.viewAll}
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

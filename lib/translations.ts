@@ -469,6 +469,18 @@ export interface Translations {
     backToLogin: string
   }
   
+  // Footer
+  footer: {
+    description: string
+    quickLinks: string
+    contactUs: string
+    companyInfo: string
+    website: string
+    email: string
+    phone: string
+    allRightsReserved: string
+  }
+
   // FAQ
   faq: {
     title: string
@@ -953,6 +965,16 @@ const translations: Record<Language, Translations> = {
       problems: 'Having problems? Contact us:',
       contactUs: 'Contact us',
       backToLogin: '← Back to sign in',
+    },
+    footer: {
+      description: 'Professional B2B medical laboratory equipment and supplies from leading manufacturers worldwide.',
+      quickLinks: 'Quick Links',
+      contactUs: 'Contact Us',
+      companyInfo: 'Company Info',
+      website: 'Website',
+      email: 'Email',
+      phone: 'Phone',
+      allRightsReserved: 'All rights reserved.',
     },
     faq: {
       title: 'Frequently Asked Questions',
@@ -1492,6 +1514,16 @@ const translations: Record<Language, Translations> = {
       problems: 'Возникли проблемы? Свяжитесь с нами:',
       contactUs: 'Свяжитесь с нами',
       backToLogin: '← Вернуться к входу',
+    },
+    footer: {
+      description: 'Профессиональное B2B медицинское и лабораторное оборудование от ведущих мировых производителей.',
+      quickLinks: 'Быстрые ссылки',
+      contactUs: 'Контакты',
+      companyInfo: 'Информация о компании',
+      website: 'Сайт',
+      email: 'Email',
+      phone: 'Телефон',
+      allRightsReserved: 'Все права защищены.',
     },
     faq: {
       title: 'Часто задаваемые вопросы',

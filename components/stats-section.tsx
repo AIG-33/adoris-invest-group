@@ -61,7 +61,7 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
   return (
     <section ref={sectionRef} className="relative py-16 sm:py-20">
       {/* Separator */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 section-divider" />
 
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Stats Grid */}
@@ -71,19 +71,19 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
             return (
               <div
                 key={idx}
-                className={`group rounded-xl p-5 sm:p-6 bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] transition-all duration-700 hover:bg-white/[0.06] hover:border-white/[0.1] ${
+                className={`group rounded-xl p-5 sm:p-6 bg-white/[0.05] backdrop-blur-sm border border-white/[0.10] transition-all duration-700 hover:bg-white/[0.09] hover:border-white/[0.16] card-glow ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
                 }`}
                 style={{ transitionDelay: `${idx * 100}ms` }}
               >
-                <Icon className="mb-3 sm:mb-4 h-8 w-8 sm:h-10 sm:w-10 text-white/30 transition-colors group-hover:text-white/50" strokeWidth={1.5} />
+                <Icon className="mb-3 sm:mb-4 h-8 w-8 sm:h-10 sm:w-10 text-white/45 transition-colors group-hover:text-white/70" strokeWidth={1.5} />
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1">
                   {stat.value}
                 </div>
-                <div className="text-sm font-medium text-white/60 mb-0.5">
+                <div className="text-sm font-medium text-white/70 mb-0.5">
                   {stat.label}
                 </div>
-                <div className="text-xs text-white/30">{stat.description}</div>
+                <div className="text-xs text-white/45">{stat.description}</div>
               </div>
             )
           })}
@@ -104,15 +104,15 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
             {features.map((feature, idx) => (
               <div
                 key={idx}
-                className={`group rounded-xl p-5 sm:p-6 bg-white/[0.02] border border-white/[0.05] transition-all duration-700 hover:bg-white/[0.05] hover:border-white/[0.1] ${
+                className={`group rounded-xl p-5 sm:p-6 bg-white/[0.04] border border-white/[0.08] transition-all duration-700 hover:bg-white/[0.08] hover:border-white/[0.14] card-glow ${
                   isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
                 }`}
                 style={{ transitionDelay: `${400 + idx * 80}ms` }}
               >
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-2 group-hover:text-white/90 transition-colors">
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-2 group-hover:text-white transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-white/40 leading-relaxed">{feature.description}</p>
+                <p className="text-sm text-white/55 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -128,21 +128,21 @@ export function StatsSection({ companyName = 'IVD Group', translations }: StatsS
           <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
             {translations.readyToOrder}
           </h3>
-          <p className="text-sm text-white/40 mb-8 max-w-lg mx-auto">
+          <p className="text-sm text-white/55 mb-8 max-w-lg mx-auto">
             {translations.minimumOrder}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link
               href="/products"
-              className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white text-sm font-semibold transition-all hover:scale-105 hover:shadow-lg"
-              style={{ backgroundColor: 'var(--company-accent, #3b82f6)' }}
+              className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-white text-sm font-semibold transition-all hover:scale-105 hover:shadow-lg hover:brightness-110"
+              style={{ backgroundColor: 'var(--company-accent)' }}
             >
               {translations.browseCatalog}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               href="/terms"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-white/[0.1] text-white text-sm font-semibold transition-all hover:bg-white/[0.05] hover:border-white/[0.2]"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-white/[0.14] text-white text-sm font-semibold transition-all hover:bg-white/[0.08] hover:border-white/[0.25]"
             >
               {translations.viewTerms}
             </Link>

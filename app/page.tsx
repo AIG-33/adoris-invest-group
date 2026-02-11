@@ -127,7 +127,7 @@ export default async function HomePage() {
     <>
       <StructuredData data={structuredData} />
       <Header />
-      <main className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black">
+      <main className="min-h-screen bg-gradient-to-b from-gray-950 via-[#0a0a0f] to-[#050508]">
         <section aria-label="Hero section">
           <HeroSection translations={dict.homepage.hero} />
         </section>

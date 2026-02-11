@@ -22,7 +22,7 @@ function ManufacturerLogo({ manufacturer }: { manufacturer: Manufacturer }) {
 
   if (!manufacturer.logo || imgError) {
     return (
-      <span className="text-[11px] sm:text-xs font-semibold text-white/50 group-hover:text-white/80 transition-colors text-center leading-tight px-1">
+      <span className="text-[11px] sm:text-xs font-semibold text-white/60 group-hover:text-white/90 transition-colors text-center leading-tight px-1">
         {manufacturer.name}
       </span>
     )
@@ -34,7 +34,7 @@ function ManufacturerLogo({ manufacturer }: { manufacturer: Manufacturer }) {
       alt={manufacturer.name}
       width={120}
       height={48}
-      className="object-contain max-h-8 sm:max-h-10 opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+      className="object-contain max-h-8 sm:max-h-10 opacity-70 group-hover:opacity-100 transition-opacity duration-300"
       loading="lazy"
       onError={() => setImgError(true)}
     />
@@ -158,7 +158,7 @@ function ScrollRow({ items, direction }: { items: Manufacturer[]; direction: 'le
             <Link
               key={`${manufacturer.slug}-${idx}`}
               href={`/products?manufacturer=${manufacturer.slug}`}
-              className="flex items-center justify-center flex-shrink-0 w-32 h-12 sm:w-40 sm:h-14 rounded-lg bg-white/[0.04] border border-white/[0.06] px-3 py-2 transition-all duration-300 hover:bg-white/[0.08] hover:border-white/[0.12] hover:scale-105 group"
+              className="flex items-center justify-center flex-shrink-0 w-32 h-12 sm:w-40 sm:h-14 rounded-lg bg-white/[0.06] border border-white/[0.10] px-3 py-2 transition-all duration-300 hover:bg-white/[0.12] hover:border-white/[0.18] hover:scale-105 group"
               draggable={false}
               onClick={(e) => { if (isDragging) e.preventDefault() }}
             >
@@ -181,11 +181,11 @@ export function ManufacturersStrip({ manufacturers, title }: ManufacturersStripP
 
   return (
     <section className="relative py-8 sm:py-12 overflow-hidden">
-      {/* Subtle top separator */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      {/* Top separator */}
+      <div className="absolute top-0 left-0 right-0 section-divider" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-5 sm:mb-6">
-        <h2 className="text-center text-sm sm:text-base font-medium uppercase tracking-widest text-white/40">
+        <h2 className="text-center text-sm sm:text-base font-medium uppercase tracking-widest text-white/55">
           {title}
         </h2>
       </div>
@@ -196,8 +196,8 @@ export function ManufacturersStrip({ manufacturers, title }: ManufacturersStripP
         <ScrollRow items={bottomRow} direction="right" />
       </div>
 
-      {/* Subtle bottom separator */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      {/* Bottom separator */}
+      <div className="absolute bottom-0 left-0 right-0 section-divider" />
     </section>
   )
 }

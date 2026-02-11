@@ -176,10 +176,10 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
   return (
     <header 
       className="border-b border-neutral-200 sticky top-0 z-50 shadow-sm"
-      style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}
+      style={{ backgroundColor: 'var(--company-secondary)' }}
     >
       {/* Top Bar - Hidden on Mobile */}
-      <div className="hidden md:block text-white" style={{ backgroundColor: 'var(--company-primary, #333333)' }}>
+      <div className="hidden md:block text-white" style={{ backgroundColor: 'var(--company-primary)' }}>
         <div className="container mx-auto px-4 sm:px-6 py-2">
           <div className="flex justify-between items-center text-xs lg:text-sm">
             <div className="flex items-center gap-2 lg:gap-4">
@@ -194,7 +194,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
       </div>
 
       {/* Main Header */}
-      <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4" style={{ color: 'var(--company-primary, #333333)' }}>
+      <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4" style={{ color: 'var(--company-primary)' }}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           {/* Mobile Menu Button and Logo */}
           <div className="flex items-center justify-between sm:justify-start gap-3">
@@ -205,9 +205,9 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? (
-                <X className="w-6 h-6" style={{ color: 'var(--company-primary, #333333)' }} />
+                <X className="w-6 h-6" style={{ color: 'var(--company-primary)' }} />
               ) : (
-                <Menu className="w-6 h-6" style={{ color: 'var(--company-primary, #333333)' }} />
+                <Menu className="w-6 h-6" style={{ color: 'var(--company-primary)' }} />
               )}
             </button>
             
@@ -241,8 +241,8 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                   placeholder={translations.search}
                   className="w-full px-3 py-2 sm:py-3 pl-10 sm:pl-12 pr-20 sm:pr-24 text-sm sm:text-base border-2 border-neutral-200 rounded-lg focus:outline-none focus:ring-2 sm:focus:ring-4 transition-all"
                   style={{
-                    '--focus-border': 'var(--company-primary, #333333)',
-                    '--focus-ring': 'var(--company-primary, #333333)',
+                    '--focus-border': 'var(--company-primary)',
+                    '--focus-ring': 'var(--company-primary)',
                   } as React.CSSProperties & Record<string, string>}
                   onFocus={(e) => {
                     const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-primary').trim() || '#333333'
@@ -259,23 +259,14 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                   <div className="absolute right-2 top-1/2 -translate-y-1/2">
                     <div 
                       className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-t-transparent rounded-full animate-spin" 
-                      style={{ borderColor: 'var(--company-accent, #000000)', borderTopColor: 'transparent' }}
+                      style={{ borderColor: 'var(--company-accent)', borderTopColor: 'transparent' }}
                     />
                   </div>
                 ) : (
                   <button
                     type="submit"
-                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md transition-colors font-medium text-xs sm:text-sm"
-                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
-                    onMouseEnter={(e) => {
-                      const currentColor = getComputedStyle(document.documentElement).getPropertyValue('--company-accent').trim() || '#000000'
-                      const rgb = currentColor.replace('#', '').match(/\w\w/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
-                      const darkened = `rgb(${Math.max(0, rgb[0] - 20)}, ${Math.max(0, rgb[1] - 20)}, ${Math.max(0, rgb[2] - 20)})`
-                      e.currentTarget.style.backgroundColor = darkened
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--company-accent, #000000)'
-                    }}
+                    className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 text-white px-3 sm:px-6 py-1.5 sm:py-2 rounded-md font-medium text-xs sm:text-sm transition-all hover:brightness-90"
+                    style={{ backgroundColor: 'var(--company-accent)' }}
                   >
                     {translations.search}
                   </button>
@@ -318,7 +309,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-bold text-sm sm:text-base" style={{ color: 'var(--company-primary, #000000)' }}>
+                      <div className="font-bold text-sm sm:text-base" style={{ color: 'var(--company-primary)' }}>
                         €{Number(product.price || 0).toFixed(2)}
                       </div>
                       <div className="text-xs text-neutral-500 hidden sm:block">excl. VAT</div>
@@ -413,7 +404,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                 {cartCount > 0 && (
                   <span 
                     className="absolute -top-2 -right-2 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center"
-                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                    style={{ backgroundColor: 'var(--company-accent)' }}
                   >
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
@@ -451,7 +442,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                         {cartCount > 0 && (
                           <span 
                             className="ml-auto text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                            style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                            style={{ backgroundColor: 'var(--company-accent)' }}
                           >
                             {cartCount}
                           </span>
@@ -582,7 +573,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                 {cartCount > 0 && (
                   <span 
                     className="ml-auto text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                    style={{ backgroundColor: 'var(--company-accent)' }}
                   >
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>

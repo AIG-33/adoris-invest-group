@@ -38,12 +38,24 @@ interface NavTranslations {
   search: string
 }
 
-interface FooterClientProps {
-  company: CompanyConfig | null
-  translations: NavTranslations
+interface FooterTranslations {
+  description: string
+  quickLinks: string
+  contactUs: string
+  companyInfo: string
+  website: string
+  email: string
+  phone: string
+  allRightsReserved: string
 }
 
-export function FooterClient({ company, translations }: FooterClientProps) {
+interface FooterClientProps {
+  company: CompanyConfig | null
+  navTranslations: NavTranslations
+  footerTranslations: FooterTranslations
+}
+
+export function FooterClient({ company, navTranslations, footerTranslations }: FooterClientProps) {
   // Get company data with defaults (neutral when no company matched for this domain)
   const companyName = company?.name || 'Shop'
   const companyEmail = company?.email || ''
@@ -59,13 +71,13 @@ export function FooterClient({ company, translations }: FooterClientProps) {
   return (
     <footer 
       className="text-white mt-12 sm:mt-20"
-      style={{ backgroundColor: 'var(--company-primary, #333333)' }}
+      style={{ backgroundColor: 'var(--company-primary)' }}
     >
-      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Company Info */}
           <div>
-            <div className="relative w-28 h-9 sm:w-32 sm:h-10 mb-3 sm:mb-4">
+            <div className="relative w-28 h-9 sm:w-36 sm:h-10 mb-4">
               <Image
                 src={companyLogo}
                 alt={companyName}
@@ -73,104 +85,38 @@ export function FooterClient({ company, translations }: FooterClientProps) {
                 className="object-contain"
               />
             </div>
-            <p className="text-neutral-300 text-xs sm:text-sm">
-              Professional B2B medical laboratory equipment and supplies from
-              leading manufacturers worldwide.
+            <p className="text-white/60 text-xs sm:text-sm leading-relaxed">
+              {footerTranslations.description}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Quick Links</h3>
-            <ul className="space-y-1.5 sm:space-y-2">
+            <h3 className="font-bold text-base sm:text-lg mb-4 text-white/90">{footerTranslations.quickLinks}</h3>
+            <ul className="space-y-2 sm:space-y-2.5">
               <li>
-                <Link
-                  href="/products"
-                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
-                  style={{
-                    '--hover-color': 'var(--company-secondary, #cccccc)',
-                  } as React.CSSProperties & Record<string, string>}
-                  onMouseEnter={(e) => {
-                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
-                    e.currentTarget.style.color = secondaryColor
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = ''
-                  }}
-                >
-                  {translations.products}
+                <Link href="/products" className="footer-link text-xs sm:text-sm inline-block">
+                  {navTranslations.products}
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/bulk-order"
-                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
-                  style={{
-                    '--hover-color': 'var(--company-secondary, #cccccc)',
-                  } as React.CSSProperties & Record<string, string>}
-                  onMouseEnter={(e) => {
-                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
-                    e.currentTarget.style.color = secondaryColor
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = ''
-                  }}
-                >
-                  {translations.bulkOrder}
+                <Link href="/bulk-order" className="footer-link text-xs sm:text-sm inline-block">
+                  {navTranslations.bulkOrder}
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/exhibitions"
-                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
-                  style={{
-                    '--hover-color': 'var(--company-secondary, #cccccc)',
-                  } as React.CSSProperties & Record<string, string>}
-                  onMouseEnter={(e) => {
-                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
-                    e.currentTarget.style.color = secondaryColor
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = ''
-                  }}
-                >
-                  {translations.exhibitions}
+                <Link href="/exhibitions" className="footer-link text-xs sm:text-sm inline-block">
+                  {navTranslations.exhibitions}
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/terms"
-                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
-                  style={{
-                    '--hover-color': 'var(--company-secondary, #cccccc)',
-                  } as React.CSSProperties & Record<string, string>}
-                  onMouseEnter={(e) => {
-                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
-                    e.currentTarget.style.color = secondaryColor
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = ''
-                  }}
-                >
-                  {translations.terms}
+                <Link href="/terms" className="footer-link text-xs sm:text-sm inline-block">
+                  {navTranslations.terms}
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/cart"
-                  className="text-neutral-300 transition-colors text-xs sm:text-sm"
-                  style={{
-                    '--hover-color': 'var(--company-secondary, #cccccc)',
-                  } as React.CSSProperties & Record<string, string>}
-                  onMouseEnter={(e) => {
-                    const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--company-secondary').trim() || '#cccccc'
-                    e.currentTarget.style.color = secondaryColor
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = ''
-                  }}
-                >
-                  {translations.cart}
+                <Link href="/cart" className="footer-link text-xs sm:text-sm inline-block">
+                  {navTranslations.cart}
                 </Link>
               </li>
             </ul>
@@ -178,17 +124,17 @@ export function FooterClient({ company, translations }: FooterClientProps) {
 
           {/* Contact */}
           <div>
-            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Contact Us</h3>
-            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
-              <li className="text-neutral-300">
-                <span className="font-semibold">Email:</span> {companyEmail}
+            <h3 className="font-bold text-base sm:text-lg mb-4 text-white/90">{footerTranslations.contactUs}</h3>
+            <ul className="space-y-2 sm:space-y-2.5 text-xs sm:text-sm">
+              <li className="text-white/60">
+                <span className="font-semibold text-white/75">{footerTranslations.email}:</span> {companyEmail}
               </li>
-              <li className="text-neutral-300">
-                <span className="font-semibold">Phone:</span> {companyPhone}
+              <li className="text-white/60">
+                <span className="font-semibold text-white/75">{footerTranslations.phone}:</span> {companyPhone}
               </li>
               {company?.domain && (
-                <li className="text-neutral-300 hidden sm:block">
-                  <span className="font-semibold">Website:</span> www.{company.domain}
+                <li className="text-white/60 hidden sm:block">
+                  <span className="font-semibold text-white/75">{footerTranslations.website}:</span> www.{company.domain}
                 </li>
               )}
             </ul>
@@ -196,23 +142,21 @@ export function FooterClient({ company, translations }: FooterClientProps) {
 
           {/* Company Details */}
           <div>
-            <h3 className="font-bold text-base sm:text-lg mb-3 sm:mb-4">Company Info</h3>
-            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-neutral-300">
-              <li>{companyName}</li>
+            <h3 className="font-bold text-base sm:text-lg mb-4 text-white/90">{footerTranslations.companyInfo}</h3>
+            <ul className="space-y-2 sm:space-y-2.5 text-xs sm:text-sm text-white/60">
+              <li className="font-medium text-white/75">{companyName}</li>
               <li>{streetAddress}</li>
               <li>{cityAddress}</li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-neutral-700 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-neutral-400">
+        <div className="border-t border-white/10 mt-8 sm:mt-10 pt-6 sm:pt-8 text-center text-xs sm:text-sm text-white/40">
           <p>
-            © {new Date()?.getFullYear() || 2025} {companyName}. All
-            rights reserved.
+            &copy; {new Date()?.getFullYear() || 2025} {companyName}. {footerTranslations.allRightsReserved}
           </p>
         </div>
       </div>
     </footer>
   )
 }
-

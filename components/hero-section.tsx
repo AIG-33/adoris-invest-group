@@ -163,11 +163,11 @@ export function HeroSection({ translations }: HeroSectionProps) {
               quality={75}
               sizes="100vw"
             />
-            {/* Multi-layer gradient overlays for depth */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
-            {/* Subtle noise texture via radial gradient */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.03)_0%,transparent_50%)]" />
+            {/* Multi-layer gradient overlays for depth — lighter to let photos show through */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/25" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+            {/* Subtle warm highlight */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.06)_0%,transparent_50%)]" />
           </div>
         ))}
       </div>
@@ -188,7 +188,7 @@ export function HeroSection({ translations }: HeroSectionProps) {
 
             {/* Subtitle */}
             <p
-              className={`text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl transition-all duration-700 ${
+              className={`text-base sm:text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed transition-all duration-700 ${
                 isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
               }`}
               style={{ transitionDelay: '400ms' }}
@@ -224,8 +224,8 @@ export function HeroSection({ translations }: HeroSectionProps) {
                     ) : (
                       <button
                         type="submit"
-                        className="mr-2 px-5 sm:px-7 py-2 sm:py-2.5 rounded-lg text-white text-sm font-semibold transition-all hover:scale-105 flex-shrink-0"
-                        style={{ backgroundColor: 'var(--company-accent, #3b82f6)' }}
+                        className="mr-2 px-5 sm:px-7 py-2 sm:py-2.5 rounded-lg text-white text-sm font-semibold transition-all hover:scale-105 hover:brightness-110 flex-shrink-0"
+                        style={{ backgroundColor: 'var(--company-accent)' }}
                       >
                         <Search className="w-4 h-4 sm:hidden" />
                         <span className="hidden sm:inline">{translations.browseCatalog.split(' ')[0]}</span>
@@ -277,8 +277,8 @@ export function HeroSection({ translations }: HeroSectionProps) {
             >
               <Link
                 href={slide.link}
-                className="group inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm sm:text-base font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
-                style={{ backgroundColor: 'var(--company-accent, #3b82f6)' }}
+                className="group inline-flex items-center gap-2 rounded-lg px-6 py-3 text-sm sm:text-base font-semibold text-white transition-all hover:scale-105 hover:shadow-lg hover:brightness-110"
+                style={{ backgroundColor: 'var(--company-accent)' }}
               >
                 {slide.cta}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -306,7 +306,7 @@ export function HeroSection({ translations }: HeroSectionProps) {
                 ? 'w-10'
                 : 'w-6 bg-white/20 hover:bg-white/40'
             }`}
-            style={idx === currentSlide ? { backgroundColor: 'var(--company-accent, #3b82f6)' } : undefined}
+            style={idx === currentSlide ? { backgroundColor: 'var(--company-accent)' } : undefined}
             aria-label={`Go to slide ${idx + 1}`}
           />
         ))}

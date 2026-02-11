@@ -25,6 +25,8 @@
     background-color: var(--company-secondary, #ffffff);
     color: var(--neutral-900, #171717);
     font-feature-settings: 'rlig' 1, 'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -34,9 +36,38 @@
   }
 }
 
+/* ---- Company-color hover utilities (used in footer, etc.) ---- */
+.footer-link {
+  color: rgba(255, 255, 255, 0.65);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.footer-link:hover {
+  color: rgba(255, 255, 255, 1);
+  transform: translateX(2px);
+}
+
+/* ---- Dark-theme card glow on hover ---- */
+.card-glow {
+  position: relative;
+}
+.card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 50%, rgba(255,255,255,0.04) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.card-glow:hover::before {
+  opacity: 1;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -45,7 +76,7 @@
 
 ::-webkit-scrollbar-thumb {
   background: var(--company-primary, #333333);
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -79,4 +110,10 @@
 .animate-scroll-left:hover,
 .animate-scroll-right:hover {
   animation-play-state: paused;
+}
+
+/* ---- Smooth gradient divider between sections ---- */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 30%, rgba(255,255,255,0.12) 70%, transparent 100%);
 }

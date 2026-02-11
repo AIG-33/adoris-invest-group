@@ -259,7 +259,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     <>
       <StructuredData data={structuredData} />
       <Header />
-      <div className="min-h-screen" style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--company-secondary)' }}>
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col gap-8 lg:flex-row">
             <aside className="lg:w-64" aria-label="Filters sidebar">
@@ -287,14 +287,14 @@ export default async function ProductsPage({ searchParams }: Props) {
                   {currentPage > 1 && (
                     <Link
                       href={buildPageUrl(currentPage - 1)}
-                      className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-neutral-100 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors text-sm font-medium"
                     >
                       <ChevronLeft className="w-4 h-4" />
                       <span>{dict.common.previous}</span>
                     </Link>
                   )}
                   
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                       let pageNum
                       if (totalPages <= 5) {
@@ -311,11 +311,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                         <Link
                           key={pageNum}
                           href={buildPageUrl(pageNum)}
-                          className={`px-4 py-2 rounded-lg transition-colors ${
+                          className={`px-3.5 py-2 rounded-lg transition-colors text-sm font-medium ${
                             currentPage === pageNum
-                              ? 'bg-white text-black font-bold'
-                              : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+                              ? 'text-white'
+                              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                           }`}
+                          style={currentPage === pageNum ? { backgroundColor: 'var(--company-accent)' } : undefined}
                         >
                           {pageNum}
                         </Link>
@@ -326,7 +327,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                   {currentPage < totalPages && (
                     <Link
                       href={buildPageUrl(currentPage + 1)}
-                      className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg hover:bg-neutral-100 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors text-sm font-medium"
                     >
                       <span>{dict.common.next}</span>
                       <ChevronRight className="w-4 h-4" />
