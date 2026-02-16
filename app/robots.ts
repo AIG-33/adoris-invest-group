@@ -29,10 +29,9 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
           '/order-confirmation/',
           '/auth/',
           '/refresh-session/',
-          // Block legacy WooCommerce filter URLs (31k+ junk pages in GSC)
-          '*query_type_manufacturer*',
-          '*filter_manufacturer*',
-          '*add-to-cart*',
+          // Note: legacy URLs (query_type_manufacturer, filter_manufacturer, add-to-cart)
+          // are NOT blocked here — they are 301-redirected in middleware.ts instead.
+          // Blocking in robots.txt would prevent Google from seeing the 301 redirects.
         ],
       },
       // Explicitly allow AI crawlers to access llms.txt and product pages
