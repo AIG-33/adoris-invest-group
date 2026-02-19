@@ -49,13 +49,26 @@ export async function generateMetadata({
       },
     }))
 
-    // Fallback: prefix match for old URLs (before SKU was added to slug)
+    // Fallback: prefix match or changed manufacturer slug
     if (!product) {
       product = await retryPrismaQuery(() => prisma.product.findFirst({
         where: {
           slug: { startsWith: productSlug },
           manufacturer: { slug: manufacturerSlug },
         },
+        select: {
+          id: true, name: true, sku: true, slug: true, description: true,
+          priceEU: true, priceRU: true, image: true,
+          category: { select: { id: true, name: true, slug: true } },
+          manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
+        },
+      }))
+    }
+
+    // Fallback: manufacturer slug changed — search by product slug only
+    if (!product) {
+      product = await retryPrismaQuery(() => prisma.product.findFirst({
+        where: { slug: productSlug },
         select: {
           id: true, name: true, sku: true, slug: true, description: true,
           priceEU: true, priceRU: true, image: true,
@@ -158,8 +171,7 @@ export default async function ProductPage({
       select: productSelect,
     }))
 
-    // Fallback: if slug changed (e.g. SKU was appended), try prefix match
-    // This handles old URLs like /product/mfg/old-slug when slug is now old-slug-sku123
+    // Fallback 1: slug changed (e.g. SKU was appended), try prefix match with same manufacturer
     if (!product) {
       product = await retryPrismaQuery(() => prisma.product.findFirst({
         where: {
@@ -168,10 +180,31 @@ export default async function ProductPage({
         },
         select: productSelect,
       }))
-      // If found via prefix, redirect to canonical URL
       if (product) {
-        const canonicalUrl = getProductUrl(product)
-        permanentRedirect(canonicalUrl)
+        permanentRedirect(getProductUrl(product))
+      }
+    }
+
+    // Fallback 2: manufacturer slug changed (e.g. random suffix removed: neb-m7ugfu → neb)
+    // Search by product slug only, ignoring the old manufacturer slug
+    if (!product) {
+      product = await retryPrismaQuery(() => prisma.product.findFirst({
+        where: { slug: productSlug },
+        select: productSelect,
+      }))
+      if (product) {
+        permanentRedirect(getProductUrl(product))
+      }
+    }
+
+    // Fallback 3: both manufacturer AND product slug changed — try prefix match on product slug only
+    if (!product) {
+      product = await retryPrismaQuery(() => prisma.product.findFirst({
+        where: { slug: { startsWith: productSlug } },
+        select: productSelect,
+      }))
+      if (product) {
+        permanentRedirect(getProductUrl(product))
       }
     }
 
