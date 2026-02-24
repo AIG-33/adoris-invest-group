@@ -77,47 +77,29 @@ export function generateProductSchema(
   baseUrl: string
 ): StructuredData {
   const productUrl = `${baseUrl}${getProductUrl(product)}`
-  const imageUrl = product.image ? `${baseUrl}${product.image}` : `${baseUrl}/placeholder.svg`
+  const productName = product.name || product.sku || 'Product'
+  const imageUrl = (product.image && product.image.length > 0)
+    ? `${baseUrl}${product.image}`
+    : (product.manufacturer?.logo && product.manufacturer.logo.length > 0)
+    ? `${baseUrl}${product.manufacturer.logo}`
+    : `${baseUrl}/placeholder.svg`
   const price = Number(product.price || product.priceEU || 0)
   const currency = 'EUR'
-  const availability = product.stockStatus === 'in_stock' 
-    ? 'https://schema.org/InStock' 
-    : product.stockStatus === 'out_of_stock'
-    ? 'https://schema.org/OutOfStock'
-    : 'https://schema.org/PreOrder'
+  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
-  return {
+  const schema: StructuredData = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: product.name,
-    description: `${product.description || `${product.name} - Medical laboratory equipment`}. SKU: ${product.sku}`,
+    name: productName,
+    description: `${product.description || `${productName} - Medical laboratory equipment`}. SKU: ${product.sku}`,
     image: imageUrl,
     sku: product.sku,
     mpn: product.sku,
-    identifier: {
-      '@type': 'PropertyValue',
-      name: 'SKU',
-      value: product.sku,
-    },
     brand: {
       '@type': 'Brand',
       name: product.manufacturer?.name || 'Unknown Manufacturer',
     },
     category: product.category?.name || 'Medical Equipment',
-    offers: {
-      '@type': 'Offer',
-      url: productUrl,
-      priceCurrency: currency,
-      price: price.toFixed(2),
-      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 year from now
-      availability: availability,
-      itemCondition: 'https://schema.org/NewCondition',
-      seller: {
-        '@type': 'Organization',
-        name: company?.name || 'Shop',
-      },
-    },
-    // Product identifiers for B2B search engines
     productID: product.sku,
     additionalProperty: [
       {
@@ -126,14 +108,25 @@ export function generateProductSchema(
         name: 'SKU',
         value: product.sku,
       },
-      {
-        '@type': 'PropertyValue',
-        propertyID: 'articleNumber',
-        name: 'Article Number',
-        value: product.sku,
-      },
     ],
   }
+
+  // Offers: required by Google. Use price if available, otherwise "0" with PreOrder.
+  schema.offers = {
+    '@type': 'Offer',
+    url: productUrl,
+    priceCurrency: currency,
+    price: price > 0 ? price.toFixed(2) : '0.00',
+    priceValidUntil,
+    availability: price > 0 ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+    itemCondition: 'https://schema.org/NewCondition',
+    seller: {
+      '@type': 'Organization',
+      name: company?.name || 'Shop',
+    },
+  }
+
+  return schema
 }
 
 /**
@@ -165,29 +158,31 @@ export function generateItemListSchema(
     '@type': 'ItemList',
     name: name,
     numberOfItems: products.length,
-    itemListElement: products.map((product, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-          item: {
-            '@type': 'Product',
-            name: product.name,
-            url: `${baseUrl}${getProductUrl(product)}`,
-        image: product.image ? `${baseUrl}${product.image}` : undefined,
-        sku: product.sku,
-        brand: {
-          '@type': 'Brand',
-          name: product.manufacturer?.name || 'Unknown',
+    itemListElement: products.map((product, index) => {
+      const price = Number(product.price || product.priceEU || 0)
+      return {
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Product',
+          name: product.name || product.sku || 'Product',
+          url: `${baseUrl}${getProductUrl(product)}`,
+          image: (product.image && product.image.length > 0) ? `${baseUrl}${product.image}` : undefined,
+          sku: product.sku,
+          brand: {
+            '@type': 'Brand',
+            name: product.manufacturer?.name || 'Unknown',
+          },
+          offers: {
+            '@type': 'Offer',
+            priceCurrency: 'EUR',
+            price: price > 0 ? price.toFixed(2) : '0.00',
+            priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            availability: price > 0 ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+          },
         },
-        offers: {
-          '@type': 'Offer',
-          priceCurrency: 'EUR',
-          price: Number(product.price || product.priceEU || 0).toFixed(2),
-          availability: product.stockStatus === 'in_stock' 
-            ? 'https://schema.org/InStock' 
-            : 'https://schema.org/OutOfStock',
-        },
-      },
-    })),
+      }
+    }),
   }
 }
 
