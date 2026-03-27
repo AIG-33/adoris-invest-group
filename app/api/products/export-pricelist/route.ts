@@ -38,7 +38,7 @@ export async function GET() {
       'Art': product.sku || '',
       'Product': product.name || '',
       'Description': product.description || '',
-      'Price, EUR': Number(product.price) || 0,
+      'Price, EUR': Number(product.priceEU) || 0,
     }))
 
     // Create workbook and worksheet

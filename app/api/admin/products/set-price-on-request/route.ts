@@ -35,6 +35,7 @@ export async function POST() {
       data: {
         priceEU: 0,
         priceRU: 0,
+        price: 0,
       },
     })
 

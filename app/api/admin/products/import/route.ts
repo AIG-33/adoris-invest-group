@@ -1129,6 +1129,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                 description: productData.description && productData.description.trim() ? productData.description.trim() : '',
                 priceEU,
                 priceRU,
+                price: priceEU,
                 image: productData.image && productData.image.trim() ? productData.image.trim() : '',
                 categoryId,
                 manufacturerId,
@@ -1163,6 +1164,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
                     description: productData.description && productData.description.trim() ? productData.description.trim() : '',
                     priceEU,
                     priceRU,
+                    price: priceEU,
                     image: productData.image && productData.image.trim() ? productData.image.trim() : '',
                     categoryId,
                     manufacturerId,
@@ -1197,7 +1199,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
               product: created,
               sku: productData.sku,
               name: productData.name,
-              price,
+              price: priceEU,
               manufacturer: productData.manufacturer,
             })
           }

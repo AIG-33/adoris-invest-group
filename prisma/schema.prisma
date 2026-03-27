@@ -139,6 +139,8 @@ model Product {
   description    String?      @db.Text
   priceEU        Decimal      @db.Decimal(10, 2) // Price for EU companies
   priceRU        Decimal?     @db.Decimal(10, 2) // Price for RU companies (optional)
+  /// Legacy column still present on many DBs; must match priceEU on every write
+  price          Decimal      @default(0) @db.Decimal(10, 2)
   image          String?
   category       Category     @relation(fields: [categoryId], references: [id])
   categoryId     String

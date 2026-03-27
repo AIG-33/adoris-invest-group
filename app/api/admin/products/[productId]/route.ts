@@ -210,6 +210,7 @@ export async function PUT(
       description: description || null,
       priceEU: priceEUNum,
       priceRU: priceRUNum,
+      price: priceEUNum,
       categoryId,
       manufacturerId,
     }
