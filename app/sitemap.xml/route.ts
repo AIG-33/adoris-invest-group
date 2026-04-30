@@ -17,9 +17,12 @@ const PRODUCTS_PER_SITEMAP = 10000
  *   /sitemaps/static          ← static pages + categories + manufacturers
  *   /sitemaps/products-0      ← products   0 … 9 999
  *   /sitemaps/products-1      ← products  10 000 … 19 999
- *   /sitemaps/sku-0           ← SKU pages  0 … 9 999
- *   /sitemaps/sku-1           ← SKU pages 10 000 … 19 999
  *   …
+ *
+ * SKU URLs (`/sku/<sku>`) are intentionally NOT listed: they always
+ * 308-redirect to the canonical product page, so including them
+ * pollutes the GSC "Page with redirect" report without any indexing
+ * benefit. The canonical product pages are already covered above.
  */
 export async function GET() {
   const baseUrl = await getBaseUrl()
@@ -44,15 +47,6 @@ export async function GET() {
     sitemaps.push(`
     <sitemap>
       <loc>${baseUrl}/sitemaps/products-${i}</loc>
-      <lastmod>${now}</lastmod>
-    </sitemap>`)
-  }
-
-  // SKU sitemaps (paginated, same count as products)
-  for (let i = 0; i < totalProductPages; i++) {
-    sitemaps.push(`
-    <sitemap>
-      <loc>${baseUrl}/sitemaps/sku-${i}</loc>
       <lastmod>${now}</lastmod>
     </sitemap>`)
   }

@@ -7,6 +7,7 @@ import { HreflangTags } from '@/components/hreflang'
 import { AnalyticsHead } from '@/components/analytics-head'
 import { getServerCompany } from '@/lib/server-company'
 import { normalizeLogoUrl } from '@/lib/logo-url'
+import { getBaseUrl } from '@/lib/get-base-url'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,7 +17,7 @@ export const revalidate = 300
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()
   const logo = company?.logo ? normalizeLogoUrl(company.logo) : '/logo.png'
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const fullLogoUrl = logo.startsWith('http') ? logo : `${baseUrl}${logo}`
   const companyName = company?.name || process.env.SITE_NAME || 'Shop'
   const description = company?.language === 'ru'

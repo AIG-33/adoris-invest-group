@@ -11,6 +11,7 @@ import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
+import { getBaseUrl } from '@/lib/get-base-url'
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -27,7 +28,7 @@ export const maxDuration = 30
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()
   const companyName = company?.name || 'Medical Equipment'
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const language = company?.language || 'en'
 
   const title = language === 'ru'
@@ -116,7 +117,7 @@ export default async function HomePage() {
   // Filter categories with at least 1 product
   const categories = categoriesRaw.filter(c => c._count.products > 0)
 
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const structuredData = [
     generateOrganizationSchema(company, baseUrl),
     generateWebSiteSchema(company, baseUrl),

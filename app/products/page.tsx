@@ -19,6 +19,7 @@ import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
+import { getBaseUrl } from '@/lib/get-base-url'
 import {
   generateItemListSchema,
   generateBreadcrumbSchema,
@@ -57,7 +58,7 @@ const ITEMS_PER_PAGE = 9
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const company = await getServerCompany()
   const companyName = company?.name || ''
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const language = company?.language || 'en'
 
   const { search, category, manufacturer, page } = searchParams
@@ -244,7 +245,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     return `/products?${params.toString()}`
   }
 
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const breadcrumbs = [
     { name: dict.nav.home, url: `${baseUrl}/` },
     { name: dict.nav.products, url: `${baseUrl}/products` },

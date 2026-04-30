@@ -1,5 +1,4 @@
-import { redirect, notFound } from 'next/navigation'
-import { permanentRedirect } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import { getProductUrl } from '@/lib/product-url'
 import { Header } from '@/components/header'
@@ -10,6 +9,7 @@ import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
+import { getBaseUrl } from '@/lib/get-base-url'
 import {
   generateProductSchema,
   generateBreadcrumbSchema,
@@ -33,49 +33,46 @@ export async function generateMetadata({
   if (slug.length === 2) {
     const [manufacturerSlug, productSlug] = slug
     const company = await getServerCompany()
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    const baseUrl = await getBaseUrl()
 
-    // Optimized query for metadata generation - with retry logic
-    let product = await retryPrismaQuery(() => prisma.product.findFirst({
-      where: {
-        slug: productSlug,
-        manufacturer: { slug: manufacturerSlug },
-      },
-      select: {
-        id: true, name: true, sku: true, slug: true, description: true,
-        priceEU: true, priceRU: true, image: true,
-        category: { select: { id: true, name: true, slug: true } },
-        manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
-      },
-    }))
+    const metaSelect = {
+      id: true, name: true, sku: true, slug: true, description: true,
+      priceEU: true, priceRU: true, image: true,
+      category: { select: { id: true, name: true, slug: true } },
+      manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
+    } as const
 
-    // Fallback: prefix match or changed manufacturer slug
-    if (!product) {
+    // Soft-fail metadata lookup: never let DB errors turn into a 5xx page.
+    let product: any = null
+    try {
       product = await retryPrismaQuery(() => prisma.product.findFirst({
         where: {
-          slug: { startsWith: productSlug },
+          slug: productSlug,
           manufacturer: { slug: manufacturerSlug },
         },
-        select: {
-          id: true, name: true, sku: true, slug: true, description: true,
-          priceEU: true, priceRU: true, image: true,
-          category: { select: { id: true, name: true, slug: true } },
-          manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
-        },
+        select: metaSelect,
       }))
-    }
 
-    // Fallback: manufacturer slug changed — search by product slug only
-    if (!product) {
-      product = await retryPrismaQuery(() => prisma.product.findFirst({
-        where: { slug: productSlug },
-        select: {
-          id: true, name: true, sku: true, slug: true, description: true,
-          priceEU: true, priceRU: true, image: true,
-          category: { select: { id: true, name: true, slug: true } },
-          manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
-        },
-      }))
+      if (!product) {
+        product = await retryPrismaQuery(() => prisma.product.findFirst({
+          where: {
+            slug: { startsWith: productSlug },
+            manufacturer: { slug: manufacturerSlug },
+          },
+          select: metaSelect,
+        }))
+      }
+
+      if (!product) {
+        product = await retryPrismaQuery(() => prisma.product.findFirst({
+          where: { slug: productSlug },
+          select: metaSelect,
+        }))
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`[product/${manufacturerSlug}/${productSlug}] metadata DB error:`, error)
+      }
     }
 
     if (!product) {
@@ -162,54 +159,65 @@ export default async function ProductPage({
       manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
     } as const
 
-    // Optimized query for product data - with retry logic
-    let product = await retryPrismaQuery(() => prisma.product.findFirst({
-      where: {
-        slug: productSlug,
-        manufacturer: { slug: manufacturerSlug },
-      },
-      select: productSelect,
-    }))
-
-    // Fallback 1: slug changed (e.g. SKU was appended), try prefix match with same manufacturer
-    if (!product) {
+    // Lookup with three fallbacks. We must NOT call permanentRedirect()/notFound()
+    // inside the try block, because Next.js implements them via thrown signals
+    // (NEXT_REDIRECT / NEXT_NOT_FOUND) and a generic catch would swallow them.
+    let product: any = null
+    let needsCanonicalRedirect = false
+    try {
       product = await retryPrismaQuery(() => prisma.product.findFirst({
         where: {
-          slug: { startsWith: productSlug },
+          slug: productSlug,
           manufacturer: { slug: manufacturerSlug },
         },
         select: productSelect,
       }))
-      if (product) {
-        permanentRedirect(getProductUrl(product))
-      }
-    }
 
-    // Fallback 2: manufacturer slug changed (e.g. random suffix removed: neb-m7ugfu → neb)
-    // Search by product slug only, ignoring the old manufacturer slug
-    if (!product) {
-      product = await retryPrismaQuery(() => prisma.product.findFirst({
-        where: { slug: productSlug },
-        select: productSelect,
-      }))
-      if (product) {
-        permanentRedirect(getProductUrl(product))
+      if (!product) {
+        // Fallback 1: slug changed (e.g. SKU was appended), prefix match same manufacturer
+        product = await retryPrismaQuery(() => prisma.product.findFirst({
+          where: {
+            slug: { startsWith: productSlug },
+            manufacturer: { slug: manufacturerSlug },
+          },
+          select: productSelect,
+        }))
+        if (product) needsCanonicalRedirect = true
       }
-    }
 
-    // Fallback 3: both manufacturer AND product slug changed — try prefix match on product slug only
-    if (!product) {
-      product = await retryPrismaQuery(() => prisma.product.findFirst({
-        where: { slug: { startsWith: productSlug } },
-        select: productSelect,
-      }))
-      if (product) {
-        permanentRedirect(getProductUrl(product))
+      if (!product) {
+        // Fallback 2: manufacturer slug changed (e.g. neb-m7ugfu → neb)
+        product = await retryPrismaQuery(() => prisma.product.findFirst({
+          where: { slug: productSlug },
+          select: productSelect,
+        }))
+        if (product) needsCanonicalRedirect = true
       }
+
+      if (!product) {
+        // Fallback 3: both manufacturer and product slug changed
+        product = await retryPrismaQuery(() => prisma.product.findFirst({
+          where: { slug: { startsWith: productSlug } },
+          select: productSelect,
+        }))
+        if (product) needsCanonicalRedirect = true
+      }
+    } catch (error) {
+      // Pool exhaustion / DB outage: prefer 404 over 5xx so GSC clears the
+      // "Server error (5xx)" bucket faster. Lost product pages will be
+      // re-discovered via the sitemap on the next crawl.
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`[product/${manufacturerSlug}/${productSlug}] DB error:`, error)
+      }
+      notFound()
     }
 
     if (!product) {
       notFound()
+    }
+
+    if (needsCanonicalRedirect) {
+      permanentRedirect(getProductUrl(product))
     }
 
     // Get related products - soft-fail: if this query fails, show page without related products
@@ -268,7 +276,7 @@ export default async function ProductPage({
       ),
     }))
 
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    const baseUrl = await getBaseUrl()
     const productUrl = getProductUrl(product)
     const breadcrumbs = [
       { name: dict.product.home, url: `${baseUrl}/` },
@@ -300,27 +308,28 @@ export default async function ProductPage({
   if (slug.length === 1) {
     const productSlug = slug[0]
 
-    // Optimized query for legacy redirect - with retry logic
-    const product = await retryPrismaQuery(() => prisma.product.findUnique({
-      where: { slug: productSlug },
-      select: {
-        id: true,
-        slug: true,
-        manufacturer: {
-          select: {
-            slug: true,
-          },
+    let product: { id: string; slug: string; manufacturer: { slug: string } | null } | null = null
+    try {
+      product = await retryPrismaQuery(() => prisma.product.findUnique({
+        where: { slug: productSlug },
+        select: {
+          id: true,
+          slug: true,
+          manufacturer: { select: { slug: true } },
         },
-      },
-    }))
+      }))
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`[product/${productSlug}] legacy DB error:`, error)
+      }
+      notFound()
+    }
 
     if (!product) {
       notFound()
     }
 
-    // Permanent redirect to new URL format (308)
-    const newUrl = getProductUrl(product)
-    permanentRedirect(newUrl)
+    permanentRedirect(getProductUrl(product))
   }
 
   // Invalid format

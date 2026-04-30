@@ -3,6 +3,7 @@ import { Footer } from '@/components/footer'
 import { StructuredData } from '@/components/structured-data'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
+import { getBaseUrl } from '@/lib/get-base-url'
 import { generateFAQSchema, generateBreadcrumbSchema } from '@/lib/seo'
 import { HelpCircle, Mail, Phone } from 'lucide-react'
 
@@ -12,7 +13,7 @@ export default async function FAQPage() {
   const company = await getServerCompany()
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
 
   const breadcrumbs = [
     { name: dict.nav.home, url: `${baseUrl}/` },
@@ -54,21 +55,18 @@ export default async function FAQPage() {
           </div>
         </section>
 
-        {/* FAQ Content */}
-        <section className="py-16" itemScope itemType="https://schema.org/FAQPage">
+        {/* FAQ Content — structured data is provided via JSON-LD above (single source of truth). */}
+        <section className="py-16">
           <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto">
-              {/* FAQ Items */}
               <div className="space-y-4" role="list">
                 {dict.faq.items.map((item, index) => (
                   <details
                     key={index}
                     className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6 group"
-                    itemScope
-                    itemType="https://schema.org/Question"
                   >
                     <summary className="flex items-center justify-between cursor-pointer list-none">
-                      <h3 className="text-lg font-semibold text-neutral-900 pr-4 group-open:text-[#333333]" itemProp="name">
+                      <h3 className="text-lg font-semibold text-neutral-900 pr-4 group-open:text-[#333333]">
                         {item.question}
                       </h3>
                       <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-neutral-100 group-open:bg-[#333333] transition-colors">
@@ -82,8 +80,8 @@ export default async function FAQPage() {
                         </svg>
                       </div>
                     </summary>
-                    <div className="mt-4 pt-4 border-t border-neutral-200" itemScope itemType="https://schema.org/Answer">
-                      <p className="text-neutral-700 leading-relaxed" itemProp="text">
+                    <div className="mt-4 pt-4 border-t border-neutral-200">
+                      <p className="text-neutral-700 leading-relaxed">
                         {item.answer}
                       </p>
                     </div>

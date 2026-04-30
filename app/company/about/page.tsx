@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Award, Globe, Users, TrendingUp, CheckCircle2, Target, Heart, Lightbulb } from 'lucide-react'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
+import { getBaseUrl } from '@/lib/get-base-url'
 import {
   generateOrganizationSchema,
   generateBreadcrumbSchema,
@@ -16,7 +17,7 @@ export default async function AboutPage() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
   
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const breadcrumbs = [
     { name: dict.nav.home, url: `${baseUrl}/` },
     { name: dict.nav.company, url: `${baseUrl}/company/about` },

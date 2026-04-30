@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductUrl } from '@/lib/product-url'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
+import { getBaseUrl } from '@/lib/get-base-url'
 
 /**
  * llms.txt — Machine-readable site description for AI search engines
@@ -16,7 +17,7 @@ export const revalidate = 3600 // Revalidate every hour
 
 export async function GET() {
   const company = await getServerCompany()
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const baseUrl = await getBaseUrl()
   const companyName = company?.name || 'Medical Equipment Store'
   const companyEmail = company?.email || ''
   const language = company?.language || 'en'

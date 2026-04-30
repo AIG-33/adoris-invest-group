@@ -1,4 +1,4 @@
-import { redirect, notFound } from 'next/navigation'
+import { permanentRedirect, notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import { getProductUrl } from '@/lib/product-url'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
@@ -29,17 +29,29 @@ export async function generateMetadata({
   const { sku } = await params
   const decodedSku = decodeURIComponent(sku)
 
-  const product = await retryPrismaQuery(() =>
-    prisma.product.findUnique({
-      where: { sku: decodedSku },
-      select: {
-        name: true,
-        sku: true,
-        description: true,
-        manufacturer: { select: { name: true } },
-      },
-    })
-  )
+  let product: {
+    name: string
+    sku: string
+    description: string | null
+    manufacturer: { name: string } | null
+  } | null = null
+  try {
+    product = await retryPrismaQuery(() =>
+      prisma.product.findUnique({
+        where: { sku: decodedSku },
+        select: {
+          name: true,
+          sku: true,
+          description: true,
+          manufacturer: { select: { name: true } },
+        },
+      })
+    )
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`[sku/${decodedSku}] metadata DB error:`, error)
+    }
+  }
 
   if (!product) {
     return { title: `SKU ${decodedSku} — Not Found` }
@@ -60,21 +72,30 @@ export default async function SkuPage({
   const { sku } = await params
   const decodedSku = decodeURIComponent(sku)
 
-  const product = await retryPrismaQuery(() =>
-    prisma.product.findUnique({
-      where: { sku: decodedSku },
-      select: {
-        slug: true,
-        manufacturer: { select: { slug: true } },
-      },
-    })
-  )
+  // Treat infrastructure errors as 404 instead of 5xx — Google is currently
+  // reporting thousands of "Server error (5xx)" entries which originate here
+  // when the connection pool is saturated.
+  let product: { slug: string; manufacturer: { slug: string } | null } | null = null
+  try {
+    product = await retryPrismaQuery(() =>
+      prisma.product.findUnique({
+        where: { sku: decodedSku },
+        select: {
+          slug: true,
+          manufacturer: { select: { slug: true } },
+        },
+      })
+    )
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(`[sku/${decodedSku}] DB error:`, error)
+    }
+    notFound()
+  }
 
   if (!product) {
     notFound()
   }
 
-  // 308 Permanent Redirect to canonical product page
-  const canonicalUrl = getProductUrl(product)
-  redirect(canonicalUrl)
+  permanentRedirect(getProductUrl(product))
 }

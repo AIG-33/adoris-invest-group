@@ -100,35 +100,6 @@ async function generateProductsSitemap(baseUrl: string, page: number): Promise<s
   return wrapUrlset(entries)
 }
 
-/**
- * Generate a paginated SKU-URL sitemap
- * SKU pages are the primary search entry point for B2B users.
- */
-async function generateSkuSitemap(baseUrl: string, page: number): Promise<string> {
-  const products = await retryPrismaQuery(() =>
-    prisma.product.findMany({
-      select: {
-        sku: true,
-        updatedAt: true,
-      },
-      orderBy: { id: 'asc' },
-      skip: page * PRODUCTS_PER_SITEMAP,
-      take: PRODUCTS_PER_SITEMAP,
-    })
-  )
-
-  const entries = products.map((p) =>
-    urlEntry(
-      `${baseUrl}/sku/${encodeURIComponent(p.sku)}`,
-      p.updatedAt.toISOString(),
-      'weekly',
-      0.9
-    )
-  )
-
-  return wrapUrlset(entries)
-}
-
 function wrapUrlset(entries: string[]): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries.join('')}
@@ -152,12 +123,6 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid sitemap id' }, { status: 404 })
     }
     xml = await generateProductsSitemap(baseUrl, page)
-  } else if (id.startsWith('sku-')) {
-    const page = parseInt(id.replace('sku-', ''), 10)
-    if (isNaN(page) || page < 0) {
-      return NextResponse.json({ error: 'Invalid sitemap id' }, { status: 404 })
-    }
-    xml = await generateSkuSitemap(baseUrl, page)
   } else {
     return NextResponse.json({ error: 'Unknown sitemap' }, { status: 404 })
   }
