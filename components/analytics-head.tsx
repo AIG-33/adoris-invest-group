@@ -20,17 +20,18 @@ export function AnalyticsHead({ company }: AnalyticsHeadProps) {
 
   return (
     <>
-      {/* Google Analytics 4 - Use beforeInteractive to load in head */}
+      {/* Google Analytics 4 — afterInteractive: keeps GA out of the critical
+          rendering path (Next.js docs explicitly recommend this for analytics). */}
       {googleAnalyticsId && (
         <>
           <Script
             id="google-analytics-gtag"
-            strategy="beforeInteractive"
+            strategy="afterInteractive"
             src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
           />
           <Script
             id="google-analytics-config"
-            strategy="beforeInteractive"
+            strategy="afterInteractive"
             dangerouslySetInnerHTML={{
               __html: `
                 window.dataLayer = window.dataLayer || [];

@@ -6,11 +6,14 @@ import { FeaturedProducts } from '@/components/featured-products'
 import { CategoryShowcase } from '@/components/category-showcase'
 import { StatsSection } from '@/components/stats-section'
 import { StructuredData } from '@/components/structured-data'
-import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
-import { retryPrismaQuery } from '@/lib/retry-prisma'
+import {
+  getCachedFeaturedProducts,
+  getCachedManufacturersWithLogo,
+  getCachedCategoriesWithCount,
+} from '@/lib/cached-queries'
 import { getBaseUrl } from '@/lib/get-base-url'
 import {
   generateOrganizationSchema,
@@ -65,47 +68,12 @@ export default async function HomePage() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
 
-  // Fetch all data in parallel
+  // Fetch all data in parallel — all three queries are cached by unstable_cache,
+  // so on a warm cache this turns into ~0 DB roundtrips.
   const [featuredProductsRaw, manufacturersRaw, categoriesRaw] = await Promise.all([
-    // Featured products
-    retryPrismaQuery(() => prisma.product.findMany({
-      where: { featured: true },
-      select: {
-        id: true,
-        name: true,
-        sku: true,
-        slug: true,
-        priceEU: true,
-        priceRU: true,
-        image: true,
-        category: {
-          select: { id: true, name: true, slug: true },
-        },
-        manufacturer: {
-          select: { id: true, name: true, slug: true, logo: true },
-        },
-      },
-      take: 6,
-      orderBy: { createdAt: 'desc' },
-    })),
-
-    // Manufacturers with logos for the trust strip (all)
-    retryPrismaQuery(() => prisma.manufacturer.findMany({
-      where: { logo: { not: null } },
-      select: { name: true, slug: true, logo: true },
-      orderBy: { name: 'asc' },
-    })),
-
-    // All categories with product counts
-    retryPrismaQuery(() => prisma.category.findMany({
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        _count: { select: { products: true } },
-      },
-      orderBy: { name: 'asc' },
-    })),
+    getCachedFeaturedProducts(),
+    getCachedManufacturersWithLogo(),
+    getCachedCategoriesWithCount(),
   ])
 
   // Convert prices
@@ -114,8 +82,15 @@ export default async function HomePage() {
     price: getProductPrice(p.priceEU, p.priceRU, priceType as 'EU' | 'RU'),
   }))
 
-  // Filter categories with at least 1 product
-  const categories = categoriesRaw.filter(c => c._count.products > 0)
+  // Adapt to CategoryShowcase shape and filter categories with at least 1 product
+  const categories = categoriesRaw
+    .filter(c => c.productCount > 0)
+    .map(c => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      _count: { products: c.productCount },
+    }))
 
   const baseUrl = await getBaseUrl()
   const structuredData = [

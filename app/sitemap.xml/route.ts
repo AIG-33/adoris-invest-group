@@ -58,7 +58,8 @@ export async function GET() {
   return new NextResponse(xml, {
     headers: {
       'Content-Type': 'application/xml',
-      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=600',
+      // 24h on CDN, 12h SWR — Google bots hit this constantly.
+      'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=43200',
     },
   })
 }

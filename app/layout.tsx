@@ -129,6 +129,12 @@ export default async function RootLayout({
       data-company-logo={logo || undefined}
     >
       <head>
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/slide-1.webp"
+          fetchPriority="high"
+        />
         <HreflangTags />
       </head>
       <body className={inter.className} suppressHydrationWarning>

@@ -19,6 +19,7 @@ import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
+import { getCachedManufacturersList } from '@/lib/cached-queries'
 import { getBaseUrl } from '@/lib/get-base-url'
 import {
   generateItemListSchema,
@@ -208,16 +209,8 @@ export default async function ProductsPage({ searchParams }: Props) {
       take: ITEMS_PER_PAGE,
     })),
     
-    // Fetch manufacturers for filters - removed _count for better performance - with retry
-    // Product counts can be calculated client-side if needed
-    retryPrismaQuery(() => prisma.manufacturer.findMany({
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      },
-      orderBy: { name: 'asc' },
-    })),
+    // Fetch manufacturers for filters — cached, no DB hit on warm cache
+    getCachedManufacturersList(),
   ])
 
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)

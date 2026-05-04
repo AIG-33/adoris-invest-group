@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-options'
 import { prisma } from '@/lib/db'
@@ -152,6 +153,8 @@ export async function PUT(
       data: updateData,
     })
 
+    revalidateTag('company')
+
     return NextResponse.json({ company: updatedCompany })
   } catch (error: any) {
     logger.error('Error updating company:', error)
@@ -202,6 +205,8 @@ export async function DELETE(
     await prisma.company.delete({
       where: { id: companyId },
     })
+
+    revalidateTag('company')
 
     return NextResponse.json({ success: true, message: 'Company deleted successfully' })
   } catch (error: any) {

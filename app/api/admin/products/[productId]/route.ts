@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-options'
 import { prisma } from '@/lib/db'
@@ -230,6 +231,9 @@ export async function PUT(
         manufacturer: true,
       },
     })
+
+    revalidateTag('products')
+    revalidateTag('featured-products')
 
     return NextResponse.json({ product: updatedProduct })
   } catch (error: any) {

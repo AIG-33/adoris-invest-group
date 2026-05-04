@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth-options'
 import { prisma } from '@/lib/db'
@@ -1220,6 +1221,14 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
       if (process.env.NODE_ENV === 'development') {
         console.log(`✅ Batch ${batchIndex + 1}/${batches.length} completed: ${results.created} created, ${results.updated} updated`)
       }
+    }
+
+    if (totalResults.created > 0 || totalResults.updated > 0) {
+      revalidateTag('products')
+      revalidateTag('featured-products')
+      revalidateTag('products-count')
+      revalidateTag('manufacturers')
+      revalidateTag('categories')
     }
 
     return NextResponse.json({
