@@ -1,6 +1,7 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { HeroSection } from '@/components/hero-section'
+import { HeroSearch } from '@/components/hero-search'
+import { BentoStrip } from '@/components/bento-strip'
 import { ManufacturersStrip } from '@/components/manufacturers-strip'
 import { FeaturedProducts } from '@/components/featured-products'
 import { CategoryShowcase } from '@/components/category-showcase'
@@ -92,6 +93,51 @@ export default async function HomePage() {
       _count: { products: c.productCount },
     }))
 
+  // Hero v6 metrics — totals from cached queries (no extra DB roundtrips)
+  const totalProducts = categoriesRaw.reduce((sum, c) => sum + c.productCount, 0)
+  const totalManufacturers = manufacturersRaw.length
+  // Show the most populated categories first (by SKU count) so the chips
+  // surface real disciplines, not alphabetically-first brand-named buckets.
+  // Skip "uncategorized" — it's a fallback bucket, not a discipline.
+  const quickCategories = [...categories]
+    .filter((c) => c.slug !== 'uncategorized')
+    .sort((a, b) => b._count.products - a._count.products)
+    .slice(0, 6)
+    .map((c) => ({
+      slug: c.slug,
+      name: c.name,
+      count: c._count.products,
+    }))
+
+  // Bento copy depends on language
+  const bentoCopy = language === 'ru'
+    ? {
+        onTimeLabel: 'Доставка вовремя · 12 мес',
+        onTimeDetail: 'из всех отгрузок прибыли в срок.',
+        coverageLabel: 'География · по всему миру',
+        hub: 'ХАБ',
+        complianceLabel: 'Комплаенс и платежи',
+        complianceItems: [
+          'AML / KYC проверка контрагентов',
+          'Скрининг по санкциям ЕС, ООН, OFAC',
+          'SWIFT / SEPA, мульти-валютные счёта',
+          'GDPR, защита данных, EU VAT',
+        ],
+      }
+    : {
+        onTimeLabel: 'On-time delivery · 12 mo',
+        onTimeDetail: 'of shipments arrived in window.',
+        coverageLabel: 'Coverage · worldwide',
+        hub: 'HUB',
+        complianceLabel: 'Compliance & payments',
+        complianceItems: [
+          'AML / KYC counterparty due diligence',
+          'EU, UN & OFAC sanctions screening',
+          'SWIFT / SEPA, multi-currency accounts',
+          'GDPR, data protection, EU VAT registered',
+        ],
+      }
+
   const baseUrl = await getBaseUrl()
   const structuredData = [
     generateOrganizationSchema(company, baseUrl),
@@ -104,9 +150,28 @@ export default async function HomePage() {
       <StructuredData data={structuredData} />
       <Header />
       <main className="min-h-screen">
-        {/* DARK — Hero */}
+        {/* DARK — Hero v6 (search-as-hero) */}
         <section aria-label="Hero section">
-          <HeroSection translations={dict.homepage.hero} />
+          <HeroSearch
+            translations={{
+              searchPlaceholder: dict.homepage.hero.searchPlaceholder,
+              browseCatalog: dict.homepage.hero.browseCatalog,
+            }}
+            language={language}
+            companyName={company?.name || 'IVD Group'}
+            totalProducts={totalProducts}
+            totalManufacturers={totalManufacturers}
+            quickCategories={quickCategories}
+          />
+        </section>
+
+        {/* DARK — Bento metrics strip */}
+        <section aria-label="Operational metrics">
+          <BentoStrip
+            translations={bentoCopy}
+            language={language}
+            totalProducts={totalProducts}
+          />
         </section>
 
         {/* LIGHT — Trusted Manufacturers */}

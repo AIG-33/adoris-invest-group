@@ -117,13 +117,24 @@ export function FeaturedProducts({ products, translations, company }: Props) {
               {/* Content */}
               <div className="p-4 sm:p-5">
                 {/* SKU - prominent for B2B */}
-                <div className="inline-flex items-center gap-1.5 mb-2.5 px-2 py-0.5 rounded bg-white/[0.08] border border-white/[0.08]">
-                  <span className="text-[10px] font-semibold text-white/60 uppercase tracking-wider">SKU</span>
-                  <span className="text-xs font-mono font-bold text-white/80">{product.sku}</span>
+                <div
+                  className="inline-flex items-center gap-1.5 mb-2.5 px-2 py-0.5 rounded border"
+                  style={{
+                    background: 'var(--brand-1-soft)',
+                    borderColor: 'var(--brand-1-dim)',
+                  }}
+                >
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-white/65">SKU</span>
+                  <span
+                    className="font-mono-brand text-xs font-bold"
+                    style={{ color: 'var(--brand-1)' }}
+                  >
+                    {product.sku}
+                  </span>
                 </div>
 
                 {/* Product name */}
-                <h3 className="text-sm sm:text-base font-semibold text-white mb-1.5 line-clamp-2 group-hover:text-white transition-colors">
+                <h3 className="font-display text-sm sm:text-base font-semibold text-white mb-1.5 line-clamp-2 transition-colors">
                   {product.name}
                 </h3>
 
@@ -134,9 +145,9 @@ export function FeaturedProducts({ products, translations, company }: Props) {
 
                 {/* Price row */}
                 <div className="flex items-center justify-between pt-3 border-t border-white/[0.08]">
-                  <span className="text-lg font-bold text-white">
+                  <span className="font-mono-brand text-lg font-bold text-white">
                     {(!company?.showPrices || product.price === 0) ? (
-                      <span className="text-sm font-medium text-white/60">Price on Request</span>
+                      <span className="font-display text-sm font-medium text-white/60">Price on Request</span>
                     ) : (
                       `€${product.price.toLocaleString()}`
                     )}

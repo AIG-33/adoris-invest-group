@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 import { Providers } from '@/components/providers'
 import { ColorSync } from '@/components/color-sync'
@@ -9,7 +11,7 @@ import { getServerCompany } from '@/lib/server-company'
 import { normalizeLogoUrl } from '@/lib/logo-url'
 import { getBaseUrl } from '@/lib/get-base-url'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
 
 // ISR: Revalidate every 5 minutes (300 seconds) for better performance
 export const revalidate = 300
@@ -121,10 +123,13 @@ export default async function RootLayout({
     <html 
       lang={company?.language || 'en'} 
       suppressHydrationWarning
+      className={`${inter.variable} ${GeistSans.variable} ${GeistMono.variable}`}
       style={{
         '--company-primary': primaryColor,
         '--company-secondary': secondaryColor,
         '--company-accent': accentColor,
+        '--brand-1': primaryColor,
+        '--brand-2': accentColor,
       } as React.CSSProperties & Record<string, string>}
       data-company-logo={logo || undefined}
     >

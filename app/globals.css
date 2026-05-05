@@ -15,6 +15,28 @@
   --company-primary: #333333;
   --company-secondary: #ffffff;
   --company-accent: #000000;
+
+  /* ─── Brand design tokens (v6) ───────────────────────────────────────────
+   * Two-color brand system. --brand-1 / --brand-2 are injected from
+   * layout.tsx based on the company DB record (mirrors --company-primary
+   * and --company-accent), so white-labeling stays driven by the DB.
+   *
+   * Soft / dim variants are derived in pure CSS via color-mix(), so any
+   * brand color works without changing this file.
+   * ────────────────────────────────────────────────────────────────────── */
+  --brand-1: #333333;
+  --brand-2: #000000;
+  --brand-1-soft: color-mix(in srgb, var(--brand-1) 12%, transparent);
+  --brand-1-dim:  color-mix(in srgb, var(--brand-1) 25%, transparent);
+  --brand-2-soft: color-mix(in srgb, var(--brand-2) 12%, transparent);
+  --brand-2-dim:  color-mix(in srgb, var(--brand-2) 25%, transparent);
+  --brand-grad: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  --brand-grad-soft: linear-gradient(135deg, var(--brand-1-soft), var(--brand-2-soft));
+  --on-brand: #ffffff;
+
+  /* Typography stacks */
+  --font-sans: var(--font-geist-sans), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-geist-mono), 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
 }
 
 @layer base {
@@ -33,6 +55,34 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Apply Geist as the default display font everywhere headings use it */
+  .font-display {
+    font-family: var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+
+  /* Mono utility used for SKU codes, prices, IDs, timestamps, status pills */
+  .font-mono-brand {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Headline gradient that follows the active brand */
+  .text-brand-gradient {
+    background: var(--brand-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-brand-gradient {
+    background: var(--brand-grad);
+  }
+
+  .bg-brand-gradient-soft {
+    background: var(--brand-grad-soft);
   }
 }
 
@@ -97,6 +147,38 @@
 @keyframes scroll-right {
   0% { transform: translateX(-50%); }
   100% { transform: translateX(0); }
+}
+
+/* ---- Hero v6 — mesh-blob background ---------------------------------- */
+@keyframes blob-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(20px, -30px, 0) scale(1.05); }
+  66%      { transform: translate3d(-25px, 15px, 0) scale(0.97); }
+}
+.hero-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: blob-float 18s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob { animation: none; }
+}
+
+/* ---- Hero v6 — decorative floating SKU cards ------------------------- */
+@keyframes card-bob {
+  0%, 100% { transform: var(--card-base-transform) translateY(0); }
+  50%      { transform: var(--card-base-transform) translateY(-8px); }
+}
+.hero-card-float {
+  animation: card-bob 6s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-card-float { animation: none; }
 }
 
 .animate-scroll-left {

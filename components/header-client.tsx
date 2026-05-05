@@ -300,7 +300,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold text-[#000000] truncate text-sm sm:text-base">{product.name}</div>
                       <div className="text-xs sm:text-sm text-neutral-600 flex items-center gap-1 sm:gap-2 mt-1">
-                        <span className="font-mono bg-neutral-100 px-1.5 sm:px-2 py-0.5 rounded text-xs">
+                        <span className="font-mono-brand bg-neutral-100 px-1.5 sm:px-2 py-0.5 rounded text-xs font-semibold">
                           {product.sku}
                         </span>
                         {product.manufacturer && (
@@ -309,7 +309,7 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="font-bold text-sm sm:text-base" style={{ color: 'var(--company-primary)' }}>
+                      <div className="font-mono-brand font-bold text-sm sm:text-base" style={{ color: 'var(--company-primary)' }}>
                         €{Number(product.price || 0).toFixed(2)}
                       </div>
                       <div className="text-xs text-neutral-500 hidden sm:block">excl. VAT</div>
