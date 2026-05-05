@@ -132,6 +132,7 @@ const TRUST_ICON: Record<string, any> = {
 
 // Decorative cards floating to the side of the hero — purely visual, not real data.
 // They give the section the "product-y" feel of Linear/Vercel landing pages.
+// `tone` keys map to entries in CARD_TONE below.
 const FLOATING_CARDS = {
   en: [
     {
@@ -140,7 +141,7 @@ const FLOATING_CARDS = {
       name: 'CRP reagent kit',
       stock: '84 in stock',
       icon: 'drop' as const,
-      tone: 1,
+      tone: 'mint' as const,
     },
     {
       sku: '363080',
@@ -148,7 +149,7 @@ const FLOATING_CARDS = {
       name: 'Plasma tube ×100',
       stock: '1,240 in stock',
       icon: 'syringe' as const,
-      tone: 2,
+      tone: 'coral' as const,
     },
     {
       sku: '05031738',
@@ -156,7 +157,7 @@ const FLOATING_CARDS = {
       name: 'Cobas Glucose ×500',
       stock: '220 in stock',
       icon: 'beaker' as const,
-      tone: 1,
+      tone: 'blue' as const,
     },
   ],
   ru: [
@@ -166,7 +167,7 @@ const FLOATING_CARDS = {
       name: 'Реагент CRP',
       stock: '84 на складе',
       icon: 'drop' as const,
-      tone: 1,
+      tone: 'mint' as const,
     },
     {
       sku: '363080',
@@ -174,7 +175,7 @@ const FLOATING_CARDS = {
       name: 'Пробирка для плазмы ×100',
       stock: '1 240 на складе',
       icon: 'syringe' as const,
-      tone: 2,
+      tone: 'coral' as const,
     },
     {
       sku: '05031738',
@@ -182,7 +183,7 @@ const FLOATING_CARDS = {
       name: 'Cobas Глюкоза ×500',
       stock: '220 на складе',
       icon: 'beaker' as const,
-      tone: 1,
+      tone: 'blue' as const,
     },
   ],
 } as const
@@ -191,6 +192,13 @@ const CARD_ICON: Record<string, any> = {
   drop: Beaker,
   syringe: Syringe,
   beaker: FlaskConical,
+}
+
+const CARD_TONE: Record<string, { bg: string; fg: string }> = {
+  mint:   { bg: 'var(--accent-mint-soft)',   fg: 'var(--accent-mint)' },
+  coral:  { bg: 'var(--accent-coral-soft)',  fg: 'var(--accent-coral)' },
+  blue:   { bg: 'var(--accent-blue-soft)',   fg: 'var(--accent-blue)' },
+  violet: { bg: 'var(--accent-violet-soft)', fg: 'var(--accent-violet)' },
 }
 
 export function HeroSearch({
@@ -283,49 +291,95 @@ export function HeroSearch({
     <section
       className="relative overflow-hidden border-b border-neutral-200 bg-[#fafafa]"
     >
-      {/* Mesh blob background — animated, gpu-friendly */}
+      {/* Mesh blob background — discrete bright accents that read on white
+          regardless of tenant brand color. Brand-1 still seeds one blob so
+          tenants with vivid palettes get extra cohesion. */}
       <div aria-hidden className="absolute inset-0 overflow-hidden">
         <div
           className="hero-blob"
           style={{
-            top: '-160px',
-            left: '8%',
-            width: 460,
-            height: 460,
-            background: 'var(--brand-1)',
-            opacity: 0.18,
+            top: '-180px',
+            left: '-60px',
+            width: 520,
+            height: 520,
+            background: 'var(--accent-mint)',
+            opacity: 0.55,
             animationDelay: '0s',
           }}
         />
         <div
           className="hero-blob"
           style={{
-            top: '20%',
-            right: '-80px',
-            width: 520,
-            height: 520,
-            background: 'var(--brand-2)',
-            opacity: 0.14,
+            top: '-140px',
+            right: '-100px',
+            width: 560,
+            height: 560,
+            background: 'var(--accent-blue)',
+            opacity: 0.55,
             animationDelay: '-6s',
           }}
         />
         <div
           className="hero-blob"
           style={{
-            bottom: '-180px',
-            left: '40%',
-            width: 380,
-            height: 380,
-            background: 'var(--brand-1)',
-            opacity: 0.10,
+            top: '38%',
+            left: '52%',
+            width: 420,
+            height: 420,
+            background: 'var(--accent-violet)',
+            opacity: 0.40,
+            animationDelay: '-9s',
+          }}
+        />
+        <div
+          className="hero-blob"
+          style={{
+            bottom: '-200px',
+            left: '20%',
+            width: 480,
+            height: 480,
+            background: 'var(--accent-coral)',
+            opacity: 0.45,
             animationDelay: '-12s',
+          }}
+        />
+        <div
+          className="hero-blob"
+          style={{
+            bottom: '-160px',
+            right: '8%',
+            width: 360,
+            height: 360,
+            background: 'var(--accent-amber)',
+            opacity: 0.40,
+            animationDelay: '-3s',
+          }}
+        />
+        {/* Brand-tinted overlay — gives the page a faint hint of the
+            tenant's primary even when accent palette dominates. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(800px 500px at 50% 0%, var(--brand-1-soft), transparent 60%)',
           }}
         />
       </div>
 
-      {/* Subtle grid background */}
+      {/* Frosted glass layer — softens the blobs, keeps text readable */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background: 'rgba(255,255,255,0.55)',
+          backdropFilter: 'blur(40px) saturate(140%)',
+          WebkitBackdropFilter: 'blur(40px) saturate(140%)',
+        }}
+      />
+
+      {/* Subtle grid background — drawn over the frosted layer for crispness */}
       <svg
-        className="pointer-events-none absolute inset-0 h-full w-full text-neutral-900/[0.04]"
+        className="pointer-events-none absolute inset-0 h-full w-full text-neutral-900/[0.05]"
         aria-hidden="true"
       >
         <defs>
@@ -538,21 +592,21 @@ export function HeroSearch({
             onClick={() => fileInputRef.current?.click()}
             className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2 text-sm font-medium text-neutral-800 shadow-sm transition-all hover:border-neutral-300 hover:bg-neutral-50"
           >
-            <Upload className="h-4 w-4" style={{ color: 'var(--brand-1)' }} />
+            <Upload className="h-4 w-4" style={{ color: 'var(--accent-mint)' }} />
             {t.uploadCsv}
           </button>
           <Link
             href="/bulk-order"
             className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2 text-sm font-medium text-neutral-800 shadow-sm transition-all hover:border-neutral-300 hover:bg-neutral-50"
           >
-            <ClipboardPaste className="h-4 w-4" style={{ color: 'var(--brand-2)' }} />
+            <ClipboardPaste className="h-4 w-4" style={{ color: 'var(--accent-blue)' }} />
             {t.pasteQuote}
           </Link>
           <Link
             href="/products"
-            className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-transparent px-3.5 py-2 text-sm font-medium text-neutral-700 transition-all hover:border-neutral-300 hover:bg-white"
+            className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white/80 px-3.5 py-2 text-sm font-medium text-neutral-800 shadow-sm transition-all hover:border-neutral-300 hover:bg-white"
           >
-            <Zap className="h-4 w-4 text-neutral-500" />
+            <Zap className="h-4 w-4" style={{ color: 'var(--accent-amber)' }} />
             {t.browseManufacturers}
           </Link>
         </div>
@@ -599,16 +653,28 @@ export function HeroSearch({
           </div>
         )}
 
-        {/* Trust badges — anchors the hero with B2B credibility cues */}
+        {/* Trust badges — coloured icons add B2B credibility + visual life */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 sm:mt-14 sm:gap-x-8">
-          {t.trustBadges.map((b) => {
+          {t.trustBadges.map((b, i) => {
             const Icon = TRUST_ICON[b.icon] || ShieldCheck
+            const tones = [
+              { bg: 'var(--accent-mint-soft)',   fg: 'var(--accent-mint)' },
+              { bg: 'var(--accent-blue-soft)',   fg: 'var(--accent-blue)' },
+              { bg: 'var(--accent-violet-soft)', fg: 'var(--accent-violet)' },
+              { bg: 'var(--accent-coral-soft)',  fg: 'var(--accent-coral)' },
+            ]
+            const tone = tones[i % tones.length]
             return (
               <div
                 key={b.label}
-                className="inline-flex items-center gap-2 text-[12px] font-medium text-neutral-500"
+                className="inline-flex items-center gap-2 text-[12px] font-medium text-neutral-700"
               >
-                <Icon className="h-4 w-4 text-neutral-400" strokeWidth={1.75} />
+                <span
+                  className="grid h-6 w-6 place-items-center rounded-full"
+                  style={{ background: tone.bg, color: tone.fg }}
+                >
+                  <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+                </span>
                 <span className="font-mono-brand uppercase tracking-[0.08em]">
                   {b.label}
                 </span>
@@ -633,13 +699,13 @@ function FloatingCard({
     name: string
     stock: string
     icon: 'drop' | 'syringe' | 'beaker'
-    tone: number
+    tone: 'mint' | 'coral' | 'blue' | 'violet'
   }
   className?: string
   rotate: number
 }) {
   const Icon = CARD_ICON[card.icon] || FlaskConical
-  const useBrand2 = card.tone === 2
+  const tone = CARD_TONE[card.tone] || CARD_TONE.mint
   const baseTransform = `rotate(${rotate}deg)`
   return (
     <div
@@ -659,17 +725,14 @@ function FloatingCard({
         <div className="flex items-start gap-3">
           <div
             className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl"
-            style={{
-              background: useBrand2 ? 'var(--brand-2-soft)' : 'var(--brand-1-soft)',
-              color: useBrand2 ? 'var(--brand-2)' : 'var(--brand-1)',
-            }}
+            style={{ background: tone.bg, color: tone.fg }}
           >
             <Icon className="h-5 w-5" strokeWidth={1.75} />
           </div>
           <div className="min-w-0 flex-1">
             <div
               className="font-mono-brand truncate text-[11px] font-semibold"
-              style={{ color: useBrand2 ? 'var(--brand-2)' : 'var(--brand-1)' }}
+              style={{ color: tone.fg }}
             >
               {card.sku}
             </div>
@@ -683,7 +746,7 @@ function FloatingCard({
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-500">
             <span
               className="inline-block h-1.5 w-1.5 rounded-full"
-              style={{ background: '#10b981', boxShadow: '0 0 6px rgba(16,185,129,0.5)' }}
+              style={{ background: 'var(--accent-mint)', boxShadow: '0 0 6px var(--accent-mint-soft)' }}
             />
             <span className="font-mono-brand">{card.stock}</span>
           </div>
