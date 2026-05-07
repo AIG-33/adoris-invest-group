@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -291,104 +292,66 @@ export function HeroSearch({
     <section
       className="relative overflow-hidden border-b border-neutral-200 bg-[#fafafa]"
     >
-      {/* Mesh blob background — discrete bright accents that read on white
-          regardless of tenant brand color. Brand-1 still seeds one blob so
-          tenants with vivid palettes get extra cohesion. */}
-      <div aria-hidden className="absolute inset-0 overflow-hidden">
-        <div
-          className="hero-blob"
-          style={{
-            top: '-180px',
-            left: '-60px',
-            width: 520,
-            height: 520,
-            background: 'var(--accent-mint)',
-            opacity: 0.55,
-            animationDelay: '0s',
-          }}
-        />
-        <div
-          className="hero-blob"
-          style={{
-            top: '-140px',
-            right: '-100px',
-            width: 560,
-            height: 560,
-            background: 'var(--accent-blue)',
-            opacity: 0.55,
-            animationDelay: '-6s',
-          }}
-        />
-        <div
-          className="hero-blob"
-          style={{
-            top: '38%',
-            left: '52%',
-            width: 420,
-            height: 420,
-            background: 'var(--accent-violet)',
-            opacity: 0.40,
-            animationDelay: '-9s',
-          }}
-        />
-        <div
-          className="hero-blob"
-          style={{
-            bottom: '-200px',
-            left: '20%',
-            width: 480,
-            height: 480,
-            background: 'var(--accent-coral)',
-            opacity: 0.45,
-            animationDelay: '-12s',
-          }}
-        />
-        <div
-          className="hero-blob"
-          style={{
-            bottom: '-160px',
-            right: '8%',
-            width: 360,
-            height: 360,
-            background: 'var(--accent-amber)',
-            opacity: 0.40,
-            animationDelay: '-3s',
-          }}
-        />
-        {/* Brand-tinted overlay — gives the page a faint hint of the
-            tenant's primary even when accent palette dominates. */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(800px 500px at 50% 0%, var(--brand-1-soft), transparent 60%)',
-          }}
+      {/* ─── Real laboratory photo, full-width ──────────────────────────
+          A high-res shot of a scientist's hand pipetting a reagent into a
+          microplate — communicates "lab consumables & reagents" instantly,
+          and the heavy bokeh leaves the centre clean for the search column.
+          Marked priority + fetchPriority="high" so it's the LCP. */}
+      <div aria-hidden className="absolute inset-0">
+        <Image
+          src="/hero/lab-bg.jpg"
+          alt=""
+          fill
+          priority
+          fetchPriority="high"
+          sizes="100vw"
+          className="object-cover object-center"
         />
       </div>
 
-      {/* Frosted glass layer — softens the blobs, keeps text readable */}
+      {/* Vertical wash — keeps text legible at the top and bottom while
+          letting the centre of the photo breathe. */}
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
-          background: 'rgba(255,255,255,0.55)',
-          backdropFilter: 'blur(40px) saturate(140%)',
-          WebkitBackdropFilter: 'blur(40px) saturate(140%)',
+          background:
+            'linear-gradient(to bottom, rgba(250,250,250,0.94) 0%, rgba(250,250,250,0.62) 28%, rgba(250,250,250,0.55) 60%, rgba(250,250,250,0.95) 100%)',
         }}
       />
 
-      {/* Subtle grid background — drawn over the frosted layer for crispness */}
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full text-neutral-900/[0.05]"
-        aria-hidden="true"
-      >
-        <defs>
-          <pattern id="hero-grid" width="56" height="56" patternUnits="userSpaceOnUse">
-            <path d="M 56 0 L 0 0 0 56" fill="none" stroke="currentColor" strokeWidth="0.5" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#hero-grid)" />
-      </svg>
+      {/* Side vignette — fades the busiest edges of the photo so the
+          content column always sits on a calmer background. */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(to right, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 18%, rgba(255,255,255,0) 82%, rgba(255,255,255,0.55) 100%)',
+        }}
+      />
+
+      {/* Brand-tint wash — a faint hint of tenant primary at the very top,
+          ties the photo back to the rest of the site. */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(900px 480px at 50% -10%, var(--brand-1-soft), transparent 60%)',
+        }}
+      />
+
+      {/* Content spotlight — radial halo that keeps the search bar and
+          headline crisp without flattening the photograph. */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(720px 360px at 50% 46%, rgba(255,255,255,0.55), rgba(255,255,255,0) 70%)',
+        }}
+      />
 
       {/* Decorative floating SKU cards — desktop only */}
       <FloatingCard
@@ -753,6 +716,251 @@ function FloatingCard({
           <ArrowRight className="h-3.5 w-3.5 text-neutral-300" />
         </div>
       </div>
+    </div>
+  )
+}
+
+// ─── LabScene — DEPRECATED ────────────────────────────────────────────────
+//
+// The first attempt at a "laboratory background" was an inline SVG scene
+// (flasks, pipette, molecules). It was visually playful but felt like a
+// product illustration, not a real laboratory. The hero now uses a real
+// photograph (see `/public/hero/lab-bg.jpg`), so this component is unused
+// and only kept here as reference / fallback.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function LabScene() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
+      <svg
+        viewBox="0 0 1600 720"
+        preserveAspectRatio="xMidYMid slice"
+        className="h-full w-full"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="lab-mint" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--accent-mint)" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="var(--accent-mint)" stopOpacity="0.85" />
+          </linearGradient>
+          <linearGradient id="lab-blue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--accent-blue)" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="var(--accent-blue)" stopOpacity="0.85" />
+          </linearGradient>
+          <linearGradient id="lab-coral" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--accent-coral)" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="var(--accent-coral)" stopOpacity="0.85" />
+          </linearGradient>
+          <linearGradient id="lab-amber" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--accent-amber)" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="var(--accent-amber)" stopOpacity="0.85" />
+          </linearGradient>
+        </defs>
+
+        {/* ╭─ LEFT FLANK ─────────────────────────────────────────────╮ */}
+
+        {/* Erlenmeyer flask with mint reagent + rising bubbles */}
+        <g transform="translate(150, 150)" opacity="0.72">
+          {/* Neck */}
+          <rect x="62" y="-2" width="36" height="48" rx="3" fill="none" stroke="#1f2937" strokeWidth="2" />
+          {/* Body */}
+          <path
+            d="M 62 46 L 18 168 Q 8 188 30 188 L 130 188 Q 152 188 142 168 L 98 46 Z"
+            fill="#ffffff"
+            stroke="#1f2937"
+            strokeWidth="2"
+          />
+          {/* Liquid */}
+          <path
+            d="M 32 132 L 16 170 Q 8 188 30 188 L 130 188 Q 152 188 144 170 L 128 132 Z"
+            fill="url(#lab-mint)"
+          />
+          {/* Liquid surface ellipse */}
+          <ellipse cx="80" cy="132" rx="48" ry="4" fill="var(--accent-mint)" opacity="0.9" />
+          {/* Volume tick marks */}
+          <line x1="34" y1="100" x2="44" y2="100" stroke="#1f2937" strokeWidth="1.5" opacity="0.55" />
+          <line x1="30" y1="118" x2="42" y2="118" stroke="#1f2937" strokeWidth="1.5" opacity="0.55" />
+          <line x1="28" y1="136" x2="42" y2="136" stroke="#1f2937" strokeWidth="1.5" opacity="0.55" />
+          {/* Highlight */}
+          <path d="M 70 60 L 50 130" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+          {/* Bubbles — rise and fade. Per-bubble delay set inline. */}
+          <circle className="lab-bubble" cx="60" cy="170" r="3.5" fill="#ffffff" style={{ animationDelay: '0s' }} />
+          <circle className="lab-bubble" cx="86" cy="174" r="2.6" fill="#ffffff" style={{ animationDelay: '-1.1s' }} />
+          <circle className="lab-bubble" cx="100" cy="168" r="3.0" fill="#ffffff" style={{ animationDelay: '-2.3s' }} />
+          <circle className="lab-bubble" cx="48" cy="176" r="2.2" fill="#ffffff" style={{ animationDelay: '-1.7s' }} />
+          <circle className="lab-bubble" cx="76" cy="178" r="3.2" fill="#ffffff" style={{ animationDelay: '-0.5s' }} />
+        </g>
+
+        {/* Test-tube rack with three tubes (mint / blue / coral) */}
+        <g transform="translate(40, 460)" opacity="0.7">
+          {/* Rack frame */}
+          <rect x="0" y="120" width="280" height="22" rx="4" fill="#1f2937" opacity="0.7" />
+          <rect x="-6" y="138" width="292" height="10" rx="2" fill="#1f2937" opacity="0.45" />
+          <rect x="0" y="60" width="280" height="8" rx="2" fill="#1f2937" opacity="0.55" />
+          {/* Holes top — visual hint for tube guides */}
+          <circle cx="50" cy="64" r="14" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" opacity="0.85" />
+          <circle cx="140" cy="64" r="14" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" opacity="0.85" />
+          <circle cx="230" cy="64" r="14" fill="#ffffff" stroke="#1f2937" strokeWidth="1.5" opacity="0.85" />
+          {/* Tube 1 — mint */}
+          <g>
+            <path
+              d="M 38 -40 L 38 110 Q 38 124 50 124 Q 62 124 62 110 L 62 -40 Z"
+              fill="#ffffff"
+              stroke="#1f2937"
+              strokeWidth="1.8"
+            />
+            <path
+              d="M 40 60 L 40 110 Q 40 122 50 122 Q 60 122 60 110 L 60 60 Z"
+              fill="url(#lab-mint)"
+            />
+            <ellipse cx="50" cy="60" rx="10" ry="2.5" fill="var(--accent-mint)" opacity="0.95" />
+          </g>
+          {/* Tube 2 — blue */}
+          <g>
+            <path
+              d="M 128 -40 L 128 110 Q 128 124 140 124 Q 152 124 152 110 L 152 -40 Z"
+              fill="#ffffff"
+              stroke="#1f2937"
+              strokeWidth="1.8"
+            />
+            <path
+              d="M 130 30 L 130 110 Q 130 122 140 122 Q 150 122 150 110 L 150 30 Z"
+              fill="url(#lab-blue)"
+            />
+            <ellipse cx="140" cy="30" rx="10" ry="2.5" fill="var(--accent-blue)" opacity="0.95" />
+          </g>
+          {/* Tube 3 — coral (target tube for the pipette drip) */}
+          <g>
+            <path
+              d="M 218 -40 L 218 110 Q 218 124 230 124 Q 242 124 242 110 L 242 -40 Z"
+              fill="#ffffff"
+              stroke="#1f2937"
+              strokeWidth="1.8"
+            />
+            <path
+              d="M 220 80 L 220 110 Q 220 122 230 122 Q 240 122 240 110 L 240 80 Z"
+              fill="url(#lab-coral)"
+            />
+            <ellipse cx="230" cy="80" rx="10" ry="2.5" fill="var(--accent-coral)" opacity="0.95" />
+          </g>
+        </g>
+
+        {/* ╭─ RIGHT FLANK ────────────────────────────────────────────╮ */}
+
+        {/* Round-bottom flask with amber liquid + bubbles */}
+        <g className="lab-only-md" transform="translate(1340, 110)" opacity="0.7">
+          <rect x="40" y="-2" width="22" height="40" rx="2.5" fill="none" stroke="#1f2937" strokeWidth="2" />
+          <circle cx="51" cy="100" r="62" fill="#ffffff" stroke="#1f2937" strokeWidth="2" />
+          <path d="M 40 38 L 16 80" stroke="#1f2937" strokeWidth="2" fill="none" />
+          <path d="M 62 38 L 86 80" stroke="#1f2937" strokeWidth="2" fill="none" />
+          {/* Liquid */}
+          <path
+            d="M -5 110 A 62 62 0 0 0 107 110 L 107 100 L -5 100 Z"
+            fill="url(#lab-amber)"
+          />
+          <ellipse cx="51" cy="100" rx="61" ry="3" fill="var(--accent-amber)" opacity="0.9" />
+          <circle className="lab-bubble" cx="38" cy="138" r="2.5" fill="#ffffff" style={{ animationDelay: '-0.6s' }} />
+          <circle className="lab-bubble" cx="58" cy="142" r="3" fill="#ffffff" style={{ animationDelay: '-1.9s' }} />
+          <circle className="lab-bubble" cx="46" cy="135" r="2" fill="#ffffff" style={{ animationDelay: '-1.2s' }} />
+        </g>
+
+        {/* Pipette dripping into the right side */}
+        <g transform="translate(1230, 80)" opacity="0.72">
+          {/* Bulb */}
+          <ellipse cx="20" cy="14" rx="14" ry="20" fill="#ffffff" stroke="#1f2937" strokeWidth="1.8" />
+          {/* Highlight */}
+          <ellipse cx="14" cy="8" rx="3" ry="6" fill="#ffffff" opacity="0.9" />
+          {/* Stem */}
+          <rect x="14" y="32" width="12" height="170" rx="2" fill="#ffffff" stroke="#1f2937" strokeWidth="1.8" />
+          {/* Stem liquid (coral) */}
+          <rect x="16" y="60" width="8" height="138" fill="var(--accent-coral)" opacity="0.7" />
+          {/* Tip */}
+          <path d="M 14 200 L 20 224 L 26 200 Z" fill="#ffffff" stroke="#1f2937" strokeWidth="1.8" />
+          {/* Drop forming at the tip */}
+          <ellipse className="lab-drip" cx="20" cy="228" rx="3.4" ry="5" fill="var(--accent-coral)" />
+          {/* Volume marks */}
+          <line x1="14" y1="80" x2="22" y2="80" stroke="#1f2937" strokeWidth="1.3" opacity="0.5" />
+          <line x1="14" y1="110" x2="22" y2="110" stroke="#1f2937" strokeWidth="1.3" opacity="0.5" />
+          <line x1="14" y1="140" x2="22" y2="140" stroke="#1f2937" strokeWidth="1.3" opacity="0.5" />
+          <line x1="14" y1="170" x2="22" y2="170" stroke="#1f2937" strokeWidth="1.3" opacity="0.5" />
+        </g>
+
+        {/* Petri dish (bottom right) with colonies — colonies softly pulse */}
+        <g className="lab-only-sm" transform="translate(1380, 540)" opacity="0.7">
+          <ellipse cx="80" cy="60" rx="100" ry="22" fill="#ffffff" stroke="#1f2937" strokeWidth="1.8" />
+          <ellipse cx="80" cy="56" rx="100" ry="22" fill="none" stroke="#1f2937" strokeWidth="1.8" />
+          {/* Agar */}
+          <ellipse cx="80" cy="56" rx="96" ry="20" fill="var(--accent-mint-soft)" />
+          {/* Colonies */}
+          <circle className="lab-pulse" cx="40" cy="54" r="5" fill="var(--accent-mint)" />
+          <circle className="lab-pulse" cx="60" cy="60" r="3" fill="var(--accent-mint)" style={{ animationDelay: '-1s' }} />
+          <circle className="lab-pulse" cx="86" cy="48" r="6" fill="var(--accent-mint)" style={{ animationDelay: '-2.4s' }} />
+          <circle className="lab-pulse" cx="108" cy="58" r="4" fill="var(--accent-mint)" style={{ animationDelay: '-3.1s' }} />
+          <circle className="lab-pulse" cx="130" cy="52" r="3.5" fill="var(--accent-mint)" style={{ animationDelay: '-1.6s' }} />
+          <circle className="lab-pulse" cx="74" cy="64" r="2.5" fill="var(--accent-blue)" style={{ animationDelay: '-0.4s' }} />
+          <circle className="lab-pulse" cx="100" cy="64" r="2" fill="var(--accent-blue)" style={{ animationDelay: '-2.8s' }} />
+        </g>
+
+        {/* ╭─ FLOATING DECOR ─────────────────────────────────────────╮ */}
+
+        {/* Hexagonal molecule (benzene-like), slowly rotating, top-centre-left */}
+        <g className="lab-only-md" transform="translate(440, 130)" opacity="0.55">
+          <g className="lab-spin">
+            {/* Bonds */}
+            <polygon
+              points="0,-46 40,-23 40,23 0,46 -40,23 -40,-23"
+              fill="none"
+              stroke="var(--accent-violet)"
+              strokeWidth="2.5"
+            />
+            <polygon
+              points="0,-32 28,-16 28,16 0,32 -28,16 -28,-16"
+              fill="none"
+              stroke="var(--accent-violet)"
+              strokeWidth="1.5"
+              opacity="0.6"
+            />
+            {/* Atoms */}
+            <circle cx="0"   cy="-46" r="7" fill="var(--accent-violet)" />
+            <circle cx="40"  cy="-23" r="7" fill="var(--accent-violet)" />
+            <circle cx="40"  cy="23"  r="7" fill="var(--accent-violet)" />
+            <circle cx="0"   cy="46"  r="7" fill="var(--accent-violet)" />
+            <circle cx="-40" cy="23"  r="7" fill="var(--accent-violet)" />
+            <circle cx="-40" cy="-23" r="7" fill="var(--accent-violet)" />
+          </g>
+        </g>
+
+        {/* Second molecule — DNA-like double helix node pair, mid-right */}
+        <g className="lab-only-md" transform="translate(1100, 410)" opacity="0.5">
+          <g className="lab-spin" style={{ animationDuration: '52s' }}>
+            <line x1="-30" y1="-26" x2="30" y2="-26" stroke="var(--accent-blue)" strokeWidth="1.6" />
+            <line x1="-30" y1="0"   x2="30" y2="0"   stroke="var(--accent-blue)" strokeWidth="1.6" />
+            <line x1="-30" y1="26"  x2="30" y2="26"  stroke="var(--accent-blue)" strokeWidth="1.6" />
+            <circle cx="-30" cy="-26" r="6" fill="var(--accent-blue)" />
+            <circle cx="30"  cy="-26" r="6" fill="var(--accent-coral)" />
+            <circle cx="-30" cy="0"   r="6" fill="var(--accent-coral)" />
+            <circle cx="30"  cy="0"   r="6" fill="var(--accent-blue)" />
+            <circle cx="-30" cy="26"  r="6" fill="var(--accent-blue)" />
+            <circle cx="30"  cy="26"  r="6" fill="var(--accent-coral)" />
+          </g>
+        </g>
+
+        {/* Scattered floating "molecules" — small pulsing dots */}
+        <g opacity="0.6">
+          <circle className="lab-pulse" cx="320"  cy="80"  r="3.5" fill="var(--accent-mint)" />
+          <circle className="lab-pulse" cx="600"  cy="60"  r="2.5" fill="var(--accent-blue)"  style={{ animationDelay: '-1.1s' }} />
+          <circle className="lab-pulse" cx="780"  cy="160" r="3"   fill="var(--accent-coral)" style={{ animationDelay: '-2.3s' }} />
+          <circle className="lab-pulse" cx="980"  cy="100" r="2.5" fill="var(--accent-amber)" style={{ animationDelay: '-1.7s' }} />
+          <circle className="lab-pulse" cx="1200" cy="60"  r="3.5" fill="var(--accent-violet)" style={{ animationDelay: '-2.9s' }} />
+          <circle className="lab-pulse" cx="700"  cy="600" r="3"   fill="var(--accent-mint)"   style={{ animationDelay: '-3.5s' }} />
+          <circle className="lab-pulse" cx="900"  cy="640" r="2"   fill="var(--accent-blue)"   style={{ animationDelay: '-0.6s' }} />
+          <circle className="lab-pulse" cx="1080" cy="600" r="2.5" fill="var(--accent-coral)"  style={{ animationDelay: '-1.4s' }} />
+          <circle className="lab-pulse" cx="540"  cy="620" r="2.5" fill="var(--accent-violet)" style={{ animationDelay: '-2.1s' }} />
+          <circle className="lab-pulse" cx="380"  cy="640" r="3"   fill="var(--accent-amber)"  style={{ animationDelay: '-3.0s' }} />
+        </g>
+      </svg>
     </div>
   )
 }

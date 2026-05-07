@@ -66,9 +66,28 @@ interface NavTranslations {
 interface HeaderClientProps {
   company: CompanyConfig | null
   translations: NavTranslations
+  language?: 'en' | 'ru'
 }
 
-export function HeaderClient({ company, translations }: HeaderClientProps) {
+// Top "announcement" strip — short marketing line that doubles as a CTA.
+// Lives in the very top utility bar (above the main header) so we use the
+// real estate that previously held an empty "Shop |" placeholder.
+const ANNOUNCEMENT = {
+  en: {
+    badge: 'NEW',
+    headline: 'Free competitor benchmark on every quote',
+    sub: 'Quote in 1 business day · Ships from Vilnius worldwide · ISO 9001 + CE',
+    cta: 'Request a quote',
+  },
+  ru: {
+    badge: 'НОВОЕ',
+    headline: 'Бесплатное сравнение с прайсом конкурента к каждой смете',
+    sub: 'Расчёт за 1 рабочий день · Отгрузка из Вильнюса по миру · ISO 9001 + CE',
+    cta: 'Запросить смету',
+  },
+} as const
+
+export function HeaderClient({ company, translations, language = 'en' }: HeaderClientProps) {
   const { data: session, status, update } = useSession() || {}
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
@@ -178,20 +197,93 @@ export function HeaderClient({ company, translations }: HeaderClientProps) {
       className="border-b border-neutral-200 sticky top-0 z-50 shadow-sm"
       style={{ backgroundColor: 'var(--company-secondary)' }}
     >
-      {/* Top Bar - Hidden on Mobile */}
-      <div className="hidden md:block text-white" style={{ backgroundColor: 'var(--company-primary)' }}>
-        <div className="container mx-auto px-4 sm:px-6 py-2">
-          <div className="flex justify-between items-center text-xs lg:text-sm">
-            <div className="flex items-center gap-2 lg:gap-4">
-              <span className="truncate">📧 {companyEmail}</span>
-              <span className="hidden sm:inline">📞 {companyPhone}</span>
-            </div>
-            <div className="hidden lg:flex items-center gap-4">
-              <span>{companyName} | {companyAddress}</span>
+      {/* ─── Announcement Bar ──────────────────────────────────────────
+          Replaces the old utility strip (which used to show empty
+          email/phone placeholders). Now: bright gradient ribbon with a
+          short marketing line + contextual CTA pointing at /bulk-order.
+          Visible on all screens because it's the strongest above-the-fold
+          attention hook the page has. */}
+      {(() => {
+        const a = ANNOUNCEMENT[language] || ANNOUNCEMENT.en
+        return (
+          <div
+            className="relative text-white"
+            style={{
+              background: 'var(--brand-grad)',
+              boxShadow: 'inset 0 -1px 0 rgba(255,255,255,0.12)',
+            }}
+          >
+            {/* Soft accent shimmer on the right side — purely decorative,
+                gives the bar a touch of life without being noisy. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 md:block"
+              style={{
+                background:
+                  'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.10) 60%, rgba(255,255,255,0.18) 100%)',
+              }}
+            />
+            <div className="relative container mx-auto px-4 sm:px-6">
+              <div className="flex flex-col items-center gap-1.5 py-2 text-center sm:flex-row sm:justify-center sm:gap-3 sm:text-left md:justify-between md:py-2.5">
+                {/* Headline + sub + badge */}
+                <div className="flex min-w-0 items-center justify-center gap-2.5 md:justify-start">
+                  <span
+                    className="font-mono-brand inline-flex h-5 items-center rounded-full px-2 text-[10px] font-bold tracking-wider"
+                    style={{
+                      background: 'rgba(255,255,255,0.22)',
+                      color: '#ffffff',
+                      letterSpacing: '0.12em',
+                    }}
+                  >
+                    {a.badge}
+                  </span>
+                  <span className="text-[13px] font-semibold leading-tight sm:text-sm">
+                    {a.headline}
+                  </span>
+                  <span className="hidden text-[12px] text-white/75 lg:inline">
+                    · {a.sub}
+                  </span>
+                </div>
+
+                {/* Right side — CTA + optional contact */}
+                <div className="flex items-center gap-3 sm:gap-4">
+                  {companyEmail && (
+                    <a
+                      href={`mailto:${companyEmail}`}
+                      className="hidden items-center gap-1.5 text-[12px] text-white/85 transition-colors hover:text-white xl:inline-flex"
+                    >
+                      <span aria-hidden>✉</span>
+                      <span className="font-mono-brand">{companyEmail}</span>
+                    </a>
+                  )}
+                  {companyPhone && (
+                    <a
+                      href={`tel:${companyPhone.replace(/[^+\d]/g, '')}`}
+                      className="hidden items-center gap-1.5 text-[12px] text-white/85 transition-colors hover:text-white xl:inline-flex"
+                    >
+                      <span aria-hidden>☎</span>
+                      <span className="font-mono-brand">{companyPhone}</span>
+                    </a>
+                  )}
+                  <Link
+                    href="/bulk-order"
+                    className="group inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1 text-[12px] font-semibold shadow-sm transition-all hover:shadow-md"
+                    style={{ color: 'var(--brand-1)' }}
+                  >
+                    {a.cta}
+                    <span
+                      aria-hidden
+                      className="transition-transform group-hover:translate-x-0.5"
+                    >
+                      →
+                    </span>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        )
+      })()}
 
       {/* Main Header */}
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4" style={{ color: 'var(--company-primary)' }}>

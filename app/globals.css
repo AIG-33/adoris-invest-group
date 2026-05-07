@@ -199,6 +199,53 @@
   .hero-card-float { animation: none; }
 }
 
+/* ---- Hero — laboratory illustration animations ---------------------- */
+/* Bubbles rising inside a flask — each bubble has an animation-delay   */
+/* applied inline so they stagger naturally.                            */
+@keyframes lab-bubble {
+  0%   { transform: translateY(0)    scale(0.6); opacity: 0; }
+  20%  {                              opacity: 0.55; }
+  100% { transform: translateY(-46px) scale(1.05); opacity: 0; }
+}
+.lab-bubble { animation: lab-bubble 3.4s ease-in infinite; transform-origin: center; will-change: transform, opacity; }
+
+/* Drop falling from a pipette into a tube. */
+@keyframes lab-drip {
+  0%, 60%  { transform: translateY(0)     scaleY(1);   opacity: 0; }
+  65%      { transform: translateY(0)     scaleY(1.4); opacity: 0.85; }
+  100%     { transform: translateY(60px)  scaleY(0.8); opacity: 0; }
+}
+.lab-drip { animation: lab-drip 2.6s ease-in infinite; transform-origin: top center; will-change: transform, opacity; }
+
+/* Slow rotation of a molecule. */
+@keyframes lab-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.lab-spin { animation: lab-spin 36s linear infinite; transform-origin: center; transform-box: fill-box; will-change: transform; }
+
+/* Soft pulse for floating dots / petri colonies. */
+@keyframes lab-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(1);    }
+  50%      { opacity: 0.55; transform: scale(1.18); }
+}
+.lab-pulse { animation: lab-pulse 4.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; will-change: transform, opacity; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-bubble, .lab-drip, .lab-spin, .lab-pulse { animation: none; }
+}
+
+/* Lab-scene element visibility — hide secondary props on small screens
+   so the illustration doesn't get noisy or overlap the search column. */
+.lab-only-sm { display: none; }
+.lab-only-md { display: none; }
+@media (min-width: 640px) {
+  .lab-only-sm { display: inline; }
+}
+@media (min-width: 768px) {
+  .lab-only-md { display: inline; }
+}
+
 .animate-scroll-left {
   animation: scroll-left 120s linear infinite;
 }

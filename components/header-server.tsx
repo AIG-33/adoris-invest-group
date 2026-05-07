@@ -7,6 +7,6 @@ export async function Header() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
   
-  return <HeaderClient company={company} translations={dict.nav} />
+  return <HeaderClient company={company} translations={dict.nav} language={language} />
 }
 

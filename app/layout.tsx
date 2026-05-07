@@ -134,10 +134,12 @@ export default async function RootLayout({
       data-company-logo={logo || undefined}
     >
       <head>
+        {/* Preload hero LCP image — the lab photograph used as the
+            full-width background of the search hero. */}
         <link
           rel="preload"
           as="image"
-          href="/hero/slide-1.webp"
+          href="/hero/lab-bg.jpg"
           fetchPriority="high"
         />
         <HreflangTags />
