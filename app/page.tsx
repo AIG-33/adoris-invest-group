@@ -196,6 +196,7 @@ export default async function HomePage() {
           <CategoryShowcase
             categories={categories}
             translations={dict.homepage.categories}
+            language={language}
           />
         </section>
 
