@@ -187,79 +187,139 @@ export function CategoryShowcase({ categories, translations, language = 'en' }: 
             lc={lc}
           />
 
-          {/* Remaining categories. */}
+          {/* Remaining categories. Three-way cycle of card *styles* so the
+              grid reads as deliberately rhythmic instead of a wall of
+              identical pills:
+                · 0 mod 3 → pastel-tinted card (opaque colour wash, dark text)
+                · 1 mod 3 → white card with coloured chrome
+                · 2 mod 3 → solid bright accent card with white text
+              Combined with the 5-colour cycle of `TONES`, no two adjacent
+              cards end up looking the same. */}
           {rest.map((category, idx) => {
             const Icon = resolveIcon(category.slug, category.name)
             const tone = TONES[(idx + 1) % TONES.length]
             const t = TONE_VARS[tone]
+            const variant = (idx % 3) as 0 | 1 | 2
+
+            const isSolid = variant === 2
+            const isPastel = variant === 0
+            // Pastel = opaque accent-tinted background. We mix the bright
+            // accent with white so the result reads as a soft fill rather
+            // than the original `*-soft` semi-transparent var.
+            const pastelBg = `color-mix(in srgb, ${t.color} 14%, white)`
+            const pastelBgHover = `color-mix(in srgb, ${t.color} 22%, white)`
 
             return (
               <Link
                 key={category.id}
                 href={`/products?category=${category.slug}`}
-                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-[0_1px_0_rgba(15,15,30,0.04)] transition-all duration-300 hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-[0_18px_40px_-18px_rgba(15,15,30,0.18)] sm:p-5"
+                className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-0.5 sm:p-5 ${
+                  isSolid
+                    ? 'border-transparent shadow-[0_10px_30px_-12px_rgba(15,15,30,0.30)] hover:shadow-[0_22px_50px_-18px_rgba(15,15,30,0.45)]'
+                    : isPastel
+                    ? 'border-transparent shadow-[0_1px_0_rgba(15,15,30,0.04)] hover:shadow-[0_18px_40px_-18px_rgba(15,15,30,0.20)]'
+                    : 'border-neutral-200/80 bg-white shadow-[0_1px_0_rgba(15,15,30,0.04)] hover:border-neutral-300 hover:shadow-[0_18px_40px_-18px_rgba(15,15,30,0.18)]'
+                }`}
                 style={
                   {
-                    // Per-card accent colour exposed as a CSS var so the
-                    // hover-only stripe / corner-glow can read it without
-                    // an inline style each time.
                     '--card-accent': t.color,
                     '--card-accent-soft': t.soft,
+                    '--pastel-bg': pastelBg,
+                    '--pastel-bg-hover': pastelBgHover,
+                    background: isSolid ? t.color : isPastel ? pastelBg : undefined,
+                    color: isSolid ? '#ffffff' : undefined,
                   } as React.CSSProperties & Record<string, string>
                 }
               >
-                {/* Top accent stripe — appears on hover, anchors the colour. */}
-                <span
-                  aria-hidden
-                  className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
-                  style={{ background: 'var(--card-accent)' }}
-                />
+                {/* Pastel-on-hover deepens the wash without changing layout. */}
+                {isPastel && (
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    style={{ background: pastelBgHover }}
+                  />
+                )}
 
-                {/* Decorative big-icon watermark in the corner. */}
+                {/* Top accent stripe — only meaningful on white cards;
+                    on pastel/solid the colour is already everywhere. */}
+                {variant === 1 && (
+                  <span
+                    aria-hidden
+                    className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"
+                    style={{ background: 'var(--card-accent)' }}
+                  />
+                )}
+
+                {/* Decorative big-icon watermark in the corner. Brightness
+                    adapts so it stays readable across all 3 variants. */}
                 <Icon
                   aria-hidden
                   className="pointer-events-none absolute -right-4 -bottom-4 h-24 w-24 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
                   strokeWidth={1.25}
-                  style={{ color: 'var(--card-accent)', opacity: 0.10 }}
+                  style={{
+                    color: isSolid ? '#ffffff' : 'var(--card-accent)',
+                    opacity: isSolid ? 0.18 : isPastel ? 0.18 : 0.10,
+                  }}
                 />
 
                 {/* Top row: small icon tile + 3-letter code chip */}
-                <div className="flex items-start justify-between">
+                <div className="relative flex items-start justify-between">
                   <div
                     className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-105"
-                    style={{ background: 'var(--card-accent-soft)', color: 'var(--card-accent)' }}
+                    style={
+                      isSolid
+                        ? { background: 'rgba(255,255,255,0.20)', color: '#ffffff' }
+                        : isPastel
+                        ? { background: t.color, color: '#ffffff' }
+                        : { background: 'var(--card-accent-soft)', color: 'var(--card-accent)' }
+                    }
                   >
                     <Icon className="h-5 w-5" strokeWidth={1.75} />
                   </div>
                   <span
                     className="font-mono-brand rounded-md px-1.5 py-0.5 text-[10px] font-semibold tracking-wider"
-                    style={{
-                      background: 'rgba(15,15,30,0.04)',
-                      color: 'rgba(15,15,30,0.55)',
-                    }}
+                    style={
+                      isSolid
+                        ? { background: 'rgba(255,255,255,0.18)', color: '#ffffff' }
+                        : { background: 'rgba(15,15,30,0.06)', color: 'rgba(15,15,30,0.6)' }
+                    }
                   >
                     {categoryCode(category.slug)}
                   </span>
                 </div>
 
                 {/* Category name */}
-                <h3 className="font-display mt-3 line-clamp-2 text-[15px] font-semibold leading-snug text-neutral-900 sm:text-base">
+                <h3
+                  className={`font-display relative mt-3 line-clamp-2 text-[15px] font-semibold leading-snug sm:text-base ${
+                    isSolid ? 'text-white' : 'text-neutral-900'
+                  }`}
+                >
                   {category.name}
                 </h3>
 
                 {/* SKU count + arrow */}
-                <div className="mt-3 flex items-end justify-between">
+                <div className="relative mt-3 flex items-end justify-between">
                   <div className="leading-none">
-                    <span className="font-display text-2xl font-semibold tracking-tight text-neutral-900">
+                    <span
+                      className={`font-display text-2xl font-semibold tracking-tight ${
+                        isSolid ? 'text-white' : 'text-neutral-900'
+                      }`}
+                    >
                       {category._count.products.toLocaleString()}
                     </span>
-                    <span className="ml-1 text-[11px] font-medium text-neutral-500">
+                    <span
+                      className={`ml-1 text-[11px] font-medium ${
+                        isSolid ? 'text-white/75' : 'text-neutral-500'
+                      }`}
+                    >
                       {translations.products}
                     </span>
                   </div>
                   <ArrowUpRight
-                    className="h-4 w-4 text-neutral-300 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    style={{ color: 'var(--card-accent)' }}
+                    className="h-4 w-4 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    style={{
+                      color: isSolid ? '#ffffff' : 'var(--card-accent)',
+                    }}
                   />
                 </div>
               </Link>
