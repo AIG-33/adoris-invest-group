@@ -18,6 +18,30 @@ export interface Translations {
       becomeSupplier: string
       browseCatalog: string
       searchPlaceholder: string
+      // Tri-pillar value props rendered below the search bar
+      pathwaysEyebrow: string
+      pathwaysHeading: string
+      pathway1: {
+        step: string
+        title: string
+        description: string
+        cta: string
+        microCopy: string
+      }
+      pathway2: {
+        step: string
+        title: string
+        description: string
+        cta: string
+        microCopy: string
+      }
+      pathway3: {
+        step: string
+        title: string
+        description: string
+        cta: string
+        microCopy: string
+      }
     }
     featuredProducts: {
       title: string
@@ -345,6 +369,30 @@ export interface Translations {
     results: string
     addAllToCart: string
     items?: string
+    // Marketing hero copy
+    heroEyebrow?: string
+    heroHeadline?: string
+    heroTagline?: string
+    heroBadge?: string
+    steps?: {
+      step1Title: string
+      step1Desc: string
+      step2Title: string
+      step2Desc: string
+      step3Title: string
+      step3Desc: string
+    }
+    benefits?: {
+      time: { title: string; value: string; description: string }
+      accuracy: { title: string; value: string; description: string }
+      formats: { title: string; value: string; description: string }
+    }
+    seo?: {
+      whyTitle: string
+      whyParagraph: string
+      idealForTitle: string
+      idealFor: string[]
+    }
   }
   
   // Supplier
@@ -381,6 +429,31 @@ export interface Translations {
     phonePlaceholder: string
     notes: string
     notesPlaceholder: string
+    // Marketing-rich hero & sales copy
+    heroBadge?: string
+    heroEyebrow?: string
+    heroHeadline?: string
+    heroHeadlineAccent?: string
+    heroTagline?: string
+    heroCtaPrimary?: string
+    heroCtaSecondary?: string
+    benefits?: {
+      title: string
+      subtitle: string
+      items: Array<{ title: string; description: string; icon: string }>
+    }
+    whoTitle?: string
+    whoSubtitle?: string
+    whoItems?: Array<{ title: string; description: string }>
+    processTitle?: string
+    processSubtitle?: string
+    processSteps?: Array<{ title: string; description: string }>
+    statsTitle?: string
+    statsItems?: Array<{ value: string; label: string }>
+    formTitle?: string
+    formSubtitle?: string
+    faqTitle?: string
+    faqItems?: Array<{ question: string; answer: string }>
   }
   
   // Admin
@@ -522,6 +595,29 @@ const translations: Record<Language, Translations> = {
         becomeSupplier: 'Become Supplier',
         browseCatalog: 'Browse Catalog',
         searchPlaceholder: 'Search by SKU / Article Number / Product Name',
+        pathwaysEyebrow: 'Three ways to work with us',
+        pathwaysHeading: 'Pick your path — be sourcing in under a minute',
+        pathway1: {
+          step: '01',
+          title: 'Search by SKU or name',
+          description: 'Type a catalog number or a product name — we match across 100,000+ SKUs from 50+ manufacturers instantly.',
+          cta: 'Start a search',
+          microCopy: 'e.g. 07P3203, 10446232, Cobas Glucose',
+        },
+        pathway2: {
+          step: '02',
+          title: 'Paste a list — get a cart',
+          description: 'Drop in catalog numbers and quantities. Our parser builds a cart automatically — no spreadsheets, no copy-paste loops.',
+          cta: 'Try bulk paste',
+          microCopy: '10446232  2\n07P3203   5\nSKU002, 3',
+        },
+        pathway3: {
+          step: '03',
+          title: 'Supply us — direct from manufacturer',
+          description: 'Have direct prices from a manufacturer? We are actively looking for new suppliers. Long-term contracts, fast SWIFT/SEPA payments.',
+          cta: 'Become a supplier',
+          microCopy: 'New partners onboarding every month',
+        },
       },
       featuredProducts: {
         title: 'Featured Products',
@@ -853,11 +949,89 @@ const translations: Record<Language, Translations> = {
       results: 'Results',
       addAllToCart: 'Add All to Cart',
       items: 'items',
+      heroBadge: 'Paste · Match · Checkout',
+      heroEyebrow: 'For procurement teams and resellers',
+      heroHeadline: 'Paste your shopping list — we build the cart',
+      heroTagline: 'Drop in 5 or 500 catalog numbers with quantities. Our parser matches them against 100,000+ SKUs and fills your cart automatically. No spreadsheets to email back and forth.',
+      steps: {
+        step1Title: 'Paste your list',
+        step1Desc: 'Any format works — tabs, commas, semicolons, or just spaces. SKUs and quantities, one per line.',
+        step2Title: 'We match it instantly',
+        step2Desc: 'Our engine finds every product by catalog number or article and shows you what is in stock.',
+        step3Title: 'Cart ready in seconds',
+        step3Desc: 'One click adds everything to your cart. Review, adjust quantities, and request a quote.',
+      },
+      benefits: {
+        time: { title: 'Save hours per order', value: '30s', description: 'Average time to import 100 SKUs vs. ~45 min manually.' },
+        accuracy: { title: 'Zero copy-paste errors', value: '100%', description: 'Every SKU is validated against our catalog before it lands in your cart.' },
+        formats: { title: 'Any format you have', value: '5+', description: 'Tabs, commas, semicolons, spaces — even free-form lines with product names.' },
+      },
+      seo: {
+        whyTitle: 'Why procurement teams use bulk order',
+        whyParagraph: 'If you order from a recurring list — a lab inventory, a clinic protocol, or a distributor restock — typing items one by one wastes hours. Paste your full list once, get a cart you can edit, and send it to checkout. The Adoris bulk-order tool understands the messy real-world formats your supplier emails, distributor sheets, and ERP exports already produce.',
+        idealForTitle: 'Ideal for',
+        idealFor: [
+          'Hospital and clinic procurement managers',
+          'Independent laboratory inventory restocks',
+          'Distributors rebuilding a customer order from a quote',
+          'Reorders from a previous Adoris invoice or PDF',
+        ],
+      },
     },
     supplier: {
       title: 'Become Our Supplier',
       subtitle: 'Join Our Supplier Network',
       description: 'If you have access to quality products at competitive prices from manufacturers, we would love to partner with you. Simply upload your product catalog in Excel format and we will review your application.',
+      heroBadge: 'New partners onboarding every month',
+      heroEyebrow: 'Wanted: suppliers with direct manufacturer pricing',
+      heroHeadline: 'Got direct prices from a manufacturer?',
+      heroHeadlineAccent: 'Let’s do business.',
+      heroTagline: 'Adoris is actively expanding its supplier network across Europe, the CIS, and Asia. If you can ship original products at competitive prices — especially direct from the manufacturer — we want to talk this week.',
+      heroCtaPrimary: 'Submit your catalog',
+      heroCtaSecondary: 'See what we are buying',
+      benefits: {
+        title: 'Why suppliers partner with Adoris',
+        subtitle: 'We are not a marketplace. We are a buyer with real volume, fast payments, and a long-term horizon.',
+        items: [
+          { title: 'Recurring volume', description: '€20M+ annual procurement across 50+ manufacturers. Predictable monthly orders, not one-off spot buys.', icon: 'trending' },
+          { title: 'Fast, transparent payments', description: 'SWIFT and SEPA across the EU and EAEU. 100% prepayment available for new partners — no waiting on terms.', icon: 'wallet' },
+          { title: 'Direct-to-manufacturer focus', description: 'We prioritize partners with direct factory pricing. No four-layer middlemen between you and the line.', icon: 'factory' },
+          { title: 'EU-based, regulated counterparty', description: 'EU VAT registered, AML/KYC compliant, GDPR-grade data handling. Your contracts and IP are safe.', icon: 'shield' },
+          { title: 'Logistics handled', description: 'EXW Vilnius works for us. You hand off at your warehouse — we run the cold chain, customs, and last mile.', icon: 'truck' },
+          { title: 'Long-term contracts', description: 'Multi-year framework agreements available once the first 2–3 deliveries land cleanly. Predictable revenue.', icon: 'handshake' },
+        ],
+      },
+      whoTitle: 'Who we are looking for',
+      whoSubtitle: 'If any of these sound like you, send us your catalog today.',
+      whoItems: [
+        { title: 'Manufacturers', description: 'Direct producers of reagents, consumables, lab equipment, IVD kits, or medical devices looking for an EU distribution arm.' },
+        { title: 'Authorized distributors', description: 'Regional distributors with exclusive contracts and competitive pricing on a specific brand or product line.' },
+        { title: 'Importers with surplus', description: 'Holders of in-stock inventory at attractive prices — overstock, parallel imports, end-of-line — provided they are original and certified.' },
+        { title: 'OEM partners', description: 'Producers willing to white-label or co-brand specific SKUs for the EU and CIS markets.' },
+      ],
+      processTitle: 'From catalog to first PO in 3 steps',
+      processSubtitle: 'Most new suppliers get a first purchase order within 14 days of submitting their catalog.',
+      processSteps: [
+        { title: 'Submit your catalog', description: 'Upload an Excel or CSV with SKU, manufacturer, name, description, and price. Use the form below — it takes 2 minutes.' },
+        { title: 'We review and match', description: 'Our procurement team checks pricing, demand, and compliance. You get a written response within 5 business days.' },
+        { title: 'First trial order', description: 'We place a small trial order. Once it lands cleanly, we move to recurring volume and discuss framework terms.' },
+      ],
+      statsTitle: 'The Adoris partner profile in numbers',
+      statsItems: [
+        { value: '€20M+', label: 'Annual procurement budget' },
+        { value: '50+', label: 'Active manufacturer partners' },
+        { value: '5 days', label: 'Average response time' },
+        { value: '14 days', label: 'Median time to first PO' },
+      ],
+      formTitle: 'Send us your catalog',
+      formSubtitle: 'Upload your product list in Excel or CSV. We will respond within 5 business days.',
+      faqTitle: 'Common questions from new suppliers',
+      faqItems: [
+        { question: 'Do you work with non-EU suppliers?', answer: 'Yes. We import from manufacturers in Asia, the US, and the CIS regularly. Our customs broker in Vilnius handles the EU import side.' },
+        { question: 'What product categories are you most interested in?', answer: 'Reagents, IVD kits, lab consumables, analyzers, and clinical-chemistry instruments. We also evaluate dental, ophthalmology, and veterinary lines case-by-case.' },
+        { question: 'What is your typical first-order size?', answer: 'Trial orders range from €5,000 to €30,000 depending on the product. Once trust is established, recurring orders typically scale to €50,000–€250,000 per quarter.' },
+        { question: 'Do you sign NDAs and exclusivity agreements?', answer: 'Yes. We sign mutual NDAs before catalog review when requested, and we can discuss regional exclusivity for product lines we commit to volume on.' },
+      ],
       fileFormat: 'File Format Requirements',
       fileFormatDescription: 'Please upload your product catalog as an Excel file (.xlsx, .xls) or CSV file with the following columns:',
       requiredFields: 'Required Fields',
@@ -1071,6 +1245,29 @@ const translations: Record<Language, Translations> = {
         becomeSupplier: 'Стать поставщиком',
         browseCatalog: 'Просмотреть каталог',
         searchPlaceholder: 'Поиск по артикулу / каталожному номеру / названию',
+        pathwaysEyebrow: 'Три способа работать с нами',
+        pathwaysHeading: 'Выберите свой путь — начнёте закупку меньше чем за минуту',
+        pathway1: {
+          step: '01',
+          title: 'Найдите по артикулу или названию',
+          description: 'Введите каталожный номер или название — мы мгновенно найдём товар среди 100 000+ SKU от 50+ производителей.',
+          cta: 'Начать поиск',
+          microCopy: 'Напр.: 07P3203, 10446232, Cobas Глюкоза',
+        },
+        pathway2: {
+          step: '02',
+          title: 'Вставьте список — получите корзину',
+          description: 'Скопируйте каталожные номера с количеством. Наш парсер автоматически соберёт корзину — никаких таблиц и ручного копирования.',
+          cta: 'Попробовать вставку',
+          microCopy: '10446232  2\n07P3203   5\nSKU002, 3',
+        },
+        pathway3: {
+          step: '03',
+          title: 'Станьте поставщиком — напрямую от производителя',
+          description: 'Есть прямые цены от производителя? Мы активно ищем новых поставщиков. Долгосрочные контракты, быстрые платежи SWIFT/SEPA.',
+          cta: 'Стать поставщиком',
+          microCopy: 'Подключаем новых партнёров каждый месяц',
+        },
       },
       featuredProducts: {
         title: 'Рекомендуемые товары',
@@ -1402,11 +1599,89 @@ const translations: Record<Language, Translations> = {
       results: 'Результаты',
       addAllToCart: 'Добавить все в корзину',
       items: 'товаров',
+      heroBadge: 'Вставка · Сопоставление · Заказ',
+      heroEyebrow: 'Для отделов закупок и дистрибьюторов',
+      heroHeadline: 'Вставьте свой список — мы соберём корзину',
+      heroTagline: 'Скопируйте 5 или 500 каталожных номеров с количеством. Парсер сопоставит их со 100 000+ SKU и автоматически заполнит корзину. Больше никаких таблиц по почте туда-сюда.',
+      steps: {
+        step1Title: 'Вставьте список',
+        step1Desc: 'Подходит любой формат — табы, запятые, точки с запятой, пробелы. Артикул и количество, по одному на строку.',
+        step2Title: 'Мы мгновенно сопоставим',
+        step2Desc: 'Наш движок находит каждый товар по артикулу или каталожному номеру и показывает, что есть в наличии.',
+        step3Title: 'Корзина готова за секунды',
+        step3Desc: 'Один клик — и всё в корзине. Проверьте, скорректируйте количество и запросите счёт.',
+      },
+      benefits: {
+        time: { title: 'Экономия часов на заказе', value: '30с', description: 'Среднее время на загрузку 100 SKU — против ~45 минут вручную.' },
+        accuracy: { title: 'Ноль ошибок при копировании', value: '100%', description: 'Каждый артикул сверяется с нашим каталогом перед добавлением в корзину.' },
+        formats: { title: 'Любой ваш формат', value: '5+', description: 'Табы, запятые, точки с запятой, пробелы — и даже строки с произвольным названием товара.' },
+      },
+      seo: {
+        whyTitle: 'Почему отделы закупок выбирают массовый заказ',
+        whyParagraph: 'Если вы заказываете по повторяющемуся списку — инвентарь лаборатории, протокол клиники, дозаказ дистрибьютора — ввод позиций вручную съедает часы. Вставьте полный список один раз, получите редактируемую корзину и отправьте её на оформление. Инструмент массового заказа Adoris понимает реальные «грязные» форматы из писем поставщиков, прайс-листов дистрибьюторов и выгрузок ERP.',
+        idealForTitle: 'Идеально подходит',
+        idealFor: [
+          'Менеджерам закупок больниц и клиник',
+          'Независимым лабораториям для дозаказа инвентаря',
+          'Дистрибьюторам для сборки заказа из коммерческого предложения',
+          'Повторным заказам по прошлому счёту или PDF от Adoris',
+        ],
+      },
     },
     supplier: {
       title: 'Станьте нашим поставщиком',
       subtitle: 'Присоединяйтесь к нашей сети поставщиков',
       description: 'Если у вас есть доступ к качественным продуктам по конкурентоспособным ценам от производителей, мы будем рады сотрудничать с вами. Просто загрузите ваш каталог продукции в формате Excel, и мы рассмотрим вашу заявку.',
+      heroBadge: 'Подключаем новых партнёров каждый месяц',
+      heroEyebrow: 'Ищем поставщиков с прямыми ценами от производителя',
+      heroHeadline: 'Есть прямые цены от производителя?',
+      heroHeadlineAccent: 'Давайте сотрудничать.',
+      heroTagline: 'Adoris активно расширяет сеть поставщиков по Европе, СНГ и Азии. Если вы можете поставлять оригинальную продукцию по конкурентоспособным ценам — особенно напрямую от производителя — мы готовы говорить уже на этой неделе.',
+      heroCtaPrimary: 'Отправить каталог',
+      heroCtaSecondary: 'Что мы закупаем',
+      benefits: {
+        title: 'Почему поставщики выбирают Adoris',
+        subtitle: 'Мы не маркетплейс. Мы покупатель с реальным объёмом, быстрыми платежами и долгосрочным горизонтом.',
+        items: [
+          { title: 'Регулярный объём', description: 'Закупка €20M+ в год по 50+ производителям. Предсказуемые ежемесячные заказы, а не разовые сделки.', icon: 'trending' },
+          { title: 'Быстрые и прозрачные платежи', description: 'SWIFT и SEPA по ЕС и ЕАЭС. Для новых партнёров доступна 100% предоплата — без ожидания условий.', icon: 'wallet' },
+          { title: 'Фокус на прямых производителях', description: 'Приоритет — партнёрам с прямыми заводскими ценами. Никаких четырёх посредников между вами и линией.', icon: 'factory' },
+          { title: 'Контрагент в ЕС, регулируемый', description: 'Регистрация EU VAT, соблюдение AML/KYC, обработка данных по GDPR. Ваши контракты и IP защищены.', icon: 'shield' },
+          { title: 'Логистику берём на себя', description: 'Работаем на EXW Вильнюс. Вы передаёте груз на своём складе — мы ведём холодовую цепь, таможню и последнюю милю.', icon: 'truck' },
+          { title: 'Долгосрочные контракты', description: 'Рамочные соглашения на несколько лет — после успешных первых 2–3 поставок. Предсказуемая выручка.', icon: 'handshake' },
+        ],
+      },
+      whoTitle: 'Кого мы ищем',
+      whoSubtitle: 'Если что-то из этого про вас — отправьте каталог сегодня.',
+      whoItems: [
+        { title: 'Производители', description: 'Прямые производители реагентов, расходных материалов, лабораторного оборудования, IVD-наборов или медицинских изделий, ищущие дистрибуционное плечо в ЕС.' },
+        { title: 'Авторизованные дистрибьюторы', description: 'Региональные дистрибьюторы с эксклюзивными контрактами и конкурентоспособными ценами на конкретный бренд или продуктовую линейку.' },
+        { title: 'Импортёры с остатками', description: 'Держатели складского запаса по привлекательным ценам — оверсток, параллельный импорт, end-of-line — при условии, что товар оригинальный и сертифицированный.' },
+        { title: 'OEM-партнёры', description: 'Производители, готовые выпускать конкретные SKU под white-label или co-brand для рынков ЕС и СНГ.' },
+      ],
+      processTitle: 'От каталога до первого заказа за 3 шага',
+      processSubtitle: 'Большинство новых поставщиков получают первый заказ в течение 14 дней после отправки каталога.',
+      processSteps: [
+        { title: 'Отправьте каталог', description: 'Загрузите Excel или CSV с артикулом, производителем, названием, описанием и ценой. Форма ниже — занимает 2 минуты.' },
+        { title: 'Мы проверяем и сопоставляем', description: 'Команда закупок проверяет цены, спрос и комплаенс. Письменный ответ — в течение 5 рабочих дней.' },
+        { title: 'Первый пробный заказ', description: 'Размещаем небольшой пробный заказ. Когда он проходит чисто — переходим к регулярному объёму и обсуждаем рамочные условия.' },
+      ],
+      statsTitle: 'Профиль партнёра Adoris в цифрах',
+      statsItems: [
+        { value: '€20M+', label: 'Годовой бюджет закупок' },
+        { value: '50+', label: 'Активных партнёров-производителей' },
+        { value: '5 дней', label: 'Среднее время ответа' },
+        { value: '14 дней', label: 'Медианное время до первого заказа' },
+      ],
+      formTitle: 'Отправьте ваш каталог',
+      formSubtitle: 'Загрузите список товаров в Excel или CSV. Мы ответим в течение 5 рабочих дней.',
+      faqTitle: 'Частые вопросы новых поставщиков',
+      faqItems: [
+        { question: 'Работаете ли вы с поставщиками из-за пределов ЕС?', answer: 'Да. Мы регулярно импортируем от производителей из Азии, США и СНГ. Наш таможенный брокер в Вильнюсе закрывает сторону импорта в ЕС.' },
+        { question: 'Какие категории товаров для вас в приоритете?', answer: 'Реагенты, IVD-наборы, лабораторные расходники, анализаторы и приборы клинической химии. Также рассматриваем стоматологию, офтальмологию и ветеринарию в индивидуальном порядке.' },
+        { question: 'Какой типичный объём первого заказа?', answer: 'Пробные заказы — от €5 000 до €30 000 в зависимости от продукта. После установления доверия регулярные заказы обычно растут до €50 000–€250 000 в квартал.' },
+        { question: 'Подписываете ли вы NDA и эксклюзивные соглашения?', answer: 'Да. По запросу подписываем взаимный NDA до анализа каталога и можем обсудить региональную эксклюзивность по продуктовым линиям, по которым готовы взять объём.' },
+      ],
       fileFormat: 'Требования к формату файла',
       fileFormatDescription: 'Пожалуйста, загрузите ваш каталог продукции в виде файла Excel (.xlsx, .xls) или CSV со следующими колонками:',
       requiredFields: 'Обязательные поля',

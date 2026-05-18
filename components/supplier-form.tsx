@@ -1,7 +1,25 @@
 'use client'
 
 import { useState } from 'react'
-import { Upload, FileSpreadsheet, Send, CheckCircle, AlertCircle } from 'lucide-react'
+import {
+  Upload,
+  FileSpreadsheet,
+  Send,
+  CheckCircle,
+  AlertCircle,
+  TrendingUp,
+  Wallet,
+  Factory,
+  ShieldCheck,
+  Truck,
+  Handshake,
+  Building2,
+  Network,
+  Package,
+  BadgeCheck,
+  ArrowRight,
+  ChevronDown,
+} from 'lucide-react'
 import type { CompanyConfig } from '@/lib/company-types'
 
 interface SupplierTranslations {
@@ -37,7 +55,43 @@ interface SupplierTranslations {
   phonePlaceholder: string
   notes: string
   notesPlaceholder: string
+  // Marketing-rich hero & sales copy
+  heroBadge?: string
+  heroEyebrow?: string
+  heroHeadline?: string
+  heroHeadlineAccent?: string
+  heroTagline?: string
+  heroCtaPrimary?: string
+  heroCtaSecondary?: string
+  benefits?: {
+    title: string
+    subtitle: string
+    items: Array<{ title: string; description: string; icon: string }>
+  }
+  whoTitle?: string
+  whoSubtitle?: string
+  whoItems?: Array<{ title: string; description: string }>
+  processTitle?: string
+  processSubtitle?: string
+  processSteps?: Array<{ title: string; description: string }>
+  statsTitle?: string
+  statsItems?: Array<{ value: string; label: string }>
+  formTitle?: string
+  formSubtitle?: string
+  faqTitle?: string
+  faqItems?: Array<{ question: string; answer: string }>
 }
+
+const BENEFIT_ICONS: Record<string, any> = {
+  trending: TrendingUp,
+  wallet: Wallet,
+  factory: Factory,
+  shield: ShieldCheck,
+  truck: Truck,
+  handshake: Handshake,
+}
+
+const WHO_ICONS = [Factory, Network, Package, BadgeCheck]
 
 interface SupplierFormProps {
   company: CompanyConfig | null
@@ -129,26 +183,248 @@ export function SupplierForm({ company, translations }: SupplierFormProps) {
 
   return (
     <div>
-      {/* Dark Hero Block */}
-      <div className="bg-gradient-to-b from-gray-950 via-[#0a0a0f] to-[#0a0a0f] py-16 sm:py-24">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-              {translations.title}
+      {/* ═══ HERO ═══════════════════════════════════════════════════════════
+          Dark marketing hero — reframes the page from "submit a form" to
+          "we are actively recruiting suppliers with direct manufacturer
+          pricing". This is the sales pitch, not the form. */}
+      <div className="relative overflow-hidden bg-gradient-to-b from-gray-950 via-[#0a0a0f] to-[#08080d] py-16 sm:py-24">
+        {/* Decorative blobs */}
+        <div
+          aria-hidden
+          className="absolute -top-24 left-1/4 h-72 w-72 rounded-full opacity-30 blur-3xl"
+          style={{ background: 'var(--accent-mint)' }}
+        />
+        <div
+          aria-hidden
+          className="absolute bottom-0 right-1/4 h-72 w-72 rounded-full opacity-20 blur-3xl"
+          style={{ background: 'var(--accent-blue)' }}
+        />
+
+        <div className="container relative mx-auto px-4 sm:px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            {translations.heroBadge && (
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3.5 py-1.5 text-xs font-medium text-emerald-300 backdrop-blur-sm">
+                <span
+                  className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400"
+                  aria-hidden
+                />
+                {translations.heroBadge}
+              </div>
+            )}
+            {translations.heroEyebrow && (
+              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/50 sm:text-xs">
+                {translations.heroEyebrow}
+              </div>
+            )}
+            <h1 className="font-display text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
+              {translations.heroHeadline || translations.title}
+              {translations.heroHeadlineAccent && (
+                <>
+                  <br />
+                  <span
+                    className="bg-gradient-to-r from-emerald-300 via-emerald-200 to-cyan-200 bg-clip-text text-transparent"
+                  >
+                    {translations.heroHeadlineAccent}
+                  </span>
+                </>
+              )}
             </h1>
-            <p className="text-lg sm:text-xl text-white/80 mb-3">
-              {translations.subtitle}
+            <p className="mx-auto mt-5 max-w-2xl text-balance text-base leading-relaxed text-white/70 sm:text-lg">
+              {translations.heroTagline || translations.description}
             </p>
-            <p className="text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
-              {translations.description}
-            </p>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="#supplier-form"
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-400 px-5 py-3 text-sm font-semibold text-emerald-950 shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-300 hover:shadow-emerald-500/40"
+              >
+                <Send className="h-4 w-4" />
+                {translations.heroCtaPrimary || translations.submit}
+              </a>
+              {translations.heroCtaSecondary && (
+                <a
+                  href="#who-we-want"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:border-white/25 hover:bg-white/10"
+                >
+                  {translations.heroCtaSecondary}
+                  <ChevronDown className="h-4 w-4" />
+                </a>
+              )}
+            </div>
           </div>
+
+          {/* Stats strip */}
+          {translations.statsItems && translations.statsItems.length > 0 && (
+            <div className="mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+              {translations.statsItems.map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center backdrop-blur-sm"
+                >
+                  <div className="font-display bg-gradient-to-br from-white to-white/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent sm:text-3xl">
+                    {s.value}
+                  </div>
+                  <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-white/50">
+                    {s.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Light Content Block */}
-      <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-14">
-        <div className="max-w-4xl mx-auto">
+      {/* ═══ BENEFITS ═══════════════════════════════════════════════════════ */}
+      {translations.benefits && (
+        <section className="bg-white py-16 sm:py-20">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="font-display text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
+                {translations.benefits.title}
+              </h2>
+              {translations.benefits.subtitle && (
+                <p className="mt-3 text-base text-neutral-600 sm:text-lg">
+                  {translations.benefits.subtitle}
+                </p>
+              )}
+            </div>
+            <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {translations.benefits.items.map((item) => {
+                const Icon = BENEFIT_ICONS[item.icon] || ShieldCheck
+                return (
+                  <div
+                    key={item.title}
+                    className="group rounded-2xl border border-neutral-200 bg-white p-6 transition-all hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-lg"
+                  >
+                    <span
+                      className="grid h-11 w-11 place-items-center rounded-xl"
+                      style={{ background: 'var(--accent-mint-soft)', color: 'var(--accent-mint)' }}
+                    >
+                      <Icon className="h-5 w-5" strokeWidth={2} />
+                    </span>
+                    <h3 className="font-display mt-4 text-lg font-semibold tracking-tight text-neutral-900">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-[13.5px] leading-relaxed text-neutral-600">
+                      {item.description}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══ WHO WE WANT ═════════════════════════════════════════════════════ */}
+      {translations.whoItems && translations.whoItems.length > 0 && (
+        <section
+          id="who-we-want"
+          className="border-y border-neutral-200 py-16 sm:py-20"
+          style={{ backgroundColor: 'var(--company-secondary)' }}
+        >
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="font-display text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
+                {translations.whoTitle || 'Who we are looking for'}
+              </h2>
+              {translations.whoSubtitle && (
+                <p className="mt-3 text-base text-neutral-600 sm:text-lg">
+                  {translations.whoSubtitle}
+                </p>
+              )}
+            </div>
+            <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2">
+              {translations.whoItems.map((item, i) => {
+                const Icon = WHO_ICONS[i % WHO_ICONS.length] || Building2
+                return (
+                  <div
+                    key={item.title}
+                    className="flex gap-4 rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6"
+                  >
+                    <span
+                      className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl"
+                      style={{ background: 'var(--brand-1-soft)', color: 'var(--brand-1)' }}
+                    >
+                      <Icon className="h-5 w-5" strokeWidth={2} />
+                    </span>
+                    <div>
+                      <h3 className="font-display text-base font-semibold tracking-tight text-neutral-900 sm:text-lg">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1.5 text-[13.5px] leading-relaxed text-neutral-600">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══ PROCESS ═════════════════════════════════════════════════════════ */}
+      {translations.processSteps && translations.processSteps.length > 0 && (
+        <section className="bg-white py-16 sm:py-20">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="font-display text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
+                {translations.processTitle || 'How it works'}
+              </h2>
+              {translations.processSubtitle && (
+                <p className="mt-3 text-base text-neutral-600 sm:text-lg">
+                  {translations.processSubtitle}
+                </p>
+              )}
+            </div>
+            <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-5 md:grid-cols-3">
+              {translations.processSteps.map((step, i) => (
+                <div
+                  key={step.title}
+                  className="relative rounded-2xl border border-neutral-200 bg-white p-6"
+                >
+                  <span
+                    className="font-mono-brand absolute -top-3 left-6 inline-flex items-center rounded-md bg-neutral-900 px-2 py-1 text-[11px] font-bold tracking-[0.12em] text-white"
+                  >
+                    STEP {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="font-display mt-2 text-lg font-semibold tracking-tight text-neutral-900">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-[13.5px] leading-relaxed text-neutral-600">
+                    {step.description}
+                  </p>
+                  {i < (translations.processSteps?.length ?? 0) - 1 && (
+                    <ArrowRight
+                      className="absolute -right-4 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-neutral-300 md:block"
+                      aria-hidden
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══ FORM ════════════════════════════════════════════════════════════ */}
+      <div id="supplier-form" className="container mx-auto scroll-mt-20 px-4 py-10 sm:px-6 sm:py-14">
+        <div className="mx-auto max-w-4xl">
+          {(translations.formTitle || translations.formSubtitle) && (
+            <div className="mb-8 text-center">
+              {translations.formTitle && (
+                <h2 className="font-display text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
+                  {translations.formTitle}
+                </h2>
+              )}
+              {translations.formSubtitle && (
+                <p className="mt-3 text-base text-neutral-600 sm:text-lg">
+                  {translations.formSubtitle}
+                </p>
+              )}
+            </div>
+          )}
           {/* File Format Info */}
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-6 mb-8">
             <div className="flex items-start gap-3">
@@ -337,6 +613,43 @@ export function SupplierForm({ company, translations }: SupplierFormProps) {
           </form>
         </div>
       </div>
+
+      {/* ═══ FAQ ═════════════════════════════════════════════════════════════ */}
+      {translations.faqItems && translations.faqItems.length > 0 && (
+        <section
+          className="border-t border-neutral-200 py-16 sm:py-20"
+          style={{ backgroundColor: 'var(--company-secondary)' }}
+        >
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="font-display text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
+                {translations.faqTitle || 'Frequently asked questions'}
+              </h2>
+            </div>
+            <div className="mx-auto mt-10 max-w-3xl space-y-3">
+              {translations.faqItems.map((faq, i) => (
+                <details
+                  key={i}
+                  className="group rounded-xl border border-neutral-200 bg-white p-5 transition-all open:shadow-md"
+                >
+                  <summary className="flex cursor-pointer items-center justify-between gap-4 text-left">
+                    <span className="font-display text-base font-semibold tracking-tight text-neutral-900 sm:text-lg">
+                      {faq.question}
+                    </span>
+                    <ChevronDown
+                      className="h-5 w-5 flex-shrink-0 text-neutral-400 transition-transform group-open:rotate-180"
+                      aria-hidden
+                    />
+                  </summary>
+                  <p className="mt-3 text-[13.5px] leading-relaxed text-neutral-600 sm:text-sm">
+                    {faq.answer}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

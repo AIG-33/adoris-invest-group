@@ -9,7 +9,6 @@ import {
   ArrowRight,
   Upload,
   ClipboardPaste,
-  Zap,
   Package,
   Beaker,
   Microscope,
@@ -24,6 +23,8 @@ import {
   Snowflake,
   BadgeCheck,
   Truck,
+  Handshake,
+  Sparkles,
 } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 
@@ -44,9 +45,22 @@ interface QuickCategory {
   count: number
 }
 
+interface PathwayCopy {
+  step: string
+  title: string
+  description: string
+  cta: string
+  microCopy: string
+}
+
 interface HeroSearchTranslations {
   searchPlaceholder: string
   browseCatalog: string
+  pathwaysEyebrow?: string
+  pathwaysHeading?: string
+  pathway1?: PathwayCopy
+  pathway2?: PathwayCopy
+  pathway3?: PathwayCopy
 }
 
 interface HeroSearchProps {
@@ -540,39 +554,94 @@ export function HeroSearch({
           )}
         </div>
 
-        {/* Quick actions row */}
-        <div className="mx-auto mt-5 flex max-w-3xl flex-wrap items-center justify-center gap-2 text-sm text-neutral-700 sm:mt-6 sm:gap-2.5">
-          <span className="text-neutral-500">{t.or}</span>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv,.xlsx,.xls"
-            className="hidden"
-            onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2 text-sm font-medium text-neutral-800 shadow-sm transition-all hover:border-neutral-300 hover:bg-neutral-50"
-          >
-            <Upload className="h-4 w-4" style={{ color: 'var(--accent-mint)' }} />
-            {t.uploadCsv}
-          </button>
-          <Link
-            href="/bulk-order"
-            className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2 text-sm font-medium text-neutral-800 shadow-sm transition-all hover:border-neutral-300 hover:bg-neutral-50"
-          >
-            <ClipboardPaste className="h-4 w-4" style={{ color: 'var(--accent-blue)' }} />
-            {t.pasteQuote}
-          </Link>
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white/80 px-3.5 py-2 text-sm font-medium text-neutral-800 shadow-sm transition-all hover:border-neutral-300 hover:bg-white"
-          >
-            <Zap className="h-4 w-4" style={{ color: 'var(--accent-amber)' }} />
-            {t.browseManufacturers}
-          </Link>
-        </div>
+        {/* Hidden CSV input — still used by Pathway 2 */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,.xlsx,.xls"
+          className="hidden"
+          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+        />
+
+        {/* ─── THREE PATHWAYS ──────────────────────────────────────────────
+            The single most important block of the homepage: three equally
+            weighted cards that make the visitor's options crystal clear
+            within the first viewport.
+
+              01. Search by SKU / name      → focuses the hero search above
+              02. Bulk paste                → links to /bulk-order
+              03. Become a supplier         → links to /supplier
+        */}
+        {translations.pathway1 && translations.pathway2 && translations.pathway3 && (
+          <div className="mx-auto mt-12 max-w-6xl text-left sm:mt-16">
+            {(translations.pathwaysEyebrow || translations.pathwaysHeading) && (
+              <div className="mb-6 text-center sm:mb-8">
+                {translations.pathwaysEyebrow && (
+                  <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                    {translations.pathwaysEyebrow}
+                  </div>
+                )}
+                {translations.pathwaysHeading && (
+                  <h2 className="font-display text-balance text-2xl font-semibold tracking-tight text-neutral-900 sm:text-3xl">
+                    {translations.pathwaysHeading}
+                  </h2>
+                )}
+              </div>
+            )}
+            <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-3">
+              <PathwayCard
+                copy={translations.pathway1}
+                Icon={Search}
+                accent="brand"
+                onClick={() => {
+                  inputRef.current?.focus()
+                  inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }}
+                renderMicro={(text) => (
+                  <div className="flex items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50/80 px-3 py-2 text-[11px] text-neutral-600">
+                    <Search className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--brand-1)' }} />
+                    <span className="font-mono-brand truncate">{text}</span>
+                    <kbd
+                      className="font-mono-brand ml-auto rounded border border-neutral-200 bg-white px-1.5 py-0.5 text-[9px] font-medium text-neutral-500"
+                      aria-hidden
+                    >
+                      ⌘K
+                    </kbd>
+                  </div>
+                )}
+              />
+              <PathwayCard
+                copy={translations.pathway2}
+                Icon={ClipboardPaste}
+                accent="blue"
+                href="/bulk-order"
+                renderMicro={(text) => (
+                  <pre className="font-mono-brand overflow-hidden whitespace-pre rounded-lg border border-neutral-200 bg-neutral-900 px-3 py-2 text-[10.5px] leading-snug text-neutral-100">
+                    {text}
+                  </pre>
+                )}
+                extraBadge={{
+                  icon: Upload,
+                  label: language === 'ru' ? 'Загрузить .csv / .xlsx' : 'Upload .csv / .xlsx',
+                  onClick: () => fileInputRef.current?.click(),
+                }}
+              />
+              <PathwayCard
+                copy={translations.pathway3}
+                Icon={Handshake}
+                accent="mint"
+                href="/supplier"
+                highlight
+                renderMicro={(text) => (
+                  <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-[11px] font-medium text-emerald-800">
+                    <Sparkles className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--accent-mint)' }} />
+                    <span>{text}</span>
+                  </div>
+                )}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Quick categories */}
         {quickCategories.length > 0 && (
@@ -647,6 +716,147 @@ export function HeroSearch({
         </div>
       </div>
     </section>
+  )
+}
+
+// ─── PathwayCard — one of the three primary user paths in the hero ──────
+// A clear, action-oriented card with: step number, title, description,
+// a small inline demo (micro-copy), and a CTA. Accents are tied to the
+// brand gradient (search), accent blue (bulk paste), or accent mint
+// (supplier — visually highlighted to signal opportunity).
+type PathwayAccent = 'brand' | 'blue' | 'mint'
+
+const ACCENT_STYLES: Record<PathwayAccent, { iconBg: string; iconFg: string; stepBg: string; stepFg: string; ring: string }> = {
+  brand: {
+    iconBg: 'var(--brand-1-soft)',
+    iconFg: 'var(--brand-1)',
+    stepBg: 'var(--brand-1-soft)',
+    stepFg: 'var(--brand-1)',
+    ring: 'var(--brand-1-dim)',
+  },
+  blue: {
+    iconBg: 'var(--accent-blue-soft)',
+    iconFg: 'var(--accent-blue)',
+    stepBg: 'var(--accent-blue-soft)',
+    stepFg: 'var(--accent-blue)',
+    ring: 'var(--accent-blue-soft)',
+  },
+  mint: {
+    iconBg: 'var(--accent-mint-soft)',
+    iconFg: 'var(--accent-mint)',
+    stepBg: 'var(--accent-mint-soft)',
+    stepFg: 'var(--accent-mint)',
+    ring: 'var(--accent-mint-soft)',
+  },
+}
+
+interface PathwayCardProps {
+  copy: PathwayCopy
+  Icon: any
+  accent: PathwayAccent
+  href?: string
+  onClick?: () => void
+  highlight?: boolean
+  renderMicro?: (text: string) => React.ReactNode
+  extraBadge?: { icon: any; label: string; onClick: () => void }
+}
+
+function PathwayCard({
+  copy,
+  Icon,
+  accent,
+  href,
+  onClick,
+  highlight,
+  renderMicro,
+  extraBadge,
+}: PathwayCardProps) {
+  const styles = ACCENT_STYLES[accent]
+
+  const inner = (
+    <div
+      className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 sm:p-6 ${
+        highlight ? 'border-emerald-300/70' : 'border-neutral-200'
+      }`}
+      style={{
+        boxShadow: highlight
+          ? `0 18px 50px -22px ${styles.ring}, 0 0 0 1px ${styles.ring}`
+          : '0 8px 28px -14px rgba(15,15,30,0.10)',
+      }}
+    >
+      {highlight && (
+        <span
+          className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em]"
+          style={{ background: styles.iconBg, color: styles.iconFg }}
+        >
+          <Sparkles className="h-3 w-3" />
+          New
+        </span>
+      )}
+
+      <div className="flex items-center gap-3">
+        <span
+          className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl"
+          style={{ background: styles.iconBg, color: styles.iconFg }}
+        >
+          <Icon className="h-5 w-5" strokeWidth={2} />
+        </span>
+        <span
+          className="font-mono-brand inline-flex items-center rounded-md px-2 py-1 text-[10px] font-bold tracking-[0.12em]"
+          style={{ background: styles.stepBg, color: styles.stepFg }}
+        >
+          {copy.step}
+        </span>
+      </div>
+
+      <h3 className="font-display mt-4 text-lg font-semibold leading-snug tracking-tight text-neutral-900 sm:text-xl">
+        {copy.title}
+      </h3>
+      <p className="mt-2 text-[13.5px] leading-relaxed text-neutral-600">
+        {copy.description}
+      </p>
+
+      {renderMicro && <div className="mt-4">{renderMicro(copy.microCopy)}</div>}
+
+      <div className="mt-auto pt-5">
+        <span
+          className="inline-flex items-center gap-1.5 text-sm font-semibold transition-all group-hover:gap-2.5"
+          style={{ color: styles.iconFg }}
+        >
+          {copy.cta}
+          <ArrowRight className="h-4 w-4" />
+        </span>
+
+        {extraBadge && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              extraBadge.onClick()
+            }}
+            className="ml-3 inline-flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-2 py-1 text-[11px] font-medium text-neutral-600 transition-colors hover:border-neutral-300 hover:text-neutral-900"
+          >
+            <extraBadge.icon className="h-3 w-3" />
+            {extraBadge.label}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+
+  if (href) {
+    return (
+      <Link href={href} className="block h-full">
+        {inner}
+      </Link>
+    )
+  }
+
+  return (
+    <button type="button" onClick={onClick} className="block h-full text-left">
+      {inner}
+    </button>
   )
 }
 

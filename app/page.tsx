@@ -36,15 +36,20 @@ export async function generateMetadata(): Promise<Metadata> {
   const language = company?.language || 'en'
 
   const title = language === 'ru'
-    ? `${companyName} — B2B медицинское и лабораторное оборудование`
-    : `${companyName} — B2B Medical & Laboratory Equipment`
+    ? `${companyName} — Поиск по SKU · Массовый заказ · Поставщикам`
+    : `${companyName} — Search by SKU · Bulk Paste · For Suppliers`
   const description = language === 'ru'
-    ? `${companyName} — профессиональный поставщик медицинского и лабораторного оборудования, анализаторов, реагентов и расходных материалов от ведущих мировых производителей. Поиск по артикулу.`
-    : `${companyName} — professional B2B supplier of medical laboratory equipment, analyzers, reagents, and consumables from leading global manufacturers. Search by SKU.`
+    ? `${companyName} — B2B-поставщик медицинского и лабораторного оборудования. Поиск 100 000+ SKU по артикулу или названию, массовый заказ по списку и партнёрство с поставщиками с прямыми ценами от производителя.`
+    : `${companyName} — B2B medical & laboratory supply. Search 100,000+ SKUs by catalog number or product name, paste a list to build a cart instantly, or partner with us as a supplier with direct manufacturer pricing.`
+
+  const keywords = language === 'ru'
+    ? 'поиск по SKU, поиск по артикулу, массовый заказ, оптовый заказ, B2B медицинское оборудование, реагенты оптом, стать поставщиком, прямые цены производителя, лабораторное оборудование'
+    : 'search by SKU, search by catalog number, bulk order, paste SKU list, B2B medical equipment, lab reagents wholesale, become a supplier, direct manufacturer pricing, laboratory supplies, IVD distributor'
 
   return {
     title,
     description,
+    keywords,
     openGraph: {
       title,
       description,
@@ -139,10 +144,39 @@ export default async function HomePage() {
       }
 
   const baseUrl = await getBaseUrl()
+  const companyName = company?.name || 'IVD Group'
+
+  // Service schemas for the two non-product "products" the homepage promotes:
+  // the supplier-recruitment programme and the bulk-paste ordering tool.
+  // Search-by-SKU is already covered by the WebSite SearchAction schema.
+  const supplierServiceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: language === 'ru'
+      ? 'Партнёрская программа для поставщиков'
+      : 'Supplier partnership programme',
+    description: dict.homepage.hero.pathway3.description,
+    provider: { '@type': 'Organization', name: companyName, url: baseUrl },
+    serviceType: language === 'ru' ? 'Закупки и дистрибуция' : 'Procurement & distribution partnership',
+    areaServed: ['EU', 'EAEU', 'AS', 'AF', 'AM'],
+    url: `${baseUrl}/supplier`,
+  }
+  const bulkOrderServiceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: language === 'ru' ? 'Инструмент массового заказа' : 'Bulk order tool',
+    description: dict.homepage.hero.pathway2.description,
+    provider: { '@type': 'Organization', name: companyName, url: baseUrl },
+    serviceType: language === 'ru' ? 'B2B-инструмент закупок' : 'B2B procurement tool',
+    url: `${baseUrl}/bulk-order`,
+  }
+
   const structuredData = [
     generateOrganizationSchema(company, baseUrl),
     generateWebSiteSchema(company, baseUrl),
     generateItemListSchema(featuredProducts, baseUrl, 'Featured Products'),
+    supplierServiceSchema,
+    bulkOrderServiceSchema,
   ]
 
   return (
@@ -156,6 +190,11 @@ export default async function HomePage() {
             translations={{
               searchPlaceholder: dict.homepage.hero.searchPlaceholder,
               browseCatalog: dict.homepage.hero.browseCatalog,
+              pathwaysEyebrow: dict.homepage.hero.pathwaysEyebrow,
+              pathwaysHeading: dict.homepage.hero.pathwaysHeading,
+              pathway1: dict.homepage.hero.pathway1,
+              pathway2: dict.homepage.hero.pathway2,
+              pathway3: dict.homepage.hero.pathway3,
             }}
             language={language}
             companyName={company?.name || 'IVD Group'}
