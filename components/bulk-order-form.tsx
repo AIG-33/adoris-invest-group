@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Upload, ShoppingCart, AlertCircle, CheckCircle, Package, Loader2 } from 'lucide-react';
+import { parseBulkOrderText } from '@/lib/parse-bulk-order';
 
 interface ProcessedProduct {
   id: string;
@@ -56,15 +57,10 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
     setIsProcessing(true);
 
     try {
-      // Parse input text into items
-      const lines = inputText.split('\n').filter(line => line.trim());
-      const items = lines.map(line => {
-        const parts = line.split(/[\t,;\s]+/).filter(p => p.trim());
-        return {
-          sku: parts[0] || '',
-          quantity: parts[1] || '1',
-        };
-      }).filter(item => item.sku);
+      const items = parseBulkOrderText(inputText).map((item) => ({
+        sku: item.sku,
+        quantity: String(item.quantity),
+      }));
 
       if (items.length === 0) {
         setError('No valid items found. Please enter SKU and quantity on each line.');
@@ -132,9 +128,9 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
     router.push('/cart');
   };
 
-  const exampleText = `SKU001\t5
-SKU002\t3
-SKU003\t10`;
+  const exampleText = `Owrens Veronal Buffer 10445724 2
+10446232\t2
+SKU002, 3`;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -228,9 +224,10 @@ SKU003\t10`;
           <h3 className="font-semibold text-sm text-neutral-700 mb-2">Format Guide:</h3>
           <ul className="text-sm text-neutral-600 space-y-1">
             <li>• One product per line</li>
-            <li>• Format: <code className="bg-white px-2 py-0.5 rounded font-mono text-xs">SKU [TAB/COMMA/SPACE] Quantity</code></li>
+            <li>• Format: <code className="bg-white px-2 py-0.5 rounded font-mono text-xs">Catalog# Quantity</code> or <code className="bg-white px-2 py-0.5 rounded font-mono text-xs">Product name Catalog# Quantity</code></li>
+            <li>• Separators: tab, comma, semicolon, or spaces</li>
             <li>• Quantity is optional (defaults to 1)</li>
-            <li>• SKU must match exactly (case-insensitive)</li>
+            <li>• Catalog number is detected automatically (numeric or alphanumeric)</li>
           </ul>
         </div>
       </div>

@@ -2,19 +2,37 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getCurrentCompany } from '@/lib/company';
 import { getProductPrice } from '@/lib/product-price';
+import { parseBulkOrderLine } from '@/lib/parse-bulk-order';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const { items } = await request.json();
+    const { items: rawItems } = await request.json();
 
-    if (!items || !Array.isArray(items)) {
+    if (!rawItems || !Array.isArray(rawItems)) {
       return NextResponse.json(
         { error: 'Invalid request format. Expected { items: [{sku: string, quantity: number}] }' },
         { status: 400 }
       );
     }
+
+    // Re-parse lines that still contain product names (legacy clients)
+    const items = rawItems.flatMap((item: { sku?: string; quantity?: number | string }) => {
+      const sku = item.sku?.trim() ?? '';
+      if (!sku) return [];
+
+      if (/\s/.test(sku)) {
+        const line = `${sku} ${item.quantity ?? 1}`;
+        const parsed = parseBulkOrderLine(line);
+        if (parsed) return [parsed];
+      }
+
+      return [{
+        sku,
+        quantity: parseInt(String(item.quantity), 10) || 1,
+      }];
+    });
 
     // Extract SKUs
     const skus = items.map(item => item.sku?.trim()).filter(Boolean);
