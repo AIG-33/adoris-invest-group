@@ -262,7 +262,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                 selectedManufacturer={manufacturer}
               />
             </aside>
-            <main className="flex-1" itemScope itemType="https://schema.org/ItemList">
+            <main className="flex-1">
               <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <p className="text-neutral-400 text-sm">
                   {dict.products.showing} {products.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, totalProducts)} {dict.products.of} {totalProducts} {dict.products.results}

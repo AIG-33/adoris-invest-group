@@ -294,7 +294,7 @@ export default async function ProductPage({
       <div className="min-h-screen flex flex-col">
         <StructuredData data={structuredData} />
         <Header translations={dict.nav} />
-        <main className="flex-1" itemScope itemType="https://schema.org/Product">
+        <main className="flex-1">
           <article>
             <ProductDetail product={productWithNumber} relatedProducts={relatedProducts} translations={dict.product} company={company} />
           </article>

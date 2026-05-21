@@ -77,7 +77,16 @@ export function generateProductSchema(
   baseUrl: string
 ): StructuredData {
   const productUrl = `${baseUrl}${getProductUrl(product)}`
-  const productName = product.name || product.sku || 'Product'
+  // Google requires a non-empty `name` for Product schema. Fall back through
+  // sku -> manufacturer/category combo -> generic label so we never emit an
+  // empty string (which GSC flags as "Missing field 'name'").
+  const trimmedName = typeof product.name === 'string' ? product.name.trim() : ''
+  const trimmedSku = typeof product.sku === 'string' ? product.sku.trim() : ''
+  const productName =
+    trimmedName ||
+    trimmedSku ||
+    [product.manufacturer?.name, product.category?.name].filter(Boolean).join(' ') ||
+    'Product'
   const imageUrl = (product.image && product.image.length > 0)
     ? `${baseUrl}${product.image}`
     : (product.manufacturer?.logo && product.manufacturer.logo.length > 0)
@@ -91,24 +100,27 @@ export function generateProductSchema(
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: productName,
-    description: `${product.description || `${productName} - Medical laboratory equipment`}. SKU: ${product.sku}`,
+    description: `${product.description || `${productName} - Medical laboratory equipment`}${trimmedSku ? `. SKU: ${trimmedSku}` : ''}`,
     image: imageUrl,
-    sku: product.sku,
-    mpn: product.sku,
     brand: {
       '@type': 'Brand',
       name: product.manufacturer?.name || 'Unknown Manufacturer',
     },
     category: product.category?.name || 'Medical Equipment',
-    productID: product.sku,
-    additionalProperty: [
+  }
+
+  if (trimmedSku) {
+    schema.sku = trimmedSku
+    schema.mpn = trimmedSku
+    schema.productID = trimmedSku
+    schema.additionalProperty = [
       {
         '@type': 'PropertyValue',
         propertyID: 'SKU',
         name: 'SKU',
-        value: product.sku,
+        value: trimmedSku,
       },
-    ],
+    ]
   }
 
   // Offers: required by Google. Use price if available, otherwise "0" with PreOrder.
