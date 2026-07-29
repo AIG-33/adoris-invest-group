@@ -636,7 +636,7 @@ const translations: Record<Language, Translations> = {
       stats: {
         whyChoose: 'Why Choose',
         readyToOrder: 'Ready to order?',
-        minimumOrder: 'Minimum order €10,000 · 100% prepayment · 4-7 weeks delivery',
+        minimumOrder: 'Minimum order €5,000 · 100% prepayment · 4-7 weeks delivery',
         browseCatalog: 'Browse Catalog',
         viewTerms: 'View Terms',
         stats: {
@@ -869,8 +869,8 @@ const translations: Record<Language, Translations> = {
       },
       minimumOrder: {
         title: 'Minimum Order Value',
-        description: 'The minimum order value is €10,000.',
-        note: 'Please note: Orders below €10,000 will incur additional delivery charges from suppliers\' warehouses to our warehouse in Vilnius, approximately €300-€500.',
+        description: 'The minimum order value is €5,000.',
+        note: 'Please note: Orders below €5,000 will incur additional delivery charges from suppliers\' warehouses to our warehouse in Vilnius, approximately €250.',
       },
       payment: {
         title: 'Payment Terms',
@@ -1286,7 +1286,7 @@ const translations: Record<Language, Translations> = {
       stats: {
         whyChoose: 'Почему выбирают',
         readyToOrder: 'Готовы сделать заказ?',
-        minimumOrder: 'Минимальный заказ €10,000 · 100% предоплата · Доставка 4-7 недель',
+        minimumOrder: 'Минимальный заказ €5,000 · 100% предоплата · Доставка 4-7 недель',
         browseCatalog: 'Просмотреть каталог',
         viewTerms: 'Посмотреть условия',
         stats: {
@@ -1519,8 +1519,8 @@ const translations: Record<Language, Translations> = {
       },
       minimumOrder: {
         title: 'Минимальная сумма заказа',
-        description: 'Минимальная сумма заказа составляет €10,000.',
-        note: 'Обратите внимание: Заказы ниже €10,000 будут нести дополнительные расходы на доставку со складов поставщиков на наш склад в Вильнюсе, примерно €300-€500.',
+        description: 'Минимальная сумма заказа составляет €5,000.',
+        note: 'Обратите внимание: Заказы ниже €5,000 будут нести дополнительные расходы на доставку со складов поставщиков на наш склад в Вильнюсе, примерно €250.',
       },
       payment: {
         title: 'Условия оплаты',
