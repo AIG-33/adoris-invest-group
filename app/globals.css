@@ -259,6 +259,40 @@
   animation-play-state: paused;
 }
 
+/* ---- Bulk order — paste editor -------------------------------------- */
+/* Dark "editor" surface that makes the paste target unmistakable on an
+   otherwise light page. Focus state uses the mint accent so it reads as
+   active even when the tenant brand is grayscale.                        */
+.paste-editor {
+  border-color: rgba(255, 255, 255, 0.10);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.paste-editor:focus-within {
+  border-color: var(--accent-mint);
+  box-shadow: 0 0 0 4px var(--accent-mint-soft);
+}
+.paste-editor textarea {
+  caret-color: var(--accent-mint);
+}
+.paste-editor textarea::placeholder {
+  color: rgba(255, 255, 255, 0.34);
+}
+
+/* Attention pulse while the editor is still empty and untouched. */
+@keyframes paste-idle-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-mint-soft); }
+  50%      { box-shadow: 0 0 0 10px transparent; }
+}
+.paste-editor--idle {
+  animation: paste-idle-pulse 2.8s ease-in-out infinite;
+}
+.paste-editor--idle:focus-within {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .paste-editor--idle { animation: none; }
+}
+
 /* ---- Smooth gradient divider between sections ---- */
 .section-divider {
   height: 1px;

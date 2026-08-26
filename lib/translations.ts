@@ -369,6 +369,23 @@ export interface Translations {
     results: string
     addAllToCart: string
     items?: string
+    // Paste editor UI
+    pasteTitle?: string
+    pasteSubtitle?: string
+    pastePlaceholder?: string
+    pasteFromClipboard?: string
+    tryExample?: string
+    clear?: string
+    processing?: string
+    linesDetected?: string
+    anyFormat?: string
+    found?: string
+    notFound?: string
+    foundProducts?: string
+    notFoundSkus?: string
+    errorEmpty?: string
+    errorNoItems?: string
+    errorGeneric?: string
     // Marketing hero copy
     heroEyebrow?: string
     heroHeadline?: string
@@ -949,6 +966,22 @@ const translations: Record<Language, Translations> = {
       results: 'Results',
       addAllToCart: 'Add All to Cart',
       items: 'items',
+      pasteTitle: 'Paste your catalog numbers here',
+      pasteSubtitle: 'One product per line: catalog number and quantity. Copy straight from Excel, a PDF or an email.',
+      pastePlaceholder: 'Paste here, for example:\n\n10446232\t2\n07P3203, 5\n05031738; 12\nVeronal Buffer 10445724 2',
+      pasteFromClipboard: 'Paste from clipboard',
+      tryExample: 'Fill in an example',
+      clear: 'Clear',
+      processing: 'Matching…',
+      linesDetected: 'items recognised',
+      anyFormat: 'Any format works',
+      found: 'Found',
+      notFound: 'Not found',
+      foundProducts: 'Found products',
+      notFoundSkus: 'Catalog numbers not found',
+      errorEmpty: 'Paste catalog numbers with quantities first.',
+      errorNoItems: 'No valid lines found. Put a catalog number and a quantity on each line.',
+      errorGeneric: 'Something went wrong while processing your list. Please try again.',
       heroBadge: 'Paste · Match · Checkout',
       heroEyebrow: 'For procurement teams and resellers',
       heroHeadline: 'Paste your shopping list — we build the cart',
@@ -1599,6 +1632,22 @@ const translations: Record<Language, Translations> = {
       results: 'Результаты',
       addAllToCart: 'Добавить все в корзину',
       items: 'товаров',
+      pasteTitle: 'Вставьте сюда каталожные номера',
+      pasteSubtitle: 'По одному товару в строке: каталожный номер и количество. Можно копировать прямо из Excel, PDF или письма.',
+      pastePlaceholder: 'Вставьте сюда, например:\n\n10446232\t2\n07P3203, 5\n05031738; 12\nВероналовый буфер 10445724 2',
+      pasteFromClipboard: 'Вставить из буфера',
+      tryExample: 'Заполнить примером',
+      clear: 'Очистить',
+      processing: 'Сопоставляем…',
+      linesDetected: 'позиций распознано',
+      anyFormat: 'Подойдёт любой формат',
+      found: 'Найдено',
+      notFound: 'Не найдено',
+      foundProducts: 'Найденные товары',
+      notFoundSkus: 'Каталожные номера не найдены',
+      errorEmpty: 'Сначала вставьте каталожные номера с количеством.',
+      errorNoItems: 'Не удалось распознать ни одной строки. Укажите каталожный номер и количество в каждой строке.',
+      errorGeneric: 'При обработке списка произошла ошибка. Попробуйте ещё раз.',
       heroBadge: 'Вставка · Сопоставление · Заказ',
       heroEyebrow: 'Для отделов закупок и дистрибьюторов',
       heroHeadline: 'Вставьте свой список — мы соберём корзину',

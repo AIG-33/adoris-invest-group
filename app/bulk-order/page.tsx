@@ -99,19 +99,15 @@ export default async function BulkOrderPage() {
     },
   }]
 
-  const examplePaste = language === 'ru'
-    ? `10446232\t2\n07P3203\t5\n05031738, 12\nSKU002 3`
-    : `10446232\t2\n07P3203\t5\n05031738, 12\nSKU002 3`
-
   return (
     <>
       <StructuredData data={structuredData} />
       <Header />
       <main className="min-h-screen" style={{ backgroundColor: 'var(--company-secondary, #ffffff)' }}>
         {/* ═══ HERO ════════════════════════════════════════════════════════
-            Marketing hero — leads with the promise (paste → cart in
-            seconds), supported by an animated 2-column visual that shows
-            input on the left and the resulting cart on the right. */}
+            The paste editor *is* the hero: a short promise up top, then the
+            live form immediately below so the primary action needs no
+            scrolling and reads as the obvious thing to do. */}
         <section
           className="relative overflow-hidden border-b border-neutral-200"
           style={{
@@ -119,124 +115,40 @@ export default async function BulkOrderPage() {
               'radial-gradient(900px 480px at 20% 0%, var(--brand-1-soft), transparent 60%), radial-gradient(900px 480px at 80% 100%, var(--accent-blue-soft), transparent 60%), #fafafa',
           }}
         >
-          <div className="container mx-auto px-4 py-16 sm:px-6 sm:py-24">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-              {/* Left: copy */}
-              <div>
-                {bulk.heroBadge && (
-                  <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-700 shadow-sm">
-                    <ClipboardPaste className="h-3.5 w-3.5" style={{ color: 'var(--brand-1)' }} />
-                    {bulk.heroBadge}
-                  </div>
-                )}
-                {bulk.heroEyebrow && (
-                  <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500 sm:text-xs">
-                    {bulk.heroEyebrow}
-                  </div>
-                )}
-                <h1 className="font-display text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-neutral-900 sm:text-5xl md:text-6xl">
-                  {bulk.heroHeadline || bulk.title}
-                </h1>
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-neutral-600 sm:text-lg">
-                  {bulk.heroTagline || bulk.subtitle}
-                </p>
-
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <a
-                    href="#bulk-form"
-                    className="bg-brand-gradient inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110"
-                    style={{ boxShadow: '0 8px 24px var(--brand-1-dim)' }}
-                  >
-                    <ClipboardPaste className="h-4 w-4" />
-                    {bulk.enterProducts}
-                  </a>
-                  <a
-                    href="#how-it-works"
-                    className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-5 py-3 text-sm font-semibold text-neutral-800 shadow-sm transition-all hover:border-neutral-300"
-                  >
-                    {language === 'ru' ? 'Как это работает' : 'See how it works'}
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
+          <div className="container mx-auto px-4 py-10 sm:px-6 sm:py-14">
+            <div className="mx-auto max-w-3xl text-center">
+              {bulk.heroBadge && (
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-700 shadow-sm">
+                  <ClipboardPaste className="h-3.5 w-3.5" style={{ color: 'var(--brand-1)' }} />
+                  {bulk.heroBadge}
                 </div>
-              </div>
+              )}
+              <h1 className="font-display text-balance text-[28px] font-semibold leading-[1.1] tracking-tight text-neutral-900 sm:text-4xl">
+                {bulk.heroHeadline || bulk.title}
+              </h1>
+              <p className="mx-auto mt-3 max-w-xl text-[14.5px] leading-relaxed text-neutral-600">
+                {bulk.heroTagline || bulk.subtitle}
+              </p>
+            </div>
 
-              {/* Right: animated paste → cart demo */}
-              <div className="relative">
-                <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
-                  {/* Paste box */}
-                  <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_18px_50px_-22px_rgba(15,15,30,0.18)]">
-                    <div className="mb-2.5 flex items-center gap-2">
-                      <span
-                        className="grid h-7 w-7 place-items-center rounded-lg"
-                        style={{ background: 'var(--brand-1-soft)', color: 'var(--brand-1)' }}
-                      >
-                        <ClipboardPaste className="h-3.5 w-3.5" />
-                      </span>
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
-                        {language === 'ru' ? 'Ваш список' : 'Your paste'}
-                      </span>
-                    </div>
-                    <pre className="font-mono-brand whitespace-pre rounded-lg bg-neutral-900 p-3 text-[11px] leading-relaxed text-neutral-100">
-                      {examplePaste}
-                    </pre>
-                  </div>
+            {/* ─── The form itself, right in the first screen ─────────── */}
+            <div id="bulk-form" className="mx-auto mt-7 max-w-4xl scroll-mt-24 sm:mt-8">
+              <BulkOrderForm translations={{ ...bulk, items: dict.cart.items }} />
+            </div>
 
-                  {/* Arrow — visible on sm+ */}
-                  <div className="hidden sm:block">
-                    <div
-                      className="grid h-10 w-10 place-items-center rounded-full bg-white shadow-md"
-                      aria-hidden
-                    >
-                      <ArrowRight className="h-5 w-5" style={{ color: 'var(--brand-1)' }} />
-                    </div>
-                  </div>
-
-                  {/* Cart box */}
-                  <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-[0_18px_50px_-22px_rgba(15,15,30,0.18)]">
-                    <div className="mb-2.5 flex items-center gap-2">
-                      <span
-                        className="grid h-7 w-7 place-items-center rounded-lg"
-                        style={{ background: 'var(--accent-mint-soft)', color: 'var(--accent-mint)' }}
-                      >
-                        <ShoppingCart className="h-3.5 w-3.5" />
-                      </span>
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
-                        {language === 'ru' ? 'Готовая корзина' : 'Your cart'}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {[
-                        { sku: '10446232', qty: 2, ok: true },
-                        { sku: '07P3203', qty: 5, ok: true },
-                        { sku: '05031738', qty: 12, ok: true },
-                        { sku: 'SKU002', qty: 3, ok: true },
-                      ].map((item) => (
-                        <div
-                          key={item.sku}
-                          className="flex items-center justify-between rounded-lg border border-neutral-100 bg-neutral-50/60 px-2.5 py-2 text-[11px]"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Check
-                              className="h-3 w-3"
-                              style={{ color: 'var(--accent-mint)' }}
-                              strokeWidth={3}
-                            />
-                            <span className="font-mono-brand text-neutral-800">{item.sku}</span>
-                          </div>
-                          <span className="font-mono-brand font-semibold text-neutral-900">
-                            ×{item.qty}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="mt-6 text-center">
+              <a
+                href="#how-it-works"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-800"
+              >
+                {language === 'ru' ? 'Как это работает' : 'See how it works'}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </a>
             </div>
 
             {/* Benefits strip */}
             {bulk.benefits && (
-              <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
+              <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
                 {([
                   { item: bulk.benefits.time, Icon: Zap, tone: 'amber' },
                   { item: bulk.benefits.accuracy, Icon: Target, tone: 'mint' },
@@ -331,13 +243,6 @@ export default async function BulkOrderPage() {
             </div>
           </section>
         )}
-
-        {/* ═══ FORM ══════════════════════════════════════════════════════════ */}
-        <section id="bulk-form" className="container mx-auto scroll-mt-20 px-6 py-12 sm:py-16">
-          <div className="mx-auto max-w-6xl">
-            <BulkOrderForm translations={{ ...bulk, items: dict.cart.items }} />
-          </div>
-        </section>
 
         {/* ═══ SEO COPY ══════════════════════════════════════════════════════ */}
         {bulk.seo && (
