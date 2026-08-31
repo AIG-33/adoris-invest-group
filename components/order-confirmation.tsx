@@ -170,6 +170,21 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
                 </div>
               </div>
             )) || []}
+            {company?.showPrices && Number(order?.logisticFee || 0) > 0 && (
+              <div className="flex gap-4 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-neutral-900 mb-1">
+                    {translations.logisticServices}
+                  </h4>
+                  <p className="text-sm text-neutral-600">{translations.quantity}: 1</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-xl font-bold text-[#000000]">
+                    €{Number(order.logisticFee).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Totals */}
@@ -189,10 +204,11 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
                 if (!company?.showPrices) return null
                 const subtotal = Number(order?.subtotal || 0)
                 const total = Number(order?.total || 0)
-                const discount = subtotal - total
+                const logisticFee = Number(order?.logisticFee || 0)
+                const discount = Math.max(0, subtotal + logisticFee - total)
                 const discountRate = subtotal > 0 ? (discount / subtotal) * 100 : 0
                 
-                if (discount > 0) {
+                if (discount > 0.01) {
                   return (
                     <div className="flex justify-between text-[#666666]">
                       <span>{translations.volumeDiscount} ({discountRate.toFixed(0)}%)</span>
@@ -202,6 +218,14 @@ export function OrderConfirmation({ order, company, translations }: OrderConfirm
                 }
                 return null
               })()}
+              {company?.showPrices && Number(order?.logisticFee || 0) > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-neutral-700">{translations.logisticServices}</span>
+                  <span className="font-semibold">
+                    €{Number(order.logisticFee).toFixed(2)}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="flex justify-between items-center text-xl font-bold border-t-2 border-neutral-900 pt-4">
               <span>{translations.total}</span>

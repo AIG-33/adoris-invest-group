@@ -257,6 +257,11 @@ export interface Translations {
     processing: string
     secure: string
     gdpr: string
+    logisticFeeNotice: string
+    logisticServices: string
+    logisticFeeConfirmTitle: string
+    logisticFeeConfirmAccept: string
+    logisticFeeConfirmCancel: string
   }
   
   // Account
@@ -510,6 +515,7 @@ export interface Translations {
     each: string
     subtotal: string
     volumeDiscount: string
+    logisticServices: string
     total: string
     continueShopping: string
     needHelp: string
@@ -864,6 +870,11 @@ const translations: Record<Language, Translations> = {
       processing: 'Processing...',
       secure: 'Secure SSL encrypted transactions',
       gdpr: 'GDPR compliant data protection',
+      logisticFeeNotice: 'Please note: Orders below €5,000 will incur additional delivery charges from suppliers\' warehouses to our warehouse in Vilnius, approximately €250.',
+      logisticServices: 'Logistic services',
+      logisticFeeConfirmTitle: 'Confirm additional delivery charge',
+      logisticFeeConfirmAccept: 'I accept the €250 fee',
+      logisticFeeConfirmCancel: 'Cancel',
     },
     account: {
       title: 'My Account',
@@ -1129,6 +1140,7 @@ const translations: Record<Language, Translations> = {
       each: 'each',
       subtotal: 'Subtotal',
       volumeDiscount: 'Volume Discount',
+      logisticServices: 'Logistic services',
       total: 'Total',
       continueShopping: 'Continue Shopping',
       needHelp: 'Need Help?',
@@ -1530,6 +1542,11 @@ const translations: Record<Language, Translations> = {
       processing: 'Обработка...',
       secure: 'Безопасные SSL-шифрованные транзакции',
       gdpr: 'Соответствие GDPR защите данных',
+      logisticFeeNotice: 'Обратите внимание: Заказы ниже €5,000 будут нести дополнительные расходы на доставку со складов поставщиков на наш склад в Вильнюсе, примерно €250.',
+      logisticServices: 'Логистические услуги',
+      logisticFeeConfirmTitle: 'Подтвердите дополнительную плату за доставку',
+      logisticFeeConfirmAccept: 'Я принимаю плату €250',
+      logisticFeeConfirmCancel: 'Отмена',
     },
     account: {
       title: 'Мой аккаунт',
@@ -1795,6 +1812,7 @@ const translations: Record<Language, Translations> = {
       each: 'за шт.',
       subtotal: 'Промежуточный итог',
       volumeDiscount: 'Скидка за объем',
+      logisticServices: 'Логистические услуги',
       total: 'Итого',
       continueShopping: 'Продолжить покупки',
       needHelp: 'Нужна помощь?',

@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, CreditCard, Building2, Truck, FileText } from 'lucide-react'
+import { Building2, FileText } from 'lucide-react'
 import type { CompanyConfig } from '@/lib/company-types'
+import { LOGISTIC_FEE_EUR, shouldApplyLogisticFee } from '@/lib/order-constants'
 
 interface CartItem {
   id: string
@@ -25,6 +26,11 @@ interface CheckoutTranslations {
   processing: string
   secure: string
   gdpr: string
+  logisticFeeNotice: string
+  logisticServices: string
+  logisticFeeConfirmTitle: string
+  logisticFeeConfirmAccept: string
+  logisticFeeConfirmCancel: string
 }
 
 interface CheckoutFormProps {
@@ -38,6 +44,7 @@ export function CheckoutForm({ translations, company }: CheckoutFormProps) {
   const [cart, setCart] = useState<CartItem[]>([])
   const [mounted, setMounted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showLogisticConfirm, setShowLogisticConfirm] = useState(false)
   const [formData, setFormData] = useState({
     company: '',
     vatId: '',
@@ -131,14 +138,16 @@ export function CheckoutForm({ translations, company }: CheckoutFormProps) {
   }
   // 0% for orders below €50,000 or if prices are hidden
   
-        const discount = subtotal * discountRate
-        const subtotalAfterDiscount = subtotal - discount
-        const vat = 0 // VAT is always 0%
-        const total = subtotalAfterDiscount + vat
+  const discount = subtotal * discountRate
+  const subtotalAfterDiscount = subtotal - discount
+  const vat = 0 // VAT is always 0%
+  const needsLogisticFee = shouldApplyLogisticFee(subtotal, company?.showPrices)
+  const logisticFee = needsLogisticFee ? LOGISTIC_FEE_EUR : 0
+  const total = subtotalAfterDiscount + vat + logisticFee
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e?.preventDefault?.()
+  const submitOrder = async () => {
     setLoading(true)
+    setShowLogisticConfirm(false)
 
     try {
       // If showPrices is false, set all item prices to 0 before sending to API
@@ -152,6 +161,8 @@ export function CheckoutForm({ translations, company }: CheckoutFormProps) {
         subtotal: company?.showPrices ? subtotal : 0,
         discount: company?.showPrices ? discount : 0,
         vat: 0,
+        logisticFee: company?.showPrices ? logisticFee : 0,
+        logisticFeeAccepted: needsLogisticFee,
         total: company?.showPrices ? total : 0,
         userId: session?.user ? (session.user as any).id : null,
       }
@@ -163,7 +174,8 @@ export function CheckoutForm({ translations, company }: CheckoutFormProps) {
       })
 
       if (!response?.ok) {
-        throw new Error('Order failed')
+        const errBody = await response.json().catch(() => null)
+        throw new Error(errBody?.error || 'Order failed')
       }
 
       const result = await response.json()
@@ -178,6 +190,15 @@ export function CheckoutForm({ translations, company }: CheckoutFormProps) {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e?.preventDefault?.()
+    if (needsLogisticFee) {
+      setShowLogisticConfirm(true)
+      return
+    }
+    await submitOrder()
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -466,6 +487,12 @@ export function CheckoutForm({ translations, company }: CheckoutFormProps) {
               )) || []}
             </div>
 
+            {needsLogisticFee && (
+              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs sm:text-sm text-amber-900 leading-relaxed">
+                {translations.logisticFeeNotice}
+              </div>
+            )}
+
             <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-xs sm:text-sm">
               <div className="flex justify-between">
                 <span className="text-neutral-700">Subtotal</span>
@@ -485,6 +512,12 @@ export function CheckoutForm({ translations, company }: CheckoutFormProps) {
                 <div className="flex justify-between text-[#666666]">
                   <span>Volume Discount ({(discountRate * 100).toFixed(0)}%)</span>
                   <span className="font-semibold">-€{discount?.toFixed?.(2)}</span>
+                </div>
+              )}
+              {needsLogisticFee && (
+                <div className="flex justify-between">
+                  <span className="text-neutral-700">{translations.logisticServices}</span>
+                  <span className="font-semibold">€{LOGISTIC_FEE_EUR.toFixed(2)}</span>
                 </div>
               )}
             </div>
@@ -539,6 +572,47 @@ export function CheckoutForm({ translations, company }: CheckoutFormProps) {
           </div>
         </div>
       </form>
+
+      {showLogisticConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="logistic-fee-title"
+        >
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 sm:p-8">
+            <h3 id="logistic-fee-title" className="text-xl font-bold text-neutral-900 mb-3">
+              {translations.logisticFeeConfirmTitle}
+            </h3>
+            <p className="text-sm text-neutral-700 leading-relaxed mb-4">
+              {translations.logisticFeeNotice}
+            </p>
+            <div className="flex justify-between text-sm font-semibold mb-6 py-3 border-y border-neutral-200">
+              <span>{translations.logisticServices}</span>
+              <span>€{LOGISTIC_FEE_EUR.toFixed(2)}</span>
+            </div>
+            <div className="flex flex-col-reverse sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => setShowLogisticConfirm(false)}
+                disabled={loading}
+                className="flex-1 px-4 py-3 rounded-lg border-2 border-neutral-300 text-neutral-800 font-semibold hover:bg-neutral-50 disabled:opacity-50"
+              >
+                {translations.logisticFeeConfirmCancel}
+              </button>
+              <button
+                type="button"
+                onClick={() => submitOrder()}
+                disabled={loading}
+                className="flex-1 px-4 py-3 rounded-lg text-white font-semibold disabled:opacity-50"
+                style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+              >
+                {loading ? translations.processing : translations.logisticFeeConfirmAccept}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

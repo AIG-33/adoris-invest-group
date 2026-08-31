@@ -6,6 +6,10 @@ import { sendOrderConfirmationEmail } from '@/lib/email'
 import { getCurrentCompany } from '@/lib/company'
 import type { CompanyConfig } from '@/lib/company-types'
 import { logger } from '@/lib/logger'
+import {
+  LOGISTIC_FEE_EUR,
+  shouldApplyLogisticFee,
+} from '@/lib/order-constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,6 +37,7 @@ export async function POST(request: Request) {
       discount,
       vat,
       total,
+      logisticFeeAccepted,
       userId,
     } = body
 
@@ -104,9 +109,23 @@ export async function POST(request: Request) {
 
     // If showPrices is false, set all prices to 0
     const shouldHidePrices = !fullCompanyContext?.showPrices
-    const finalSubtotal = shouldHidePrices ? 0 : subtotal
-    const finalDiscount = shouldHidePrices ? 0 : discount
-    const finalTotal = shouldHidePrices ? 0 : total
+    const finalSubtotal = shouldHidePrices ? 0 : Number(subtotal || 0)
+    const finalDiscount = shouldHidePrices ? 0 : Number(discount || 0)
+
+    const needsLogisticFee = shouldApplyLogisticFee(
+      finalSubtotal,
+      fullCompanyContext?.showPrices
+    )
+    if (needsLogisticFee && !logisticFeeAccepted) {
+      return NextResponse.json(
+        { error: 'Logistic fee confirmation required for orders below €5,000' },
+        { status: 400 }
+      )
+    }
+    const finalLogisticFee = needsLogisticFee ? LOGISTIC_FEE_EUR : 0
+    const finalTotal = shouldHidePrices
+      ? 0
+      : Math.max(0, finalSubtotal - finalDiscount) + finalLogisticFee
 
     const order = await prisma.order.create({
       data: {
@@ -119,6 +138,7 @@ export async function POST(request: Request) {
         billingAddress: billingAddress || null,
         subtotal: finalSubtotal,
         tax: 0, // VAT is always 0
+        logisticFee: finalLogisticFee,
         total: finalTotal,
         status: 'pending',
         items: {
@@ -143,7 +163,21 @@ export async function POST(request: Request) {
       },
     })
 
-    const pdfBuffer = await generateOrderPDF(order, body, fullCompanyContext)
+    // Ensure PDF/email see the fee and corrected totals
+    const pdfFormData = {
+      ...body,
+      discount: finalDiscount,
+      logisticFee: finalLogisticFee,
+      total: finalTotal,
+      subtotal: finalSubtotal,
+    }
+
+    const pdfBuffer = await generateOrderPDF(order, pdfFormData, fullCompanyContext)
+
+    const logisticLabel =
+      fullCompanyContext?.language === 'ru'
+        ? 'Логистические услуги'
+        : 'Logistic services'
 
     await sendOrderConfirmationEmail({
       to: email,
@@ -151,6 +185,24 @@ export async function POST(request: Request) {
       customerName: `${firstName} ${lastName}`,
       pdfBuffer,
       company: fullCompanyContext,
+      orderDetails: {
+        customerName: `${firstName} ${lastName}`,
+        customerEmail: email,
+        customerPhone: phone || '',
+        companyName: company || '',
+        vatId: vatId || '',
+        address: address || '',
+        city: city || '',
+        postalCode: postalCode || '',
+        country: country || '',
+        department: department || '',
+        subtotal: finalSubtotal,
+        discount: finalDiscount,
+        logisticFee: finalLogisticFee,
+        logisticLabel,
+        total: finalTotal,
+        showPrices: !shouldHidePrices,
+      },
     })
 
     return NextResponse.json({ success: true, orderNumber }, { status: 201 })

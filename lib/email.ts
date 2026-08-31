@@ -22,12 +22,32 @@ function createTransporter() {
   })
 }
 
+interface OrderCustomerDetails {
+  customerName: string
+  customerEmail: string
+  customerPhone: string
+  companyName: string
+  vatId: string
+  address: string
+  city: string
+  postalCode: string
+  country: string
+  department?: string
+  subtotal: number
+  discount: number
+  logisticFee: number
+  logisticLabel: string
+  total: number
+  showPrices: boolean
+}
+
 interface OrderEmailOptions {
   to: string
   orderNumber: string
   customerName: string
   pdfBuffer: Buffer
   company?: CompanyConfig | null
+  orderDetails?: OrderCustomerDetails
 }
 
 interface WelcomeEmailOptions {
@@ -88,6 +108,7 @@ export async function sendOrderConfirmationEmail({
   customerName,
   pdfBuffer,
   company,
+  orderDetails,
 }: OrderEmailOptions) {
   try {
     const transporter = createTransporter()
@@ -99,6 +120,13 @@ export async function sendOrderConfirmationEmail({
     const companyAddress = company?.address || ''
     const companyDomain = company?.domain || new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000').hostname
 
+    const formatMoney = (n: number) => `€${Number(n || 0).toFixed(2)}`
+    const fullAddress = orderDetails
+      ? [orderDetails.address, orderDetails.city, orderDetails.postalCode, orderDetails.country]
+          .filter(Boolean)
+          .join(', ')
+      : ''
+
     // Generate text version for better deliverability
     const textVersion = `
 Order Confirmation - ${orderNumber}
@@ -108,7 +136,9 @@ Dear ${customerName},
 Your order has been successfully received and is now being processed.
 
 Order Number: ${orderNumber}
-
+${orderDetails?.showPrices ? `
+Order Total: ${formatMoney(orderDetails.total)}
+${orderDetails.logisticFee > 0 ? `${orderDetails.logisticLabel}: ${formatMoney(orderDetails.logisticFee)}\n` : ''}` : ''}
 What Happens Next:
 1. Review Order Confirmation - Check the attached PDF for complete order details
 2. Payment Instructions - Detailed payment information will follow in a separate email
@@ -131,13 +161,7 @@ ${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
 © ${new Date().getFullYear()} ${companyName}. All rights reserved.
     `.trim()
 
-    const mailOptions = {
-      from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
-      to,
-      replyTo: companyEmail,
-      subject: `Order Confirmation - ${orderNumber}`,
-      text: textVersion,
-      html: `
+    const customerHtml = `
         <!DOCTYPE html>
         <html>
         <head>
@@ -170,6 +194,7 @@ ${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
                           <td align="center">
                             <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Order Number</p>
                             <p style="margin: 0; color: #1a8c7c; font-size: 32px; font-weight: bold; letter-spacing: 2px;">${orderNumber}</p>
+                            ${orderDetails?.showPrices ? `<p style="margin: 12px 0 0 0; color: #374151; font-size: 16px;">Total: <strong>${formatMoney(orderDetails.total)}</strong></p>` : ''}
                           </td>
                         </tr>
                       </table>
@@ -182,6 +207,15 @@ ${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
                       <p style="font-size: 17px; line-height: 1.7; color: #333; margin: 0 0 25px 0;">
                         Your order has been successfully received and is now being processed. We'll keep you updated on the progress.
                       </p>
+
+                      ${orderDetails?.logisticFee && orderDetails.logisticFee > 0 ? `
+                      <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 0 0 25px 0;">
+                        <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6;">
+                          <strong>${orderDetails.logisticLabel}:</strong> ${formatMoney(orderDetails.logisticFee)}
+                          (orders below €5,000)
+                        </p>
+                      </div>
+                      ` : ''}
 
                       <!-- Status Timeline -->
                       <div style="background: #f9fafb; border-radius: 10px; padding: 30px; margin: 30px 0;">
@@ -331,7 +365,89 @@ ${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
           </table>
         </body>
         </html>
-      `,
+      `
+
+    const adminContactBlock = orderDetails
+      ? `
+Customer Contact Details:
+Name: ${orderDetails.customerName}
+Email: ${orderDetails.customerEmail}
+Phone: ${orderDetails.customerPhone || 'N/A'}
+Company: ${orderDetails.companyName || 'N/A'}
+VAT ID: ${orderDetails.vatId || 'N/A'}
+${orderDetails.department ? `Department: ${orderDetails.department}\n` : ''}Address: ${fullAddress || 'N/A'}
+
+Order Summary:
+${orderDetails.showPrices ? `Subtotal: ${formatMoney(orderDetails.subtotal)}
+${orderDetails.discount > 0 ? `Discount: -${formatMoney(orderDetails.discount)}\n` : ''}${orderDetails.logisticFee > 0 ? `${orderDetails.logisticLabel}: ${formatMoney(orderDetails.logisticFee)}\n` : ''}Total: ${formatMoney(orderDetails.total)}` : 'Total: Price on Request'}
+`
+      : `Customer: ${customerName}\nEmail: ${to}\n`
+
+    const adminTextVersion = `
+New Order: ${orderNumber}
+
+${adminContactBlock}
+
+A PDF invoice is attached.
+    `.trim()
+
+    const adminHtml = orderDetails
+      ? `
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"><title>New Order ${orderNumber}</title></head>
+        <body style="margin:0;padding:0;font-family:'Helvetica Neue',Arial,sans-serif;background:#f4f4f4;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 20px;">
+            <tr><td align="center">
+              <table width="600" cellpadding="0" cellspacing="0" style="background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+                <tr>
+                  <td style="background:linear-gradient(135deg,#1a8c7c 0%,#20a895 100%);padding:30px 40px;text-align:center;">
+                    <h1 style="color:white;margin:0;font-size:24px;">New Order Received</h1>
+                    <p style="color:rgba(255,255,255,0.95);margin:10px 0 0 0;font-size:18px;font-weight:bold;">${orderNumber}</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:30px 40px;">
+                    <h2 style="margin:0 0 16px 0;color:#1a8c7c;font-size:18px;">Customer Contact Details</h2>
+                    <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#333;background:#f9fafb;border-radius:8px;border-left:4px solid #1a8c7c;">
+                      <tr><td style="padding:10px 16px;font-weight:bold;width:140px;">Name</td><td style="padding:10px 16px;">${orderDetails.customerName}</td></tr>
+                      <tr><td style="padding:10px 16px;font-weight:bold;">Email</td><td style="padding:10px 16px;"><a href="mailto:${orderDetails.customerEmail}" style="color:#20a895;">${orderDetails.customerEmail}</a></td></tr>
+                      <tr><td style="padding:10px 16px;font-weight:bold;">Phone</td><td style="padding:10px 16px;">${orderDetails.customerPhone || 'N/A'}</td></tr>
+                      <tr><td style="padding:10px 16px;font-weight:bold;">Company</td><td style="padding:10px 16px;">${orderDetails.companyName || 'N/A'}</td></tr>
+                      <tr><td style="padding:10px 16px;font-weight:bold;">VAT ID</td><td style="padding:10px 16px;">${orderDetails.vatId || 'N/A'}</td></tr>
+                      ${orderDetails.department ? `<tr><td style="padding:10px 16px;font-weight:bold;">Department</td><td style="padding:10px 16px;">${orderDetails.department}</td></tr>` : ''}
+                      <tr><td style="padding:10px 16px;font-weight:bold;">Address</td><td style="padding:10px 16px;">${fullAddress || 'N/A'}</td></tr>
+                    </table>
+
+                    <h2 style="margin:28px 0 16px 0;color:#1a8c7c;font-size:18px;">Order Totals</h2>
+                    <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#333;">
+                      ${orderDetails.showPrices ? `
+                      <tr><td style="padding:6px 0;">Subtotal</td><td style="padding:6px 0;text-align:right;">${formatMoney(orderDetails.subtotal)}</td></tr>
+                      ${orderDetails.discount > 0 ? `<tr><td style="padding:6px 0;">Discount</td><td style="padding:6px 0;text-align:right;">-${formatMoney(orderDetails.discount)}</td></tr>` : ''}
+                      ${orderDetails.logisticFee > 0 ? `<tr><td style="padding:6px 0;">${orderDetails.logisticLabel}</td><td style="padding:6px 0;text-align:right;">${formatMoney(orderDetails.logisticFee)}</td></tr>` : ''}
+                      <tr><td style="padding:12px 0 0 0;font-weight:bold;font-size:16px;border-top:2px solid #111;">Total</td><td style="padding:12px 0 0 0;text-align:right;font-weight:bold;font-size:16px;border-top:2px solid #111;">${formatMoney(orderDetails.total)}</td></tr>
+                      ` : `
+                      <tr><td style="padding:6px 0;font-weight:bold;">Total</td><td style="padding:6px 0;text-align:right;">Price on Request</td></tr>
+                      `}
+                    </table>
+                    <p style="margin:24px 0 0 0;color:#666;font-size:13px;">Full order details are in the attached PDF.</p>
+                  </td>
+                </tr>
+              </table>
+            </td></tr>
+          </table>
+        </body>
+        </html>
+      `
+      : customerHtml
+
+    const mailOptions = {
+      from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
+      to,
+      replyTo: companyEmail,
+      subject: `Order Confirmation - ${orderNumber}`,
+      text: textVersion,
+      html: customerHtml,
       attachments: [
         {
           filename: `Order-${orderNumber}.pdf`,
@@ -350,39 +466,47 @@ ${companyPhone ? `Phone: ${companyPhone}\n` : ''}Email: ${companyEmail}
       },
     }
 
-          await transporter.sendMail(mailOptions)
+    await transporter.sendMail(mailOptions)
 
-          // Send copy to company email (supplier notification)
-          if (companyEmail) {
-            await transporter.sendMail({
-              ...mailOptions,
-              to: companyEmail,
-              subject: `New Order: ${orderNumber} - ${customerName}`,
-              headers: {
-                ...mailOptions.headers,
-                'Message-ID': `<${orderNumber}-internal-${Date.now()}@${companyDomain}>`,
-              },
-            })
-          }
+    const adminMailBase = {
+      from: mailOptions.from,
+      replyTo: orderDetails?.customerEmail || to,
+      text: adminTextVersion,
+      html: adminHtml,
+      attachments: mailOptions.attachments,
+    }
 
-          // Send copy to info@ivdgroup.eu (central notification for all orders from all sites)
-          await transporter.sendMail({
-            ...mailOptions,
-            to: 'info@ivdgroup.eu',
-            subject: `New Order: ${orderNumber} - ${customerName} [${companyName}]`,
-            headers: {
-              ...mailOptions.headers,
-              'Message-ID': `<${orderNumber}-ivdgroup-${Date.now()}@${companyDomain}>`,
-            },
-          })
+    // Send copy to company email (supplier notification) with customer details in body
+    if (companyEmail) {
+      await transporter.sendMail({
+        ...adminMailBase,
+        to: companyEmail,
+        subject: `New Order: ${orderNumber} - ${customerName}`,
+        headers: {
+          ...mailOptions.headers,
+          'Message-ID': `<${orderNumber}-internal-${Date.now()}@${companyDomain}>`,
+        },
+      })
+    }
 
-          return { success: true }
-        } catch (error) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('Error sending order confirmation email:', error)
-          }
-          return { success: false, error }
-        }
+    // Send copy to info@ivdgroup.eu (central notification for all orders from all sites)
+    await transporter.sendMail({
+      ...adminMailBase,
+      to: 'info@ivdgroup.eu',
+      subject: `New Order: ${orderNumber} - ${customerName} [${companyName}]`,
+      headers: {
+        ...mailOptions.headers,
+        'Message-ID': `<${orderNumber}-ivdgroup-${Date.now()}@${companyDomain}>`,
+      },
+    })
+
+    return { success: true }
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error sending order confirmation email:', error)
+    }
+    return { success: false, error }
+  }
 }
 
 // Send welcome email after registration

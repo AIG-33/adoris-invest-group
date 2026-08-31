@@ -173,6 +173,12 @@ export function CartContent({ translations, company }: CartContentProps) {
                     fill
                     className="object-contain p-2"
                     sizes="(max-width: 640px) 80px, 112px"
+                    unoptimized={
+                      !(
+                        (item?.image && item.image.length > 0) ||
+                        (item?.imageUrl && item.imageUrl.length > 0)
+                      ) && !!item?.manufacturer?.logo
+                    }
                   />
                 </div>
               </Link>

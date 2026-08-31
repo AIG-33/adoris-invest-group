@@ -123,6 +123,19 @@ export async function generateOrderPDF(
     }
   }
 
+  // Logistic services line (not a product OrderItem — stored on Order.logisticFee)
+  const logisticFeeLine = Number(order?.logisticFee ?? formData?.logisticFee ?? 0)
+  if (company?.showPrices && logisticFeeLine > 0) {
+    const logisticLabel =
+      company?.language === 'ru' ? 'Логистические услуги' : 'Logistic services'
+    doc.text(logisticLabel, 17, y)
+    doc.text('—', 105, y)
+    doc.text('1', 135, y)
+    doc.text(`€${logisticFeeLine.toFixed(2)}`, 155, y)
+    doc.text(`€${logisticFeeLine.toFixed(2)}`, 175, y)
+    y += 6
+  }
+
   // Totals
   y += 10
   doc.setFontSize(10)
@@ -132,10 +145,13 @@ export async function generateOrderPDF(
     // Calculate discount from formData or order
     const discount = formData?.discount || 0
     const subtotal = Number(order?.subtotal || 0)
-    const discountRate = discount > 0 ? (discount / subtotal) * 100 : 0
+    const logisticFee = logisticFeeLine
+    const discountRate = discount > 0 && subtotal > 0 ? (discount / subtotal) * 100 : 0
     const discountLabel = discountRate > 0 
       ? `Volume Discount (${discountRate.toFixed(0)}%)` 
       : 'Discount'
+    const logisticLabel =
+      company?.language === 'ru' ? 'Логистические услуги' : 'Logistic services'
     
     doc.text(`Subtotal:`, 140, y)
     doc.text(`€${subtotal?.toFixed?.(2)}`, 175, y)
@@ -147,15 +163,21 @@ export async function generateOrderPDF(
       doc.text(`-€${discount?.toFixed?.(2)}`, 175, y)
       y += 6
     }
+
+    if (logisticFee > 0) {
+      doc.text(`${logisticLabel}:`, 140, y)
+      doc.text(`€${logisticFee.toFixed(2)}`, 175, y)
+      y += 6
+    }
     
     doc.setTextColor(0, 0, 0)
     doc.text(`Subtotal (excl. VAT):`, 140, y)
-    doc.text(`€${(subtotal - discount)?.toFixed?.(2)}`, 175, y)
+    doc.text(`€${(subtotal - discount + logisticFee)?.toFixed?.(2)}`, 175, y)
     y += 8
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(12)
     doc.text(`Total:`, 140, y)
-    doc.text(`€${(order?.total || 0)?.toFixed?.(2)}`, 175, y)
+    doc.text(`€${Number(order?.total || 0)?.toFixed?.(2)}`, 175, y)
   } else {
     // Prices are hidden - show "Price on Request"
     doc.setFont('helvetica', 'bold')

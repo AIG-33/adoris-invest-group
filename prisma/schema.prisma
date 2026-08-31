@@ -188,6 +188,7 @@ model Order {
   status         OrderStatus @default(pending)
   subtotal       Decimal     @db.Decimal(10, 2)
   tax            Decimal     @db.Decimal(10, 2)
+  logisticFee    Decimal     @default(0) @db.Decimal(10, 2)
   total          Decimal     @db.Decimal(10, 2)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
