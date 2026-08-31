@@ -36,6 +36,7 @@ function ManufacturerLogo({ manufacturer }: { manufacturer: Manufacturer }) {
       height={48}
       className="object-contain max-h-8 sm:max-h-10 opacity-60 group-hover:opacity-100 transition-opacity duration-300"
       loading="lazy"
+      unoptimized
       onError={() => setImgError(true)}
     />
   )

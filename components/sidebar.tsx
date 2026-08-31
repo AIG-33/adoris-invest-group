@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { X, Package, ChevronDown, ChevronUp, Download } from 'lucide-react'
@@ -19,6 +19,7 @@ export function Sidebar({
   const router = useRouter()
   const searchParams = useSearchParams()
   const [showAllManufacturers, setShowAllManufacturers] = useState(false)
+  const [manufacturerQuery, setManufacturerQuery] = useState('')
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams?.toString() || '')
@@ -38,9 +39,38 @@ export function Sidebar({
 
   const hasFilters = selectedManufacturer
 
-  const displayedManufacturers = showAllManufacturers 
-    ? manufacturers 
-    : manufacturers?.slice(0, INITIAL_SHOW_COUNT)
+  const filteredManufacturers = useMemo(() => {
+    const q = manufacturerQuery.trim().toLowerCase()
+    if (!q) return manufacturers || []
+    return (manufacturers || []).filter(
+      (man) =>
+        man?.name?.toLowerCase?.().includes(q) ||
+        man?.slug?.toLowerCase?.().includes(q)
+    )
+  }, [manufacturers, manufacturerQuery])
+
+  const displayedManufacturers = useMemo(() => {
+    if (manufacturerQuery.trim() || showAllManufacturers) {
+      return filteredManufacturers
+    }
+    const initial = filteredManufacturers.slice(0, INITIAL_SHOW_COUNT)
+    // Keep the active selection visible even if it falls outside the first N
+    if (
+      selectedManufacturer &&
+      !initial.some((man) => man?.slug === selectedManufacturer)
+    ) {
+      const selected = filteredManufacturers.find(
+        (man) => man?.slug === selectedManufacturer
+      )
+      if (selected) return [selected, ...initial]
+    }
+    return initial
+  }, [
+    filteredManufacturers,
+    manufacturerQuery,
+    showAllManufacturers,
+    selectedManufacturer,
+  ])
 
   return (
     <aside className="space-y-6">
@@ -64,7 +94,18 @@ export function Sidebar({
           <h3 className="text-sm font-semibold text-neutral-700 uppercase tracking-wide mb-3">
             Manufacturers
           </h3>
-          <div className="space-y-2">
+          <input
+            type="search"
+            value={manufacturerQuery}
+            onChange={(e) => {
+              setManufacturerQuery(e.target.value)
+              setShowAllManufacturers(false)
+            }}
+            placeholder="Search manufacturers…"
+            className="w-full mb-3 px-3 py-2 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-300"
+            aria-label="Search manufacturers"
+          />
+          <div className="space-y-2 max-h-80 overflow-y-auto">
             {displayedManufacturers?.map?.((man) => (
               <label
                 key={man?.id}
@@ -84,14 +125,15 @@ export function Sidebar({
                 <span className="flex-1 text-sm text-neutral-700 group-hover:text-[#333333]">
                   {man?.name}
                 </span>
-                <span className="text-xs text-neutral-400">
-                  {/* Product count removed for performance - can be added back if needed */}
-                </span>
               </label>
             )) || []}
+            {displayedManufacturers.length === 0 && (
+              <p className="text-sm text-neutral-400 py-1">No manufacturers match</p>
+            )}
           </div>
           
-          {manufacturers && manufacturers.length > INITIAL_SHOW_COUNT && (
+          {!manufacturerQuery.trim() &&
+            filteredManufacturers.length > INITIAL_SHOW_COUNT && (
             <button
               onClick={() => setShowAllManufacturers(!showAllManufacturers)}
               className="mt-3 text-sm text-[#333333] hover:text-[#1a1a1a] font-medium flex items-center gap-1 w-full justify-center"
@@ -104,7 +146,7 @@ export function Sidebar({
               ) : (
                 <>
                   <ChevronDown className="w-4 h-4" />
-                  <span>Show all ({manufacturers.length})</span>
+                  <span>Show all ({filteredManufacturers.length})</span>
                 </>
               )}
             </button>

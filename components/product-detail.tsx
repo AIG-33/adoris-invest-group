@@ -102,6 +102,10 @@ export function ProductDetail({ product, relatedProducts, translations, company 
               className="object-contain"
               sizes="(max-width: 1024px) 100vw, 40vw"
               priority
+              unoptimized={
+                !(product?.image && product.image.length > 0) &&
+                !!product?.manufacturer?.logo
+              }
             />
           </div>
         </aside>
@@ -312,6 +316,10 @@ export function ProductDetail({ product, relatedProducts, translations, company 
                     fill
                     className="object-contain"
                     sizes="25vw"
+                    unoptimized={
+                      !(relProduct?.image && relProduct.image.length > 0) &&
+                      !!relProduct?.manufacturer?.logo
+                    }
                   />
                 </div>
                 <div className="p-4">

@@ -215,9 +215,11 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
 
-  // Convert Decimal to number and apply correct price
+  // Convert Decimal to number and apply correct price.
+  // Normalize empty image strings to null so cards fall back to manufacturer.logo.
   const products = productsRaw.map(p => ({
     ...p,
+    image: p.image && p.image.length > 0 ? p.image : null,
     price: getProductPrice(
       p.priceEU,
       p.priceRU,

@@ -89,6 +89,12 @@ export function ProductGrid({ products, search, company }: ProductGridProps) {
                     fill
                     className="object-contain"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    // Local /logos/* assets are already sized; skip optimizer so
+                    // missing sharp / empty optimizer responses don't blank logos.
+                    unoptimized={
+                      !(product?.image && product.image.length > 0) &&
+                      !!product?.manufacturer?.logo
+                    }
                   />
                 </div>
               </Link>

@@ -17,26 +17,42 @@ import { retryPrismaQuery } from './retry-prisma'
 
 export const getCachedManufacturersWithLogo = unstable_cache(
   async () =>
-    retryPrismaQuery(() =>
-      prisma.manufacturer.findMany({
-        where: { logo: { not: null } },
-        select: { name: true, slug: true, logo: true },
-        orderBy: { name: 'asc' },
-      })
-    ),
-  ['manufacturers-with-logo'],
+    retryPrismaQuery(async () => {
+      // Prefer manufacturers with the most products so new large catalogs
+      // (e.g. EnkiLife) appear in the strip without waiting on alphabetical order.
+      const rows = await prisma.$queryRaw<
+        Array<{ name: string; slug: string; logo: string }>
+      >`
+        SELECT m.name, m.slug, m.logo
+        FROM "Manufacturer" m
+        INNER JOIN "Product" p ON p."manufacturerId" = m.id
+        WHERE m.logo IS NOT NULL
+        GROUP BY m.id, m.name, m.slug, m.logo
+        ORDER BY COUNT(p.id) DESC, m.name ASC
+      `
+      return rows
+    }),
+  ['manufacturers-with-logo-by-count'],
   { revalidate: 3600, tags: ['manufacturers'] }
 )
 
 export const getCachedManufacturersList = unstable_cache(
   async () =>
-    retryPrismaQuery(() =>
-      prisma.manufacturer.findMany({
-        select: { id: true, name: true, slug: true },
-        orderBy: { name: 'asc' },
-      })
-    ),
-  ['manufacturers-list'],
+    retryPrismaQuery(async () => {
+      // Ordered by product count so large catalogs appear in the first
+      // sidebar page (INITIAL_SHOW_COUNT) instead of being buried alphabetically.
+      const rows = await prisma.$queryRaw<
+        Array<{ id: string; name: string; slug: string }>
+      >`
+        SELECT m.id, m.name, m.slug
+        FROM "Manufacturer" m
+        INNER JOIN "Product" p ON p."manufacturerId" = m.id
+        GROUP BY m.id, m.name, m.slug
+        ORDER BY COUNT(p.id) DESC, m.name ASC
+      `
+      return rows
+    }),
+  ['manufacturers-list-by-count'],
   { revalidate: 3600, tags: ['manufacturers'] }
 )
 
