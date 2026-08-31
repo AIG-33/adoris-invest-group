@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle, Handshake } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle, Handshake, ClipboardList } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
@@ -77,13 +77,11 @@ const ANNOUNCEMENT = {
     badge: 'NEW',
     headline: 'Free competitor benchmark on every quote',
     sub: 'Quote in 1 business day · Ships from Vilnius worldwide · ISO 9001 + CE',
-    cta: 'Request a quote',
   },
   ru: {
     badge: 'НОВОЕ',
     headline: 'Бесплатное сравнение с прайсом конкурента к каждой смете',
     sub: 'Расчёт за 1 рабочий день · Отгрузка из Вильнюса по миру · ISO 9001 + CE',
-    cta: 'Запросить смету',
   },
 } as const
 
@@ -266,11 +264,11 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                     </a>
                   )}
                   <Link
-                    href="/bulk-order"
+                    href="/bulk-order#bulk-form"
                     className="group inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1 text-[12px] font-semibold shadow-sm transition-all hover:shadow-md"
                     style={{ color: 'var(--brand-1)' }}
                   >
-                    {a.cta}
+                    {translations.bulkOrder}
                     <span
                       aria-hidden
                       className="transition-transform group-hover:translate-x-0.5"
@@ -422,6 +420,15 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               <span className="hidden sm:inline">{translations.catalog}</span>
             </Link>
 
+            {/* Bulk Order — standalone top-level item */}
+            <Link
+              href="/bulk-order"
+              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+            >
+              <ClipboardList className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">{translations.bulkOrder}</span>
+            </Link>
+
             {/* Company Dropdown Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors outline-none text-xs sm:text-sm lg:text-base">
@@ -517,7 +524,7 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                   <DropdownMenuContent align="end" className="w-48 sm:w-56">
                     <DropdownMenuItem asChild>
                       <Link href="/bulk-order" className="flex items-center gap-2 cursor-pointer">
-                        <Package className="w-4 h-4" />
+                        <ClipboardList className="w-4 h-4" />
                         <span>{translations.bulkOrder}</span>
                       </Link>
                     </DropdownMenuItem>
@@ -607,6 +614,15 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               </Link>
 
               <Link
+                href="/bulk-order"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <ClipboardList className="w-5 h-5" />
+                <span>{translations.bulkOrder}</span>
+              </Link>
+
+              <Link
                 href="/company/about"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
@@ -676,14 +692,6 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               {status === 'authenticated' && session?.user ? (
                 <>
                   <div className="border-t border-neutral-200 my-2"></div>
-                  <Link
-                    href="/bulk-order"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
-                  >
-                    <Package className="w-5 h-5" />
-                    <span>{translations.bulkOrder}</span>
-                  </Link>
                   <Link
                     href="/supplier"
                     onClick={() => setMobileMenuOpen(false)}
