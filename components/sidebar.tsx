@@ -178,14 +178,14 @@ export function Sidebar({
           <h3 className="font-bold text-lg">Download Pricelist</h3>
         </div>
         <p className="text-sm opacity-90 mb-4">
-          Download our complete product catalog in Excel format. Get all products with prices, SKUs, and descriptions.
+          Download our complete product catalog as a CSV spreadsheet (opens in Excel). Get all products with prices, SKUs, and descriptions.
         </p>
         <a
           href="/api/products/export-pricelist"
           download
           className="inline-block w-full text-center bg-white text-[#333333] font-semibold py-2.5 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         >
-          Download Excel
+          Download CSV
         </a>
       </div>
     </aside>
