@@ -429,6 +429,15 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               <span className="hidden sm:inline">{translations.bulkOrder}</span>
             </Link>
 
+            {/* Supplier — standalone top-level item */}
+            <Link
+              href="/supplier"
+              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+            >
+              <Handshake className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">{translations.supplier}</span>
+            </Link>
+
             {/* Company Dropdown Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors outline-none text-xs sm:text-sm lg:text-base">
@@ -529,12 +538,6 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/supplier" className="flex items-center gap-2 cursor-pointer">
-                        <Handshake className="w-4 h-4" />
-                        <span>{translations.supplier}</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
                       <Link href="/cart" className="flex items-center gap-2 cursor-pointer relative">
                         <ShoppingCart className="w-4 h-4" />
                         <span>{translations.cart}</span>
@@ -623,6 +626,15 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               </Link>
 
               <Link
+                href="/supplier"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
+              >
+                <Handshake className="w-5 h-5" />
+                <span>{translations.supplier}</span>
+              </Link>
+
+              <Link
                 href="/company/about"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
@@ -692,14 +704,6 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               {status === 'authenticated' && session?.user ? (
                 <>
                   <div className="border-t border-neutral-200 my-2"></div>
-                  <Link
-                    href="/supplier"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
-                  >
-                    <Handshake className="w-5 h-5" />
-                    <span>{translations.supplier}</span>
-                  </Link>
                   <Link
                     href="/account"
                     onClick={() => setMobileMenuOpen(false)}
