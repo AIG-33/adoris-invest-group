@@ -204,17 +204,38 @@ export function CartContent({ translations, company }: CartContentProps) {
                     <span className="text-xs sm:text-sm font-medium text-neutral-700">Qty:</span>
                     <div className="flex border-2 border-neutral-300 rounded-lg overflow-hidden">
                       <button
+                        type="button"
                         onClick={() => updateQuantity(item?.id, (item?.quantity || 1) - 1)}
-                        className="px-2 sm:px-3 py-1 bg-neutral-100 hover:bg-neutral-200 transition-colors"
+                        className="px-2 sm:px-3 py-2 bg-neutral-100 hover:bg-neutral-200 transition-colors"
+                        aria-label="Decrease quantity"
                       >
                         <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
-                      <span className="px-3 sm:px-4 py-1 font-semibold border-x-2 border-neutral-300 min-w-[40px] sm:min-w-[50px] text-center text-sm">
-                        {item?.quantity}
-                      </span>
+                      <input
+                        type="number"
+                        min={1}
+                        inputMode="numeric"
+                        value={item?.quantity ?? 1}
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => {
+                          const parsed = parseInt(e.target.value, 10)
+                          if (Number.isNaN(parsed)) return
+                          updateQuantity(item?.id, Math.max(1, parsed))
+                        }}
+                        onBlur={(e) => {
+                          const parsed = parseInt(e.target.value, 10)
+                          if (Number.isNaN(parsed) || parsed < 1) {
+                            updateQuantity(item?.id, Math.max(1, item?.quantity || 1))
+                          }
+                        }}
+                        className="w-12 sm:w-14 min-w-[48px] py-2 text-center font-semibold border-x-2 border-neutral-300 text-sm focus:outline-none focus:bg-neutral-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        aria-label="Quantity"
+                      />
                       <button
+                        type="button"
                         onClick={() => updateQuantity(item?.id, (item?.quantity || 1) + 1)}
-                        className="px-2 sm:px-3 py-1 bg-neutral-100 hover:bg-neutral-200 transition-colors"
+                        className="px-2 sm:px-3 py-2 bg-neutral-100 hover:bg-neutral-200 transition-colors"
+                        aria-label="Increase quantity"
                       >
                         <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>

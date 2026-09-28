@@ -315,15 +315,29 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
     if (files.length > 0) void runOcr(files);
   };
 
+  const updateFoundQuantity = (id: string, newQuantity: number) => {
+    if (newQuantity < 1) return;
+    setResult((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        found: prev.found.map((product) =>
+          product.id === id ? { ...product, requestedQuantity: newQuantity } : product
+        ),
+      };
+    });
+  };
+
   const addToCart = () => {
     if (!result || result.found.length === 0) return;
 
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
     result.found.forEach(product => {
+      const qty = Math.max(1, Math.floor(Number(product.requestedQuantity)) || 1);
       const existingItem = cart.find((item: any) => item.id === product.id);
       if (existingItem) {
-        existingItem.quantity += product.requestedQuantity;
+        existingItem.quantity += qty;
       } else {
         cart.push({
           id: product.id,
@@ -338,7 +352,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
             name: product.manufacturer?.name || '',
             logo: product.manufacturer?.logo || null,
           },
-          quantity: product.requestedQuantity,
+          quantity: qty,
         });
       }
     });
@@ -733,10 +747,30 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
                           <div className="font-mono-brand text-xs text-neutral-500">{product.sku}</div>
                         </div>
                         <div className="flex-shrink-0 text-right">
-                          <div className="font-mono-brand text-sm font-bold text-neutral-900">
-                            ×{product.requestedQuantity}
+                          <div className="flex items-center justify-end gap-1.5">
+                            <span className="text-sm font-semibold text-neutral-500">×</span>
+                            <input
+                              type="number"
+                              min={1}
+                              inputMode="numeric"
+                              value={product.requestedQuantity}
+                              onFocus={(e) => e.target.select()}
+                              onChange={(e) => {
+                                const parsed = parseInt(e.target.value, 10);
+                                if (Number.isNaN(parsed)) return;
+                                updateFoundQuantity(product.id, Math.max(1, parsed));
+                              }}
+                              onBlur={(e) => {
+                                const parsed = parseInt(e.target.value, 10);
+                                if (Number.isNaN(parsed) || parsed < 1) {
+                                  updateFoundQuantity(product.id, Math.max(1, product.requestedQuantity || 1));
+                                }
+                              }}
+                              className="w-14 sm:w-16 rounded-lg border border-neutral-300 bg-white px-2 py-2 text-center font-mono-brand text-sm font-bold text-neutral-900 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              aria-label={`Quantity for ${product.sku}`}
+                            />
                           </div>
-                          <div className="font-mono-brand text-xs text-neutral-500">
+                          <div className="mt-1 font-mono-brand text-xs text-neutral-500">
                             €{(Number(product.price || 0) * product.requestedQuantity).toFixed(2)}
                           </div>
                         </div>
