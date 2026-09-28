@@ -45,8 +45,10 @@ export async function generateMetadata(): Promise<Metadata> {
       company?.language === 'ru' ? 'лабораторное оборудование' : '',
     ].filter(Boolean),
     metadataBase: new URL(baseUrl),
+    // Do NOT set a default homepage canonical here — missing/child pages
+    // (e.g. soft-404 product URLs) would inherit it. Each page that should
+    // be indexed must set its own alternates.canonical.
     alternates: {
-      canonical: baseUrl,
       languages: {
         'en': baseUrl,
         'ru': baseUrl,

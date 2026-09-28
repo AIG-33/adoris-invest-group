@@ -55,8 +55,10 @@ export async function middleware(request: NextRequest) {
 
   const response = NextResponse.next()
 
-  // Add caching headers for static pages (ISR with revalidate)
-  if (pathname === '/' || pathname === '/products' || pathname.startsWith('/product/')) {
+  // Cache homepage + listing. Do NOT force CDN cache on /product/* —
+  // missing products must return a real HTTP 404 (soft-404s get sticky
+  // when a 200 + NEXT_NOT_FOUND shell is cached at the edge).
+  if (pathname === '/' || pathname === '/products') {
     response.headers.set(
       'Cache-Control',
       'public, s-maxage=60, stale-while-revalidate=120'

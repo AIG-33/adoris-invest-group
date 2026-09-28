@@ -22,63 +22,96 @@ export const revalidate = 300
 // Allow up to 30 seconds for DB queries on cold start (Vercel Pro)
 export const maxDuration = 30
 
+const NOINDEX_META: Metadata = {
+  title: 'Product Not Found',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false },
+  },
+  // Explicitly clear any inherited homepage canonical
+  alternates: { canonical: null },
+}
+
+const metaSelect = {
+  id: true, name: true, sku: true, slug: true, description: true,
+  priceEU: true, priceRU: true, image: true,
+  category: { select: { id: true, name: true, slug: true } },
+  manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
+} as const
+
+/**
+ * Look up a product for the 2-segment URL. Returns null when missing.
+ * Must not call notFound()/redirect — those throw and must stay outside try/catch.
+ */
+async function lookupProduct(manufacturerSlug: string, productSlug: string) {
+  let product = await retryPrismaQuery(() => prisma.product.findFirst({
+    where: {
+      slug: productSlug,
+      manufacturer: { slug: manufacturerSlug },
+    },
+    select: metaSelect,
+  }))
+
+  if (!product) {
+    product = await retryPrismaQuery(() => prisma.product.findFirst({
+      where: {
+        slug: { startsWith: productSlug },
+        manufacturer: { slug: manufacturerSlug },
+      },
+      select: metaSelect,
+    }))
+  }
+
+  if (!product) {
+    product = await retryPrismaQuery(() => prisma.product.findFirst({
+      where: { slug: productSlug },
+      select: metaSelect,
+    }))
+  }
+
+  if (!product) {
+    product = await retryPrismaQuery(() => prisma.product.findFirst({
+      where: { slug: { startsWith: productSlug } },
+      select: metaSelect,
+    }))
+  }
+
+  return product
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string[] }>
 }): Promise<Metadata> {
   const { slug } = await params
-  
+
   // New format: /product/manufacturer/product-slug
   if (slug.length === 2) {
     const [manufacturerSlug, productSlug] = slug
     const company = await getServerCompany()
     const baseUrl = await getBaseUrl()
 
-    const metaSelect = {
-      id: true, name: true, sku: true, slug: true, description: true,
-      priceEU: true, priceRU: true, image: true,
-      category: { select: { id: true, name: true, slug: true } },
-      manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
-    } as const
-
-    // Soft-fail metadata lookup: never let DB errors turn into a 5xx page.
-    let product: any = null
+    let product: Awaited<ReturnType<typeof lookupProduct>> = null
     try {
-      product = await retryPrismaQuery(() => prisma.product.findFirst({
-        where: {
-          slug: productSlug,
-          manufacturer: { slug: manufacturerSlug },
-        },
-        select: metaSelect,
-      }))
-
-      if (!product) {
-        product = await retryPrismaQuery(() => prisma.product.findFirst({
-          where: {
-            slug: { startsWith: productSlug },
-            manufacturer: { slug: manufacturerSlug },
-          },
-          select: metaSelect,
-        }))
-      }
-
-      if (!product) {
-        product = await retryPrismaQuery(() => prisma.product.findFirst({
-          where: { slug: productSlug },
-          select: metaSelect,
-        }))
-      }
+      product = await lookupProduct(manufacturerSlug, productSlug)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error(`[product/${manufacturerSlug}/${productSlug}] metadata DB error:`, error)
       }
+      // Real HTTP 404 — must be thrown outside try/catch of the page body,
+      // and preferably from generateMetadata so the status is set before
+      // the HTML shell flushes (avoids soft-404 200 + NEXT_NOT_FOUND).
+      notFound()
     }
 
     if (!product) {
-      return {
-        title: 'Product Not Found',
-      }
+      // Calling notFound() here ensures HTTP 404 before the response body
+      // is streamed. Returning noindex meta as a belt-and-suspenders in case
+      // a future Next.js change softens the throw path.
+      notFound()
+      return NOINDEX_META
     }
 
     const priceType = company?.priceType || 'EU'
@@ -117,11 +150,36 @@ export async function generateMetadata({
       },
     }
   }
-  
-  // Legacy format - return basic metadata
-  return {
-    title: 'Product',
+
+  // Legacy single-segment or invalid: resolve or 404 (no homepage canonical)
+  if (slug.length === 1) {
+    const productSlug = slug[0]
+    let product: { slug: string; manufacturer: { slug: string } | null } | null = null
+    try {
+      product = await retryPrismaQuery(() => prisma.product.findUnique({
+        where: { slug: productSlug },
+        select: {
+          slug: true,
+          manufacturer: { select: { slug: true } },
+        },
+      }))
+    } catch {
+      notFound()
+    }
+    if (!product) {
+      notFound()
+      return NOINDEX_META
+    }
+    // Will 308 in the page; keep a temporary title without homepage canonical
+    return {
+      title: 'Product',
+      alternates: { canonical: null },
+      robots: { index: false, follow: false },
+    }
   }
+
+  notFound()
+  return NOINDEX_META
 }
 
 /**
