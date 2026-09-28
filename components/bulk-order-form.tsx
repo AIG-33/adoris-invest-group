@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
@@ -12,8 +12,15 @@ import {
   Loader2,
   Sparkles,
   Eraser,
+  ImagePlus,
+  Upload,
+  Camera,
 } from 'lucide-react';
 import { parseBulkOrderText } from '@/lib/parse-bulk-order';
+import {
+  OcrImageError,
+  recognizeBulkOrderImages,
+} from '@/lib/ocr-bulk-order';
 
 interface ProcessedProduct {
   id: string;
@@ -57,6 +64,18 @@ interface BulkOrderTranslations {
   errorEmpty?: string
   errorNoItems?: string
   errorGeneric?: string
+  photoTitle?: string
+  photoSubtitle?: string
+  photoDropHint?: string
+  photoBrowse?: string
+  photoCamera?: string
+  photoRecognizing?: string
+  photoProgress?: string
+  photoSuccess?: string
+  photoErrorGeneric?: string
+  photoErrorTooLarge?: string
+  photoErrorType?: string
+  photoErrorEmpty?: string
 }
 
 interface BulkOrderFormProps {
@@ -72,15 +91,48 @@ const FORMAT_SAMPLES = ['10446232  2', '07P3203, 5', '05031738; 12'];
 
 const MIN_GUTTER_ROWS = 12;
 
+const ACCEPT_ATTR = 'image/png,image/jpeg,image/jpg,image/webp,image/gif,image/bmp,.png,.jpg,.jpeg,.webp,.gif,.bmp';
+
+function collectClipboardImages(data: DataTransfer | null): File[] {
+  if (!data) return [];
+  const files: File[] = [];
+  const items = data.items;
+  if (items) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) files.push(file);
+      }
+    }
+  }
+  if (files.length === 0 && data.files?.length) {
+    for (let i = 0; i < data.files.length; i++) {
+      const file = data.files[i];
+      if (file.type.startsWith('image/')) files.push(file);
+    }
+  }
+  return files;
+}
+
 export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
   const router = useRouter();
   const [inputText, setInputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<BulkOrderResult | null>(null);
   const [error, setError] = useState('');
+  const [isOcrRunning, setIsOcrRunning] = useState(false);
+  const [ocrProgress, setOcrProgress] = useState(0);
+  const [ocrSuccess, setOcrSuccess] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const formCardRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const dragDepthRef = useRef(0);
+  const ocrBusyRef = useRef(false);
 
   const t = translations;
   const parsedCount = useMemo(() => parseBulkOrderText(inputText).length, [inputText]);
@@ -96,8 +148,86 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
     el.setSelectionRange(el.value.length, el.value.length);
   };
 
+  const mapOcrError = useCallback((err: unknown): string => {
+    if (err instanceof OcrImageError) {
+      if (err.message === 'FILE_TOO_LARGE') {
+        return t.photoErrorTooLarge || 'Image is too large (max 10 MB).';
+      }
+      if (err.message === 'UNSUPPORTED_TYPE') {
+        return t.photoErrorType || 'Unsupported file type. Use PNG, JPEG, or WebP.';
+      }
+      if (err.message === 'NO_IMAGE') {
+        return t.photoErrorGeneric || 'Could not read text from that image.';
+      }
+    }
+    return t.photoErrorGeneric || 'Could not read text from that image. Try a clearer photo or paste the text instead.';
+  }, [t.photoErrorGeneric, t.photoErrorTooLarge, t.photoErrorType]);
+
+  const applyOcrText = useCallback((text: string) => {
+    setInputText((prev) => {
+      const trimmed = text.trim();
+      if (!trimmed) return prev;
+      if (!prev.trim()) return trimmed;
+      return `${prev.replace(/\s+$/, '')}\n${trimmed}`;
+    });
+  }, []);
+
+  const runOcr = useCallback(async (images: File[]) => {
+    if (images.length === 0 || ocrBusyRef.current) return;
+
+    ocrBusyRef.current = true;
+    setIsOcrRunning(true);
+    setOcrProgress(0);
+    setOcrSuccess('');
+    setError('');
+    setResult(null);
+
+    try {
+      const text = await recognizeBulkOrderImages(images, ({ progress }) => {
+        setOcrProgress(Math.max(0, Math.min(1, progress)));
+      });
+
+      if (!text.trim()) {
+        setError(t.photoErrorEmpty || 'No readable text found in the image.');
+        return;
+      }
+
+      applyOcrText(text);
+      setOcrSuccess(t.photoSuccess || 'Text extracted — review the editor below, then Process Items.');
+      setOcrProgress(1);
+      requestAnimationFrame(() => focusEditor());
+    } catch (err) {
+      setError(mapOcrError(err));
+    } finally {
+      ocrBusyRef.current = false;
+      setIsOcrRunning(false);
+    }
+  }, [applyOcrText, mapOcrError, t.photoErrorEmpty, t.photoSuccess]);
+
+  // Image paste (Ctrl/Cmd+V) anywhere inside the form card — text paste stays native.
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const root = formCardRef.current;
+      if (!root) return;
+      const target = e.target as Node | null;
+      if (target && !root.contains(target) && document.activeElement && !root.contains(document.activeElement)) {
+        return;
+      }
+
+      const images = collectClipboardImages(e.clipboardData);
+      if (images.length === 0) return;
+
+      e.preventDefault();
+      void runOcr(images);
+    };
+
+    document.addEventListener('paste', onPaste);
+    return () => document.removeEventListener('paste', onPaste);
+  }, [runOcr]);
+
   const handleProcess = async () => {
     setError('');
+    setOcrSuccess('');
     setResult(null);
 
     if (!inputText.trim()) {
@@ -147,15 +277,42 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
 
   const pasteFromClipboard = async () => {
     try {
+      // Prefer image from clipboard when available (async Clipboard API).
+      if (navigator.clipboard && 'read' in navigator.clipboard) {
+        try {
+          const items = await navigator.clipboard.read();
+          const images: File[] = [];
+          for (const item of items) {
+            const imageType = item.types.find((type) => type.startsWith('image/'));
+            if (!imageType) continue;
+            const blob = await item.getType(imageType);
+            images.push(new File([blob], `clipboard.${imageType.split('/')[1] || 'png'}`, { type: imageType }));
+          }
+          if (images.length > 0) {
+            await runOcr(images);
+            return;
+          }
+        } catch {
+          // Fall through to text clipboard — permission or empty image.
+        }
+      }
+
       const text = await navigator.clipboard.readText();
       if (text.trim()) {
         setInputText((prev) => (prev.trim() ? `${prev.replace(/\s+$/, '')}\n${text}` : text));
+        setOcrSuccess('');
       }
     } catch {
       // Clipboard permission denied — fall back to a manual paste.
     } finally {
       focusEditor();
     }
+  };
+
+  const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (files.length > 0) void runOcr(files);
   };
 
   const addToCart = () => {
@@ -193,6 +350,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
   };
 
   const isIdle = inputText.length === 0 && !result;
+  const progressPct = Math.round(ocrProgress * 100);
 
   return (
     <div className="relative">
@@ -208,6 +366,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
       />
 
       <div
+        ref={formCardRef}
         className="rounded-[1.75rem] p-[1.5px] shadow-[0_34px_90px_-46px_rgba(15,15,30,0.55)]"
         style={{ background: 'var(--brand-grad)' }}
       >
@@ -246,6 +405,143 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
             </div>
           </div>
 
+          {/* ─── Photo / OCR drop zone ──────────────────────────────── */}
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label={t.photoTitle || 'Upload or paste a photo of your list'}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
+            onDragEnter={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dragDepthRef.current += 1;
+              setIsDragging(true);
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
+              if (dragDepthRef.current === 0) setIsDragging(false);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dragDepthRef.current = 0;
+              setIsDragging(false);
+              const files = Array.from(e.dataTransfer.files || []).filter((f) =>
+                f.type.startsWith('image/') || !f.type
+              );
+              if (files.length > 0) void runOcr(files);
+            }}
+            className={`mt-5 rounded-2xl border-2 border-dashed px-4 py-5 transition-colors sm:px-5 ${
+              isDragging
+                ? 'border-[color:var(--brand-1)] bg-[color:var(--brand-1)]/[0.06]'
+                : 'border-neutral-200 bg-neutral-50/80 hover:border-neutral-300'
+            } ${isOcrRunning ? 'pointer-events-none opacity-80' : ''}`}
+          >
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <span
+                  className="grid h-10 w-10 flex-shrink-0 place-items-center rounded-xl"
+                  style={{
+                    background: 'var(--accent-blue-soft)',
+                    color: 'var(--brand-1)',
+                  }}
+                >
+                  <ImagePlus className="h-5 w-5" strokeWidth={2} />
+                </span>
+                <div>
+                  <div className="text-sm font-semibold text-neutral-900">
+                    {t.photoTitle || 'Or paste / upload a photo of your list'}
+                  </div>
+                  <p className="mt-0.5 max-w-md text-[12.5px] leading-relaxed text-neutral-600">
+                    {t.photoSubtitle ||
+                      'Photograph a paper list or screenshot — OCR fills the editor.'}
+                  </p>
+                  <p className="mt-1.5 text-[11px] text-neutral-400">
+                    {t.photoDropHint || 'Drop images here, or press Ctrl/Cmd+V to paste a screenshot'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 sm:flex-shrink-0">
+                <button
+                  type="button"
+                  disabled={isOcrRunning}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-neutral-300 hover:bg-neutral-50 disabled:opacity-50"
+                >
+                  <Upload className="h-4 w-4" />
+                  {t.photoBrowse || 'Upload image'}
+                </button>
+                <button
+                  type="button"
+                  disabled={isOcrRunning}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    cameraInputRef.current?.click();
+                  }}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-neutral-300 hover:bg-neutral-50 disabled:opacity-50 sm:hidden"
+                >
+                  <Camera className="h-4 w-4" />
+                  {t.photoCamera || 'Take photo'}
+                </button>
+              </div>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={ACCEPT_ATTR}
+              multiple
+              className="hidden"
+              onChange={onFileInputChange}
+            />
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={onFileInputChange}
+            />
+
+            {isOcrRunning && (
+              <div className="mt-4">
+                <div className="mb-1.5 flex items-center justify-between gap-3 text-[12px]">
+                  <span className="inline-flex items-center gap-1.5 font-medium text-neutral-700">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" style={{ color: 'var(--brand-1)' }} />
+                    {t.photoRecognizing || 'Reading text from image…'}
+                  </span>
+                  <span className="font-mono-brand text-neutral-500">
+                    {t.photoProgress || 'OCR progress'} {progressPct}%
+                  </span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-neutral-200">
+                  <div
+                    className="h-full rounded-full transition-[width] duration-200"
+                    style={{
+                      width: `${progressPct}%`,
+                      background: 'var(--brand-grad)',
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* ─── Editor ─────────────────────────────────────────────── */}
           <div
             className={`paste-editor relative mt-5 overflow-hidden rounded-2xl border-2 bg-neutral-950 ${
@@ -266,7 +562,10 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
             <textarea
               ref={textareaRef}
               value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
+              onChange={(e) => {
+                setInputText(e.target.value);
+                if (ocrSuccess) setOcrSuccess('');
+              }}
               onScroll={(e) => {
                 if (gutterRef.current) {
                   gutterRef.current.style.transform = `translateY(${-e.currentTarget.scrollTop}px)`;
@@ -300,7 +599,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
           <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               onClick={handleProcess}
-              disabled={isProcessing || !inputText.trim()}
+              disabled={isProcessing || isOcrRunning || !inputText.trim()}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45 disabled:shadow-none"
               style={{ background: 'var(--brand-grad)', boxShadow: '0 10px 28px var(--brand-1-dim)' }}
             >
@@ -319,7 +618,8 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
 
             <button
               onClick={pasteFromClipboard}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-neutral-300 hover:bg-neutral-50"
+              disabled={isOcrRunning}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-neutral-300 hover:bg-neutral-50 disabled:opacity-50"
             >
               <ClipboardPaste className="h-4 w-4" />
               {t.pasteFromClipboard || 'Paste from clipboard'}
@@ -331,6 +631,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
                   setInputText('');
                   setResult(null);
                   setError('');
+                  setOcrSuccess('');
                   focusEditor();
                 }}
                 className="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3.5 text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-800"
@@ -343,6 +644,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
                 onClick={() => {
                   setInputText(EXAMPLE_TEXT);
                   setError('');
+                  setOcrSuccess('');
                   focusEditor();
                 }}
                 className="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3.5 text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-800"
@@ -366,6 +668,13 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
               </code>
             ))}
           </div>
+
+          {ocrSuccess && !error && (
+            <div className="mt-4 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+              <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600" />
+              <p className="text-sm text-emerald-800">{ocrSuccess}</p>
+            </div>
+          )}
 
           {error && (
             <div className="mt-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4">

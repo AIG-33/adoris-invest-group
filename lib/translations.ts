@@ -391,6 +391,19 @@ export interface Translations {
     errorEmpty?: string
     errorNoItems?: string
     errorGeneric?: string
+    // Image / OCR paste
+    photoTitle?: string
+    photoSubtitle?: string
+    photoDropHint?: string
+    photoBrowse?: string
+    photoCamera?: string
+    photoRecognizing?: string
+    photoProgress?: string
+    photoSuccess?: string
+    photoErrorGeneric?: string
+    photoErrorTooLarge?: string
+    photoErrorType?: string
+    photoErrorEmpty?: string
     // Marketing hero copy
     heroEyebrow?: string
     heroHeadline?: string
@@ -993,13 +1006,25 @@ const translations: Record<Language, Translations> = {
       errorEmpty: 'Paste catalog numbers with quantities first.',
       errorNoItems: 'No valid lines found. Put a catalog number and a quantity on each line.',
       errorGeneric: 'Something went wrong while processing your list. Please try again.',
-      heroBadge: 'Paste · Match · Checkout',
+      photoTitle: 'Or paste / upload a photo of your list',
+      photoSubtitle: 'Photograph a paper list, invoice, or Excel/PDF screenshot — we read the catalog numbers and quantities with OCR and fill the editor.',
+      photoDropHint: 'Drop images here, or press Ctrl/Cmd+V to paste a screenshot',
+      photoBrowse: 'Upload image',
+      photoCamera: 'Take photo',
+      photoRecognizing: 'Reading text from image…',
+      photoProgress: 'OCR progress',
+      photoSuccess: 'Text extracted — review the editor below, then Process Items.',
+      photoErrorGeneric: 'Could not read text from that image. Try a clearer photo or paste the text instead.',
+      photoErrorTooLarge: 'Image is too large (max 10 MB). Compress it or take a tighter crop.',
+      photoErrorType: 'Unsupported file type. Use PNG, JPEG, WebP, GIF, or BMP.',
+      photoErrorEmpty: 'No readable text found in the image. Try a sharper photo with clearer contrast.',
+      heroBadge: 'Paste · Photo · Checkout',
       heroEyebrow: 'For procurement teams and resellers',
       heroHeadline: 'Paste your shopping list — we build the cart',
-      heroTagline: 'Drop in 5 or 500 catalog numbers with quantities. Our parser matches them against 100,000+ SKUs and fills your cart automatically. No spreadsheets to email back and forth.',
+      heroTagline: 'Drop in 5 or 500 catalog numbers with quantities — or paste a photo of a paper list / Excel screenshot. Our parser matches them against 100,000+ SKUs and fills your cart automatically.',
       steps: {
-        step1Title: 'Paste your list',
-        step1Desc: 'Any format works — tabs, commas, semicolons, or just spaces. SKUs and quantities, one per line.',
+        step1Title: 'Paste your list or a photo',
+        step1Desc: 'Paste text, drop a screenshot, or photograph a paper list / invoice. Any format works — tabs, commas, spaces.',
         step2Title: 'We match it instantly',
         step2Desc: 'Our engine finds every product by catalog number or article and shows you what is in stock.',
         step3Title: 'Cart ready in seconds',
@@ -1008,11 +1033,11 @@ const translations: Record<Language, Translations> = {
       benefits: {
         time: { title: 'Save hours per order', value: '30s', description: 'Average time to import 100 SKUs vs. ~45 min manually.' },
         accuracy: { title: 'Zero copy-paste errors', value: '100%', description: 'Every SKU is validated against our catalog before it lands in your cart.' },
-        formats: { title: 'Any format you have', value: '5+', description: 'Tabs, commas, semicolons, spaces — even free-form lines with product names.' },
+        formats: { title: 'Any format you have', value: 'Photo+', description: 'Tabs, commas, spaces — or a photo of a handwritten list, invoice, or spreadsheet screenshot.' },
       },
       seo: {
         whyTitle: 'Why procurement teams use bulk order',
-        whyParagraph: 'If you order from a recurring list — a lab inventory, a clinic protocol, or a distributor restock — typing items one by one wastes hours. Paste your full list once, get a cart you can edit, and send it to checkout. The Adoris bulk-order tool understands the messy real-world formats your supplier emails, distributor sheets, and ERP exports already produce.',
+        whyParagraph: 'If you order from a recurring list — a lab inventory, a clinic protocol, or a distributor restock — typing items one by one wastes hours. Paste your full list once (or photograph a paper invoice / Excel screenshot), get a cart you can edit, and send it to checkout. The Adoris bulk-order tool understands the messy real-world formats your supplier emails, distributor sheets, and ERP exports already produce.',
         idealForTitle: 'Ideal for',
         idealFor: [
           'Hospital and clinic procurement managers',
@@ -1665,13 +1690,25 @@ const translations: Record<Language, Translations> = {
       errorEmpty: 'Сначала вставьте каталожные номера с количеством.',
       errorNoItems: 'Не удалось распознать ни одной строки. Укажите каталожный номер и количество в каждой строке.',
       errorGeneric: 'При обработке списка произошла ошибка. Попробуйте ещё раз.',
-      heroBadge: 'Вставка · Сопоставление · Заказ',
+      photoTitle: 'Или вставьте / загрузите фото списка',
+      photoSubtitle: 'Сфотографируйте бумажный список, счёт или скриншот Excel/PDF — мы распознаем каталожные номера и количества через OCR и заполним редактор.',
+      photoDropHint: 'Перетащите изображения сюда или нажмите Ctrl/Cmd+V, чтобы вставить скриншот',
+      photoBrowse: 'Загрузить изображение',
+      photoCamera: 'Сделать фото',
+      photoRecognizing: 'Читаем текст с изображения…',
+      photoProgress: 'Прогресс OCR',
+      photoSuccess: 'Текст извлечён — проверьте редактор ниже и нажмите «Обработать».',
+      photoErrorGeneric: 'Не удалось прочитать текст с изображения. Попробуйте более чёткое фото или вставьте текст вручную.',
+      photoErrorTooLarge: 'Изображение слишком большое (макс. 10 МБ). Сожмите его или обрежьте кадр.',
+      photoErrorType: 'Неподдерживаемый тип файла. Используйте PNG, JPEG, WebP, GIF или BMP.',
+      photoErrorEmpty: 'На изображении не найдено читаемого текста. Сделайте более чёткое фото с лучшим контрастом.',
+      heroBadge: 'Вставка · Фото · Заказ',
       heroEyebrow: 'Для отделов закупок и дистрибьюторов',
       heroHeadline: 'Вставьте свой список — мы соберём корзину',
-      heroTagline: 'Скопируйте 5 или 500 каталожных номеров с количеством. Парсер сопоставит их со 100 000+ SKU и автоматически заполнит корзину. Больше никаких таблиц по почте туда-сюда.',
+      heroTagline: 'Скопируйте 5 или 500 каталожных номеров с количеством — или вставьте фото бумажного списка / скриншот Excel. Парсер сопоставит их со 100 000+ SKU и автоматически заполнит корзину.',
       steps: {
-        step1Title: 'Вставьте список',
-        step1Desc: 'Подходит любой формат — табы, запятые, точки с запятой, пробелы. Артикул и количество, по одному на строку.',
+        step1Title: 'Вставьте список или фото',
+        step1Desc: 'Вставьте текст, перетащите скриншот или сфотографируйте бумажный список / счёт. Подойдёт любой формат — табы, запятые, пробелы.',
         step2Title: 'Мы мгновенно сопоставим',
         step2Desc: 'Наш движок находит каждый товар по артикулу или каталожному номеру и показывает, что есть в наличии.',
         step3Title: 'Корзина готова за секунды',
@@ -1680,11 +1717,11 @@ const translations: Record<Language, Translations> = {
       benefits: {
         time: { title: 'Экономия часов на заказе', value: '30с', description: 'Среднее время на загрузку 100 SKU — против ~45 минут вручную.' },
         accuracy: { title: 'Ноль ошибок при копировании', value: '100%', description: 'Каждый артикул сверяется с нашим каталогом перед добавлением в корзину.' },
-        formats: { title: 'Любой ваш формат', value: '5+', description: 'Табы, запятые, точки с запятой, пробелы — и даже строки с произвольным названием товара.' },
+        formats: { title: 'Любой ваш формат', value: 'Фото+', description: 'Табы, запятые, пробелы — или фото рукописного списка, счёта либо скриншота таблицы.' },
       },
       seo: {
         whyTitle: 'Почему отделы закупок выбирают массовый заказ',
-        whyParagraph: 'Если вы заказываете по повторяющемуся списку — инвентарь лаборатории, протокол клиники, дозаказ дистрибьютора — ввод позиций вручную съедает часы. Вставьте полный список один раз, получите редактируемую корзину и отправьте её на оформление. Инструмент массового заказа Adoris понимает реальные «грязные» форматы из писем поставщиков, прайс-листов дистрибьюторов и выгрузок ERP.',
+        whyParagraph: 'Если вы заказываете по повторяющемуся списку — инвентарь лаборатории, протокол клиники, дозаказ дистрибьютора — ввод позиций вручную съедает часы. Вставьте полный список один раз (или сфотографируйте бумажный счёт / скриншот Excel), получите редактируемую корзину и отправьте её на оформление. Инструмент массового заказа Adoris понимает реальные «грязные» форматы из писем поставщиков, прайс-листов дистрибьюторов и выгрузок ERP.',
         idealForTitle: 'Идеально подходит',
         idealFor: [
           'Менеджерам закупок больниц и клиник',
