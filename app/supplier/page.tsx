@@ -3,14 +3,14 @@ import { Footer } from '@/components/footer'
 import { SupplierForm } from '@/components/supplier-form'
 import { StructuredData } from '@/components/structured-data'
 import { getServerCompany } from '@/lib/server-company'
-import { getDictionary } from '@/lib/translations'
+import { getDictionary, resolveSupplierTranslations } from '@/lib/translations'
 import { getBaseUrl } from '@/lib/get-base-url'
 import { generateFAQSchema } from '@/lib/seo'
 import type { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()
-  const companyName = company?.name || 'Adoris Invest Group'
+  const companyName = company?.name || process.env.SITE_NAME || 'Shop'
   const language = (company?.language || 'en') as 'en' | 'ru'
   const baseUrl = await getBaseUrl()
 
@@ -50,7 +50,8 @@ export default async function SupplierPage() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
   const baseUrl = await getBaseUrl()
-  const companyName = company?.name || 'Adoris Invest Group'
+  const companyName = company?.name || process.env.SITE_NAME || 'Shop'
+  const supplierTranslations = resolveSupplierTranslations(dict.supplier, companyName)
 
   const supplierServiceSchema = {
     '@context': 'https://schema.org',
@@ -58,7 +59,7 @@ export default async function SupplierPage() {
     name: language === 'ru'
       ? 'Партнёрская программа для поставщиков'
       : 'Supplier partnership programme',
-    description: dict.supplier.heroTagline || dict.supplier.description,
+    description: supplierTranslations.heroTagline || supplierTranslations.description,
     provider: {
       '@type': 'Organization',
       name: companyName,
@@ -75,8 +76,8 @@ export default async function SupplierPage() {
     url: `${baseUrl}/supplier`,
   }
 
-  const faqSchema = dict.supplier.faqItems && dict.supplier.faqItems.length > 0
-    ? generateFAQSchema(dict.supplier.faqItems)
+  const faqSchema = supplierTranslations.faqItems && supplierTranslations.faqItems.length > 0
+    ? generateFAQSchema(supplierTranslations.faqItems)
     : null
 
   const structuredData = faqSchema
@@ -88,7 +89,7 @@ export default async function SupplierPage() {
       <StructuredData data={structuredData} />
       <Header />
       <main className="flex-1" style={{ backgroundColor: 'var(--company-secondary)' }}>
-        <SupplierForm company={company} translations={dict.supplier} />
+        <SupplierForm company={company} translations={supplierTranslations} />
       </main>
       <Footer />
     </div>

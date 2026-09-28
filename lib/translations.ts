@@ -1037,13 +1037,13 @@ const translations: Record<Language, Translations> = {
       },
       seo: {
         whyTitle: 'Why procurement teams use bulk order',
-        whyParagraph: 'If you order from a recurring list — a lab inventory, a clinic protocol, or a distributor restock — typing items one by one wastes hours. Paste your full list once (or photograph a paper invoice / Excel screenshot), get a cart you can edit, and send it to checkout. The Adoris bulk-order tool understands the messy real-world formats your supplier emails, distributor sheets, and ERP exports already produce.',
+        whyParagraph: 'If you order from a recurring list — a lab inventory, a clinic protocol, or a distributor restock — typing items one by one wastes hours. Paste your full list once (or photograph a paper invoice / Excel screenshot), get a cart you can edit, and send it to checkout. The {company} bulk-order tool understands the messy real-world formats your supplier emails, distributor sheets, and ERP exports already produce.',
         idealForTitle: 'Ideal for',
         idealFor: [
           'Hospital and clinic procurement managers',
           'Independent laboratory inventory restocks',
           'Distributors rebuilding a customer order from a quote',
-          'Reorders from a previous Adoris invoice or PDF',
+          'Reorders from a previous {company} invoice or PDF',
         ],
       },
     },
@@ -1055,11 +1055,11 @@ const translations: Record<Language, Translations> = {
       heroEyebrow: 'Wanted: suppliers with direct manufacturer pricing',
       heroHeadline: 'Got direct prices from a manufacturer?',
       heroHeadlineAccent: 'Let’s do business.',
-      heroTagline: 'Adoris is actively expanding its supplier network across Europe, the CIS, and Asia. If you can ship original products at competitive prices — especially direct from the manufacturer — we want to talk this week.',
+      heroTagline: '{company} is actively expanding its supplier network across Europe, the CIS, and Asia. If you can ship original products at competitive prices — especially direct from the manufacturer — we want to talk this week.',
       heroCtaPrimary: 'Submit your catalog',
       heroCtaSecondary: 'See what we are buying',
       benefits: {
-        title: 'Why suppliers partner with Adoris',
+        title: 'Why suppliers partner with {company}',
         subtitle: 'We are not a marketplace. We are a buyer with real volume, fast payments, and a long-term horizon.',
         items: [
           { title: 'Recurring volume', description: '€20M+ annual procurement across 50+ manufacturers. Predictable monthly orders, not one-off spot buys.', icon: 'trending' },
@@ -1085,7 +1085,7 @@ const translations: Record<Language, Translations> = {
         { title: 'We review and match', description: 'Our procurement team checks pricing, demand, and compliance. You get a written response within 5 business days.' },
         { title: 'First trial order', description: 'We place a small trial order. Once it lands cleanly, we move to recurring volume and discuss framework terms.' },
       ],
-      statsTitle: 'The Adoris partner profile in numbers',
+      statsTitle: 'The {company} partner profile in numbers',
       statsItems: [
         { value: '€20M+', label: 'Annual procurement budget' },
         { value: '50+', label: 'Active manufacturer partners' },
@@ -1721,13 +1721,13 @@ const translations: Record<Language, Translations> = {
       },
       seo: {
         whyTitle: 'Почему отделы закупок выбирают массовый заказ',
-        whyParagraph: 'Если вы заказываете по повторяющемуся списку — инвентарь лаборатории, протокол клиники, дозаказ дистрибьютора — ввод позиций вручную съедает часы. Вставьте полный список один раз (или сфотографируйте бумажный счёт / скриншот Excel), получите редактируемую корзину и отправьте её на оформление. Инструмент массового заказа Adoris понимает реальные «грязные» форматы из писем поставщиков, прайс-листов дистрибьюторов и выгрузок ERP.',
+        whyParagraph: 'Если вы заказываете по повторяющемуся списку — инвентарь лаборатории, протокол клиники, дозаказ дистрибьютора — ввод позиций вручную съедает часы. Вставьте полный список один раз (или сфотографируйте бумажный счёт / скриншот Excel), получите редактируемую корзину и отправьте её на оформление. Инструмент массового заказа {company} понимает реальные «грязные» форматы из писем поставщиков, прайс-листов дистрибьюторов и выгрузок ERP.',
         idealForTitle: 'Идеально подходит',
         idealFor: [
           'Менеджерам закупок больниц и клиник',
           'Независимым лабораториям для дозаказа инвентаря',
           'Дистрибьюторам для сборки заказа из коммерческого предложения',
-          'Повторным заказам по прошлому счёту или PDF от Adoris',
+          'Повторным заказам по прошлому счёту или PDF от {company}',
         ],
       },
     },
@@ -1739,11 +1739,11 @@ const translations: Record<Language, Translations> = {
       heroEyebrow: 'Ищем поставщиков с прямыми ценами от производителя',
       heroHeadline: 'Есть прямые цены от производителя?',
       heroHeadlineAccent: 'Давайте сотрудничать.',
-      heroTagline: 'Adoris активно расширяет сеть поставщиков по Европе, СНГ и Азии. Если вы можете поставлять оригинальную продукцию по конкурентоспособным ценам — особенно напрямую от производителя — мы готовы говорить уже на этой неделе.',
+      heroTagline: '{company} активно расширяет сеть поставщиков по Европе, СНГ и Азии. Если вы можете поставлять оригинальную продукцию по конкурентоспособным ценам — особенно напрямую от производителя — мы готовы говорить уже на этой неделе.',
       heroCtaPrimary: 'Отправить каталог',
       heroCtaSecondary: 'Что мы закупаем',
       benefits: {
-        title: 'Почему поставщики выбирают Adoris',
+        title: 'Почему поставщики выбирают {company}',
         subtitle: 'Мы не маркетплейс. Мы покупатель с реальным объёмом, быстрыми платежами и долгосрочным горизонтом.',
         items: [
           { title: 'Регулярный объём', description: 'Закупка €20M+ в год по 50+ производителям. Предсказуемые ежемесячные заказы, а не разовые сделки.', icon: 'trending' },
@@ -1769,7 +1769,7 @@ const translations: Record<Language, Translations> = {
         { title: 'Мы проверяем и сопоставляем', description: 'Команда закупок проверяет цены, спрос и комплаенс. Письменный ответ — в течение 5 рабочих дней.' },
         { title: 'Первый пробный заказ', description: 'Размещаем небольшой пробный заказ. Когда он проходит чисто — переходим к регулярному объёму и обсуждаем рамочные условия.' },
       ],
-      statsTitle: 'Профиль партнёра Adoris в цифрах',
+      statsTitle: 'Профиль партнёра {company} в цифрах',
       statsItems: [
         { value: '€20M+', label: 'Годовой бюджет закупок' },
         { value: '50+', label: 'Активных партнёров-производителей' },
@@ -1990,5 +1990,48 @@ export function getDictionary(language: Language = 'en'): Translations {
 
 export function getTranslations(language: Language) {
   return getDictionary(language)
+}
+
+/** Replace `{company}` placeholders in supplier marketing copy with the tenant name. */
+export function resolveSupplierTranslations(
+  supplier: Translations['supplier'],
+  companyName: string
+): Translations['supplier'] {
+  const withCompany = (text: string | undefined) =>
+    text?.replaceAll('{company}', companyName)
+
+  return {
+    ...supplier,
+    heroTagline: withCompany(supplier.heroTagline) ?? supplier.heroTagline,
+    benefits: supplier.benefits
+      ? {
+          ...supplier.benefits,
+          title: withCompany(supplier.benefits.title) ?? supplier.benefits.title,
+        }
+      : supplier.benefits,
+    statsTitle: withCompany(supplier.statsTitle) ?? supplier.statsTitle,
+  }
+}
+
+/** Replace `{company}` placeholders in bulk-order marketing copy with the tenant name. */
+export function resolveBulkOrderTranslations(
+  bulkOrder: Translations['bulkOrder'],
+  companyName: string
+): Translations['bulkOrder'] {
+  const withCompany = (text: string | undefined) =>
+    text?.replaceAll('{company}', companyName)
+
+  if (!bulkOrder.seo) return bulkOrder
+
+  return {
+    ...bulkOrder,
+    seo: {
+      ...bulkOrder.seo,
+      whyParagraph: withCompany(bulkOrder.seo.whyParagraph) ?? bulkOrder.seo.whyParagraph,
+      idealFor: bulkOrder.seo.idealFor.map(
+        (item) => withCompany(item) ?? item
+      ),
+    },
+  }
 }
 

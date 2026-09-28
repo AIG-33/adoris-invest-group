@@ -144,7 +144,7 @@ export default async function HomePage() {
       }
 
   const baseUrl = await getBaseUrl()
-  const companyName = company?.name || 'IVD Group'
+  const companyName = company?.name || process.env.SITE_NAME || 'Shop'
 
   // Service schemas for the two non-product "products" the homepage promotes:
   // the supplier-recruitment programme and the bulk-paste ordering tool.
@@ -197,7 +197,7 @@ export default async function HomePage() {
               pathway3: dict.homepage.hero.pathway3,
             }}
             language={language}
-            companyName={company?.name || 'IVD Group'}
+            companyName={companyName}
             totalProducts={totalProducts}
             totalManufacturers={totalManufacturers}
             quickCategories={quickCategories}
@@ -242,7 +242,7 @@ export default async function HomePage() {
         {/* DARK — Stats & CTA */}
         <section aria-label="Statistics and company information" className="bg-gradient-to-b from-gray-950 via-[#0a0a0f] to-[#050508]">
           <StatsSection
-            companyName={company?.name || 'IVD Group'}
+            companyName={companyName}
             translations={dict.homepage.stats}
           />
         </section>

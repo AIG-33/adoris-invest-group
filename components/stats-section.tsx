@@ -29,7 +29,7 @@ interface StatsSectionProps {
   translations: StatsSectionTranslations
 }
 
-export function StatsSection({ companyName = 'IVD Group', translations }: StatsSectionProps) {
+export function StatsSection({ companyName = 'Shop', translations }: StatsSectionProps) {
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
 

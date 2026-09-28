@@ -3,7 +3,7 @@ import { Footer } from '@/components/footer';
 import BulkOrderForm from '@/components/bulk-order-form';
 import { StructuredData } from '@/components/structured-data';
 import { getServerCompany } from '@/lib/server-company';
-import { getDictionary } from '@/lib/translations';
+import { getDictionary, resolveBulkOrderTranslations } from '@/lib/translations';
 import { getBaseUrl } from '@/lib/get-base-url';
 import { generateHowToSchema } from '@/lib/seo';
 import {
@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getServerCompany()
-  const companyName = company?.name || 'Adoris Invest Group'
+  const companyName = company?.name || process.env.SITE_NAME || 'Shop'
   const language = (company?.language || 'en') as 'en' | 'ru'
   const baseUrl = await getBaseUrl()
 
@@ -62,7 +62,8 @@ export default async function BulkOrderPage() {
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
   const baseUrl = await getBaseUrl()
-  const bulk = dict.bulkOrder
+  const companyName = company?.name || process.env.SITE_NAME || 'Shop'
+  const bulk = resolveBulkOrderTranslations(dict.bulkOrder, companyName)
 
   // ─── JSON-LD: HowTo schema for the bulk-order flow ───────────────────────
   const howToSchema = generateHowToSchema(
@@ -87,7 +88,9 @@ export default async function BulkOrderPage() {
   const structuredData = [howToSchema, {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: language === 'ru' ? 'Инструмент массового заказа Adoris' : 'Adoris Bulk Order Tool',
+    name: language === 'ru'
+      ? `Инструмент массового заказа ${companyName}`
+      : `${companyName} Bulk Order Tool`,
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     description: bulk.heroTagline || bulk.subtitle,
