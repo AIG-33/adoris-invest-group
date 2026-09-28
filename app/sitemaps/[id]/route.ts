@@ -9,6 +9,9 @@ export const maxDuration = 60
 
 const PRODUCTS_PER_SITEMAP = 10000
 
+/** Stable epoch for rarely changing legal/static marketing pages. */
+const STATIC_PAGE_LASTMOD = '2025-01-15T00:00:00.000Z'
+
 function escapeXml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -29,49 +32,66 @@ function urlEntry(url: string, lastmod: string, changefreq: string, priority: nu
 }
 
 /**
- * Generate the "static" sitemap: static pages + categories + manufacturers
+ * Generate the "static" sitemap: static pages + categories + manufacturers.
+ * lastmod uses real entity dates (category/manufacturer have no updatedAt —
+ * fall back to max product.updatedAt for those listing pages). Static
+ * marketing/legal pages use a fixed date, not wall-clock "now".
  */
 async function generateStaticSitemap(baseUrl: string): Promise<string> {
-  const now = new Date().toISOString()
-
   const entries: string[] = []
 
-  // Static pages
+  const [latestProduct, categories, manufacturers] = await Promise.all([
+    retryPrismaQuery(() =>
+      prisma.product.findFirst({
+        select: { updatedAt: true },
+        orderBy: { updatedAt: 'desc' },
+      })
+    ),
+    retryPrismaQuery(() =>
+      prisma.category.findMany({ select: { slug: true } })
+    ),
+    retryPrismaQuery(() =>
+      prisma.manufacturer.findMany({
+        select: { slug: true, updatedAt: true },
+      })
+    ),
+  ])
+
+  const catalogLastmod = (latestProduct?.updatedAt ?? new Date(STATIC_PAGE_LASTMOD)).toISOString()
+
+  // Static pages — fixed lastmod (content changes are infrequent releases)
   const staticPages = [
-    { path: '',                 changefreq: 'daily',   priority: 1.0 },
-    { path: '/products',        changefreq: 'daily',   priority: 0.9 },
-    { path: '/bulk-order',      changefreq: 'monthly', priority: 0.7 },
-    { path: '/company/about',   changefreq: 'monthly', priority: 0.6 },
-    { path: '/faq',             changefreq: 'monthly', priority: 0.6 },
-    { path: '/terms',           changefreq: 'monthly', priority: 0.4 },
-    { path: '/supplier',        changefreq: 'monthly', priority: 0.5 },
+    { path: '',                 changefreq: 'daily',   priority: 1.0, lastmod: catalogLastmod },
+    { path: '/products',        changefreq: 'daily',   priority: 0.9, lastmod: catalogLastmod },
+    { path: '/bulk-order',      changefreq: 'monthly', priority: 0.7, lastmod: STATIC_PAGE_LASTMOD },
+    { path: '/company/about',   changefreq: 'monthly', priority: 0.6, lastmod: STATIC_PAGE_LASTMOD },
+    { path: '/faq',             changefreq: 'monthly', priority: 0.6, lastmod: STATIC_PAGE_LASTMOD },
+    { path: '/terms',           changefreq: 'monthly', priority: 0.4, lastmod: STATIC_PAGE_LASTMOD },
+    { path: '/supplier',        changefreq: 'monthly', priority: 0.5, lastmod: STATIC_PAGE_LASTMOD },
   ]
 
   for (const page of staticPages) {
-    entries.push(urlEntry(`${baseUrl}${page.path}`, now, page.changefreq, page.priority))
+    entries.push(urlEntry(`${baseUrl}${page.path}`, page.lastmod, page.changefreq, page.priority))
   }
 
-  // Categories
-  const categories = await retryPrismaQuery(() =>
-    prisma.category.findMany({ select: { slug: true } })
-  )
+  // Categories — listing freshness tracks catalog
   for (const cat of categories) {
-    entries.push(urlEntry(`${baseUrl}/products?category=${cat.slug}`, now, 'weekly', 0.7))
+    entries.push(urlEntry(`${baseUrl}/products?category=${cat.slug}`, catalogLastmod, 'weekly', 0.7))
   }
 
-  // Manufacturers
-  const manufacturers = await retryPrismaQuery(() =>
-    prisma.manufacturer.findMany({ select: { slug: true } })
-  )
+  // Manufacturers — use manufacturer.updatedAt when present
   for (const m of manufacturers) {
-    entries.push(urlEntry(`${baseUrl}/products?manufacturer=${m.slug}`, now, 'weekly', 0.7))
+    const lastmod = (m.updatedAt ?? latestProduct?.updatedAt ?? new Date(STATIC_PAGE_LASTMOD)).toISOString()
+    entries.push(urlEntry(`${baseUrl}/products?manufacturer=${m.slug}`, lastmod, 'weekly', 0.7))
   }
 
   return wrapUrlset(entries)
 }
 
 /**
- * Generate a paginated product-URL sitemap
+ * Generate a paginated product-URL sitemap.
+ * Each product URL uses its own updatedAt as lastmod (already correct —
+ * do not replace with new Date()).
  */
 async function generateProductsSitemap(baseUrl: string, page: number): Promise<string> {
   const products = await retryPrismaQuery(() =>

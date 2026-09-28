@@ -19,6 +19,11 @@ const PRODUCTS_PER_SITEMAP = 10000
  *   /sitemaps/products-1      ← products  10 000 … 19 999
  *   …
  *
+ * lastmod on each sitemap entry uses max(product.updatedAt) so Google
+ * sees a stable signal instead of "now" on every request. Product URL
+ * sitemaps themselves already emit per-URL updatedAt (see
+ * app/sitemaps/[id]/route.ts) — leave those alone.
+ *
  * SKU URLs (`/sku/<sku>`) are intentionally NOT listed: they always
  * 308-redirect to the canonical product page, so including them
  * pollutes the GSC "Page with redirect" report without any indexing
@@ -27,11 +32,19 @@ const PRODUCTS_PER_SITEMAP = 10000
 export async function GET() {
   const baseUrl = await getBaseUrl()
 
-  // Count products to determine how many sub-sitemaps we need
-  const totalProducts = await retryPrismaQuery(() => prisma.product.count())
-  const totalProductPages = Math.ceil(totalProducts / PRODUCTS_PER_SITEMAP)
+  const [totalProducts, latestProduct] = await Promise.all([
+    retryPrismaQuery(() => prisma.product.count()),
+    retryPrismaQuery(() =>
+      prisma.product.findFirst({
+        select: { updatedAt: true },
+        orderBy: { updatedAt: 'desc' },
+      })
+    ),
+  ])
 
-  const now = new Date().toISOString()
+  const totalProductPages = Math.ceil(totalProducts / PRODUCTS_PER_SITEMAP)
+  // Prefer catalog freshness over wall-clock "now"
+  const catalogLastmod = (latestProduct?.updatedAt ?? new Date()).toISOString()
 
   const sitemaps: string[] = []
 
@@ -39,15 +52,16 @@ export async function GET() {
   sitemaps.push(`
     <sitemap>
       <loc>${baseUrl}/sitemaps/static</loc>
-      <lastmod>${now}</lastmod>
+      <lastmod>${catalogLastmod}</lastmod>
     </sitemap>`)
 
-  // Product sitemaps (paginated)
+  // Product sitemaps (paginated) — same catalog lastmod for the index entry;
+  // individual product URLs still use their own updatedAt inside the file.
   for (let i = 0; i < totalProductPages; i++) {
     sitemaps.push(`
     <sitemap>
       <loc>${baseUrl}/sitemaps/products-${i}</loc>
-      <lastmod>${now}</lastmod>
+      <lastmod>${catalogLastmod}</lastmod>
     </sitemap>`)
   }
 
