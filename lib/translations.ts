@@ -636,7 +636,7 @@ const translations: Record<Language, Translations> = {
         pathway1: {
           step: '01',
           title: 'Search by SKU or name',
-          description: 'Type a catalog number or a product name — we match across 100,000+ SKUs from 50+ manufacturers instantly.',
+          description: 'Type a catalog number or a product name — we match across 75,000+ SKUs from 400+ manufacturers instantly.',
           cta: 'Start a search',
           microCopy: 'e.g. 07P3203, 10446232, Cobas Glucose',
         },
@@ -677,13 +677,13 @@ const translations: Record<Language, Translations> = {
         viewTerms: 'View Terms',
         stats: {
           medicalProducts: {
-            value: '100,000+',
+            value: '75,000+',
             label: 'Medical Products',
             description: 'Comprehensive catalog',
           },
           manufacturers: {
-            value: '50+',
-            label: 'European Manufacturers',
+            value: '400+',
+            label: 'Manufacturers',
             description: 'Original products only',
           },
           compliance: {
@@ -1021,7 +1021,7 @@ const translations: Record<Language, Translations> = {
       heroBadge: 'Paste · Photo · Checkout',
       heroEyebrow: 'For procurement teams and resellers',
       heroHeadline: 'Paste your shopping list — we build the cart',
-      heroTagline: 'Drop in 5 or 500 catalog numbers with quantities — or paste a photo of a paper list / Excel screenshot. Our parser matches them against 100,000+ SKUs and fills your cart automatically.',
+      heroTagline: 'Drop in 5 or 500 catalog numbers with quantities — or paste a photo of a paper list / Excel screenshot. Our parser matches them against 75,000+ SKUs and fills your cart automatically.',
       steps: {
         step1Title: 'Paste your list or a photo',
         step1Desc: 'Paste text, drop a screenshot, or photograph a paper list / invoice. Any format works — tabs, commas, spaces.',
@@ -1062,7 +1062,7 @@ const translations: Record<Language, Translations> = {
         title: 'Why suppliers partner with {company}',
         subtitle: 'We are not a marketplace. We are a buyer with real volume, fast payments, and a long-term horizon.',
         items: [
-          { title: 'Recurring volume', description: '€20M+ annual procurement across 50+ manufacturers. Predictable monthly orders, not one-off spot buys.', icon: 'trending' },
+          { title: 'Recurring volume', description: '€20M+ annual procurement across 400+ manufacturers. Predictable monthly orders, not one-off spot buys.', icon: 'trending' },
           { title: 'Fast, transparent payments', description: 'SWIFT and SEPA across the EU and EAEU. 100% prepayment available for new partners — no waiting on terms.', icon: 'wallet' },
           { title: 'Direct-to-manufacturer focus', description: 'We prioritize partners with direct factory pricing. No four-layer middlemen between you and the line.', icon: 'factory' },
           { title: 'EU-based, regulated counterparty', description: 'EU VAT registered, AML/KYC compliant, GDPR-grade data handling. Your contracts and IP are safe.', icon: 'shield' },
@@ -1088,7 +1088,7 @@ const translations: Record<Language, Translations> = {
       statsTitle: 'The {company} partner profile in numbers',
       statsItems: [
         { value: '€20M+', label: 'Annual procurement budget' },
-        { value: '50+', label: 'Active manufacturer partners' },
+        { value: '400+', label: 'Active manufacturer partners' },
         { value: '5 days', label: 'Average response time' },
         { value: '14 days', label: 'Median time to first PO' },
       ],
@@ -1320,7 +1320,7 @@ const translations: Record<Language, Translations> = {
         pathway1: {
           step: '01',
           title: 'Найдите по артикулу или названию',
-          description: 'Введите каталожный номер или название — мы мгновенно найдём товар среди 100 000+ SKU от 50+ производителей.',
+          description: 'Введите каталожный номер или название — мы мгновенно найдём товар среди 75 000+ SKU от 400+ производителей.',
           cta: 'Начать поиск',
           microCopy: 'Напр.: 07P3203, 10446232, Cobas Глюкоза',
         },
@@ -1361,13 +1361,13 @@ const translations: Record<Language, Translations> = {
         viewTerms: 'Посмотреть условия',
         stats: {
           medicalProducts: {
-            value: '100,000+',
+            value: '75,000+',
             label: 'Медицинских товаров',
             description: 'Полный каталог',
           },
           manufacturers: {
-            value: '50+',
-            label: 'Европейских производителей',
+            value: '400+',
+            label: 'Производителей',
             description: 'Только оригинальная продукция',
           },
           compliance: {
@@ -1705,7 +1705,7 @@ const translations: Record<Language, Translations> = {
       heroBadge: 'Вставка · Фото · Заказ',
       heroEyebrow: 'Для отделов закупок и дистрибьюторов',
       heroHeadline: 'Вставьте свой список — мы соберём корзину',
-      heroTagline: 'Скопируйте 5 или 500 каталожных номеров с количеством — или вставьте фото бумажного списка / скриншот Excel. Парсер сопоставит их со 100 000+ SKU и автоматически заполнит корзину.',
+      heroTagline: 'Скопируйте 5 или 500 каталожных номеров с количеством — или вставьте фото бумажного списка / скриншот Excel. Парсер сопоставит их со 75 000+ SKU и автоматически заполнит корзину.',
       steps: {
         step1Title: 'Вставьте список или фото',
         step1Desc: 'Вставьте текст, перетащите скриншот или сфотографируйте бумажный список / счёт. Подойдёт любой формат — табы, запятые, пробелы.',
@@ -1746,7 +1746,7 @@ const translations: Record<Language, Translations> = {
         title: 'Почему поставщики выбирают {company}',
         subtitle: 'Мы не маркетплейс. Мы покупатель с реальным объёмом, быстрыми платежами и долгосрочным горизонтом.',
         items: [
-          { title: 'Регулярный объём', description: 'Закупка €20M+ в год по 50+ производителям. Предсказуемые ежемесячные заказы, а не разовые сделки.', icon: 'trending' },
+          { title: 'Регулярный объём', description: 'Закупка €20M+ в год по 400+ производителям. Предсказуемые ежемесячные заказы, а не разовые сделки.', icon: 'trending' },
           { title: 'Быстрые и прозрачные платежи', description: 'SWIFT и SEPA по ЕС и ЕАЭС. Для новых партнёров доступна 100% предоплата — без ожидания условий.', icon: 'wallet' },
           { title: 'Фокус на прямых производителях', description: 'Приоритет — партнёрам с прямыми заводскими ценами. Никаких четырёх посредников между вами и линией.', icon: 'factory' },
           { title: 'Контрагент в ЕС, регулируемый', description: 'Регистрация EU VAT, соблюдение AML/KYC, обработка данных по GDPR. Ваши контракты и IP защищены.', icon: 'shield' },
@@ -1772,7 +1772,7 @@ const translations: Record<Language, Translations> = {
       statsTitle: 'Профиль партнёра {company} в цифрах',
       statsItems: [
         { value: '€20M+', label: 'Годовой бюджет закупок' },
-        { value: '50+', label: 'Активных партнёров-производителей' },
+        { value: '400+', label: 'Активных партнёров-производителей' },
         { value: '5 дней', label: 'Среднее время ответа' },
         { value: '14 дней', label: 'Медианное время до первого заказа' },
       ],

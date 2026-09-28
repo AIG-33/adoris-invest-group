@@ -39,8 +39,8 @@ export async function generateMetadata(): Promise<Metadata> {
     ? `${companyName} — Поиск по SKU · Массовый заказ · Поставщикам`
     : `${companyName} — Search by SKU · Bulk Paste · For Suppliers`
   const description = language === 'ru'
-    ? `${companyName} — B2B-поставщик медицинского и лабораторного оборудования. Поиск 100 000+ SKU по артикулу или названию, массовый заказ по списку и партнёрство с поставщиками с прямыми ценами от производителя.`
-    : `${companyName} — B2B medical & laboratory supply. Search 100,000+ SKUs by catalog number or product name, paste a list to build a cart instantly, or partner with us as a supplier with direct manufacturer pricing.`
+    ? `${companyName} — B2B-поставщик медицинского и лабораторного оборудования. Поиск 75 000+ SKU по артикулу или названию, массовый заказ по списку и партнёрство с поставщиками с прямыми ценами от производителя.`
+    : `${companyName} — B2B medical & laboratory supply. Search 75,000+ SKUs by catalog number or product name, paste a list to build a cart instantly, or partner with us as a supplier with direct manufacturer pricing.`
 
   const keywords = language === 'ru'
     ? 'поиск по SKU, поиск по артикулу, массовый заказ, оптовый заказ, B2B медицинское оборудование, реагенты оптом, стать поставщиком, прямые цены производителя, лабораторное оборудование'
