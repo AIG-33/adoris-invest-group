@@ -1,0 +1,575 @@
+# GSC product redirect map report
+
+Generated: 2026-09-28T14:59:54.224Z
+
+## Summary
+
+| Metric | Count |
+|--------|------:|
+| Unique GSC URLs (all exports + top pages) | 3556 |
+| Unique `/product/...` paths considered | 1312 |
+| Structurally skipped (shop/category/filters/etc.) | 1751 |
+| Already canonical (no redirect needed) | 549 |
+| Matched product 301s | 289 |
+| Unmatched product paths (not invented) | 474 |
+| `/manufacturer/...` path 301s | 8 |
+
+### Match reasons
+
+```
+{
+  "prefix-base+sku": 204,
+  "sku-*": 47,
+  "prefix-base-strip-wp+sku": 14,
+  "startsWith-base": 13,
+  "exact-slug+mfg": 3,
+  "exact-slug-wrong-mfg": 5,
+  "legacy-1seg-exact-slug": 3
+}
+```
+
+### Unmatched reasons
+
+```
+{
+  "ambiguous": 187,
+  "no-match": 287
+}
+```
+
+## Task B — Uncategorized → Reagents & Disposables
+
+| Metric | Count |
+|--------|------:|
+| Products moved | 19659 |
+| Reagents & Disposables after move | 75542 |
+| Uncategorized category | deleted (empty) |
+
+Also: `CATEGORY_SLUG_REDIRECTS` maps `uncategorized` and `disposables` → `reagents-disposables`.
+
+## Implementation
+
+- `lib/product-redirects.generated.ts` — product + manufacturer-path maps
+- `middleware.ts` — exact 301 lookups + `/product-category/:slug[/page/N]` + `/products/page/N`
+- `scripts/build-gsc-product-redirects.ts` — regenerator
+- `scripts/move-uncategorized-to-reagents.ts` — idempotent migrate (already applied)
+
+## Unmatched paths (do not invent redirects)
+
+- `/product/gpx4-e5y8k-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/total-ige-liez-6654761-25-ml` — no-match
+- `/product/applied-biosystems-seqstudio-cartridge-125-injections-500-reactions` — no-match
+- `/product/dynabeads-flowcomp-flexi-kit-1-kit` — no-match
+- `/product/5-atto-520-3-eclipse-2` — ambiguous-prefix (5)
+- `/product/nebnext-fast-dna-library-prep-set-for-ion-torrent-50-reactions-50-reactions` — no-match
+- `/product/pathscan-acetylated-histone-h3-sandwich-elisa-kit-3` — ambiguous-prefix (5)
+- `/product/phospho-p53-ser15-e9y4u-rabbit-mab` — ambiguous-prefix (2)
+- `/product/architect-s8000` — no-match
+- `/product/nrf2-d1z9c-xp-rabbit-maba-alexa-fluor-488-conjugate` — no-match
+- `/product/zytolight-️-spec-ntrk3-dual-color-break-apart-probe` — no-match
+- `/product/transport-swab-in-tube-29` — no-match
+- `/product/200ul-filter-tips` — no-match
+- `/product/tsh-3-gen-l2kts2-6607550-200` — no-match
+- `/product/jagged1-28h8-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/xs1000i-4` — ambiguous-prefix (2)
+- `/product/adaptor-no-1-pm-100-pcs-pack-100-sztuk` — no-match
+- `/product/20ul-no-filter-tips-3` — no-match
+- `/product/cholera-toxin-beta-monoclonal-antibody-2-63-200-u` — no-match
+- `/product/i²3-tubulin-d65a4-xp-rabbit-mab` — no-match
+- `/product/anti-bovine-igghrp-conjugate` — no-match
+- `/product/benzonase-r-nuclease-ultrapure-grade-2` — ambiguous-prefix (2)
+- `/product/il-acl-tor-500-cts-2` — no-match
+- `/product/gi-ma-lgiz-6653757-25-ml` — no-match
+- `/product/10ul-no-filter-tips` — no-match
+- `/product/5-atto-520-3-bhq-1-3` — ambiguous-prefix (5)
+- `/product/n-dodecyl-β-d-maltoside-3` — no-match
+- `/product/bufer-atl-4x50-ml` — no-match
+- `/product/nrf2-e3j1v-rabbit-mab` — ambiguous-prefix (3)
+- `/product/alternaria-tenuis-mc6l-10485106-4-ml` — no-match
+- `/product/taqman-rnase-p-instrument-verification-plate-fast-96-well-for-0-1-ml-block-1-x-96-well-plate` — no-match
+- `/product/etheno-datp-ε-datp-2` — no-match
+- `/product/exonuclease-t-1-250-units` — no-match
+- `/product/33′55′-tetramethylbenzidine-1g` — no-match
+- `/product/fibrillarin-c13c3-rabbit-mab` — ambiguous-prefix (2)
+- `/product/buffer-solution-sp-systems-10-l` — no-match
+- `/product/acetyl-i±-tubulin-lys40-d20g3-xp-rabbit-mab-2` — no-match
+- `/product/neon-nxt-electroporation-system-10-µl-kit-96-x-2-reactions` — no-match
+- `/product/ncii-10-000-units` — no-match
+- `/product/cdc25c-5h9-rabbit-mab` — ambiguous-prefix (2)
+- `/product/phospho-alk-tyr1282-1283-d39b2-rabbit-mab` — ambiguous-prefix (2)
+- `/product/cd3iµ-d7a6e-xp-rabbit-mab` — no-match
+- `/product/acrylamide` — ambiguous-prefix (6)
+- `/product/6-azido-l-lysine-hcl-2` — ambiguous-prefix (3)
+- `/product/unconjugated-estriol-l2kue32-6607925-200` — no-match
+- `/product/y-27632-dihydrochloride` — ambiguous-prefix (6)
+- `/product/fastdigest-eco52i-50-reactions` — no-match
+- `/product/hif-2i±-e8e5z-rabbit-mab-2` — no-match
+- `/product/s6-ribosomal-protein-5g10-rabbit-mab` — ambiguous-prefix (6)
+- `/product/phospho-topoisomerase-iii±-ser1469-d4f5-rabbit-mab` — no-match
+- `/product/syngap-d78b11-rabbit-mab` — ambiguous-prefix (2)
+- `/product/wdr82-d2i3b-rabbit-mab` — ambiguous-prefix (2)
+- `/product/massruler-express-lr-forward-dna-ladder-ready-to-use-2-x-500-µl` — no-match
+- `/product/zeba-spin-desalting-columns-plates-and-cartridges-7k-mwco-0-5-100-ml-25-columns-zeba-spin-desalting-columns-7k-mwco-5-ml` — no-match
+- `/product/γ-8-aminooctyl-imido-gtp-2` — no-match
+- `/product/calf-serum-bovine-calf-serum-bcs` — ambiguous-prefix (3)
+- `/product/γ-6-aminohexyl-atp-atto-612q` — no-match
+- `/product/γ-6-aminohexyl-dgtp-atto-532` — no-match
+- `/product/phospho-alk-tyr1096-d96h9-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/whitlow-218-linker-e3u7q-rabbit-mab-3` — ambiguous-prefix (6)
+- `/product/3500xl-dx-genetic-analyzer-24-capillary-array-50-cm` — no-match
+- `/product/atg13-e1y9v-rabbit-mab-2` — ambiguous-prefix (3)
+- `/product/upp1-e6y2b-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/histone-h2a-x-d17a3-xp-rabbit-mab` — ambiguous-prefix (6)
+- `/product/madcam-1-e1v8f-rabbit-mab` — ambiguous-prefix (3)
+- `/product/bttaa` — no-match
+- `/product/ntp-bundle-2` — ambiguous-prefix (2)
+- `/product/dcp1b-d2p9w-rabbit-mab` — ambiguous-prefix (2)
+- `/product/pe-cyanine7-anti-human-ifn-γ-antibody` — no-match
+- `/product/ppari³-d8i3y-mouse-mab-2` — no-match
+- `/product/dele1-e9k6o-rabbit-mab` — ambiguous-prefix (2)
+- `/product/duke-standards-2000-series-uniform-polymer-particles-15-μm-each` — no-match
+- `/product/lexsy-tet` — ambiguous-prefix (3)
+- `/product/pe-anti-human-cd196-ccr6-antibody-100-tests` — no-match
+- `/product/cadherin-17-e5j8z-rabbit-mab` — ambiguous-prefix (3)
+- `/product/5-atto-390-3-dabcyl-4` — ambiguous-prefix (5)
+- `/product/ptprcap-e8e6g-rabbit-mab` — ambiguous-prefix (2)
+- `/product/oas1-d1w3a-rabbit-mab` — ambiguous-prefix (2)
+- `/product/lamin-a-c-4c11-mouse-mab-2` — ambiguous-prefix (5)
+- `/product/gp130-e6x8s-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/phospho-c-abl-tyr245-73e5-rabbit-mab` — ambiguous-prefix (2)
+- `/product/qpcr-probesmaster` — ambiguous-prefix (6)
+- `/product/remel-mcfarland-equivalence-turbidity-standards-turbidity-standard-0-5` — no-match
+- `/product/erp72-d70d12-xp-rabbit-mab` — ambiguous-prefix (2)
+- `/product/k-lactis-protein-expression-kit-1-kit` — no-match
+- `/product/ampa-receptor-4-glua-4-d41a11-xp-rabbit-mab` — ambiguous-prefix (3)
+- `/product/i²-actin-d6a8-rabbit-mab` — no-match
+- `/product/neb-10-beta-competent-e-coli-high-efficiency-24-rxns-6-x-200µl` — no-match
+- `/product/i²-catenin-antibody-amino-terminal-antigen` — no-match
+- `/product/pe-cyanine7-anti-human-ifn-γ-antibody-100-tests` — no-match
+- `/product/bid-antibody` — ambiguous-prefix (2)
+- `/product/8-6-aminohexyl-amino-adenosine-25-bisphosphate-atto-655` — no-match
+- `/product/bcl-2-d55g8-rabbit-mab` — ambiguous-prefix (2)
+- `/product/succinic-acid-acs-reagent-≥99-0-500-g` — no-match
+- `/product/i±-smooth-muscle-actin-d4k9n-xp-rabbit-mab-alexa-fluor-488-conjugate` — no-match
+- `/product/apc-fire-750-anti-human-cd194-ccr4-antibody-25-tests` — no-match
+- `/product/epha3-a4-a5-d2c11-rabbit-mab` — ambiguous-prefix (2)
+- `/product/mes-hydrate-≥99-5-titration-1-kg` — no-match
+- `/product/antibody-binding-buffer-cutrun-cuttag` — no-match
+- `/product/anti-mouse-igm-μ-chain-specific-peroxidase-antibody-produced-in-goat-1-ml` — no-match
+- `/product/itm2b-bri2-e6o3y-rabbit-mab` — ambiguous-prefix (2)
+- `/product/neurofilament-l-da2-mouse-mab` — ambiguous-prefix (2)
+- `/product/nsdhl-f3p8w-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/dap2nic` — no-match
+- `/product/genescan-120-liz-dye-size-standard` — no-match
+- `/product/phospho-tbk1-nak-ser172-d52c2-xp-rabbit-mab` — ambiguous-prefix (6)
+- `/product/trypsin-digested-bsa-ms-standard-cam-modified-500-pmol` — no-match
+- `/product/phospho-bcl-2-ser70-5h2-rabbit-mab-3` — ambiguous-prefix (5)
+- `/product/heracell-240i-co2-incubator-240-l-copper` — no-match
+- `/product/fetal-bovine-serum-value-heat-inactivated-formerly-usda-approved-in-north-america-or-qualified-brazil-in-other-regions-500-ml` — no-match
+- `/product/high-range-dna-ladder` — ambiguous-prefix (2)
+- `/product/eosinophil-cationic-protein-e6u5m-rabbit-mab` — ambiguous-prefix (3)
+- `/product/γ-6-aminohexyl-gtp-atto-620` — no-match
+- `/product/myristyltrimethylammonium-bromide-≥99` — no-match
+- `/product/pbs-ph-7-4-500-ml` — no-match
+- `/product/grk6-d1a4-rabbit-mab` — ambiguous-prefix (2)
+- `/product/γ-8-aminooctyl-imido-8-oxo-gtp-2` — no-match
+- `/product/dll3-e3j5r-rabbit-mab-2` — ambiguous-prefix (3)
+- `/product/matrix-standards-kit-bigdye-terminator-v3-1-for-31xx-3500-seqstudio-seqstudio-flex-1-kit` — no-match
+- `/product/tnf-alpha-monoclonal-antibody-mab11-pe-cyanine7-ebioscience-100-µg` — no-match
+- `/product/γ-6-aminohexyl-atp-atto-rho14` — no-match
+- `/product/λdna-psti-digest-2` — no-match
+- `/product/cadherin-17-e5b1y-rabbit-mab` — ambiguous-prefix (2)
+- `/product/sr95531-gabazine-10-mg` — no-match
+- `/product/one-glo-luciferase-assay-system-10-ml` — no-match
+- `/product/fgf-2-human-procartaplex-simplex-kit-96-tests` — no-match
+- `/product/histone-h3-3-human-recombinant-100-µg` — no-match
+- `/product/ampki±-d5a2-rabbit-mab-biotinylated` — no-match
+- `/product/txnip-d5f3e-rabbit-mab-2` — ambiguous-prefix (3)
+- `/product/th-complete-14-plex-rat-procartaplex-panel-96-tests` — no-match
+- `/product/countess-3-fl-automated-cell-counter-1-instrument` — no-match
+- `/product/taqman-universal-pcr-master-mix-10-x-5-ml` — no-match
+- `/product/percp-cyanine5-5-anti-h2a-x-phosphorylated-ser139-antibody-100-tests` — no-match
+- `/product/tie1-d2k2t-rabbit-mab` — ambiguous-prefix (2)
+- `/product/44′4′′4′′′-porphine-5101520-tetrayltetrakisbenzoic-acid` — no-match
+- `/product/human-factor-ix-native-protein-100-µg` — no-match
+- `/product/bamhi-hf-50-000-units` — no-match
+- `/product/egta-ethylene-glycol-bis2-aminoethylether-nnn′n′-tetraacetic-acid-bioultra-for-molecular-biology-≥99-0-t` — no-match
+- `/product/cd45-monoclonal-antibody-cc1-fitc-100-tests` — no-match
+- `/product/sbfi-hf-500-units` — no-match
+- `/product/phospho-estrogen-receptor-i±-ser167-d5w3z-rabbit-mab-chip-formulated-2` — no-match
+- `/product/ptwin2-vector-dna-10-µg` — no-match
+- `/product/2-2-dimethylaminoethoxyethanol-98-250-ml` — no-match
+- `/product/thpta-2` — no-match
+- `/product/highyield-t7-arca-mrna-synthesis-kit-5moutp-2` — ambiguous-prefix (2)
+- `/product/nα-benzoyl-dl-arginine-4-nitroanilide-hydrochloride-2` — no-match
+- `/product/γ-6-aminohexyl-imido-atp-2` — no-match
+- `/product/datp-solution-25-µmol` — no-match
+- `/product/script-direct-rt-qpcr-probesmaster-2` — ambiguous-prefix (6)
+- `/product/ciao1-d4e2u-rabbit-mab` — ambiguous-prefix (2)
+- `/product/qiasymphony-dna-investigator-kit-192-samples` — no-match
+- `/product/arf6-d12g6-rabbit-mab` — ambiguous-prefix (2)
+- `/product/pathscan-rp-phospho-atg13-ser355-sandwich-elisa-kit-4` — ambiguous-prefix (5)
+- `/product/xtp-triethylammonium-salt-2` — ambiguous-prefix (2)
+- `/product/rubicon-d9f7-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/eda-gtpγs-atto-655` — no-match
+- `/product/neb-10-beta-competent-e-coli-high-efficiency-1-x-96-wells` — no-match
+- `/product/sodium-chloride-5kg` — ambiguous-prefix (3)
+- `/product/nebnext-rrna-depletion-kit-24-rxns` — no-match
+- `/product/eco91i-bsteii-10-u-µl-1000-units` — no-match
+- `/product/cd248-e9z7o-xp-rabbit-mab` — ambiguous-prefix (3)
+- `/product/γ-6-aminohexyl-atp-6-rox` — no-match
+- `/product/microbial-dna-standard-from-escherichia-coli-0-3-μg` — no-match
+- `/product/α-zearalenol-5-mg` — no-match
+- `/product/phix174-dna-hae-iii-digest-250-gel-lanes` — no-match
+- `/product/pngase-f-glycan-cleavage-kit-1-kit` — no-match
+- `/product/fastruler-middle-range-dna-ladder-ready-to-use-1000µl` — no-match
+- `/product/platinum-taq-dna-polymerase-dna-free-400-reactions` — no-match
+- `/product/saphir-bst-polymerase-2` — ambiguous-prefix (2)
+- `/product/abgene-96-well-0-8ml-polypropylene-deepwell-sample-processing-storage-plate-for-genomics-and-ngs-library-preparation` — ambiguous-prefix (2)
+- `/product/phusion-high-fidelity-dna-polymerase-2-u-µl-500-units` — no-match
+- `/product/aurora-a-1f8-mouse-mab-2` — ambiguous-prefix (2)
+- `/product/psph-e1d2x-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/dusp6-mkp3-f8s8f-rabbit-mab` — ambiguous-prefix (2)
+- `/product/apoe-e7x2a-rabbit-mab` — ambiguous-prefix (3)
+- `/product/γ-6-aminohexyl-gtp-6-rox` — no-match
+- `/product/agar-5` — no-match
+- `/product/id3-d16d10-rabbit-mab` — ambiguous-prefix (2)
+- `/product/rox-reference-dye-100-μm` — no-match
+- `/product/hexanes-98-extra-pure` — no-match
+- `/product/anti-tpo-ab-l2kto2-6607526-200` — no-match
+- `/product/utp-solid-4` — ambiguous-prefix (4)
+- `/product/protoscript-ii-reverse-transcriptase-40-000-units` — no-match
+- `/product/sortbitol-bioultra-≥99-0-hplc-250-g` — no-match
+- `/product/gpx3-polyclonal-antibody-20-µl` — no-match
+- `/product/crystal-mount-base-assembly-19` — ambiguous-prefix (6)
+- `/product/acetyl-i±-tubulin-lys40-d20g3-xp-rabbit-mab` — no-match
+- `/product/neun-e4m5p-mouse-mab-2` — ambiguous-prefix (2)
+- `/product/warmstart-colorimetric-lamp-2x-master-mix-with-udg-100-rxns` — no-match
+- `/product/hoxd9-e3f2t-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/oca-t2-f5a7z-rabbit-mab` — ambiguous-prefix (2)
+- `/product/ring1b-d22f2-xp-rabbit-mab-2` — ambiguous-prefix (3)
+- `/product/psti-conc-50-000-units` — no-match
+- `/product/phospho-sqstm1-p62-ser403-d8d6t-rabbit-mab` — ambiguous-prefix (2)
+- `/product/boric-acid-puriss-p-a-acs-reagent-reag-iso-reag-ph-eur-buffer-substance-≥99-8-500-g` — no-match
+- `/product/millex-pvdf-syringe-filter-pore-size-0-45-μm` — no-match
+- `/product/lrsam1-d1o5s-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/cmv-igm-control` — no-match
+- `/product/fura-2-am-cell-permeant-1-mg` — no-match
+- `/product/brachyury-d2z3j-rabbit-mab-2` — ambiguous-prefix (4)
+- `/product/nupage-lds-sample-buffer-4x` — no-match
+- `/product/sarcomeric-alpha-actinin-monoclonal-antibody-ea-53-500-µl` — no-match
+- `/product/cell-death-detection-elisaplus-10-x-95-tests-sigma-aldrich` — no-match
+- `/product/cy5-5-azide` — ambiguous-prefix (3)
+- `/product/brilliant-violet-421-anti-human-cd24-antibody-100-tests` — no-match
+- `/product/brucella-blut-agar-m-hamin-vitamin-k1-ve-20-st` — no-match
+- `/product/β-galactosidase-e-coli-5mg` — no-match
+- `/product/imp1-d33a2-rabbit-mab` — ambiguous-prefix (2)
+- `/product/rhoa-67b9-rabbit-mab` — ambiguous-prefix (2)
+- `/product/infinium-oncoarray-500k-beadchip-kit-48-samples` — ambiguous-prefix (2)
+- `/product/ubc9-d26f2-xp-rabbit-mab` — ambiguous-prefix (2)
+- `/product/pathscan-total-i±-tubulin-sandwich-elisa-antibody-pair` — no-match
+- `/product/dmem-high-glucose-neaa-no-glutamine` — no-match
+- `/product/nebnext-globin-rrna-depletion-kit-human-mouse-rat-with-beads-24-rxns` — no-match
+- `/product/nebnext-enzymatic-5hmc-seq-conversion-module-96-rxns` — no-match
+- `/product/pathscan-total-nf-iob-p65-sandwich-elisa-kit-4` — no-match
+- `/product/irak4-antibody` — ambiguous-prefix (2)
+- `/product/aquasil2-p-n-77503-014001-3-µm-120-a-100-0-x-4-6-mm` — no-match
+- `/product/recombinant-mouse-fcγriii-cd16-carrier-free-10-µg` — no-match
+- `/product/γ-6-aminohexyl-gtp-atto-532` — no-match
+- `/product/mhc-class-i-e6l8f-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/foxp3-monoclonal-antibody-3g3-fitc-100-µl` — no-match
+- `/product/carboxyl-latex-beads-0-8-1-0-µm-15ml` — no-match
+- `/product/gst-tag-26h1-mouse-mab-2` — ambiguous-prefix (2)
+- `/product/mouse-igg1-isotype-control-mopc-21-100-µg` — no-match
+- `/product/14-benzoquinone-99-100g` — no-match
+- `/product/snat1-slc38a1-d9l2p-rabbit-mab` — ambiguous-prefix (2)
+- `/product/nebnext-ultra-ii-non-directional-rna-second-strand-module-100-reactions-100-reactions` — no-match
+- `/product/thiazole-orange-2` — ambiguous-prefix (2)
+- `/product/psa-lkps1-6603245-100` — no-match
+- `/product/n4bp1-e9a4j-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/d-glucose-≥99-5-gc-25-kg` — no-match
+- `/product/pkd-pkci¼-d4j1n-rabbit-mab-2` — no-match
+- `/product/monarch-plasmid-wash-buffer-1-2x27-ml` — no-match
+- `/product/symplekin-d5y3t-rabbit-mab` — ambiguous-prefix (2)
+- `/product/cd48-d7l8i-xp-rabbit-mab` — ambiguous-prefix (3)
+- `/product/western-blotting-filter-paper-0-83-mm-thick-7-x-8-4-cm-100-sheets` — no-match
+- `/product/nrf2-d1z9ca-xp-rabbit-mab` — no-match
+- `/product/tcf12-heb-d2c10-rabbit-mab` — ambiguous-prefix (2)
+- `/product/mouse-igg1-isotype-control-pe` — no-match
+- `/product/hcv-core-36-kda` — ambiguous-prefix (2)
+- `/product/catalase-d4p7ba-xp-rabbit-mab` — no-match
+- `/product/papd7-f1q9r-rabbit-mab` — ambiguous-prefix (2)
+- `/product/ultrapure-agarose` — no-match
+- `/product/serpinb9-e9x9z-rabbit-mab` — ambiguous-prefix (5)
+- `/product/penicillin-streptomycin-10000-u-ml-100-ml` — no-match
+- `/product/hpk1-e1c3l-rabbit-mab-2` — ambiguous-prefix (6)
+- `/product/purified-anti-caspase-8-antibody-25-µg` — no-match
+- `/product/cd45-monoclonal-antibody-hi30-pacific-orange-25-tests` — no-match
+- `/product/phospho-egf-receptor-tyr1173-53a5-rabbit-mab-3` — ambiguous-prefix (4)
+- `/product/apc-anti-human-cd28-antibody-100-tests` — no-match
+- `/product/antibodies-pe-cyanine7-anti-human-cd4-antibody-100-tests` — no-match
+- `/product/mnli-2` — no-match
+- `/product/5-fluo-3-eclipse-4` — ambiguous-prefix (5)
+- `/product/androstendione-l2kao2-6605043-200` — no-match
+- `/product/filamin-b-d7e4w-rabbit-mab` — ambiguous-prefix (2)
+- `/product/hop-d10e2-xp-rabbit-mab` — ambiguous-prefix (2)
+- `/product/estrogen-receptor-i±-d6r2w-rabbit-mab` — no-match
+- `/product/3-azido-23-ddgtp` — no-match
+- `/product/sticktogether-dna-ligase-buffer-20-ml` — no-match
+- `/product/cryab-d6s9e-rabbit-mab` — ambiguous-prefix (2)
+- `/product/asc-tms1-f8u7p-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/transferrin-receptor-cd71-h68-4-mouse-mab-2` — ambiguous-prefix (2)
+- `/product/triethylamine-≥99-100-ml` — no-match
+- `/product/anti-sheep-igg-h-l-cross-ab-sorbed` — no-match
+- `/product/etheno-amp-ε-amp` — no-match
+- `/product/3-well-crystallization-plate-low-profile-uvxpo-2` — ambiguous-prefix (2)
+- `/product/eosin-5-maleimide-25-mg` — no-match
+- `/product/anti-rabbit-igg-hrp-linked-antibody-2` — ambiguous-prefix (4)
+- `/product/mant-atp` — ambiguous-prefix (4)
+- `/product/nebnext-adaptor-dilution-buffer-96-ml` — no-match
+- `/product/sars-glycoprotein-m` — ambiguous-prefix (2)
+- `/product/glucocorticoid-receptor-d4x9s-mouse-mab` — ambiguous-prefix (2)
+- `/product/qiagen-qxl9xr/tissuelyser-lt-adapter--12-tub-69980-13996` — no-match
+- `/product/tppp-p25-e9c8g-rabbit-mab` — ambiguous-prefix (2)
+- `/product/5-fluo-3-tamra-4` — ambiguous-prefix (5)
+- `/product/20ul-no-filter-tips-2` — no-match
+- `/product/200ul-filter-tips-3` — no-match
+- `/product/alcian-blue-8-gs-c-l-74240` — ambiguous-prefix (2)
+- `/product/countess-cell-counting-chamber-slides-500-slides` — no-match
+- `/product/finnpipette-f2-variable-volume-pipettes-finntip-5ml-filter-5ml` — no-match
+- `/product/phospho-gsk-3i±-ser21-d1g2-rabbit-mab-2` — no-match
+- `/product/esp3i-bsmbi-10-u-μl-200-units` — no-match
+- `/product/5-atto-520-3-dabcyl-2` — ambiguous-prefix (5)
+- `/product/rab5-c8b1-rabbit-mab` — ambiguous-prefix (2)
+- `/product/ultrapure-1m-tris-hci-ph-8-0-1-l-2` — no-match
+- `/product/zytolight-️-spec-ret-dual-color-break-apart-probe` — no-match
+- `/product/β-nicotinamide-adenine-dinucleotide-hydrate-98-1-g` — no-match
+- `/product/i±-smooth-muscle-actin-d4k9n-xp-rabbit-mab-bsa-and-azide-free` — no-match
+- `/product/t7-dna-ligase-100-000-units` — no-match
+- `/product/cd102-icam-2-d7p2q-rabbit-mab` — ambiguous-prefix (2)
+- `/product/270504-2-5l-hexane` — no-match
+- `/product/phospho-lat-tyr255-e3k6b-rabbit-mab` — ambiguous-prefix (2)
+- `/product/wash-buffer-ii-access` — no-match
+- `/product/medical-face-mask-type-1` — no-match
+- `/product/paqci-200-units` — no-match
+- `/product/silica-gel-inorganic-sorbent-pore-size-60-a-100-g` — no-match
+- `/product/g3bp1-e9g1m-xp-rabbit-mab` — ambiguous-prefix (4)
+- `/product/hev-orf2-44-kda` — ambiguous-prefix (2)
+- `/product/5-atto-520-3-dabcyl-5` — ambiguous-prefix (5)
+- `/product/10ul-no-filter-tips-3` — no-match
+- `/product/celltracker-green-cmfda-dye-20-x-50-µg` — no-match
+- `/product/hsv-1-gd` — ambiguous-prefix (2)
+- `/product/zytolight-️-spec-ntrk1-dual-color-break-apart-probe` — no-match
+- `/product/rpmi-1640-medium-no-glucose-500ml` — no-match
+- `/product/olig2-e6g6q-xp-rabbit-mab` — ambiguous-prefix (5)
+- `/product/mitotracker-red-cmxros-special-packaging-20-x-50-µg` — no-match
+- `/product/1-kb-dna-ladder-2` — ambiguous-prefix (5)
+- `/product/8-6-aminohexyl-amino-camp-2` — ambiguous-prefix (6)
+- `/product/axin1-c76h11-rabbit-mab-2` — ambiguous-prefix (3)
+- `/product/boric-acid-3` — ambiguous-prefix (6)
+- `/product/tspo-d1n7z-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/mdh2-d8q5s-rabbit-mab` — ambiguous-prefix (2)
+- `/product/whsc1l1-d4n9n-rabbit-mab` — ambiguous-prefix (3)
+- `/product/tev-protease-high-concentration` — ambiguous-prefix (2)
+- `/product/qubit-4-fluorometer-with-wifi-new-cat-q33238` — no-match
+- `/product/rbm8a-e5z8t-rabbit-mab` — ambiguous-prefix (2)
+- `/product/nebnext-multiplex-oligos-for-mgi-dual-index-primer-pairs-set-1-96-rxns` — no-match
+- `/product/symmetric-di-methyl-histone-h4-arg3-e5z6w-rabbit-mab` — ambiguous-prefix (2)
+- `/product/phospho-git2-tyr392-d8n9a-rabbit-mab` — ambiguous-prefix (2)
+- `/product/t4-rna-ligase-reaction-buffer-3-ml` — no-match
+- `/product/dynabeads️-m-280-sheep-anti-mouse-igg` — no-match
+- `/product/roche-cobas-e402-e801-calset-mioglobina-2` — ambiguous-prefix (2)
+- `/product/pierce-c18-spin-tips-columns-96-x-10-µl-tips` — no-match
+- `/product/phospho-ikki±-i²-ser176-180-16a6-rabbit-mab-alexa-fluor-488-conjugate` — no-match
+- `/product/sucrose-≥99-5-1-kg` — no-match
+- `/product/cholera-toxin-beta-polyclonal-antibody-1-ml` — no-match
+- `/product/mycoprep-75ml-bottles` — no-match
+- `/product/i±-actinin-4-d7u5a-rabbit-maba` — no-match
+- `/product/rad50-antibody` — ambiguous-prefix (4)
+- `/product/mitotracker-green-fm-dye-for-flow-cytometry` — no-match
+- `/product/vasp-9a2-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/8-6-aminohexyl-amino-adenosine-35-bisphosphate-dy-480xl` — no-match
+- `/product/artemis-d7o8v-rabbit-mab` — ambiguous-prefix (2)
+- `/product/ammonium-acetate-acs-reagent-≥97-500-g` — no-match
+- `/product/cd22-e7l6z-xp-rabbit-mab-2` — ambiguous-prefix (3)
+- `/product/purified-anti-human-cd105-antibody-100-µg` — no-match
+- `/product/thermostable-inorganic-pyrophosphatase-1-250-units` — no-match
+- `/product/hcv-core-36-kda-2` — ambiguous-prefix (2)
+- `/product/pierce-streptavidin-plus-ultralink-resin-2-ml` — no-match
+- `/product/cd44-monoclonal-antibody-im7-pe-cyanine7-ebioscience-100-µg` — no-match
+- `/product/invitrogen-silverxpress-silver-staining-kit-625ml` — no-match
+- `/product/nme1-ndka-d18f10-rabbit-mab` — ambiguous-prefix (2)
+- `/product/aim-v-medium-liquid-research-grade-500-ml` — no-match
+- `/product/micro-tubes-05ml` — no-match
+- `/product/agilent-6100` — no-match
+- `/product/hcv-ns5-genotype-3a-36-kda-2` — ambiguous-prefix (2)
+- `/product/neuropilin-1-e8l6e-rabbit-mab` — ambiguous-prefix (4)
+- `/product/nup62-e4y5p-rabbit-mab` — ambiguous-prefix (2)
+- `/product/eda-atpγs-atto-647n` — no-match
+- `/product/goat-anti-rabbit-igg-h-l-highly-cross-adsorbed-secondary-antibody-alexa-fluor-plus-5551mg` — no-match
+- `/product/p27-kip1-d69c12-xp-rabbit-mab-2` — ambiguous-prefix (5)
+- `/product/i±-actinin-antibody` — no-match
+- `/product/4-azido-l-phenylalanine-3` — ambiguous-prefix (3)
+- `/product/cd3iµ-e4t1b-xp-rabbit-mab` — no-match
+- `/product/oxacillin-sodium-0-1g` — no-match
+- `/product/malonyl-lysine-mal-k-multimab-rabbit-mab-mix-2` — ambiguous-prefix (2)
+- `/product/duke-standards-2000-series-uniform-polymer-particles-25-μm-each` — no-match
+- `/product/qubit️-dsdna-hs-and-br-assay-kits` — no-match
+- `/product/cytochrome-c-from-bovine-heart-≥95-based-on-mol-wt-12327-basis-250-mg` — no-match
+- `/product/rapidlab-845-4` — ambiguous-prefix (2)
+- `/product/slmap-e5f4y-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/anti-human-igg-fc-specific−peroxidase-antibody-produced-in-goat-1-ml` — no-match
+- `/product/cytokine-control-lilcm-6601110-3-x-2-ml` — no-match
+- `/product/hypersep-hypercarb-spe-cartridges-1-ml-pack-of-50` — no-match
+- `/product/protein-a-agarose-beads` — ambiguous-prefix (2)
+- `/product/bigdye-terminator-v1-1-cycle-sequencing-kit-24-reactions` — no-match
+- `/product/di-methyl-histone-h3-lys79-d15e8-xp-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/blotting-papers-rotilabo-thickness-10-mm-15-x-15-cm` — no-match
+- `/product/cea-l2kce2-6605256-200` — no-match
+- `/product/γ-6-aminohexyl-atp-texas-red` — no-match
+- `/product/phospho-npm1-ser4-d19c1-xp-rabbit-mab-2` — ambiguous-prefix (3)
+- `/product/prolong-gold-antifade-mountant-5-x-2-ml` — no-match
+- `/product/wash-buffer-ii-dxi` — no-match
+- `/product/nα-benzoyl-dl-arginine-4-nitroanilide-hydrochloride-3` — no-match
+- `/product/wash-buffer-ii-onboard-reagent-k` — no-match
+- `/product/anti-snap-tag-antibody-polyclonal-100-µl` — no-match
+- `/product/rhodamine-123-25-mg-25-mg` — no-match
+- `/product/jena-mj19mt8d/nourseothricin-powder-ab-102-1` — ambiguous-prefix (2)
+- `/product/perforin-e7d8r-rabbit-mab` — ambiguous-prefix (2)
+- `/product/barcoded-goniometer-base-b3-3` — ambiguous-prefix (4)
+- `/product/d-mannitol-≥98-gc-100-g` — no-match
+- `/product/qiaprep-spin-miniprep-kit` — ambiguous-prefix (2)
+- `/product/choone-e-expression-medium-without-insulin-without-l-glutamine-with-pluronic` — no-match
+- `/product/eda-gtpγs-dyq-660` — no-match
+- `/product/eco47iii-afei-10-u-μl` — no-match
+- `/product/atf7ip-f8c9i-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/pdcd4-d29c6-xp-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/phrodo-ifl-green-microscale-protein-labeling-kit-3-labelings` — no-match
+- `/product/ccl3-mip-1i±-f2m8q-rabbit-mab` — no-match
+- `/product/qiasymphony-dsp-dna-mini-kit-192` — no-match
+- `/product/dntp-mix-pcr-grade-200-µl` — no-match
+- `/product/rad21-d5y8s-rabbit-mab` — ambiguous-prefix (2)
+- `/product/b-myb-f9w2m-rabbit-mab` — ambiguous-prefix (2)
+- `/product/live-dead-baclight-bacterial-c-1-kit-1-kit` — no-match
+- `/product/abbott/cc-multigent-cannabinoid-rgt-3l4120-6775` — no-match
+- `/product/phospho-14-3-3-i-ser58-i·-ser59-i³-ser59-i²-i±-ser60-e6b3g-rabbit-mab-2` — no-match
+- `/product/xcell-ii-blot-module-1-unit` — no-match
+- `/product/p190-a-rhogap-d8q6c-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/poly-mono-adp-ribose-d9p7z-rabbit-mab` — ambiguous-prefix (4)
+- `/product/purexpress-disulfide-bond-enhancer-50-rxns` — no-match
+- `/product/dpf3-baf45c-e7f7n-rabbit-mab` — ambiguous-prefix (2)
+- `/product/om-ma-lomz-6655512-25-ml` — no-match
+- `/product/barcoded-goniometer-base-b1a` — ambiguous-prefix (4)
+- `/product/waste-bags-access` — no-match
+- `/product/jq1` — no-match
+- `/product/agilent-1100` — no-match
+- `/product/vitek2-nh-id` — no-match
+- `/product/xn-check-set-1x3x30ml` — no-match
+- `/product/vitek-ms-matrix-solution` — no-match
+- `/product/wash-solution-2` — ambiguous-prefix (3)
+- `/product/vitek2-ast-n215` — no-match
+- `/product/sa7000` — no-match
+- `/product/agilent-6200` — no-match
+- `/product/5-atto-520-3-eclipse` — ambiguous-prefix (5)
+- `/product/metanephrine-sulentestkit` — no-match
+- `/product/100ul-no-filter-tips` — no-match
+- `/product/diaclon-anti-c3d-monoklonal-id-n14940` — no-match
+- `/product/tgf-beta-1-monoclonal-antibody-tb21-100-µl` — no-match
+- `/product/lipofectamine-3000-transfection-reagent-1-5-ml` — no-match
+- `/product/lyoprime-warmstart-fluorescent-lamp-rt-lamp-mix-with-udg-100-rxns` — no-match
+- `/product/sigma-aldrich/pyridine-02486-1m` — no-match
+- `/product/4-azido-l-phenylalanine-2` — ambiguous-prefix (3)
+- `/product/carl-roth/adenosine-5--triphosphate-diso-310l1-6485` — no-match
+- `/product/ssu72-d3i2d-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/nari-500units-500-units` — no-match
+- `/product/phadia-mj19emf3/w230-allergen-component-namb-a-14496901-3295` — no-match
+- `/product/pvdf-transfer-membranes-0-45-μm-1-roll` — no-match
+- `/product/decorin-e2n2c-xp-rabbit-mab-2` — ambiguous-prefix (3)
+- `/product/elp3-d5h12-rabbit-mab` — ambiguous-prefix (2)
+- `/product/gi-ma-ca-19-9-l2kgi2-6606090-200` — no-match
+- `/product/l-α-lysophosphatidylcholine-from-glycine-max-soybean-100mg` — no-match
+- `/product/symplekin-d5y3t-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/phospho-perk-thr980-16f8-rabbit-mab-3` — ambiguous-prefix (3)
+- `/product/carlroth/alizarin-s-solution-100-ml-1` — no-match
+- `/product/exosap-it-express-pcr-product-cleanup-reagent-500-reactions` — no-match
+- `/product/instrumentation-laboratory/il-acl-9000-24a13b72` — no-match
+- `/product/protor-2-d19a5-rabbit-mab` — ambiguous-prefix (2)
+- `/product/eif4a2-f3s3x-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/ifn-gamma-human-procartaplex-simplex-kit` — no-match
+- `/product/phospho-cdc2-tyr15-10a11-rabbit-mab-2` — ambiguous-prefix (5)
+- `/product/illumina-yuw4if/infinium-core-24-v1-2-kit--115-20024568-16504` — no-match
+- `/product/γ-bbt-ctp` — no-match
+- `/product/goniometer-base-b4` — ambiguous-prefix (3)
+- `/product/poly-mono-adp-ribose-d9p7z-rabbit-mab-2` — ambiguous-prefix (4)
+- `/product/mig-cxcl9-human-procartaplex-simplex-kit` — no-match
+- `/product/abbott-m2000rt-0c0f3efa` — no-match
+- `/product/illumina-yuw4if/infinium-xt-starter-kit--48-be-20011069-16545` — no-match
+- `/product/5-tamra-azide-2` — ambiguous-prefix (2)
+- `/product/xrcc2-e7m8y-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/nuclease-free-water-not-depc-treated-1-x-500-ml` — no-match
+- `/product/wtx-amer1-d38e5-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/cd84-e4f2n-rabbit-mab` — ambiguous-prefix (2)
+- `/product/ifn-i²1-d1d7g-rabbit-mab-2` — no-match
+- `/product/abbott/fob-gold-sentinel-control-set-wide-0l115710` — no-match
+- `/product/yeast-dna-preparation-solution-kit-2` — ambiguous-prefix (2)
+- `/product/roche-diagnostics/hitachi-911-c12437a1` — no-match
+- `/product/endo-f2-480-units` — no-match
+- `/product/slc25a37-f6w1r-rabbit-mab-2` — ambiguous-prefix (2)
+- `/product/roche-diagnostics/hitachi-912-91f024d4` — no-match
+- `/product/albumin-acetylated-from-bovine-serum` — ambiguous-prefix (2)
+- `/product/lc3a-b-d3u4c-xp-rabbit-mab-2` — ambiguous-prefix (6)
+- `/product/cholera-toxin-beta-polyclonal-antibody-fitc-1-ml` — no-match
+- `/product/neuraminidase-from-clostridium-perfringens-c-welchii-5u` — no-match
+- `/product/epha7-d1c3k-rabbit-mab` — ambiguous-prefix (2)
+- `/product/i²-actin-d6a8-rabbit-mab-3` — no-match
+- `/product/pi3-kinase-class-iii-d9a5-rabbit-mab` — ambiguous-prefix (2)
+- `/product/azdye488-nt-labeling-kit-2` — ambiguous-prefix (2)
+- `/product/lambda-dna-hind-iii-digest-750-gel-lanes` — no-match
+- `/product/celltiter-96-aqueous-non-radioactive-proliferation-assay-5000-assays` — no-match
+- `/product/phospho-stat2-tyr690-d3p2p-rabbit-mab` — ambiguous-prefix (6)
+- `/product/8-6-aminohexyl-amino-adenosine-35-bisphosphate-atto-rho13` — no-match
+- `/product/hbeag` — no-match
+- `/product/mouse-igg2b-kappa-isotype-control-ebmg2b-fitc-50-µg` — no-match
+
+## Sample matches
+
+- `/product/1-thioglycerol` → `/product/sigma-aldrich/1-thioglycerol-m1753-500ml` (prefix-base+sku)
+- `/product/21x1-fbn` → `/product/bd/21x1-fbn-301746` (prefix-base+sku)
+- `/product/5-cy3-apu` → `/product/jena/5-cy3-apu-nu-917-cy3` (prefix-base+sku)
+- `/product/5-propargylamino-ctp-atto-rho13` → `/product/jena/5-propargylamino-ctp-atto-rho13-nu-831-rho13` (prefix-base+sku)
+- `/product/5-propargylamino-ctp-cy3` → `/product/jena/5-propargylamino-ctp-cy3-nu-831-cy3` (prefix-base+sku)
+- `/product/5-propargylamino-ctp-cy3-high-concentration` → `/product/jena/5-propargylamino-ctp-cy3-high-concentration-nu-831-cy3-hc` (prefix-base+sku)
+- `/product/5-propargylamino-ddctp-atto-495` → `/product/jena/5-propargylamino-ddctp-atto-495-nu-850-495` (prefix-base+sku)
+- `/product/5-propargylamino-ddctp-dyq-660` → `/product/jena/5-propargylamino-ddctp-dyq-660-nu-850-660q` (prefix-base+sku)
+- `/product/5-propargylamino-ddutp-atto-580q` → `/product/jena/5-propargylamino-ddutp-atto-580q-nu-1619-580q` (prefix-base+sku)
+- `/product/5-propargylamino-ddutp-atto-665` → `/product/jena/5-propargylamino-ddutp-atto-665-nu-1619-665` (prefix-base+sku)
+- `/product/5-propargylamino-ddutp-atto-thio12` → `/product/jena/5-propargylamino-ddutp-atto-thio12-nu-1619-thio12` (prefix-base+sku)
+- `/product/7-propargylamino-7-deaza-ddgtp-atto-550` → `/product/jena/7-propargylamino-7-deaza-ddgtp-atto-550-nu-1618-550` (prefix-base+sku)
+- `/product/7-propargylamino-7-deaza-dgtp-atto-647n` → `/product/jena/7-propargylamino-7-deaza-dgtp-atto-647n-nu-1615-647n` (prefix-base+sku)
+- `/product/8-6-aminohexyl-amino-atp-6-fam` → `/product/jena/8-6-aminohexyl-amino-atp-6-fam-nu-807-6fm` (prefix-base+sku)
+- `/product/8-6-aminohexyl-amino-atp-texas-red` → `/product/jena/8-6-aminohexyl-amino-atp-texas-red-nu-807-txr` (prefix-base+sku)
+- `/product/8-6-aminohexyl-amino-gmp-dy-751` → `/product/jena/8-6-aminohexyl-amino-gmp-dy-751-nu-829-751` (prefix-base+sku)
+- `/product/8-6-aminohexyl-amino-gtp-6-fam` → `/product/jena/8-6-aminohexyl-amino-gtp-6-fam-nu-830-6fm` (prefix-base+sku)
+- `/product/8-6-aminohexyl-amino-gtp-dyq-660` → `/product/jena/8-6-aminohexyl-amino-gtp-dyq-660-nu-830-660q` (prefix-base+sku)
+- `/product/ab-sciex-llc-dsdna-1000-test-mix` → `/product/ab-sciex/ab-sciex-llc-dsdna-1000-test-mix-477414` (prefix-base+sku)
+- `/product/ab-sciex-llc-lif-performance-test-mix-488-nm` → `/product/ab-sciex/ab-sciex-llc-lif-performance-test-mix-488-nm-726022` (prefix-base+sku)
+- `/product/abbott-alinity-c-ago-campione` → `/product/abbott/abbott-alinity-c-ago-campione-4s5101` (prefix-base+sku)
+- `/product/abbott-architect-active-vitamin-b12-100-test` → `/product/abbott/abbott-architect-active-vitamin-b12-100-test-3p2428` (prefix-base+sku)
+- `/product/abbott-bio-quantia-rf-plus` → `/product/abbott/abbott-bio-quantia-rf-plus-6k4402` (prefix-base+sku)
+- `/product/abbott-cell-dyn-cn-free-hgb-noc-lyse` → `/product/abbott/abbott-cell-dyn-cn-free-hgb-noc-lyse-3h8002` (prefix-base+sku)
+- `/product/abbott-control-homocystein` → `/product/abbott/abbott-control-homocystein-1l7110` (prefix-base+sku)
+- `/product/abbott/alinity-c-multichem-p-8P9010` → `/product/abbott/alinity-c-multichem-p-8p9010` (sku-norm:8P9010)
+- `/product/abbott/alinity-i-estradiolo-reagente-7P5020` → `/product/abbott/alinity-i-estradiolo-reagente-7p5020` (sku-norm:7P5020)
+- `/product/abbott/alinity-i-t3-totale-reagente-7P9420` → `/product/abbott/alinity-i-t3-totale-reagente-7p9420` (sku-norm:7P9420)
+- `/product/abbott/multicontrol-proteine-1-livell-5P8110` → `/product/abbott/multicontrol-proteine-1-livell-5p8110` (sku-norm:5P8110)
+- `/product/abbott/multicontrol-urine-2-livelli-5P8010` → `/product/abbott/multicontrol-urine-2-livelli-5p8010` (sku-norm:5P8010)
+- `/product/acetaminophen-100-g` → `/product/sigma-aldrich/acetaminophen-100-g-a5000-100g` (prefix-base+sku)
+- `/product/acetyl-histone-h3-lys9-c5b11-rabbit-mab-bsa-and-azide-free` → `/product/cell-signaling/acetyl-histone-h3-lys9-c5b11-rabbit-mab-bsa-and-azide-free-96075sf` (prefix-base+sku)
+- `/product/advantage-2-polymerase-mix` → `/product/takara-bio/advantage-2-polymerase-mix-639202` (prefix-base+sku)
+- `/product/advia-1650-2` → `/product/siemens/advia-1650-c93369766024` (prefix-base-strip-wp+sku)
+- `/product/advia-2400` → `/product/siemens/advia-2400-a11bda17f852` (prefix-base+sku)
+- `/product/advia-chemistry-ise-serum-standart-set-2-x-100-ml` → `/product/siemens/advia-chemistry-ise-serum-standart-set-2-x-100-ml-10311903` (prefix-base+sku)
+- `/product/affinity-bio/glutamine-synthetase-antibody-100ul-df7341-100ul` → `/product/affinity-bio/glutamine-synthetase-antibody-100ul-2` (sku-norm:df7341-100ul)
+- `/product/agarose-agarose-500-g` → `/product/sigma-aldrich/agarose-agarose-500-g-a9539-500g` (prefix-base+sku)
+- `/product/albumin-bovine-35-solution-50-ml` → `/product/mp-biomedicals/albumin-bovine-35-solution-50-ml-8810061` (prefix-base+sku)
+- `/product/albumin-solution-human` → `/product/sigma-aldrich/albumin-solution-human-a9080-10ml` (prefix-base+sku)

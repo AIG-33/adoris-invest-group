@@ -30,12 +30,12 @@ export const MANUFACTURER_SLUG_REDIRECTS: Record<string, string> = {
 /**
  * Legacy category slug → canonical slug.
  * Populated by cleanup-categories.ts; middleware 301s ?category=.
- *
- * Full GSC product-level WP→Next map still needs a user export — do not invent
- * product URL mappings here.
+ * Product-level WP→Next paths live in product-redirects.generated.ts.
  */
 export const CATEGORY_SLUG_REDIRECTS: Record<string, string> = {
   'reagents-and-disposables': 'reagents-disposables',
+  disposables: 'reagents-disposables',
+  uncategorized: 'reagents-disposables',
   abbott: 'reagents-disposables',
   bd: 'reagents-disposables',
   biomerieux: 'reagents-disposables',

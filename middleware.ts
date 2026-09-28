@@ -4,22 +4,33 @@ import {
   MANUFACTURER_SLUG_REDIRECTS,
   CATEGORY_SLUG_REDIRECTS,
 } from '@/lib/legacy-redirects'
+import {
+  PRODUCT_PATH_REDIRECTS,
+  MANUFACTURER_PATH_REDIRECTS,
+} from '@/lib/product-redirects.generated'
 
 /**
  * Middleware - lightweight, no Prisma
  * Company detection is done in server components via getServerCompany()
- * Legacy product URL redirects are handled by catch-all route
+ * Legacy 1-segment /product/:slug exact matches also redirect in the catch-all page
  * Cleans up legacy/spam URLs that pollute Google Search Console
- *
- * NOTE: Full WooCommerce/WP product-level 301 map still needs a GSC export
- * from the user. We only cover structural patterns here — do not invent
- * fake /product/:old → /product/:mfr/:slug mappings.
  */
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const searchParams = request.nextUrl.searchParams
+  const cleanPath = pathname.replace(/\/+$/, '') || '/'
 
   // ─── Legacy URL cleanup (31k+ canonical issues in GSC) ───
+
+  // 0. Exact product / manufacturer-path 301s from GSC map (generated)
+  const productTarget = PRODUCT_PATH_REDIRECTS[cleanPath]
+  if (productTarget) {
+    return NextResponse.redirect(new URL(productTarget, request.url), 301)
+  }
+  const mfgPathTarget = MANUFACTURER_PATH_REDIRECTS[cleanPath]
+  if (mfgPathTarget) {
+    return NextResponse.redirect(new URL(mfgPathTarget, request.url), 301)
+  }
 
   // 1. Legacy WooCommerce-style filter URLs:
   //    ?query_type_manufacturer=or&filter_manufacturer=abbott,acros,...
@@ -83,23 +94,30 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 5. WooCommerce / WordPress structural paths (partial — no invented product maps)
+  // 5. WooCommerce / WordPress structural paths
   //    /shop → /products
-  if (pathname === '/shop' || pathname === '/shop/') {
+  if (cleanPath === '/shop') {
     return NextResponse.redirect(new URL('/products', request.url), 301)
   }
 
-  //    /product-category/:slug → /products?category=:mapped or /products
-  const productCategoryMatch = pathname.match(/^\/product-category\/([^/]+)\/?$/)
+  //    /product-category/:slug[/page/N] → /products?category=:mapped
+  const productCategoryMatch = cleanPath.match(
+    /^\/product-category\/([^/]+)(?:\/page\/\d+)?$/
+  )
   if (productCategoryMatch) {
     const rawSlug = decodeURIComponent(productCategoryMatch[1])
     const canonical = CATEGORY_SLUG_REDIRECTS[rawSlug] || rawSlug
     const cleanUrl = new URL('/products', request.url)
-    // Only attach ?category= when we know the slug (mapped or pass-through).
-    // Unknown WP slugs still land on /products rather than a soft-404 category.
-    if (CATEGORY_SLUG_REDIRECTS[rawSlug] || canonical) {
-      cleanUrl.searchParams.set('category', canonical)
-    }
+    cleanUrl.searchParams.set('category', canonical)
+    return NextResponse.redirect(cleanUrl, 301)
+  }
+
+  //    /products/page/N → /products (drop WP pagination path)
+  if (/^\/products\/page\/\d+$/.test(cleanPath)) {
+    const cleanUrl = new URL('/products', request.url)
+    searchParams.forEach((value, key) => {
+      cleanUrl.searchParams.set(key, value)
+    })
     return NextResponse.redirect(cleanUrl, 301)
   }
 
