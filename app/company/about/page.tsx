@@ -88,7 +88,7 @@ export default async function AboutPage() {
                   <div className="text-neutral-600 font-medium">{dict.about.stats.countriesServed}</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
-                  <div className="text-4xl font-bold text-black mb-2">100+</div>
+                  <div className="text-4xl font-bold text-black mb-2">400+</div>
                   <div className="text-neutral-600 font-medium">{dict.about.stats.globalPartners}</div>
                 </div>
                 <div className="bg-white p-6 rounded-xl shadow-lg text-center border-t-4 border-black">
