@@ -230,6 +230,17 @@ export interface Translations {
     relatedProducts: string
     home: string
     products: string
+    rfqTitle: string
+    rfqSubtitle: string
+    rfqName: string
+    rfqEmail: string
+    rfqQuantity: string
+    rfqMessage: string
+    rfqMessagePlaceholder: string
+    rfqSubmit: string
+    rfqSending: string
+    rfqSuccess: string
+    rfqError: string
   }
   
   // Cart
@@ -853,13 +864,24 @@ const translations: Record<Language, Translations> = {
       manufacturer: 'Manufacturer',
       category: 'Category',
       b2bPrice: 'B2B Price',
-      availableByOrder: 'Available by Order Only',
-      deliveryInfo: 'Delivery to our warehouse in Vilnius takes 4-7 weeks. Products sourced directly from European manufacturers.',
+      availableByOrder: 'Available on request',
+      deliveryInfo: 'Lead time to our Vilnius warehouse is typically 4–7 weeks. Products are sourced on order from manufacturers — not held as local stock.',
       addToCart: 'Add to Cart',
       edit: 'Edit',
       relatedProducts: 'Related Products',
       home: 'Home',
       products: 'Products',
+      rfqTitle: 'Request a quote',
+      rfqSubtitle: 'Tell us the quantity you need — we will confirm availability and lead time.',
+      rfqName: 'Name',
+      rfqEmail: 'Work email',
+      rfqQuantity: 'Quantity',
+      rfqMessage: 'Message (optional)',
+      rfqMessagePlaceholder: 'Delivery address, preferred packing, or other notes',
+      rfqSubmit: 'Send RFQ',
+      rfqSending: 'Sending…',
+      rfqSuccess: 'Request sent. Our team will reply to your email shortly.',
+      rfqError: 'Could not send the request. Please try again or email us directly.',
     },
     cart: {
       title: 'Shopping Cart',
@@ -1026,7 +1048,7 @@ const translations: Record<Language, Translations> = {
         step1Title: 'Paste your list or a photo',
         step1Desc: 'Paste text, drop a screenshot, or photograph a paper list / invoice. Any format works — tabs, commas, spaces.',
         step2Title: 'We match it instantly',
-        step2Desc: 'Our engine finds every product by catalog number or article and shows you what is in stock.',
+        step2Desc: 'Our engine finds every product by catalog number or article and shows availability on request.',
         step3Title: 'Cart ready in seconds',
         step3Desc: 'One click adds everything to your cart. Review, adjust quantities, and request a quote.',
       },
@@ -1537,13 +1559,24 @@ const translations: Record<Language, Translations> = {
       manufacturer: 'Производитель',
       category: 'Категория',
       b2bPrice: 'B2B Цена',
-      availableByOrder: 'Доступно только по заказу',
-      deliveryInfo: 'Доставка на наш склад в Вильнюсе занимает 4-7 недель. Продукция поставляется напрямую от европейских производителей.',
+      availableByOrder: 'Доступно по запросу',
+      deliveryInfo: 'Срок поставки на склад в Вильнюсе обычно 4–7 недель. Товары закупаются под заказ у производителей — локального склада нет.',
       addToCart: 'Добавить в корзину',
       edit: 'Редактировать',
       relatedProducts: 'Похожие продукты',
       home: 'Главная',
       products: 'Продукты',
+      rfqTitle: 'Запросить предложение',
+      rfqSubtitle: 'Укажите нужное количество — мы подтвердим доступность и срок поставки.',
+      rfqName: 'Имя',
+      rfqEmail: 'Рабочий email',
+      rfqQuantity: 'Количество',
+      rfqMessage: 'Сообщение (необязательно)',
+      rfqMessagePlaceholder: 'Адрес доставки, упаковка или другие пожелания',
+      rfqSubmit: 'Отправить запрос',
+      rfqSending: 'Отправка…',
+      rfqSuccess: 'Запрос отправлен. Мы ответим на ваш email в ближайшее время.',
+      rfqError: 'Не удалось отправить запрос. Попробуйте ещё раз или напишите нам напрямую.',
     },
     cart: {
       title: 'Корзина покупок',
@@ -1710,7 +1743,7 @@ const translations: Record<Language, Translations> = {
         step1Title: 'Вставьте список или фото',
         step1Desc: 'Вставьте текст, перетащите скриншот или сфотографируйте бумажный список / счёт. Подойдёт любой формат — табы, запятые, пробелы.',
         step2Title: 'Мы мгновенно сопоставим',
-        step2Desc: 'Наш движок находит каждый товар по артикулу или каталожному номеру и показывает, что есть в наличии.',
+        step2Desc: 'Наш движок находит каждый товар по артикулу или каталожному номеру и показывает доступность по запросу.',
         step3Title: 'Корзина готова за секунды',
         step3Desc: 'Один клик — и всё в корзине. Проверьте, скорректируйте количество и запросите счёт.',
       },

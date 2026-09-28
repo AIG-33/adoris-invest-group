@@ -58,7 +58,7 @@ const LOCAL_COPY = {
   ru: {
     categoriesLabel: 'категорий',
     topCategory: 'Топ категория',
-    skuAvailable: 'SKU в наличии',
+    skuAvailable: 'SKU в каталоге',
     explore: 'Открыть',
     featureCopy: 'смотреть весь ассортимент — расходники, реагенты и оборудование в один клик.',
   },

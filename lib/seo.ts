@@ -123,14 +123,15 @@ export function generateProductSchema(
     ]
   }
 
-  // Offers: required by Google. Use price if available, otherwise "0" with PreOrder.
+  // Offers: required by Google. Catalog is order-only (4–7 weeks lead time) —
+  // never claim InStock for everything. Prefer PreOrder / price-on-request.
   schema.offers = {
     '@type': 'Offer',
     url: productUrl,
     priceCurrency: currency,
     price: price > 0 ? price.toFixed(2) : '0.00',
     priceValidUntil,
-    availability: price > 0 ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+    availability: 'https://schema.org/PreOrder',
     itemCondition: 'https://schema.org/NewCondition',
     seller: {
       '@type': 'Organization',
@@ -190,7 +191,8 @@ export function generateItemListSchema(
             priceCurrency: 'EUR',
             price: price > 0 ? price.toFixed(2) : '0.00',
             priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            availability: price > 0 ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+            // Catalog is order-only — do not advertise InStock for all SKUs
+            availability: 'https://schema.org/PreOrder',
           },
         },
       }

@@ -921,3 +921,76 @@ The ${companyName} Team
     throw error
   }
 }
+
+interface RfqEmailOptions {
+  to: string
+  customerName: string
+  customerEmail: string
+  sku: string
+  productName: string
+  quantity: number
+  message?: string
+  productUrl?: string
+  company?: CompanyConfig | null
+}
+
+/** Short product RFQ from the PDP — sent to the tenant company inbox. */
+export async function sendProductRfqEmail({
+  to,
+  customerName,
+  customerEmail,
+  sku,
+  productName,
+  quantity,
+  message,
+  productUrl,
+  company,
+}: RfqEmailOptions) {
+  const transporter = createTransporter()
+  const companyName = company?.name || process.env.EMAIL_FROM_NAME || ''
+  const companyDomain =
+    company?.domain ||
+    new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000').hostname
+
+  const textVersion = `
+Product RFQ — ${sku}
+
+Customer: ${customerName}
+Email: ${customerEmail}
+SKU: ${sku}
+Product: ${productName}
+Quantity: ${quantity}
+${productUrl ? `URL: ${productUrl}\n` : ''}
+${message ? `Message:\n${message}\n` : ''}
+— ${companyName} website RFQ form
+  `.trim()
+
+  await transporter.sendMail({
+    from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
+    to,
+    replyTo: customerEmail,
+    subject: `RFQ ${sku} × ${quantity} — ${customerName}`,
+    text: textVersion,
+    html: `
+      <!DOCTYPE html>
+      <html><body style="font-family: Arial, sans-serif; color: #222;">
+        <h2 style="margin:0 0 12px;">Product RFQ</h2>
+        <p><strong>Customer:</strong> ${customerName}<br/>
+           <strong>Email:</strong> <a href="mailto:${customerEmail}">${customerEmail}</a></p>
+        <p><strong>SKU:</strong> ${sku}<br/>
+           <strong>Product:</strong> ${productName}<br/>
+           <strong>Quantity:</strong> ${quantity}</p>
+        ${productUrl ? `<p><a href="${productUrl}">Open product page</a></p>` : ''}
+        ${message ? `<p><strong>Message:</strong><br/>${message.replace(/\n/g, '<br/>')}</p>` : ''}
+        <hr/>
+        <p style="color:#666;font-size:12px;">Sent via ${companyName} (${companyDomain}) RFQ form</p>
+      </body></html>
+    `,
+    headers: {
+      'Message-ID': `<rfq-${sku}-${Date.now()}@${companyDomain}>`,
+      'X-Mailer': 'Next.js Email System',
+    },
+  })
+
+  return { success: true }
+}

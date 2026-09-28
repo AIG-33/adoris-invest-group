@@ -8,6 +8,7 @@ import { ShoppingCart, Minus, Plus, Truck, Edit } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
 import { normalizeImageUrl } from '@/lib/normalize-image-url'
+import { ProductRfqForm } from '@/components/product-rfq-form'
 
 interface Product {
   id: string
@@ -36,6 +37,17 @@ interface ProductTranslations {
   relatedProducts: string
   home: string
   products: string
+  rfqTitle: string
+  rfqSubtitle: string
+  rfqName: string
+  rfqEmail: string
+  rfqQuantity: string
+  rfqMessage: string
+  rfqMessagePlaceholder: string
+  rfqSubmit: string
+  rfqSending: string
+  rfqSuccess: string
+  rfqError: string
 }
 
 interface ProductDetailProps {
@@ -228,6 +240,26 @@ export function ProductDetail({ product, relatedProducts, translations, company 
               </Link>
             )}
           </div>
+
+          <ProductRfqForm
+            sku={product?.sku || ''}
+            productName={product?.name || ''}
+            productUrl={getProductUrl(product)}
+            initialQuantity={quantity}
+            translations={{
+              rfqTitle: translations.rfqTitle,
+              rfqSubtitle: translations.rfqSubtitle,
+              rfqName: translations.rfqName,
+              rfqEmail: translations.rfqEmail,
+              rfqQuantity: translations.rfqQuantity,
+              rfqMessage: translations.rfqMessage,
+              rfqMessagePlaceholder: translations.rfqMessagePlaceholder,
+              rfqSubmit: translations.rfqSubmit,
+              rfqSending: translations.rfqSending,
+              rfqSuccess: translations.rfqSuccess,
+              rfqError: translations.rfqError,
+            }}
+          />
         </section>
       </div>
 
