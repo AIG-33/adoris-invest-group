@@ -112,6 +112,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(cleanUrl, 301)
   }
 
+  //    /manufacturer/:slug[/page/N] → /products?manufacturer=:mapped
+  //    (legacy WP manufacturer archive; exact GSC hits also in MANUFACTURER_PATH_REDIRECTS)
+  const manufacturerPathMatch = cleanPath.match(
+    /^\/manufacturer\/([^/]+)(?:\/page\/\d+)?$/
+  )
+  if (manufacturerPathMatch) {
+    const rawSlug = decodeURIComponent(manufacturerPathMatch[1])
+    const canonical = MANUFACTURER_SLUG_REDIRECTS[rawSlug] || rawSlug
+    const cleanUrl = new URL('/products', request.url)
+    cleanUrl.searchParams.set('manufacturer', canonical)
+    return NextResponse.redirect(cleanUrl, 301)
+  }
+
   //    /products/page/N → /products (drop WP pagination path)
   if (/^\/products\/page\/\d+$/.test(cleanPath)) {
     const cleanUrl = new URL('/products', request.url)

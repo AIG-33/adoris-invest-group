@@ -3,11 +3,19 @@
  *
  * Usage:
  *   npx tsx --require dotenv/config scripts/build-gsc-product-redirects.ts
+ *   npx tsx --require dotenv/config scripts/build-gsc-product-redirects.ts --domain=adorisgroup.com
  *
- * Reads zip extracts under /tmp/gsc-ivd/set{0..3}/ and Top pages CSV.
+ * Env / flags:
+ *   GSC_DOMAIN / --domain=  host filter (default: ivdgroup.eu)
+ *   GSC_URL_CSVS / --csvs=  comma-separated URL CSV paths (URL column or first col)
+ *   GSC_TOP_PAGES / --top=  optional top-pages CSV
+ *   GSC_MERGE=1 / --merge    keep existing PRODUCT_PATH_REDIRECTS / MANUFACTURER_PATH_REDIRECTS
+ *   GSC_REPORT / --report=  report markdown path
+ *
+ * Default ivd paths: /tmp/gsc-ivd/set{0..3}/urls_0.csv + Top pages CSV.
  * Writes:
  *   lib/product-redirects.generated.ts
- *   docs/gsc-product-redirects-report.md
+ *   docs/gsc-product-redirects-report.md (or --report)
  */
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
@@ -18,12 +26,46 @@ import {
   MANUFACTURER_SLUG_REDIRECTS,
   CATEGORY_SLUG_REDIRECTS,
 } from '../lib/legacy-redirects'
+import {
+  PRODUCT_PATH_REDIRECTS as EXISTING_PRODUCT_REDIRECTS,
+  MANUFACTURER_PATH_REDIRECTS as EXISTING_MFG_REDIRECTS,
+} from '../lib/product-redirects.generated'
 
 const prisma = new PrismaClient()
 
-const GSC_SETS = [0, 1, 2, 3].map((i) => `/tmp/gsc-ivd/set${i}/urls_0.csv`)
+function argValue(flag: string): string | undefined {
+  const hit = process.argv.find((a) => a.startsWith(`${flag}=`))
+  return hit ? hit.slice(flag.length + 1) : undefined
+}
+
+const DOMAIN =
+  argValue('--domain') ||
+  process.env.GSC_DOMAIN ||
+  'ivdgroup.eu'
+const MERGE =
+  process.argv.includes('--merge') ||
+  process.env.GSC_MERGE === '1' ||
+  DOMAIN !== 'ivdgroup.eu'
+const REPORT_PATH =
+  argValue('--report') ||
+  process.env.GSC_REPORT ||
+  (DOMAIN.includes('adoris')
+    ? 'docs/gsc-adoris-product-redirects-report.md'
+    : 'docs/gsc-product-redirects-report.md')
 const TOP_PAGES =
-  '/Users/gmaxby/Downloads/ivdgroup.eu-Top target pages-2026-09-28.csv'
+  argValue('--top') ||
+  process.env.GSC_TOP_PAGES ||
+  (DOMAIN.includes('adoris')
+    ? ''
+    : '/Users/gmaxby/Downloads/ivdgroup.eu-Top target pages-2026-09-28.csv')
+const GSC_SETS = (
+  argValue('--csvs') ||
+  process.env.GSC_URL_CSVS ||
+  [0, 1, 2, 3].map((i) => `/tmp/gsc-ivd/set${i}/urls_0.csv`).join(',')
+)
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean)
 
 function normalizeSku(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '')
@@ -71,14 +113,14 @@ function collectUrls(): Set<string> {
       relax_column_count: true,
     }) as Record<string, string>[]
     for (const r of rows) {
-      const u = (r.URL || Object.values(r)[0] || '')
+      const u = (r.URL || r.Url || r.url || Object.values(r)[0] || '')
         .toString()
         .trim()
         .replace(/^"|"$/g, '')
       if (u.startsWith('http')) urlSet.add(u)
     }
   }
-  if (fs.existsSync(TOP_PAGES)) {
+  if (TOP_PAGES && fs.existsSync(TOP_PAGES)) {
     const rows = parse(fs.readFileSync(TOP_PAGES, 'utf8'), {
       columns: true,
       skip_empty_lines: true,
@@ -96,6 +138,8 @@ function collectUrls(): Set<string> {
 function isStructurallyHandled(pathname: string, search: string): boolean {
   if (pathname === '/shop' || pathname === '/shop/') return true
   if (pathname.startsWith('/product-category/')) return true
+  if (/^\/manufacturer\/[^/]+(?:\/page\/\d+)?$/.test(pathname.replace(/\/+$/, '') || '/'))
+    return true
   if (pathname === '/products' || pathname.startsWith('/products/')) {
     const sp = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)
     if (sp.has('query_type_manufacturer') || sp.has('filter_manufacturer')) return true
@@ -109,7 +153,14 @@ function isStructurallyHandled(pathname: string, search: string): boolean {
   return false
 }
 
+function hostMatches(hostname: string): boolean {
+  const h = hostname.replace(/^www\./, '').toLowerCase()
+  const d = DOMAIN.replace(/^www\./, '').toLowerCase()
+  return h === d || h.endsWith('.' + d)
+}
+
 async function main() {
+  console.log({ DOMAIN, MERGE, REPORT_PATH, GSC_SETS, TOP_PAGES: TOP_PAGES || '(none)' })
   const urlSet = collectUrls()
   console.log('unique GSC urls', urlSet.size)
 
@@ -117,6 +168,7 @@ async function main() {
   const productPaths = new Map<string, Cand>()
   const otherUrls: string[] = []
   let structurallySkipped = 0
+  let wrongHost = 0
 
   for (const u of urlSet) {
     let url: URL
@@ -125,7 +177,10 @@ async function main() {
     } catch {
       continue
     }
-    if (!url.hostname.replace(/^www\./, '').endsWith('ivdgroup.eu')) continue
+    if (!hostMatches(url.hostname)) {
+      wrongHost++
+      continue
+    }
 
     const pathname = decodeURIComponent(url.pathname)
     const cleanPath = pathname.replace(/\/+$/, '') || '/'
@@ -414,11 +469,9 @@ async function main() {
   for (const m of matches) {
     if (!map.has(m.from)) map.set(m.from, m)
   }
-  const uniqueMatches = [...map.values()].sort((a, b) =>
-    a.from.localeCompare(b.from)
-  )
 
-  // Also add manufacturer path redirects for GSC /manufacturer/* URLs
+  // Manufacturer paths are structurally handled in middleware now; keep explicit
+  // map entries only when merging prior generated redirects.
   const mfgRedirects: Match[] = []
   for (const u of otherUrls) {
     let url: URL
@@ -439,9 +492,31 @@ async function main() {
     })
   }
   const mfgMap = new Map(mfgRedirects.map((m) => [m.from, m]))
-  const uniqueMfg = [...mfgMap.values()]
 
-  const reasonCounts = uniqueMatches.reduce(
+  // Merge with existing maps when regenerating for a second domain
+  if (MERGE) {
+    for (const [from, to] of Object.entries(EXISTING_PRODUCT_REDIRECTS)) {
+      if (!map.has(from)) {
+        map.set(from, { from, to, reason: 'existing-merge' })
+      }
+    }
+    for (const [from, to] of Object.entries(EXISTING_MFG_REDIRECTS)) {
+      if (!mfgMap.has(from)) {
+        mfgMap.set(from, { from, to, reason: 'existing-merge' })
+      }
+    }
+  }
+  const uniqueMatchesFinal = [...map.values()].sort((a, b) =>
+    a.from.localeCompare(b.from)
+  )
+  const uniqueMfg = [...mfgMap.values()].sort((a, b) =>
+    a.from.localeCompare(b.from)
+  )
+  const newProductMatches = uniqueMatchesFinal.filter(
+    (m) => m.reason !== 'existing-merge'
+  )
+
+  const reasonCounts = newProductMatches.reduce(
     (a, m) => {
       const key = m.reason.startsWith('sku-') ? 'sku-*' : m.reason
       a[key] = (a[key] || 0) + 1
@@ -461,9 +536,13 @@ async function main() {
   console.log(
     JSON.stringify(
       {
+        domain: DOMAIN,
+        merge: MERGE,
         gscUrls: urlSet.size,
+        wrongHost,
         productPaths: productPaths.size,
-        matches: uniqueMatches.length,
+        newMatches: newProductMatches.length,
+        totalProductRedirects: uniqueMatchesFinal.length,
         alreadyCanonical: alreadyCanonical.length,
         unmatched: unmatched.length,
         mfgPathRedirects: uniqueMfg.length,
@@ -478,7 +557,7 @@ async function main() {
 
   // Write generated TS module
   const outTs = path.join(process.cwd(), 'lib/product-redirects.generated.ts')
-  const productEntries = uniqueMatches
+  const productEntries = uniqueMatchesFinal
     .map((m) => `  ${JSON.stringify(m.from)}: ${JSON.stringify(m.to)},`)
     .join('\n')
   const mfgEntries = uniqueMfg
@@ -488,7 +567,7 @@ async function main() {
   const ts = `/**
  * AUTO-GENERATED by scripts/build-gsc-product-redirects.ts — do not edit by hand.
  * Product-level + /manufacturer/* 301 map from GSC exports (${new Date().toISOString().slice(0, 10)}).
- * Matches: ${uniqueMatches.length} product, ${uniqueMfg.length} manufacturer-path.
+ * Domain filter: ${DOMAIN}. Matches: ${newProductMatches.length} new product, ${uniqueMatchesFinal.length} total product, ${uniqueMfg.length} manufacturer-path.
  */
 export const PRODUCT_PATH_REDIRECTS: Record<string, string> = {
 ${productEntries}
@@ -502,11 +581,8 @@ ${mfgEntries}
   console.log('wrote', outTs)
 
   // Report
-  const reportPath = path.join(
-    process.cwd(),
-    'docs/gsc-product-redirects-report.md'
-  )
-  const report = `# GSC product redirect map report
+  const reportPath = path.join(process.cwd(), REPORT_PATH)
+  const report = `# GSC product redirect map report (${DOMAIN})
 
 Generated: ${new Date().toISOString()}
 
@@ -514,15 +590,18 @@ Generated: ${new Date().toISOString()}
 
 | Metric | Count |
 |--------|------:|
+| Domain filter | ${DOMAIN} |
 | Unique GSC URLs (all exports + top pages) | ${urlSet.size} |
+| Wrong-host skipped | ${wrongHost} |
 | Unique \`/product/...\` paths considered | ${productPaths.size} |
-| Structurally skipped (shop/category/filters/etc.) | ${structurallySkipped} |
+| Structurally skipped (shop/category/manufacturer/filters/etc.) | ${structurallySkipped} |
 | Already canonical (no redirect needed) | ${alreadyCanonical.length} |
-| Matched product 301s | ${uniqueMatches.length} |
+| New matched product 301s | ${newProductMatches.length} |
+| Total product 301s in map (after merge) | ${uniqueMatchesFinal.length} |
 | Unmatched product paths | ${unmatched.length} |
-| \`/manufacturer/...\` path 301s | ${uniqueMfg.length} |
+| \`/manufacturer/...\` path 301s (explicit map) | ${uniqueMfg.length} |
 
-### Match reasons
+### Match reasons (new only)
 
 \`\`\`
 ${JSON.stringify(reasonCounts, null, 2)}
@@ -536,14 +615,14 @@ ${JSON.stringify(unmatchedReasons, null, 2)}
 
 ## Unmatched paths (do not invent redirects)
 
-${unmatched.map((u) => `- \`${u.path}\` — ${u.reason}`).join('\n')}
+${unmatched.length ? unmatched.map((u) => `- \`${u.path}\` — ${u.reason}`).join('\n') : '_None (no product URLs in input)._'}
 
-## Sample matches
+## Sample new matches
 
-${uniqueMatches
+${newProductMatches
   .slice(0, 40)
   .map((m) => `- \`${m.from}\` → \`${m.to}\` (${m.reason})`)
-  .join('\n')}
+  .join('\n') || '_None._'}
 `
   fs.mkdirSync(path.dirname(reportPath), { recursive: true })
   fs.writeFileSync(reportPath, report)
