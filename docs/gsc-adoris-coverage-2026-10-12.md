@@ -43,15 +43,25 @@ Tried `python3` + `urllib` against Wayback CDX for `adorisgroup.com/product/*` (
 
 Result: **~1 855 unique product paths**, almost all already canonical **2-segment** `/product/{manufacturer}/{slug}`. **Zero** legacy 1-segment `/product/{slug}` paths — nothing useful to merge as new product 301s the way ivdgroup Drilldown URLs were.
 
-## What the user must re-export
+## Follow-up: Coverage-Drilldown ZIPs (2026-10-12)
 
-In Google Search Console for **adorisgroup.com**:
+User provided four **Coverage-Drilldown** ZIPs with `Таблица.csv` URL tables:
 
-1. Open **Indexing → Pages** (Индексирование → Страницы).
-2. Click a **reason** row that needs URL-level work (start with **Soft 404** / Ложная ошибка 404; also export **5xx** if still high).
-3. On the reason detail page, use **Export** (Экспорт) → download the **Coverage Drilldown** / URL table ZIP (should contain `urls_0.csv` or similar with full URLs).
-4. Repeat per high-count reason if needed (soft 404, 5xx, redirect errors).
+| Export | Problem (RU) | URL rows |
+|--------|--------------|--------:|
+| `…-2026-10-12.zip` | Ложная ошибка 404 | 1000 |
+| `… (1).zip` | Страница с переадресацией | 1000 |
+| `… (2).zip` | Ошибка сервера (5xx) | 1000 |
+| `… (3).zip` | Вариант страницы с тегом canonical | 332 |
 
-Do **not** export only the top-level Coverage chart ZIP again — that has no URL list.
+Product-level 301s were merged into `lib/product-redirects.generated.ts` via:
 
-After Drilldown ZIPs are available, regenerate / merge product 301s with `scripts/build-gsc-product-redirects.ts` the same way as ivdgroup (see `docs/gsc-product-redirects-report.md`).
+```bash
+npx tsx --require dotenv/config scripts/build-gsc-product-redirects.ts \
+  --domain=adorisgroup.com \
+  --csvs=/tmp/gsc-adoris/set{0..3}/urls_0.csv \
+  --merge \
+  --report=docs/gsc-adoris-product-redirects-report.md
+```
+
+See **`docs/gsc-adoris-product-redirects-report.md`** for full stats (3332 unique URLs → 913 new product 301s → 1196 total map; 756 unmatched left unmapped).
