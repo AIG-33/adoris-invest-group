@@ -259,6 +259,7 @@ export interface Translations {
     continueShopping: string
     clearCart: string
     clearConfirm: string
+    exportExcel: string
   }
   
   // Checkout
@@ -900,6 +901,7 @@ const translations: Record<Language, Translations> = {
       continueShopping: 'Continue Shopping',
       clearCart: 'Clear cart',
       clearConfirm: 'Remove all items from your cart?',
+      exportExcel: 'Export to Excel',
     },
     checkout: {
       title: 'Checkout',
@@ -1597,6 +1599,7 @@ const translations: Record<Language, Translations> = {
       continueShopping: 'Продолжить покупки',
       clearCart: 'Очистить корзину',
       clearConfirm: 'Удалить все товары из корзины?',
+      exportExcel: 'Экспорт в Excel',
     },
     checkout: {
       title: 'Оформление заказа',

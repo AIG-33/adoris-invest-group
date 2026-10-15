@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Minus, Plus, X, ArrowRight } from 'lucide-react'
+import { Minus, Plus, X, ArrowRight, FileSpreadsheet } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
@@ -35,6 +35,7 @@ interface CartTranslations {
   continueShopping: string
   clearCart: string
   clearConfirm: string
+  exportExcel: string
   common?: {
     loading?: string
   }
@@ -82,6 +83,36 @@ export function CartContent({ translations, company }: CartContentProps) {
     setCart([])
     localStorage?.removeItem?.('cart')
     window?.dispatchEvent?.(new Event('cartUpdated'))
+  }
+
+  const exportToExcel = async () => {
+    if (!cart?.length) return
+
+    const XLSX = await import('xlsx')
+    const showPrices = Boolean(company?.showPrices)
+
+    const rows = cart.map((item) => {
+      const qty = item?.quantity || 0
+      const unit = Number(item?.price || 0)
+      const line: Record<string, string | number> = {
+        Manufacturer: item?.manufacturer?.name || '',
+        SKU: item?.sku || '',
+        Product: item?.name || '',
+        Quantity: qty,
+      }
+      if (showPrices) {
+        line['Unit price EUR'] = unit
+        line['Line total EUR'] = Math.round(unit * qty * 100) / 100
+      }
+      return line
+    })
+
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Cart')
+
+    const date = new Date().toISOString().slice(0, 10)
+    XLSX.writeFile(wb, `cart-${date}.xlsx`)
   }
 
   if (!mounted) {
@@ -346,6 +377,15 @@ export function CartContent({ translations, company }: CartContentProps) {
             >
               {translations.proceedToCheckout}
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={exportToExcel}
+              className="w-full mt-3 py-3 rounded-lg border-2 border-neutral-300 text-neutral-800 hover:border-neutral-500 hover:bg-neutral-50 transition-all font-medium text-sm sm:text-base inline-flex items-center justify-center gap-2"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              {translations.exportExcel}
             </button>
 
             <button
