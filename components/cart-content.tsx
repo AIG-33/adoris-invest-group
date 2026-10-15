@@ -33,6 +33,8 @@ interface CartTranslations {
   total: string
   proceedToCheckout: string
   continueShopping: string
+  clearCart: string
+  clearConfirm: string
   common?: {
     loading?: string
   }
@@ -72,6 +74,13 @@ export function CartContent({ translations, company }: CartContentProps) {
     const updatedCart = cart?.filter?.((item) => item?.id !== id)
     setCart(updatedCart || [])
     localStorage?.setItem?.('cart', JSON.stringify(updatedCart))
+    window?.dispatchEvent?.(new Event('cartUpdated'))
+  }
+
+  const clearCart = () => {
+    if (!window?.confirm?.(translations.clearConfirm)) return
+    setCart([])
+    localStorage?.removeItem?.('cart')
     window?.dispatchEvent?.(new Event('cartUpdated'))
   }
 
@@ -337,6 +346,14 @@ export function CartContent({ translations, company }: CartContentProps) {
             >
               {translations.proceedToCheckout}
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={clearCart}
+              className="w-full mt-3 py-3 rounded-lg border-2 border-neutral-300 text-neutral-700 hover:border-neutral-500 hover:bg-neutral-50 transition-all font-medium text-sm sm:text-base"
+            >
+              {translations.clearCart}
             </button>
           </div>
         </div>

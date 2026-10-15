@@ -257,6 +257,8 @@ export interface Translations {
     total: string
     proceedToCheckout: string
     continueShopping: string
+    clearCart: string
+    clearConfirm: string
   }
   
   // Checkout
@@ -896,6 +898,8 @@ const translations: Record<Language, Translations> = {
       total: 'Total',
       proceedToCheckout: 'Proceed to Checkout',
       continueShopping: 'Continue Shopping',
+      clearCart: 'Clear cart',
+      clearConfirm: 'Remove all items from your cart?',
     },
     checkout: {
       title: 'Checkout',
@@ -1591,6 +1595,8 @@ const translations: Record<Language, Translations> = {
       total: 'Итого',
       proceedToCheckout: 'Перейти к оформлению',
       continueShopping: 'Продолжить покупки',
+      clearCart: 'Очистить корзину',
+      clearConfirm: 'Удалить все товары из корзины?',
     },
     checkout: {
       title: 'Оформление заказа',
