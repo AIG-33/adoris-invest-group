@@ -3,6 +3,11 @@ import { prisma } from '@/lib/db';
 import { getCurrentCompany } from '@/lib/company';
 import { getProductPrice } from '@/lib/product-price';
 import { parseBulkOrderLine } from '@/lib/parse-bulk-order';
+import {
+  buildSkuLookupMaps,
+  expandNumericSkuVariants,
+  matchProductBySku,
+} from '@/lib/sku-normalize';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,11 +63,15 @@ export async function POST(request: Request) {
       console.error('[Bulk Order] Company not found for domain:', host);
     }
 
-    // Find products by SKUs
+    // Expand purely numeric SKUs with/without leading zeros so Roche-style
+    // catalog numbers match either direction (DB 12345 ↔ paste 012345).
+    const lookupSkus = [...new Set(skus.flatMap(expandNumericSkuVariants))];
+
+    // Find products by SKUs (exact + numeric zero-padded variants)
     const products = await prisma.product.findMany({
       where: {
         sku: {
-          in: skus,
+          in: lookupSkus,
         },
       },
       include: {
@@ -77,10 +86,7 @@ export async function POST(request: Request) {
       notFound: [] as string[],
     };
 
-    // Create a map of SKU to product
-    const productMap = new Map(
-      products.map((p: any) => [p.sku.toLowerCase(), p])
-    );
+    const { byExactLower, byNumericNormalized } = buildSkuLookupMaps(products);
 
     // Process each requested item
     items.forEach(item => {
@@ -89,7 +95,7 @@ export async function POST(request: Request) {
 
       if (!sku) return;
 
-      const product = productMap.get(sku.toLowerCase());
+      const product = matchProductBySku(sku, byExactLower, byNumericNormalized);
 
       if (product) {
         // Apply correct price based on company priceType
