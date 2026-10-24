@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/db'
+import { requireAdminPage } from '@/lib/rfq/auth'
 import { EMAIL_STATUS } from '@/lib/rfq/labels'
 import { getAutomationSettings } from '@/lib/rfq/settings'
 
@@ -46,6 +47,7 @@ export default async function MailInboxPage({
 }: {
   searchParams: { status?: string; mailbox?: string; q?: string; page?: string }
 }) {
+  await requireAdminPage()
   const status = searchParams.status ?? ''
   const mailboxId = searchParams.mailbox || ''
   const q = (searchParams.q || '').trim()

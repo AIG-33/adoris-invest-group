@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import { AutomationSettingsForm } from '@/components/admin-mail/automation-settings-form'
 import { MailboxCard } from '@/components/admin-mail/mailbox-card'
+import { requireAdminPage } from '@/lib/rfq/auth'
 import { isGoogleOAuthConfigured } from '@/lib/rfq/google-oauth'
 import { LOG_ACTIONS } from '@/lib/rfq/labels'
 import { getAutomationSettings } from '@/lib/rfq/settings'
@@ -12,6 +13,7 @@ export default async function MailSettingsPage({
 }: {
   searchParams: { connected?: string; error?: string }
 }) {
+  await requireAdminPage()
   const [settings, mailboxes, companies, logs, counts] = await Promise.all([
     getAutomationSettings(),
     prisma.mailbox.findMany({ orderBy: { createdAt: 'asc' } }),

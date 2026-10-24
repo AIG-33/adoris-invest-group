@@ -1,10 +1,12 @@
 import { prisma } from '@/lib/db'
 import { PromptEditor } from '@/components/admin-mail/prompt-editor'
+import { requireAdminPage } from '@/lib/rfq/auth'
 import { getActivePrompt } from '@/lib/rfq/settings'
 
 export const dynamic = 'force-dynamic'
 
 export default async function MailPromptsPage() {
+  await requireAdminPage()
   await Promise.all([getActivePrompt('classify'), getActivePrompt('reply')])
   const [versions, emails] = await Promise.all([
     prisma.aiPromptVersion.findMany({ orderBy: [{ kind: 'asc' }, { version: 'desc' }] }),

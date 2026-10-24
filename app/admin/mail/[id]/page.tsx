@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import { EmailActions } from '@/components/admin-mail/email-actions'
+import { requireAdminPage } from '@/lib/rfq/auth'
 import { gmailThreadUrl } from '@/lib/rfq/gmail'
 import { EMAIL_STATUS, ITEM_STATUS } from '@/lib/rfq/labels'
 
@@ -26,6 +27,7 @@ const ATTACHMENT_STATUS: Record<string, string> = {
 }
 
 export default async function MailEmailPage({ params }: { params: { id: string } }) {
+  await requireAdminPage()
   const email = await prisma.inboundEmail.findUnique({
     where: { id: params.id },
     include: {
