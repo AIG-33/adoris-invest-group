@@ -99,6 +99,8 @@ model Company {
   updatedAt      DateTime  @default(now()) @updatedAt
   products       Product[]
   orders         Order[]
+  mailboxes      Mailbox[]
+  replyTemplates ReplyTemplate[]
 
   @@index([domain])
   @@index([slug])
@@ -154,6 +156,7 @@ model Product {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @default(now()) @updatedAt
   orderItems     OrderItem[]
+  rfqItems       PriceRequestItem[]
 
   @@index([featured])
   @@index([categoryId])
@@ -203,4 +206,194 @@ model OrderItem {
   productId String
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
+}
+
+// ---------------------------------------------------------------------------
+// Inbound price-request (RFQ) email automation
+// ---------------------------------------------------------------------------
+
+model Mailbox {
+  id              String         @id @default(cuid())
+  email           String         @unique
+  displayName     String?
+  company         Company?       @relation(fields: [companyId], references: [id])
+  companyId       String?
+  /// off | monitor | drafts | auto
+  mode            String         @default("drafts")
+  /// "auto" = reply in the customer's language, otherwise ISO code (en, pl, de, ru…)
+  replyLanguage   String         @default("auto")
+  signatureHtml   String?        @db.Text
+  /// Newline-separated emails or @domains that are never processed
+  excludedSenders String?        @db.Text
+  /// Extra Gmail search filter, e.g. "label:rfq"
+  gmailQuery      String?
+  backfillDays    Int            @default(3)
+  refreshTokenEnc String?        @db.Text
+  historyId       String?
+  lastSyncAt      DateTime?
+  lastError       String?        @db.Text
+  lastErrorAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @default(now()) @updatedAt
+  emails          InboundEmail[]
+}
+
+model InboundEmail {
+  id              String             @id @default(cuid())
+  mailbox         Mailbox            @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  mailboxId       String
+  gmailMessageId  String
+  gmailThreadId   String
+  rfcMessageId    String?
+  references      String?            @db.Text
+  fromEmail       String
+  fromName        String?
+  toEmail         String?
+  subject         String             @default("")
+  receivedAt      DateTime
+  snippet         String?            @db.Text
+  bodyText        String?            @db.Text
+  bodyHtml        String?            @db.Text
+  /// new | processing | ignored | not_rfq | draft_ready | needs_review | sent_auto | sent_manual | rejected | error
+  status          String             @default("new")
+  ignoreReason    String?
+  isPriceRequest  Boolean?
+  confidence      Float?
+  language        String?
+  customerName    String?
+  customerCompany String?
+  aiSummary       String?            @db.Text
+  aiRaw           Json?
+  model           String?
+  promptVersionId String?
+  attempts        Int                @default(0)
+  error           String?            @db.Text
+  processedAt     DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @default(now()) @updatedAt
+  attachments     EmailAttachment[]
+  items           PriceRequestItem[]
+  replies         OutboundReply[]
+
+  @@unique([mailboxId, gmailMessageId])
+  @@index([status])
+  @@index([receivedAt])
+  @@index([gmailThreadId])
+}
+
+model EmailAttachment {
+  id                String       @id @default(cuid())
+  email             InboundEmail @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  emailId           String
+  filename          String
+  mimeType          String
+  size              Int          @default(0)
+  gmailAttachmentId String?      @db.Text
+  /// pending | text | sent_to_ai | skipped | error
+  status            String       @default("pending")
+  extractedText     String?      @db.Text
+  error             String?      @db.Text
+  createdAt         DateTime     @default(now())
+
+  @@index([emailId])
+}
+
+model PriceRequestItem {
+  id               String       @id @default(cuid())
+  email            InboundEmail @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  emailId          String
+  position         Int          @default(0)
+  requestedSku     String
+  quantity         Int          @default(1)
+  description      String?      @db.Text
+  manufacturerHint String?
+  product          Product?     @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId        String?
+  matchedSku       String?
+  productName      String?
+  unitPrice        Decimal?     @db.Decimal(10, 2)
+  currency         String       @default("EUR")
+  /// found | not_found | no_price
+  status           String
+  verifiedInText   Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+
+  @@index([emailId])
+  @@index([status])
+  @@index([productId])
+}
+
+model OutboundReply {
+  id              String       @id @default(cuid())
+  email           InboundEmail @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  emailId         String
+  /// draft | sent | discarded | error
+  status          String       @default("draft")
+  toEmail         String
+  subject         String
+  bodyHtml        String       @db.Text
+  aiDraftHtml     String       @db.Text
+  /// auto | manual
+  sendMode        String?
+  edited          Boolean      @default(false)
+  sentByEmail     String?
+  sentAt          DateTime?
+  gmailMessageId  String?
+  gmailThreadId   String?
+  promptVersionId String?
+  templateId      String?
+  error           String?      @db.Text
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @default(now()) @updatedAt
+
+  @@index([emailId])
+  @@index([status])
+}
+
+model AiPromptVersion {
+  id          String   @id @default(cuid())
+  /// classify | reply
+  kind        String
+  version     Int
+  text        String   @db.Text
+  comment     String?
+  authorEmail String?
+  isActive    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@unique([kind, version])
+  @@index([kind, isActive])
+}
+
+model ReplyTemplate {
+  id        String   @id @default(cuid())
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String?
+  /// ISO language code, "en" is the fallback
+  language  String   @default("en")
+  subject   String
+  bodyHtml  String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([companyId, language])
+}
+
+model AutomationSettings {
+  id                  String   @id @default("global")
+  autoSendEnabled     Boolean  @default(false)
+  model               String   @default("gpt-4.1")
+  confidenceThreshold Float    @default(0.8)
+  updatedByEmail      String?
+  updatedAt           DateTime @default(now()) @updatedAt
+}
+
+model AutomationLog {
+  id        String   @id @default(cuid())
+  action    String
+  details   Json?
+  userEmail String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
 }

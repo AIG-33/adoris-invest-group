@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, XCircle, Truck, RefreshCw, Trash2, Plus, Edit, Building2 } from 'lucide-react'
+import { Upload, Package, ShoppingBag, Clock, CheckCircle, FileSpreadsheet, XCircle, Truck, RefreshCw, Trash2, Plus, Edit, Building2, Mail } from 'lucide-react'
+import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { CompaniesAdmin } from './companies-admin'
 
@@ -396,6 +397,13 @@ export function AdminPanel({ stats, recentOrders, translations }: AdminPanelProp
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl font-bold mb-4">{translations.dashboard}</h1>
           <p className="text-lg text-white/90">Manage orders, products, and companies</p>
+          <Link
+            href="/admin/mail"
+            className="inline-flex items-center gap-2 mt-6 bg-white text-black rounded-lg px-5 py-2.5 font-semibold hover:bg-neutral-100"
+          >
+            <Mail className="w-5 h-5" />
+            Запросы цен по почте
+          </Link>
         </div>
       </section>
 
