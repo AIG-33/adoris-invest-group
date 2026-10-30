@@ -3,6 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { CompanyConfig } from '@/lib/company-types'
+import { isAdoris } from '@/lib/tenant'
+import { portalUrl } from '@/lib/supplier-portal'
+import { ExternalLink } from '@/components/external-link'
 
 // Normalize logo URL to ensure it starts with a slash
 function normalizeLogoUrl(logo: string | null | undefined): string {
@@ -35,6 +38,9 @@ interface NavTranslations {
   logout: string
   admin: string
   bulkOrder: string
+  supplierPortal: string
+  becomeSupplier: string
+  opensInNewTab: string
   search: string
 }
 
@@ -62,6 +68,7 @@ export function FooterClient({ company, navTranslations, footerTranslations }: F
   const companyPhone = company?.phone || ''
   const companyAddress = company?.address || ''
   const companyLogo = normalizeLogoUrl(company?.logo)
+  const adoris = isAdoris(company)
   
   // Extract address parts (no Adoris fallback when company not matched)
   const addressParts = companyAddress.split(',').map(s => s.trim()).filter(Boolean)
@@ -119,6 +126,28 @@ export function FooterClient({ company, navTranslations, footerTranslations }: F
                   {navTranslations.cart}
                 </Link>
               </li>
+              {adoris && (
+                <>
+                  <li>
+                    <ExternalLink
+                      href={portalUrl('/', 'footer')}
+                      newTabLabel={navTranslations.opensInNewTab}
+                      className="footer-link text-xs sm:text-sm inline-flex items-center gap-1.5"
+                    >
+                      {navTranslations.supplierPortal}
+                    </ExternalLink>
+                  </li>
+                  <li>
+                    <ExternalLink
+                      href={portalUrl('/login?mode=signup', 'footer')}
+                      newTabLabel={navTranslations.opensInNewTab}
+                      className="footer-link text-xs sm:text-sm inline-flex items-center gap-1.5"
+                    >
+                      {navTranslations.becomeSupplier}
+                    </ExternalLink>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 

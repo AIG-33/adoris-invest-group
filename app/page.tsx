@@ -6,10 +6,13 @@ import { ManufacturersStrip } from '@/components/manufacturers-strip'
 import { FeaturedProducts } from '@/components/featured-products'
 import { CategoryShowcase } from '@/components/category-showcase'
 import { StatsSection } from '@/components/stats-section'
+import { SupplierPortalSection } from '@/components/supplier-portal-section'
 import { StructuredData } from '@/components/structured-data'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
+import { isAdoris } from '@/lib/tenant'
+import { PORTAL_ROOT } from '@/lib/supplier-portal'
 import {
   getCachedFeaturedProducts,
   getCachedManufacturersWithLogo,
@@ -38,13 +41,19 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = language === 'ru'
     ? `${companyName} — Поиск по SKU · Массовый заказ · Поставщикам`
     : `${companyName} — Search by SKU · Bulk Paste · For Suppliers`
-  const description = language === 'ru'
+  const adoris = isAdoris(company)
+  const baseDescription = language === 'ru'
     ? `${companyName} — B2B-поставщик медицинского и лабораторного оборудования. Поиск 75 000+ SKU по артикулу или названию, массовый заказ по списку и партнёрство с поставщиками с прямыми ценами от производителя.`
     : `${companyName} — B2B medical & laboratory supply. Search 75,000+ SKUs by catalog number or product name, paste a list to build a cart instantly, or partner with us as a supplier with direct manufacturer pricing.`
 
-  const keywords = language === 'ru'
+  const description = adoris
+    ? `${baseDescription} Supplier portal: register, see our open sourcing requests and quote online.`
+    : baseDescription
+
+  const baseKeywords = language === 'ru'
     ? 'поиск по SKU, поиск по артикулу, массовый заказ, оптовый заказ, B2B медицинское оборудование, реагенты оптом, стать поставщиком, прямые цены производителя, лабораторное оборудование'
     : 'search by SKU, search by catalog number, bulk order, paste SKU list, B2B medical equipment, lab reagents wholesale, become a supplier, direct manufacturer pricing, laboratory supplies, IVD distributor'
+  const keywords = adoris ? `${baseKeywords}, supplier portal` : baseKeywords
 
   return {
     title,
@@ -73,6 +82,7 @@ export default async function HomePage() {
   const priceType = company?.priceType || 'EU'
   const language = (company?.language || 'en') as 'en' | 'ru'
   const dict = getDictionary(language)
+  const adoris = isAdoris(company)
 
   // Fetch all data in parallel — all three queries are cached by unstable_cache,
   // so on a warm cache this turns into ~0 DB roundtrips.
@@ -159,7 +169,7 @@ export default async function HomePage() {
     provider: { '@type': 'Organization', name: companyName, url: baseUrl },
     serviceType: language === 'ru' ? 'Закупки и дистрибуция' : 'Procurement & distribution partnership',
     areaServed: ['EU', 'EAEU', 'AS', 'AF', 'AM'],
-    url: `${baseUrl}/supplier`,
+    url: adoris ? PORTAL_ROOT : `${baseUrl}/supplier`,
   }
   const bulkOrderServiceSchema = {
     '@context': 'https://schema.org',
@@ -201,6 +211,12 @@ export default async function HomePage() {
             totalProducts={totalProducts}
             totalManufacturers={totalManufacturers}
             quickCategories={quickCategories}
+            isAdoris={adoris}
+            portalCopy={{
+              cta: dict.homepage.supplierPortal.heroTileCta,
+              inquiry: dict.homepage.supplierPortal.heroTileInquiry,
+              newTabLabel: dict.nav.opensInNewTab,
+            }}
           />
         </section>
 
@@ -239,11 +255,24 @@ export default async function HomePage() {
           />
         </section>
 
+        {/* DARK — Supplier portal promo (Adoris only) */}
+        {adoris && (
+          <SupplierPortalSection
+            translations={dict.homepage.supplierPortal}
+            newTabLabel={dict.nav.opensInNewTab}
+          />
+        )}
+
         {/* DARK — Stats & CTA */}
         <section aria-label="Statistics and company information" className="bg-gradient-to-b from-gray-950 via-[#0a0a0f] to-[#050508]">
           <StatsSection
             companyName={companyName}
             translations={dict.homepage.stats}
+            supplierPortalCta={
+              adoris
+                ? { label: dict.nav.becomeSupplier, newTabLabel: dict.nav.opensInNewTab }
+                : undefined
+            }
           />
         </section>
       </main>

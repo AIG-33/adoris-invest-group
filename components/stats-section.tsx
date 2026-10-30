@@ -1,7 +1,9 @@
 'use client'
 
-import { Award, Building2, Globe, Shield, ArrowRight } from 'lucide-react'
+import { Award, Building2, Globe, Shield, ArrowRight, UserPlus } from 'lucide-react'
 import Link from 'next/link'
+import { portalUrl } from '@/lib/supplier-portal'
+import { ExternalLink } from '@/components/external-link'
 import { useEffect, useRef, useState } from 'react'
 
 interface StatsSectionTranslations {
@@ -27,9 +29,11 @@ interface StatsSectionTranslations {
 interface StatsSectionProps {
   companyName?: string
   translations: StatsSectionTranslations
+  /** Adoris tenant only: adds a "Become a supplier" button linking to the supplier portal. */
+  supplierPortalCta?: { label: string; newTabLabel: string }
 }
 
-export function StatsSection({ companyName = 'Shop', translations }: StatsSectionProps) {
+export function StatsSection({ companyName = 'Shop', translations, supplierPortalCta }: StatsSectionProps) {
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
 
@@ -146,6 +150,16 @@ export function StatsSection({ companyName = 'Shop', translations }: StatsSectio
             >
               {translations.viewTerms}
             </Link>
+            {supplierPortalCta && (
+              <ExternalLink
+                href={portalUrl('/login?mode=signup', 'stats_cta')}
+                newTabLabel={supplierPortalCta.newTabLabel}
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl border border-white/[0.14] text-white text-sm font-semibold transition-all hover:bg-white/[0.08] hover:border-white/[0.25] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
+              >
+                <UserPlus aria-hidden="true" className="w-4 h-4" />
+                {supplierPortalCta.label}
+              </ExternalLink>
+            )}
           </div>
         </div>
       </div>

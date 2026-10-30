@@ -42,8 +42,10 @@ import {
   Layers,
   Check,
   Handshake,
+  ExternalLink,
 } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
+import { portalUrl } from '@/lib/supplier-portal'
 
 // Accent used for the cyan headline tail and the on-dark primary-tile CTA.
 // Kept as a literal hex so the hero stays recognisable across white-labelled
@@ -92,6 +94,9 @@ interface HeroSearchProps {
   totalProducts: number
   totalManufacturers: number
   quickCategories: QuickCategory[]
+  /** Adoris tenant: the third tile points to the supplier portal. */
+  isAdoris?: boolean
+  portalCopy?: { cta: string; inquiry: string; newTabLabel: string }
 }
 
 // Decorative — only used by the live-suggestions dropdown when a product
@@ -152,6 +157,8 @@ export function HeroSearch({
   language,
   totalProducts,
   totalManufacturers,
+  isAdoris = false,
+  portalCopy,
 }: HeroSearchProps) {
   const router = useRouter()
   const t = COPY[language] || COPY.en
@@ -483,13 +490,27 @@ export function HeroSearch({
                   onClick: () => fileInputRef.current?.click(),
                 }}
               />
-              <Tile
-                Icon={Handshake}
-                title={translations.pathway3.title}
-                blurb={translations.pathway3.description}
-                cta={translations.pathway3.cta}
-                href="/supplier"
-              />
+              {isAdoris && portalCopy ? (
+                <Tile
+                  Icon={Handshake}
+                  title={translations.pathway3.title}
+                  blurb={translations.pathway3.description}
+                  cta={portalCopy.cta}
+                  external={{
+                    href: portalUrl('/login?mode=signup', 'hero_tile'),
+                    newTabLabel: portalCopy.newTabLabel,
+                  }}
+                  secondaryLink={{ href: '/supplier', label: portalCopy.inquiry }}
+                />
+              ) : (
+                <Tile
+                  Icon={Handshake}
+                  title={translations.pathway3.title}
+                  blurb={translations.pathway3.description}
+                  cta={translations.pathway3.cta}
+                  href="/supplier"
+                />
+              )}
             </div>
           )}
         </div>
@@ -514,12 +535,17 @@ interface TileProps {
     label: string
     onClick: () => void
   }
+  /** Off-site CTA: the CTA is the link and stretches over the whole card. */
+  external?: { href: string; newTabLabel: string }
+  /** Extra on-site text link; sits above the stretched CTA. Only used with `external`. */
+  secondaryLink?: { href: string; label: string }
 }
 
-function Tile({ Icon, title, blurb, cta, href, onClick, primary, secondaryAction }: TileProps) {
+function Tile({ Icon, title, blurb, cta, href, onClick, primary, secondaryAction, external, secondaryLink }: TileProps) {
+  const ctaColor = primary ? ACCENT : '#0a7ea4'
   const inner = (
     <div
-      className={`group flex h-full flex-col gap-3 rounded-2xl p-5 transition-all hover:-translate-y-0.5 sm:p-6 ${
+      className={`group relative flex h-full flex-col gap-3 rounded-2xl p-5 transition-all hover:-translate-y-0.5 sm:p-6 ${
         primary
           ? 'bg-[#0c1116] text-white'
           : 'border border-neutral-200 bg-white text-neutral-900'
@@ -550,14 +576,39 @@ function Tile({ Icon, title, blurb, cta, href, onClick, primary, secondaryAction
         {blurb}
       </p>
 
-      <div className="mt-auto flex flex-wrap items-center gap-3 pt-2">
-        <span
-          className="inline-flex items-center gap-2 text-[14px] font-bold transition-all group-hover:gap-3"
-          style={{ color: primary ? ACCENT : '#0a7ea4' }}
-        >
-          {cta}
-          <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-        </span>
+      <div className={`mt-auto flex flex-wrap items-center pt-2 ${external ? 'gap-x-4 gap-y-1' : 'gap-3'}`}>
+        {external ? (
+          <a
+            href={external.href}
+            target="_blank"
+            rel="noopener"
+            className="inline-flex min-h-[44px] items-center gap-2 text-[14px] font-bold transition-all group-hover:gap-3 focus-visible:outline-none after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-[#0a7ea4] focus-visible:after:ring-offset-2"
+            style={{ color: ctaColor }}
+          >
+            {cta}
+            <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
+            <ExternalLink aria-hidden="true" className="h-3 w-3" />
+            <span className="sr-only"> {external.newTabLabel}</span>
+          </a>
+        ) : (
+          <span
+            className="inline-flex items-center gap-2 text-[14px] font-bold transition-all group-hover:gap-3"
+            style={{ color: ctaColor }}
+          >
+            {cta}
+            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+          </span>
+        )}
+
+        {external && secondaryLink && (
+          <Link
+            href={secondaryLink.href}
+            className="relative z-10 inline-flex min-h-[44px] items-center text-[13px] font-medium underline underline-offset-4 hover:decoration-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a7ea4] rounded"
+            style={{ color: primary ? '#cfdde2' : '#4a5462' }}
+          >
+            {secondaryLink.label}
+          </Link>
+        )}
 
         {secondaryAction && (
           <button
@@ -581,6 +632,10 @@ function Tile({ Icon, title, blurb, cta, href, onClick, primary, secondaryAction
       </div>
     </div>
   )
+
+  if (external) {
+    return <div className="h-full">{inner}</div>
+  }
 
   if (href) {
     return (

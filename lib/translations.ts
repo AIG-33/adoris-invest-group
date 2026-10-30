@@ -76,6 +76,20 @@ export interface Translations {
         exwVilnius: { title: string; description: string }
       }
     }
+    // Promo for suppliers.adorisgroup.com (rendered for the Adoris tenant only).
+    // Feature strings are "Title: body" — the text before the first colon is the card title.
+    supplierPortal: {
+      eyebrow: string
+      title: string
+      lead: string
+      features: [string, string, string, string, string, string]
+      steps: [string, string, string]
+      ctaPrimary: string
+      ctaSecondary: string
+      ctaRequests: string
+      heroTileCta: string
+      heroTileInquiry: string
+    }
   }
   
   // Navigation
@@ -97,6 +111,9 @@ export interface Translations {
     admin: string
     bulkOrder: string
     supplier: string
+    supplierPortal: string
+    becomeSupplier: string
+    opensInNewTab: string
     search: string
   }
   
@@ -730,6 +747,25 @@ const translations: Record<Language, Translations> = {
           },
         },
       },
+      supplierPortal: {
+        eyebrow: 'Supplier portal',
+        title: 'Sell to Adoris Invest Group, without email ping-pong',
+        lead: 'Our sourcing requests are live online. Register in a minute, see what we need right now and send prices in one or two clicks.',
+        features: [
+          'Passwordless sign-in: we email you a secure login link.',
+          'Company profile: brands, categories, regions and contacts in one place.',
+          "Open requests: see the items you haven't quoted yet.",
+          'Quote in 1–2 clicks: price, currency, lead time, done.',
+          'Bulk upload: answer many items at once via an .xlsx file.',
+          'My offers: track, edit or withdraw any offer at any time.',
+        ],
+        steps: ['Sign up', 'Complete your profile', 'Quote open requests'],
+        ctaPrimary: 'Become a supplier',
+        ctaSecondary: 'Log in',
+        ctaRequests: 'See what we need now →',
+        heroTileCta: 'Join the supplier portal',
+        heroTileInquiry: 'Or send us an inquiry',
+      },
     },
     nav: {
       home: 'Home',
@@ -748,7 +784,10 @@ const translations: Record<Language, Translations> = {
       logout: 'Logout',
       admin: 'Admin',
       bulkOrder: 'Bulk Order',
-      supplier: 'Become Supplier',
+      supplier: 'Supplier inquiry',
+      supplierPortal: 'Supplier portal',
+      becomeSupplier: 'Become a supplier',
+      opensInNewTab: '(opens in new tab)',
       search: 'Search',
     },
     common: {
@@ -1428,6 +1467,25 @@ const translations: Record<Language, Translations> = {
           },
         },
       },
+      supplierPortal: {
+        eyebrow: 'Портал поставщиков',
+        title: 'Продавайте Adoris Invest Group без бесконечной переписки',
+        lead: 'Наши запросы на закупку доступны онлайн. Зарегистрируйтесь за минуту, смотрите, что нам нужно прямо сейчас, и отправляйте цены в 1–2 клика.',
+        features: [
+          'Вход без пароля: присылаем на email ссылку для входа.',
+          'Профиль компании: бренды, категории, регионы и контакты в одном месте.',
+          'Открытые запросы: позиции, по которым вы ещё не дали цену.',
+          'Цена в 1–2 клика: цена, валюта, срок — готово.',
+          'Массовая загрузка: ответ сразу по многим позициям через .xlsx.',
+          'Мои предложения: отслеживайте, редактируйте или отзывайте в любой момент.',
+        ],
+        steps: ['Регистрация', 'Профиль компании', 'Цены по запросам'],
+        ctaPrimary: 'Стать поставщиком',
+        ctaSecondary: 'Войти',
+        ctaRequests: 'Что нам нужно сейчас →',
+        heroTileCta: 'Присоединиться к порталу поставщиков',
+        heroTileInquiry: 'Или отправьте нам заявку',
+      },
     },
     nav: {
       home: 'Главная',
@@ -1446,7 +1504,10 @@ const translations: Record<Language, Translations> = {
       logout: 'Выйти',
       admin: 'Админ',
       bulkOrder: 'Массовый заказ',
-      supplier: 'Стать поставщиком',
+      supplier: 'Заявка поставщика',
+      supplierPortal: 'Портал поставщиков',
+      becomeSupplier: 'Стать поставщиком',
+      opensInNewTab: '(откроется в новой вкладке)',
       search: 'Поиск',
     },
     common: {
