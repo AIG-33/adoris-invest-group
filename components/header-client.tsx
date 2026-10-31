@@ -465,6 +465,12 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                     <span>{translations.about}</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/supplier" className="flex items-center gap-2 cursor-pointer">
+                    <Handshake className="w-4 h-4" />
+                    <span>{translations.supplier}</span>
+                  </Link>
+                </DropdownMenuItem>
                 {company?.language !== 'ru' && (
                   <>
                     <DropdownMenuItem asChild>
