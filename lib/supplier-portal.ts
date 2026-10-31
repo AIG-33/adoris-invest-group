@@ -15,9 +15,10 @@ export type PortalUtmContent =
 /** Portal root without tracking params — for canonical/structured-data use. */
 export const PORTAL_ROOT = `${BASE}/`
 
-export const portalUrl = (path: PortalPath, content: PortalUtmContent) => {
+/** `source` is the referring storefront domain (utm_source). */
+export const portalUrl = (path: PortalPath, content: PortalUtmContent, source = 'adorisgroup.com') => {
   const u = new URL(path, BASE)
-  u.searchParams.set('utm_source', 'adorisgroup.com')
+  u.searchParams.set('utm_source', source)
   u.searchParams.set('utm_medium', 'cta')
   u.searchParams.set('utm_campaign', 'supplier_portal')
   u.searchParams.set('utm_content', content)

@@ -3,12 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle, Handshake, ClipboardList, UserPlus, Store } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle, Handshake, ClipboardList, Store } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
 import { getProductUrl } from '@/lib/product-url'
-import { isAdoris } from '@/lib/tenant'
 import { portalUrl } from '@/lib/supplier-portal'
 import { ExternalLink as PortalLink } from '@/components/external-link'
 
@@ -109,9 +108,11 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
   const [showDropdown, setShowDropdown] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const adoris = isAdoris(company)
-  // Adoris has an extra header button, so action labels collapse to icons until xl to keep one row.
-  const actionLabelClass = adoris ? 'sr-only xl:not-sr-only' : 'hidden sm:inline'
+  const portalSource = company?.domain || 'adorisgroup.com'
+  // Action labels collapse to icons until xl so the row (with the portal button) stays on one line.
+  const actionLabelClass = 'sr-only xl:not-sr-only'
+  // Russian labels are longer, so the portal button gets its text one breakpoint later.
+  const portalWide = language === 'ru'
   const searchRef = useRef<HTMLDivElement>(null)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
@@ -438,28 +439,17 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               <span className={actionLabelClass}>{translations.bulkOrder}</span>
             </Link>
 
-            {/* Supplier — standalone top-level item */}
-            <Link
-              href="/supplier"
-              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+            {/* Icon-only until xl (2xl for ru): below that the header has no room for the label. */}
+            <PortalLink
+              href={portalUrl('/', 'header', portalSource)}
+              newTabLabel={translations.opensInNewTab}
+              iconClassName={`hidden h-3 w-3 flex-shrink-0 ${portalWide ? '2xl:block' : 'xl:block'}`}
+              className={`inline-flex flex-shrink-0 items-center justify-center gap-2 h-11 min-w-[44px] px-2.5 ${portalWide ? '2xl:px-4' : 'xl:px-4'} rounded-xl text-white text-sm font-semibold whitespace-nowrap transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900`}
+              style={{ backgroundColor: 'var(--company-accent)' }}
             >
-              <Handshake className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className={actionLabelClass}>{translations.supplier}</span>
-            </Link>
-
-            {/* Label is visible only at 2xl: below that the header has no room, so the button is icon-only. */}
-            {adoris && (
-              <PortalLink
-                href={portalUrl('/login?mode=signup', 'header')}
-                newTabLabel={translations.opensInNewTab}
-                iconClassName="hidden 2xl:block h-3 w-3 flex-shrink-0"
-                className="inline-flex flex-shrink-0 items-center justify-center gap-2 h-11 min-w-[44px] px-2.5 2xl:px-4 rounded-xl text-white text-sm font-semibold whitespace-nowrap transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900"
-                style={{ backgroundColor: 'var(--company-accent)' }}
-              >
-                <UserPlus aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                <span className="sr-only 2xl:not-sr-only">{translations.becomeSupplier}</span>
-              </PortalLink>
-            )}
+              <Store aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              <span className={portalWide ? 'sr-only 2xl:not-sr-only' : 'sr-only xl:not-sr-only'}>{translations.supplierPortal}</span>
+            </PortalLink>
 
             {/* Company Dropdown Menu */}
             <DropdownMenu>
@@ -503,22 +493,9 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                     <span>{translations.faq}</span>
                   </Link>
                 </DropdownMenuItem>
-                {(company?.language !== 'ru' || adoris) && <DropdownMenuSeparator />}
-                {adoris && (
-                  <DropdownMenuItem asChild>
-                    <PortalLink
-                      href={portalUrl('/', 'header')}
-                      newTabLabel={translations.opensInNewTab}
-                      iconClassName="w-3 h-3 ml-auto"
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      <Store aria-hidden="true" className="w-4 h-4" />
-                      <span>{translations.supplierPortal}</span>
-                    </PortalLink>
-                  </DropdownMenuItem>
-                )}
                 {company?.language !== 'ru' && (
                   <>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <a href="https://mednais.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
                         <Package className="w-4 h-4" />
@@ -642,32 +619,18 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
         {mobileMenuOpen && (
           <div className="sm:hidden mt-4 pb-4 border-t border-neutral-200">
             <nav className="flex flex-col gap-1 pt-4">
-              {adoris && (
-                <>
-                  <PortalLink
-                    href={portalUrl('/login?mode=signup', 'header_mobile')}
-                    newTabLabel={translations.opensInNewTab}
-                    iconClassName="w-3 h-3 ml-auto"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-white font-semibold transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900"
-                    style={{ backgroundColor: 'var(--company-accent)' }}
-                  >
-                    <UserPlus aria-hidden="true" className="w-5 h-5" />
-                    <span>{translations.becomeSupplier}</span>
-                  </PortalLink>
-                  <PortalLink
-                    href={portalUrl('/', 'header_mobile')}
-                    newTabLabel={translations.opensInNewTab}
-                    iconClassName="w-3 h-3 ml-auto"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
-                  >
-                    <Store aria-hidden="true" className="w-5 h-5" />
-                    <span>{translations.supplierPortal}</span>
-                  </PortalLink>
-                  <div className="my-2 border-t border-neutral-200" />
-                </>
-              )}
+              <PortalLink
+                href={portalUrl('/', 'header_mobile', portalSource)}
+                newTabLabel={translations.opensInNewTab}
+                iconClassName="w-3 h-3 ml-auto"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-white font-semibold transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900"
+                style={{ backgroundColor: 'var(--company-accent)' }}
+              >
+                <Store aria-hidden="true" className="w-5 h-5" />
+                <span>{translations.supplierPortal}</span>
+              </PortalLink>
+              <div className="my-2 border-t border-neutral-200" />
               {/* Main Navigation */}
               <Link
                 href="/products"

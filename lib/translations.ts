@@ -785,7 +785,7 @@ const translations: Record<Language, Translations> = {
       admin: 'Admin',
       bulkOrder: 'Bulk Order',
       supplier: 'Supplier inquiry',
-      supplierPortal: 'Supplier portal',
+      supplierPortal: 'Supplier Portal',
       becomeSupplier: 'Become a supplier',
       opensInNewTab: '(opens in new tab)',
       search: 'Search',
