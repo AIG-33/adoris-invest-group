@@ -11,14 +11,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
     setMounted(true)
   }, [])
 
-  if (!mounted) {
-    return null
-  }
-
+  // Page content must be server-rendered: crawlers need the HTML, and HTTP 301/404
+  // from redirect()/notFound() only work when the shell waits for the page.
   return (
     <SessionProvider>
       {children}
-      <Toaster
+      {mounted && <Toaster
         position="top-right"
         toastOptions={{
           duration: 3000,
@@ -36,7 +34,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             },
           },
         }}
-      />
+      />}
     </SessionProvider>
   )
 }
