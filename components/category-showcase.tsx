@@ -70,6 +70,16 @@ const LOCAL_COPY = {
 // because real category slugs often combine brand + discipline (e.g.
 // "pcr-plates", "abbott-reagents").
 const ICON_MAP: Array<[RegExp, any]> = [
+  [/antibod/i, ShieldCheck],
+  [/protein|peptide/i, Dna],
+  [/elisa|assay/i, Grid3x3],
+  [/ivd|clinical/i, Stethoscope],
+  [/cell-culture|culture/i, FlaskConical],
+  [/microbio/i, Microscope],
+  [/standard/i, Sparkles],
+  [/surgical|suture/i, Syringe],
+  [/labware/i, TestTubes],
+  [/lab-equipment|spare/i, Scan],
   [/pcr|molecul/i, Atom],
   [/dna|sequenc/i, Dna],
   [/h(a|e)mato|blood/i, Droplet],

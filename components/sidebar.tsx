@@ -5,9 +5,15 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { X, Package, ChevronDown, ChevronUp, Download } from 'lucide-react'
 
+type SidebarCategory = { slug: string; name: string; count: number }
+
 interface SidebarProps {
   manufacturers: any[]
   selectedManufacturer?: string
+  sections?: Array<SidebarCategory & { children: SidebarCategory[] }>
+  selectedCategory?: string
+  researchAreas?: Array<{ slug: string; name: string }>
+  selectedArea?: string
 }
 
 const INITIAL_SHOW_COUNT = 20
@@ -15,6 +21,10 @@ const INITIAL_SHOW_COUNT = 20
 export function Sidebar({
   manufacturers,
   selectedManufacturer,
+  sections = [],
+  selectedCategory,
+  researchAreas = [],
+  selectedArea,
 }: SidebarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -37,7 +47,10 @@ export function Sidebar({
     router?.push?.('/products')
   }
 
-  const hasFilters = selectedManufacturer
+  const hasFilters = selectedManufacturer || selectedCategory || selectedArea
+  const activeSection = sections.find(
+    (s) => s.slug === selectedCategory || s.children.some((c) => c.slug === selectedCategory)
+  )
 
   const filteredManufacturers = useMemo(() => {
     const q = manufacturerQuery.trim().toLowerCase()
@@ -88,6 +101,75 @@ export function Sidebar({
             </button>
           )}
         </div>
+
+        {sections.length > 0 && (
+          <nav aria-label="Product categories" className="mb-6">
+            <h3 className="text-sm font-semibold text-neutral-700 uppercase tracking-wide mb-3">
+              Categories
+            </h3>
+            <ul className="space-y-1 max-h-96 overflow-y-auto">
+              {sections.map((section) => {
+                const open = activeSection?.slug === section.slug
+                return (
+                  <li key={section.slug}>
+                    <Link
+                      href={`/products?category=${section.slug}`}
+                      className={`flex items-center justify-between gap-2 text-sm py-1 hover:text-[#1a1a1a] ${
+                        selectedCategory === section.slug ? 'font-semibold text-neutral-900' : 'text-neutral-700'
+                      }`}
+                    >
+                      <span>{section.name}</span>
+                      <span className="text-xs text-neutral-400">{section.count.toLocaleString('en')}</span>
+                    </Link>
+                    {open && section.children.length > 0 && (
+                      <ul className="ml-3 border-l border-neutral-200 pl-3 space-y-1">
+                        {section.children.map((child) => (
+                          <li key={child.slug}>
+                            <Link
+                              href={`/products?category=${child.slug}`}
+                              className={`flex items-center justify-between gap-2 text-sm py-0.5 hover:text-[#1a1a1a] ${
+                                selectedCategory === child.slug ? 'font-semibold text-neutral-900' : 'text-neutral-600'
+                              }`}
+                            >
+                              <span>{child.name}</span>
+                              <span className="text-xs text-neutral-400">{child.count.toLocaleString('en')}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
+        )}
+
+        {researchAreas.length > 0 && selectedCategory && (
+          <nav aria-label="Research area" className="mb-6">
+            <h3 className="text-sm font-semibold text-neutral-700 uppercase tracking-wide mb-3">
+              Research area
+            </h3>
+            <ul className="space-y-1">
+              {researchAreas.map((a) => (
+                <li key={a.slug}>
+                  <Link
+                    href={
+                      selectedArea === a.slug
+                        ? `/products?category=${selectedCategory}`
+                        : `/products?category=${selectedCategory}&area=${a.slug}`
+                    }
+                    className={`block text-sm py-0.5 hover:text-[#1a1a1a] ${
+                      selectedArea === a.slug ? 'font-semibold text-neutral-900' : 'text-neutral-600'
+                    }`}
+                  >
+                    {a.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
 
         {/* Manufacturers */}
         <div>

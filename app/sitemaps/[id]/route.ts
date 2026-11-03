@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import {
+  getCachedCategoryTree,
+  visibleSections,
+  RESEARCH_AREAS,
+  RESEARCH_AREA_SECTION,
+} from '@/lib/catalog-taxonomy'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
 import { getProductUrl } from '@/lib/product-url'
 import { getBaseUrl } from '@/lib/get-base-url'
@@ -40,15 +46,20 @@ function urlEntry(url: string, lastmod: string, changefreq: string, priority: nu
 async function generateStaticSitemap(baseUrl: string): Promise<string> {
   const entries: string[] = []
 
-  const [latestProduct, categories, manufacturers] = await Promise.all([
+  const [latestProduct, categoryTree, areaCounts, manufacturers] = await Promise.all([
     retryPrismaQuery(() =>
       prisma.product.findFirst({
         select: { updatedAt: true },
         orderBy: { updatedAt: 'desc' },
       })
     ),
+    getCachedCategoryTree(),
     retryPrismaQuery(() =>
-      prisma.category.findMany({ select: { slug: true } })
+      prisma.product.groupBy({
+        by: ['researchArea'],
+        where: { researchArea: { not: null } },
+        _count: { _all: true },
+      })
     ),
     retryPrismaQuery(() =>
       prisma.manufacturer.findMany({
@@ -74,9 +85,24 @@ async function generateStaticSitemap(baseUrl: string): Promise<string> {
     entries.push(urlEntry(`${baseUrl}${page.path}`, page.lastmod, page.changefreq, page.priority))
   }
 
-  // Categories — listing freshness tracks catalog
-  for (const cat of categories) {
-    entries.push(urlEntry(`${baseUrl}/products?category=${cat.slug}`, catalogLastmod, 'weekly', 0.7))
+  // Categories with products (sections + subcategories) — listing freshness tracks catalog.
+  // Empty legacy categories are left out; middleware 301s their URLs.
+  for (const section of visibleSections(categoryTree)) {
+    entries.push(urlEntry(`${baseUrl}/products?category=${section.slug}`, catalogLastmod, 'weekly', 0.8))
+    for (const sub of section.children) {
+      entries.push(urlEntry(`${baseUrl}/products?category=${sub.slug}`, catalogLastmod, 'weekly', 0.7))
+    }
+  }
+  // Research-area facet pages of the antibodies section
+  if (categoryTree.bySlug[RESEARCH_AREA_SECTION]?.productCount) {
+    for (const a of areaCounts) {
+      if (a.researchArea && RESEARCH_AREAS[a.researchArea] && a._count._all > 0) {
+        entries.push(urlEntry(
+          `${baseUrl}/products?category=${RESEARCH_AREA_SECTION}&area=${a.researchArea}`,
+          catalogLastmod, 'weekly', 0.6
+        ))
+      }
+    }
   }
 
   // Manufacturers — use manufacturer.updatedAt when present

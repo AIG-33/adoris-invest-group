@@ -106,13 +106,21 @@ model Company {
   @@index([slug])
 }
 
+/// Two-level catalog: top-level sections have parentId = null, products link to a subcategory.
+/// Legacy categories (e.g. reagents-disposables) stay as empty rows for rollback.
 model Category {
-  id       String    @id @default(cuid())
-  name     String    @unique
-  slug     String    @unique
-  products Product[]
+  id          String     @id @default(cuid())
+  name        String     @unique
+  slug        String     @unique
+  description String?    @db.Text
+  sortOrder   Int        @default(0)
+  parentId    String?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Category[] @relation("CategoryTree")
+  products    Product[]
 
   @@index([slug])
+  @@index([parentId])
 }
 
 model Manufacturer {
@@ -157,6 +165,9 @@ model Product {
   updatedAt      DateTime     @default(now()) @updatedAt
   orderItems     OrderItem[]
   rfqItems       PriceRequestItem[]
+  /// Research-area facet for antibodies (slug from lib/catalog-taxonomy.ts RESEARCH_AREAS)
+  researchArea   String?
+  slugRedirects  ProductSlugRedirect[]
 
   @@index([featured])
   @@index([categoryId])
@@ -167,6 +178,17 @@ model Product {
   @@index([createdAt])
   @@index([name])
   @@index([sku])
+  @@index([researchArea])
+}
+
+/// Old product slugs kept after a slug rewrite so old URLs 301 to the current one.
+model ProductSlugRedirect {
+  oldSlug   String   @id
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([productId])
 }
 
 enum OrderStatus {

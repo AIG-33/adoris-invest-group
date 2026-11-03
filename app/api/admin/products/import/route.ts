@@ -7,6 +7,7 @@ import OpenAI from 'openai'
 import * as XLSX from 'xlsx'
 import { parse } from 'csv-parse/sync'
 import { logger } from '@/lib/logger'
+import { FALLBACK_CATEGORY_SLUG } from '@/lib/catalog-taxonomy'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 600 // 600 seconds (10 minutes) for large file processing
@@ -929,6 +930,9 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
     ])
 
     const categoryMap = new Map(categories.map(c => [c.name.toLowerCase(), c.id]))
+    for (const c of categories) categoryMap.set(c.slug.toLowerCase(), c.id)
+    const fallbackCategoryId =
+      categories.find(c => c.slug === FALLBACK_CATEGORY_SLUG)?.id ?? categories[0]?.id
     const manufacturerMap = new Map(manufacturers.map(m => [m.name.toLowerCase(), m.id]))
 
     // Process products in batches to prevent timeout
@@ -1095,7 +1099,7 @@ Return ONLY the JSON object - no additional text, no markdown formatting, just p
           }
 
           // Find category (optional)
-          let categoryId = categories[0]?.id // Default to first category if not found
+          let categoryId = fallbackCategoryId
           if (productData.category) {
             const foundCategory = categoryMap.get(productData.category.toLowerCase()) ||
               categories.find(c => c.name.toLowerCase().includes(productData.category!.toLowerCase()))?.id

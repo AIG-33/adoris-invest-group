@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getProductUrl } from '@/lib/product-url'
+import { getCachedCategoryTree, visibleSections } from '@/lib/catalog-taxonomy'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
 import { getBaseUrl } from '@/lib/get-base-url'
 
@@ -23,12 +24,9 @@ export async function GET() {
   const language = company?.language || 'en'
 
   // Get product stats
-  const [productCount, categories, manufacturers, sampleProducts] = await Promise.all([
+  const [productCount, categoryTree, manufacturers, sampleProducts] = await Promise.all([
     retryPrismaQuery(() => prisma.product.count()),
-    retryPrismaQuery(() => prisma.category.findMany({
-      select: { name: true, slug: true, _count: { select: { products: true } } },
-      orderBy: { name: 'asc' },
-    })),
+    getCachedCategoryTree(),
     retryPrismaQuery(() => prisma.manufacturer.findMany({
       select: { name: true, slug: true, _count: { select: { products: true } } },
       orderBy: { name: 'asc' },
@@ -46,8 +44,12 @@ export async function GET() {
     })),
   ])
 
+  const categories = visibleSections(categoryTree)
   const categoryList = categories
-    .map(c => `- ${c.name} (${c._count.products} products): ${baseUrl}/products?category=${c.slug}`)
+    .map(s => [
+      `- ${s.name} (${s.productCount} products): ${baseUrl}/products?category=${s.slug}`,
+      ...s.children.map(c => `  - ${c.name} (${c.productCount} products): ${baseUrl}/products?category=${c.slug}`),
+    ].join('\n'))
     .join('\n')
 
   const manufacturerList = manufacturers
@@ -83,7 +85,7 @@ Products can be found by:
 ## Catalog Statistics
 
 - Total products: ${productCount}
-- Categories: ${categories.length}
+- Categories: ${categories.length} sections, ${categories.reduce((n, s) => n + s.children.length, 0)} subcategories
 - Manufacturers: ${manufacturers.length}
 
 ## Categories

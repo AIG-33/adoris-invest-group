@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import {
   MANUFACTURER_SLUG_REDIRECTS,
-  CATEGORY_SLUG_REDIRECTS,
+  resolveLegacyCategory,
+  type LegacyCategoryTarget,
 } from '@/lib/legacy-redirects'
 import {
   PRODUCT_PATH_REDIRECTS,
@@ -15,6 +16,15 @@ import {
  * Legacy 1-segment /product/:slug exact matches also redirect in the catch-all page
  * Cleans up legacy/spam URLs that pollute Google Search Console
  */
+function setCategoryTarget(url: URL, target: LegacyCategoryTarget) {
+  url.searchParams.delete('category')
+  if ('category' in target) {
+    url.searchParams.set('category', target.category)
+  } else if ('manufacturer' in target && !url.searchParams.has('manufacturer')) {
+    url.searchParams.set('manufacturer', target.manufacturer)
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const searchParams = request.nextUrl.searchParams
@@ -67,9 +77,8 @@ export async function middleware(request: NextRequest) {
   //    → Redirect to /products?category=... (with slug remap if needed)
   if (pathname === '/' && searchParams.has('category')) {
     const raw = searchParams.get('category')!
-    const canonical = CATEGORY_SLUG_REDIRECTS[raw] || raw
     const cleanUrl = new URL('/products', request.url)
-    cleanUrl.searchParams.set('category', canonical)
+    setCategoryTarget(cleanUrl, resolveLegacyCategory(raw) ?? { category: raw })
     return NextResponse.redirect(cleanUrl, 301)
   }
 
@@ -78,18 +87,19 @@ export async function middleware(request: NextRequest) {
     const mfg = searchParams.get('manufacturer')
     const cat = searchParams.get('category')
     const mfgCanon = mfg ? MANUFACTURER_SLUG_REDIRECTS[mfg] : undefined
-    const catCanon = cat ? CATEGORY_SLUG_REDIRECTS[cat] : undefined
-    if (mfgCanon || catCanon) {
+    const catTarget = cat ? resolveLegacyCategory(cat) : null
+    if (mfgCanon || catTarget) {
       const cleanUrl = new URL('/products', request.url)
       searchParams.forEach((value, key) => {
+        // A remapped category has a different product set, so old page numbers are meaningless
+        if (key === 'page' && catTarget) return
         if (key === 'manufacturer' && mfgCanon) {
           cleanUrl.searchParams.set(key, mfgCanon)
-        } else if (key === 'category' && catCanon) {
-          cleanUrl.searchParams.set(key, catCanon)
         } else {
           cleanUrl.searchParams.set(key, value)
         }
       })
+      if (catTarget) setCategoryTarget(cleanUrl, catTarget)
       return NextResponse.redirect(cleanUrl, 301)
     }
   }
@@ -106,9 +116,8 @@ export async function middleware(request: NextRequest) {
   )
   if (productCategoryMatch) {
     const rawSlug = decodeURIComponent(productCategoryMatch[1])
-    const canonical = CATEGORY_SLUG_REDIRECTS[rawSlug] || rawSlug
     const cleanUrl = new URL('/products', request.url)
-    cleanUrl.searchParams.set('category', canonical)
+    setCategoryTarget(cleanUrl, resolveLegacyCategory(rawSlug) ?? { category: rawSlug })
     return NextResponse.redirect(cleanUrl, 301)
   }
 

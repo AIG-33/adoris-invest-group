@@ -20,6 +20,14 @@ import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
 import { getCachedManufacturersList } from '@/lib/cached-queries'
+import {
+  getCachedCategoryTree,
+  visibleSections,
+  categoryIdsForSlug,
+  parentOf,
+  RESEARCH_AREAS,
+  RESEARCH_AREA_SECTION,
+} from '@/lib/catalog-taxonomy'
 import { getBaseUrl } from '@/lib/get-base-url'
 import {
   generateItemListSchema,
@@ -38,6 +46,7 @@ export const maxDuration = 30
 type SearchParams = {
   search?: string
   category?: string
+  area?: string
   manufacturer?: string
   minPrice?: string
   maxPrice?: string
@@ -63,6 +72,9 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const language = company?.language || 'en'
 
   const { search, category, manufacturer, page } = searchParams
+  const tree = category ? await getCachedCategoryTree() : null
+  const categoryNode = category ? tree?.bySlug[category] : undefined
+  const area = searchParams.area && RESEARCH_AREAS[searchParams.area] ? searchParams.area : undefined
 
   let title = language === 'ru'
     ? `Каталог продукции | ${companyName}`
@@ -79,13 +91,17 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       ? `Результаты поиска «${search}» в каталоге ${companyName}. B2B медицинское оборудование и расходные материалы.`
       : `Search results for "${search}" in ${companyName} catalog. B2B medical equipment and laboratory supplies.`
   } else if (category) {
-    const categoryName = category.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    const baseName = categoryNode?.name || category.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    const categoryName = area ? `${RESEARCH_AREAS[area]} ${baseName}` : baseName
+    const count = categoryNode?.productCount
     title = language === 'ru'
       ? `${categoryName} — каталог | ${companyName}`
-      : `${categoryName} — Catalog | ${companyName}`
-    description = language === 'ru'
-      ? `${categoryName} от ведущих производителей. Каталог ${companyName}.`
-      : `${categoryName} from leading manufacturers. ${companyName} catalog.`
+      : `${categoryName} — Buy Online | ${companyName}`
+    description = categoryNode?.description && !area
+      ? categoryNode.description
+      : language === 'ru'
+        ? `${categoryName} от ведущих производителей. Каталог ${companyName}.`
+        : `${categoryName}${count ? ` — ${count.toLocaleString('en')} products` : ''} from leading manufacturers. Request a quote from ${companyName}.`
   } else if (manufacturer) {
     const manufacturerName = manufacturer.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
     title = language === 'ru'
@@ -100,6 +116,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const canonicalParams = new URLSearchParams()
   if (search) canonicalParams.set('search', search)
   if (category) canonicalParams.set('category', category)
+  if (category && area) canonicalParams.set('area', area)
   if (manufacturer) canonicalParams.set('manufacturer', manufacturer)
   const queryString = canonicalParams.toString()
   const canonical = `${baseUrl}/products${queryString ? `?${queryString}` : ''}`
@@ -130,7 +147,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 export default async function ProductsPage({ searchParams }: Props) {
   const { search, category, manufacturer, minPrice, maxPrice, page, sort } = searchParams
+  const area = searchParams.area && RESEARCH_AREAS[searchParams.area] ? searchParams.area : undefined
   const currentPage = parseInt(page || '1')
+  const tree = await getCachedCategoryTree()
+  const categoryNode = category ? tree.bySlug[category] : undefined
+  const parentNode = parentOf(tree, categoryNode)
+  const sectionNode = parentNode || categoryNode
 
   // Get current company
   const company = await getServerCompany()
@@ -150,7 +172,12 @@ export default async function ProductsPage({ searchParams }: Props) {
   }
 
   if (category) {
-    where.category = { slug: category }
+    const ids = categoryIdsForSlug(tree, category)
+    where.categoryId = ids ? { in: ids } : '__none__'
+  }
+
+  if (area) {
+    where.researchArea = area
   }
 
   if (manufacturer) {
@@ -232,6 +259,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     const params = new URLSearchParams()
     if (search) params.set('search', search)
     if (category) params.set('category', category)
+    if (area) params.set('area', area)
     if (manufacturer) params.set('manufacturer', manufacturer)
     if (minPrice) params.set('minPrice', minPrice)
     if (maxPrice) params.set('maxPrice', maxPrice)
@@ -245,9 +273,26 @@ export default async function ProductsPage({ searchParams }: Props) {
     { name: dict.nav.home, url: `${baseUrl}/` },
     { name: dict.nav.products, url: `${baseUrl}/products` },
   ]
+  if (parentNode) {
+    breadcrumbs.push({ name: parentNode.name, url: `${baseUrl}/products?category=${parentNode.slug}` })
+  }
+  if (categoryNode) {
+    breadcrumbs.push({ name: categoryNode.name, url: `${baseUrl}/products?category=${categoryNode.slug}` })
+  }
+  if (categoryNode && area) {
+    breadcrumbs.push({ name: RESEARCH_AREAS[area], url: `${baseUrl}/products?category=${categoryNode.slug}&area=${area}` })
+  }
+  const sections = visibleSections(tree)
+  const showAreas = sectionNode?.slug === RESEARCH_AREA_SECTION
+  const pageHeading = categoryNode
+    ? (area ? `${RESEARCH_AREAS[area]} ${categoryNode.name}` : categoryNode.name)
+    : null
+  const subcategoryLinks = categoryNode && !parentNode
+    ? sections.find((s) => s.id === categoryNode.id)?.children || []
+    : []
   
   const structuredData = [
-    generateItemListSchema(products, baseUrl, 'Products'),
+    generateItemListSchema(products, baseUrl, pageHeading || 'Products'),
     generateBreadcrumbSchema(breadcrumbs),
   ]
 
@@ -262,9 +307,39 @@ export default async function ProductsPage({ searchParams }: Props) {
               <Sidebar
                 manufacturers={manufacturers}
                 selectedManufacturer={manufacturer}
+                sections={sections.map((s) => ({
+                  slug: s.slug,
+                  name: s.name,
+                  count: s.productCount,
+                  children: s.children.map((c) => ({ slug: c.slug, name: c.name, count: c.productCount })),
+                }))}
+                selectedCategory={category}
+                researchAreas={showAreas ? Object.entries(RESEARCH_AREAS).map(([slug, name]) => ({ slug, name })) : []}
+                selectedArea={area}
               />
             </aside>
             <main className="flex-1">
+              {pageHeading && (
+                <div className="mb-6">
+                  <h1 className="text-2xl font-bold text-neutral-900">{pageHeading}</h1>
+                  {categoryNode?.description && !area && (
+                    <p className="mt-2 text-sm text-neutral-600 max-w-3xl">{categoryNode.description}</p>
+                  )}
+                  {subcategoryLinks.length > 0 && (
+                    <nav aria-label="Subcategories" className="mt-4 flex flex-wrap gap-2">
+                      {subcategoryLinks.map((c) => (
+                        <Link
+                          key={c.slug}
+                          href={`/products?category=${c.slug}`}
+                          className="px-3 py-1.5 rounded-full border border-neutral-200 bg-white text-sm text-neutral-700 hover:border-neutral-400"
+                        >
+                          {c.name} <span className="text-neutral-400">{c.productCount.toLocaleString('en')}</span>
+                        </Link>
+                      ))}
+                    </nav>
+                  )}
+                </div>
+              )}
               <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <p className="text-neutral-400 text-sm">
                   {dict.products.showing} {products.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0} - {Math.min(currentPage * ITEMS_PER_PAGE, totalProducts)} {dict.products.of} {totalProducts} {dict.products.results}
@@ -275,7 +350,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                 </div>
               </div>
               
-              <ProductGrid products={products} company={company} />
+              <ProductGrid products={products} company={company} hideHeader={!!pageHeading} />
               
               {/* Pagination */}
               {totalPages > 1 && (

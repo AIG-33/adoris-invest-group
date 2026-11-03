@@ -24,7 +24,7 @@ import * as path from 'path'
 import { parse } from 'csv-parse/sync'
 import {
   MANUFACTURER_SLUG_REDIRECTS,
-  CATEGORY_SLUG_REDIRECTS,
+  resolveLegacyCategory,
 } from '../lib/legacy-redirects'
 import {
   PRODUCT_PATH_REDIRECTS as EXISTING_PRODUCT_REDIRECTS,
@@ -144,7 +144,7 @@ function isStructurallyHandled(pathname: string, search: string): boolean {
     const sp = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)
     if (sp.has('query_type_manufacturer') || sp.has('filter_manufacturer')) return true
     const cat = sp.get('category')
-    if (cat && CATEGORY_SLUG_REDIRECTS[cat]) return true
+    if (cat && resolveLegacyCategory(cat)) return true
     const mfg = sp.get('manufacturer')
     if (mfg && MANUFACTURER_SLUG_REDIRECTS[mfg]) return true
   }
