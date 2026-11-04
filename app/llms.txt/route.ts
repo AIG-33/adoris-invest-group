@@ -104,7 +104,7 @@ ${productList}
 
 - Homepage: ${baseUrl}
 - Product Catalog: ${baseUrl}/products
-- Bulk Order: ${baseUrl}/bulk-order
+- 1-Click Quote (send a list as text, photo, Excel or CSV and get prices): ${baseUrl}/bulk-order
 - About: ${baseUrl}/company/about
 - FAQ: ${baseUrl}/faq
 - Terms: ${baseUrl}/terms

@@ -11,7 +11,7 @@
      │ <search bar>   overlaps the band (z-index 2)    │
      │ <sub + trust>  one-line description + ticks     │
      ├─────────────────────────────────────────────────┤
-     │ <3 tiles>      Search · Bulk paste · Supplier   │
+     │ <3 tiles>      Quote · Search · Supplier        │
      └─────────────────────────────────────────────────┘
 
    The middle tile is rendered dark/"primary" — the visual anchor.
@@ -23,13 +23,12 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Search,
   ArrowRight,
   Upload,
-  ClipboardPaste,
   Package,
   Beaker,
   Microscope,
@@ -45,9 +44,17 @@ import {
   ExternalLink,
   ShieldCheck,
   Grid3x3,
+  Paperclip,
+  Zap,
+  ImagePlus,
+  FileSpreadsheet,
+  Type,
 } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import { portalUrl } from '@/lib/supplier-portal'
+import { parseBulkOrderText } from '@/lib/parse-bulk-order'
+import { setPendingQuote } from '@/lib/quote-handoff'
+import { SHEET_ACCEPT, isImageFile, isSheetFile } from '@/lib/sheet-to-text'
 
 // Accent used for the cyan headline tail and the on-dark primary-tile CTA.
 // Kept as a literal hex so the hero stays recognisable across white-labelled
@@ -130,10 +137,23 @@ const COPY = {
   en: {
     eyebrow: (skus: number, brands: number) =>
       `B2B medical & lab supply · ${skus.toLocaleString()} SKUs · ${brands}+ manufacturers`,
-    headline: 'Find any lab supply —',
-    headlineAccent: 'quoted in one business day.',
+    headline: 'Send your list in any form —',
+    headlineAccent: 'get a quote in one click.',
     subtitle:
-      'Original products from leading European manufacturers. Search by SKU or name, paste a bulk list, or partner with us — direct from the manufacturer.',
+      'Paste catalog numbers, drop a photo, screenshot or Excel file — we match every item against our catalog and show prices instantly. Not in the catalog? We quote it within one business day.',
+    placeholderShort: 'Paste your list',
+    placeholderLong: 'Paste your list, drop a file — or type one SKU to search',
+    searchCta: 'Search',
+    quoteCta: 'Get quote',
+    attach: 'Attach a photo, screenshot, Excel or CSV file',
+    dropHint: 'Drop it here — we’ll price it in one click',
+    worksWith: 'Works with',
+    chipText: 'Pasted text',
+    chipPhoto: 'Photo / screenshot',
+    chipSheet: 'Excel / CSV',
+    tryExample: 'Try an example',
+    itemsDetected: (n: number) => `${n} items detected — press Get quote`,
+    fileError: 'Use a photo, screenshot, Excel or CSV file.',
     trust: ['Original products', 'CE & ISO certified', 'EXW Vilnius'],
     searchHint: 'Press',
     enter: '↵',
@@ -142,15 +162,28 @@ const COPY = {
     of: 'of',
     nothingMatched: 'Nothing matched.',
     openCatalog: 'Open full catalog',
-    uploadCsvLabel: 'Upload .csv / .xlsx',
+    uploadCsvLabel: 'Upload photo / Excel',
   },
   ru: {
     eyebrow: (skus: number, brands: number) =>
       `B2B-расходники и оборудование · ${skus.toLocaleString()} SKU · ${brands}+ производителей`,
-    headline: 'Найдите любой расходник —',
-    headlineAccent: 'расчёт за один рабочий день.',
+    headline: 'Пришлите список в любом виде —',
+    headlineAccent: 'получите КП в один клик.',
     subtitle:
-      'Оригинальная продукция от ведущих европейских производителей. Поиск по артикулу или названию, массовый заказ по списку или прямое партнёрство с производителем.',
+      'Вставьте артикулы, перетащите фото, скриншот или Excel — сопоставим каждую позицию с каталогом и сразу покажем цены. Нет в каталоге? Посчитаем за один рабочий день.',
+    placeholderShort: 'Вставьте список',
+    placeholderLong: 'Вставьте список, перетащите файл — или введите один артикул для поиска',
+    searchCta: 'Найти',
+    quoteCta: 'Получить КП',
+    attach: 'Прикрепить фото, скриншот, Excel или CSV',
+    dropHint: 'Отпустите файл — посчитаем в один клик',
+    worksWith: 'Подойдёт',
+    chipText: 'Текст',
+    chipPhoto: 'Фото / скриншот',
+    chipSheet: 'Excel / CSV',
+    tryExample: 'Попробовать на примере',
+    itemsDetected: (n: number) => `Распознано позиций: ${n} — нажмите «Получить КП»`,
+    fileError: 'Подойдут фото, скриншот, Excel или CSV.',
     trust: ['Оригинальная продукция', 'CE и ISO сертификация', 'EXW Вильнюс'],
     searchHint: 'Нажмите',
     enter: '↵',
@@ -159,9 +192,14 @@ const COPY = {
     of: 'из',
     nothingMatched: 'Ничего не найдено.',
     openCatalog: 'Открыть весь каталог',
-    uploadCsvLabel: 'Загрузить .csv / .xlsx',
+    uploadCsvLabel: 'Загрузить фото / Excel',
   },
 } as const
+
+const CHIP =
+  'inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 text-[12.5px] font-medium text-neutral-700 transition-colors hover:border-neutral-300 hover:text-neutral-900'
+
+const EXAMPLE_LIST = '10446232\t2\n10309757, 1\n11622889190; 5'
 
 export function HeroSearch({
   translations,
@@ -178,11 +216,26 @@ export function HeroSearch({
   const [focused, setFocused] = useState(false)
   const [results, setResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
+  const [dragging, setDragging] = useState(false)
+  const [fileError, setFileError] = useState('')
 
   const wrapRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const debounceRef = useRef<NodeJS.Timeout>()
+  const dragDepthRef = useRef(0)
+
+  // One field, two jobs: a single SKU searches, a list (2+ lines) becomes a quote.
+  const listCount = useMemo(() => parseBulkOrderText(query).length, [query])
+  const quoteMode = query.includes('\n') || listCount >= 2
+
+  // Grow with the pasted list, up to ~5 lines.
+  useEffect(() => {
+    const el = inputRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${Math.min(el.scrollHeight, 168)}px`
+  }, [query])
 
   // Cmd+K / Ctrl+K focuses the hero search from anywhere on the homepage.
   useEffect(() => {
@@ -210,7 +263,7 @@ export function HeroSearch({
   // Debounced live suggestions — same backend as before.
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current)
-    if (query.trim().length < 2) {
+    if (query.trim().length < 2 || quoteMode) {
       setResults([])
       return
     }
@@ -228,20 +281,64 @@ export function HeroSearch({
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [query])
+  }, [query, quoteMode])
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const goQuote = (text: string, files: File[] = []) => {
+    setPendingQuote({ text, files })
+    router.push('/bulk-order#bulk-form')
+  }
+
+  const submit = (e?: React.FormEvent) => {
+    e?.preventDefault()
     const q = query.trim()
     if (!q) return
     setFocused(false)
+    if (quoteMode) {
+      goQuote(query)
+      return
+    }
     router.push(`/products?search=${encodeURIComponent(q)}`)
   }
 
-  const onFile = (file: File | null) => {
-    if (!file) return
-    // Hand off to the bulk-order page, which accepts the same formats.
-    router.push('/bulk-order')
+  // A dropped / attached / pasted file goes straight to pricing — no extra click.
+  const acceptFiles = (list: FileList | File[] | null | undefined) => {
+    const files = Array.from(list || []).filter((f) => isImageFile(f) || isSheetFile(f))
+    if (files.length === 0) {
+      setFileError(t.fileError)
+      return
+    }
+    setFileError('')
+    goQuote(quoteMode ? query : '', files)
+  }
+
+  const onPaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const images = Array.from(e.clipboardData?.files || []).filter(isImageFile)
+    if (images.length === 0) return
+    e.preventDefault()
+    acceptFiles(images)
+  }
+
+  const dragHandlers = {
+    onDragEnter: (e: React.DragEvent) => {
+      if (!e.dataTransfer.types.includes('Files')) return
+      e.preventDefault()
+      dragDepthRef.current += 1
+      setDragging(true)
+    },
+    onDragOver: (e: React.DragEvent) => {
+      if (e.dataTransfer.types.includes('Files')) e.preventDefault()
+    },
+    onDragLeave: (e: React.DragEvent) => {
+      e.preventDefault()
+      dragDepthRef.current = Math.max(0, dragDepthRef.current - 1)
+      if (dragDepthRef.current === 0) setDragging(false)
+    },
+    onDrop: (e: React.DragEvent) => {
+      e.preventDefault()
+      dragDepthRef.current = 0
+      setDragging(false)
+      acceptFiles(e.dataTransfer.files)
+    },
   }
 
   const focusSearch = () => {
@@ -249,7 +346,7 @@ export function HeroSearch({
     inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
-  const showOverlay = focused && (results.length > 0 || isSearching || query.trim().length >= 2)
+  const showOverlay = !quoteMode && focused && (results.length > 0 || isSearching || query.trim().length >= 2)
 
   return (
     <section className="relative" aria-label="Hero">
@@ -290,7 +387,7 @@ export function HeroSearch({
             · {t.eyebrow(totalProducts, totalManufacturers)} ·
           </div>
           <h1
-            className="font-display mt-3 max-w-3xl text-balance text-4xl font-extrabold leading-[1.02] tracking-[-0.028em] text-white sm:mt-4 sm:text-5xl md:text-6xl lg:text-[78px]"
+            className="font-display mt-3 max-w-5xl text-balance text-[34px] font-extrabold leading-[1.04] tracking-[-0.028em] text-white sm:mt-4 sm:text-5xl lg:text-[60px] xl:text-[72px]"
           >
             {t.headline}
             <br className="hidden sm:block" />
@@ -306,46 +403,88 @@ export function HeroSearch({
         <div className="relative z-10 mx-auto -mt-8 max-w-7xl px-5 sm:-mt-10 sm:px-8 lg:px-12">
           {/* ─── SEARCH BAR ────────────────────────────────────────────── */}
           <div ref={wrapRef} className="relative">
-            <form onSubmit={submit}>
+            <form onSubmit={submit} {...dragHandlers}>
               <div
-                className="relative flex h-14 items-stretch overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-[0_18px_50px_-16px_rgba(10,17,22,0.25)] transition-all sm:h-16"
+                className={`relative flex min-h-[56px] items-stretch overflow-hidden rounded-2xl border bg-white shadow-[0_18px_50px_-16px_rgba(10,17,22,0.25)] transition-all sm:min-h-[64px] ${
+                  dragging ? 'border-2 border-dashed border-[#0a7ea4]' : 'border-neutral-200'
+                }`}
                 style={
-                  focused
+                  focused || dragging
                     ? { boxShadow: `0 0 0 4px ${ACCENT}33, 0 18px 50px -16px rgba(10,17,22,0.25)` }
                     : undefined
                 }
               >
-                <span className="grid place-items-center px-5 text-neutral-500 sm:px-6">
-                  <Search className="h-5 w-5" strokeWidth={1.75} />
+                <span className="grid place-items-center px-3.5 text-neutral-500 sm:px-6" aria-hidden>
+                  {quoteMode ? (
+                    <Zap className="h-5 w-5 text-[#0a7ea4]" strokeWidth={1.75} />
+                  ) : (
+                    <Search className="h-5 w-5" strokeWidth={1.75} />
+                  )}
                 </span>
-                <input
-                  ref={inputRef}
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => setFocused(true)}
-                  placeholder={translations.searchPlaceholder}
-                  className="font-display flex-1 bg-transparent text-base font-medium text-neutral-900 placeholder-neutral-400 outline-none sm:text-lg"
-                  aria-label={translations.searchPlaceholder}
-                />
-                <kbd
-                  className="font-mono-brand my-auto mr-2 hidden rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[11px] font-medium text-neutral-500 sm:inline"
-                  aria-hidden
+                <div className="relative min-w-0 flex-1">
+                  <textarea
+                    ref={inputRef}
+                    rows={1}
+                    value={query}
+                    onChange={(e) => {
+                      setQuery(e.target.value)
+                      if (fileError) setFileError('')
+                    }}
+                    onFocus={() => setFocused(true)}
+                    onPaste={onPaste}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+                        e.preventDefault()
+                        submit()
+                      }
+                    }}
+                    wrap={quoteMode ? 'soft' : 'off'}
+                    spellCheck={false}
+                    aria-label={t.placeholderLong}
+                    className={`font-display block w-full resize-none overflow-y-auto bg-transparent py-4 text-base font-medium leading-6 text-neutral-900 outline-none sm:py-5 sm:text-lg sm:leading-6 ${
+                      quoteMode ? 'font-mono-brand !text-[14px]' : ''
+                    }`}
+                  />
+                  {!query && (
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-y-0 left-0 right-2 flex items-center truncate text-base font-medium text-neutral-400 sm:text-lg"
+                    >
+                      <span className="truncate xl:hidden">{t.placeholderShort}</span>
+                      <span className="hidden truncate xl:inline">{t.placeholderLong}</span>
+                    </span>
+                  )}
+                  {dragging && (
+                    <span className="pointer-events-none absolute inset-0 flex items-center bg-white text-sm font-semibold text-[#0a7ea4] sm:text-base">
+                      {t.dropHint}
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  aria-label={t.attach}
+                  title={t.attach}
+                  className="grid w-11 flex-shrink-0 place-items-center text-neutral-500 transition-colors hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0a7ea4] sm:w-12"
                 >
-                  ⌘K
-                </kbd>
+                  <Paperclip className="h-5 w-5" strokeWidth={1.75} />
+                </button>
+                {!quoteMode && (
+                  <kbd
+                    className="font-mono-brand my-auto mr-2 hidden rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[11px] font-medium text-neutral-500 md:inline"
+                    aria-hidden
+                  >
+                    ⌘K
+                  </kbd>
+                )}
                 <button
                   type="submit"
-                  className="font-display inline-flex items-center gap-2 px-5 text-sm font-bold text-white transition-colors sm:px-8 sm:text-[15px]"
+                  className="font-display inline-flex flex-shrink-0 items-center gap-2 px-4 text-sm font-bold text-white transition-colors hover:brightness-90 sm:px-8 sm:text-[15px]"
                   style={{ background: '#0a7ea4' }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#086a89'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#0a7ea4'
-                  }}
                 >
-                  <span>{translations.browseCatalog.split(' ')[0]}</span>
-                  <ArrowRight className="hidden h-4 w-4 sm:inline" strokeWidth={2} />
+                  {quoteMode && <Zap className="h-4 w-4" strokeWidth={2.25} aria-hidden />}
+                  <span>{quoteMode ? t.quoteCta : t.searchCta}</span>
+                  <ArrowRight className="hidden h-4 w-4 sm:inline" strokeWidth={2} aria-hidden />
                 </button>
               </div>
             </form>
@@ -451,6 +590,44 @@ export function HeroSearch({
             )}
           </div>
 
+          {/* ─── WHAT THE FIELD ACCEPTS / LIST STATUS ───────────────────── */}
+          <div className="mt-3 flex min-h-[36px] flex-wrap items-center gap-2" aria-live="polite">
+            {quoteMode ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-semibold" style={{ background: '#e6f1f6', color: '#0a7ea4' }}>
+                <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
+                {t.itemsDetected(listCount)}
+              </span>
+            ) : (
+              <>
+                <span className="text-[12px] font-medium text-neutral-500">{t.worksWith}:</span>
+                <button type="button" onClick={() => inputRef.current?.focus()} className={CHIP}>
+                  <Type className="h-3.5 w-3.5" aria-hidden />
+                  {t.chipText}
+                </button>
+                <button type="button" onClick={() => fileInputRef.current?.click()} className={CHIP}>
+                  <ImagePlus className="h-3.5 w-3.5" aria-hidden />
+                  {t.chipPhoto}
+                </button>
+                <button type="button" onClick={() => fileInputRef.current?.click()} className={CHIP}>
+                  <FileSpreadsheet className="h-3.5 w-3.5" aria-hidden />
+                  {t.chipSheet}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery(EXAMPLE_LIST)
+                    inputRef.current?.focus()
+                  }}
+                  className="ml-1 inline-flex min-h-[36px] items-center text-[12.5px] font-semibold underline-offset-4 hover:underline"
+                  style={{ color: '#0a7ea4' }}
+                >
+                  {t.tryExample} →
+                </button>
+              </>
+            )}
+            {fileError && <span className="text-[12.5px] font-medium text-red-700">{fileError}</span>}
+          </div>
+
           {/* ─── SUBTITLE + TRUST TICKS ──────────────────────────────────── */}
           <div className="mt-5 flex flex-col gap-3 text-[14px] text-neutral-600 sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
             <p className="max-w-2xl leading-relaxed">{t.subtitle}</p>
@@ -469,27 +646,24 @@ export function HeroSearch({
             </ul>
           </div>
 
-          {/* ─── HIDDEN FILE INPUT — driven by tile 2's secondary upload ──── */}
+          {/* ─── HIDDEN FILE INPUT — paperclip, format chips and the quote tile ── */}
           <input
             ref={fileInputRef}
             type="file"
-            accept=".csv,.xlsx,.xls"
+            multiple
+            accept={`image/*,${SHEET_ACCEPT}`}
             className="hidden"
-            onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+            onChange={(e) => {
+              acceptFiles(e.target.files)
+              e.target.value = ''
+            }}
           />
 
           {/* ─── THREE TILES ─────────────────────────────────────────────── */}
           {translations.pathway1 && translations.pathway2 && translations.pathway3 && (
             <div className="mt-8 grid grid-cols-1 gap-4 pb-12 sm:mt-10 sm:grid-cols-3 sm:gap-5 sm:pb-16">
               <Tile
-                Icon={Search}
-                title={translations.pathway1.title}
-                blurb={translations.pathway1.description}
-                cta={translations.pathway1.cta}
-                onClick={focusSearch}
-              />
-              <Tile
-                Icon={ClipboardPaste}
+                Icon={Zap}
                 title={translations.pathway2.title}
                 blurb={translations.pathway2.description}
                 cta={translations.pathway2.cta}
@@ -500,6 +674,13 @@ export function HeroSearch({
                   label: t.uploadCsvLabel,
                   onClick: () => fileInputRef.current?.click(),
                 }}
+              />
+              <Tile
+                Icon={Search}
+                title={translations.pathway1.title}
+                blurb={translations.pathway1.description}
+                cta={translations.pathway1.cta}
+                onClick={focusSearch}
               />
               {isAdoris && portalCopy ? (
                 <Tile

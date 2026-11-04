@@ -193,9 +193,78 @@ export function parseBulkOrderLine(line: string): BulkOrderLineItem | null {
   return { sku, quantity }
 }
 
+const SKU_HEADER =
+  /^(sku|cat|cat no|cat nr|cat number|catalog|catalogue|catalog no|catalog number|catalogue no|catalogue number|article|article no|art|art no|art nr|part no|part number|item no|item code|ref|ref no|reference|code|product code|артикул|кат|кат no|кат номер|каталожный номер|код|код товара)$/
+const QTY_HEADER =
+  /^((order )?(qty|quantity|qnt|pcs|amount|count|units)( pcs| ordered)?|кол|кол во|кол во шт|количество|шт)$/
+
+function normalizeHeader(cell: string): string {
+  return cell
+    .toLowerCase()
+    .replace(/№/g, ' no ')
+    .replace(/[^a-zа-яё0-9]+/gi, ' ')
+    .trim()
+}
+
+function splitCells(line: string, delimiter: string): string[] {
+  const cells: string[] = []
+  let cell = ''
+  let quoted = false
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i]
+    if (ch === '"') {
+      if (quoted && line[i + 1] === '"') {
+        cell += '"'
+        i++
+      } else {
+        quoted = !quoted
+      }
+    } else if (ch === delimiter && !quoted) {
+      cells.push(cell.trim())
+      cell = ''
+    } else {
+      cell += ch
+    }
+  }
+  cells.push(cell.trim())
+  return cells
+}
+
+/**
+ * Spreadsheet-style input (Excel paste, CSV export) with a header row such as
+ * "Cat. No | Description | Qty | Price": read the SKU and quantity columns only,
+ * so prices and descriptions are never mistaken for quantities.
+ */
+function parseTableWithHeader(lines: string[]): BulkOrderLineItem[] | null {
+  for (let i = 0; i < Math.min(lines.length, 5); i++) {
+    const line = lines[i]
+    const delimiter = line.includes('\t') ? '\t' : line.includes(';') ? ';' : line.includes(',') ? ',' : null
+    if (!delimiter) continue
+
+    const headers = splitCells(line, delimiter).map(normalizeHeader)
+    const skuIdx = headers.findIndex((h) => SKU_HEADER.test(h))
+    if (skuIdx === -1) continue
+    const qtyIdx = headers.findIndex((h) => QTY_HEADER.test(h))
+
+    const items: BulkOrderLineItem[] = []
+    for (const row of lines.slice(i + 1)) {
+      const cells = splitCells(row, delimiter)
+      const sku = cells[skuIdx]
+      if (!sku) continue
+      const quantity = qtyIdx === -1 ? 1 : parseQuantityToken(cells[qtyIdx] ?? '') ?? 1
+      items.push({ sku, quantity })
+    }
+    return items
+  }
+  return null
+}
+
 export function parseBulkOrderText(text: string): BulkOrderLineItem[] {
-  return text
-    .split(/\r?\n/)
+  const lines = text.split(/\r?\n/).filter((l) => l.trim())
+  const table = parseTableWithHeader(lines)
+  if (table) return table
+
+  return lines
     .map(parseBulkOrderLine)
     .filter((item): item is BulkOrderLineItem => item !== null && Boolean(item.sku.trim()))
 }

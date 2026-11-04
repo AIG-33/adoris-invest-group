@@ -10,10 +10,25 @@ export async function POST(request: Request) {
     const body = await request.json()
     const name = String(body.name || '').trim()
     const email = String(body.email || '').trim()
-    const sku = String(body.sku || '').trim()
-    const productName = String(body.productName || '').trim()
-    const quantity = Number(body.quantity)
-    const message = String(body.message || '').trim()
+    // 1-Click Quote sends every item that wasn't found in the catalog at once.
+    const items: { sku: string; quantity: number }[] = Array.isArray(body.items)
+      ? body.items
+          .slice(0, 500)
+          .map((i: any) => ({ sku: String(i?.sku || '').trim(), quantity: Math.max(1, Math.floor(Number(i?.quantity) || 1)) }))
+          .filter((i: { sku: string }) => i.sku)
+      : []
+    const sku = items.length > 0
+      ? `${items.length} item${items.length === 1 ? '' : 's'}`
+      : String(body.sku || '').trim()
+    const productName = items.length > 0
+      ? `Not in catalog: ${items.map((i) => `${i.sku} × ${i.quantity}`).join('; ')}`
+      : String(body.productName || '').trim()
+    const quantity = items.length > 0
+      ? items.reduce((sum, i) => sum + i.quantity, 0)
+      : Number(body.quantity)
+    const message = items.length > 0
+      ? [String(body.message || '').trim(), items.map((i) => `${i.sku}\t${i.quantity}`).join('\n')].filter(Boolean).join('\n\n')
+      : String(body.message || '').trim()
     const productUrl = String(body.productUrl || '').trim()
 
     if (!name || !email || !sku || !Number.isFinite(quantity) || quantity < 1) {

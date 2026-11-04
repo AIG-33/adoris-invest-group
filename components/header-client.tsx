@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle, Handshake, ClipboardList, Store } from 'lucide-react'
+import { Search, ShoppingCart, User, LogOut, Package, Calendar, ChevronDown, Building2, ExternalLink, Download, FileText, Menu, X, HelpCircle, Handshake, ClipboardList, Store, Zap } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import type { CompanyConfig } from '@/lib/company-types'
@@ -248,7 +248,7 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                   <span className="text-[13px] font-semibold leading-tight sm:text-sm">
                     {a.headline}
                   </span>
-                  <span className="hidden text-[12px] text-white/75 lg:inline">
+                  <span className={`hidden text-[12px] text-white/75 ${language === 'ru' ? '2xl:inline' : 'lg:inline'}`}>
                     · {a.sub}
                   </span>
                 </div>
@@ -275,7 +275,7 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                   )}
                   <Link
                     href="/bulk-order#bulk-form"
-                    className="group inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1 text-[12px] font-semibold shadow-sm transition-all hover:shadow-md"
+                    className="group inline-flex flex-shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-white px-3.5 py-1 text-[12px] font-semibold shadow-sm transition-all hover:shadow-md"
                     style={{ color: 'var(--brand-1)' }}
                   >
                     {translations.bulkOrder}
@@ -430,13 +430,14 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               <span className={actionLabelClass}>{translations.catalog}</span>
             </Link>
 
-            {/* Bulk Order — standalone top-level item */}
+            {/* 1-Click Quote — the main buyer action, so it gets the filled accent button. */}
             <Link
-              href="/bulk-order"
-              className="flex items-center gap-1 sm:gap-2 text-neutral-700 hover:text-[#666666] font-medium transition-colors text-xs sm:text-sm lg:text-base"
+              href="/bulk-order#bulk-form"
+              className="inline-flex flex-shrink-0 items-center justify-center gap-2 h-11 min-w-[44px] px-2.5 xl:px-4 rounded-xl text-white text-sm font-semibold whitespace-nowrap transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900"
+              style={{ backgroundColor: 'var(--company-accent)' }}
             >
-              <ClipboardList className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className={actionLabelClass}>{translations.bulkOrder}</span>
+              <Zap aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              <span className="sr-only xl:not-sr-only">{translations.bulkOrder}</span>
             </Link>
 
             {/* Icon-only until xl (2xl for ru): below that the header has no room for the label. */}
@@ -444,8 +445,7 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               href={portalUrl('/', 'header', portalSource)}
               newTabLabel={translations.opensInNewTab}
               iconClassName={`hidden h-3 w-3 flex-shrink-0 ${portalWide ? '2xl:block' : 'xl:block'}`}
-              className={`inline-flex flex-shrink-0 items-center justify-center gap-2 h-11 min-w-[44px] px-2.5 ${portalWide ? '2xl:px-4' : 'xl:px-4'} rounded-xl text-white text-sm font-semibold whitespace-nowrap transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900`}
-              style={{ backgroundColor: 'var(--company-accent)' }}
+              className={`inline-flex flex-shrink-0 items-center justify-center gap-2 h-11 min-w-[44px] px-2.5 ${portalWide ? '2xl:px-4' : 'xl:px-4'} rounded-xl border border-neutral-300 text-neutral-800 text-sm font-semibold whitespace-nowrap transition-colors hover:border-neutral-500 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900`}
             >
               <Store aria-hidden="true" className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
               <span className={portalWide ? 'sr-only 2xl:not-sr-only' : 'sr-only xl:not-sr-only'}>{translations.supplierPortal}</span>
@@ -552,7 +552,7 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                   <DropdownMenuContent align="end" className="w-48 sm:w-56">
                     <DropdownMenuItem asChild>
                       <Link href="/bulk-order" className="flex items-center gap-2 cursor-pointer">
-                        <ClipboardList className="w-4 h-4" />
+                        <Zap className="w-4 h-4" />
                         <span>{translations.bulkOrder}</span>
                       </Link>
                     </DropdownMenuItem>
@@ -625,13 +625,21 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
         {mobileMenuOpen && (
           <div className="sm:hidden mt-4 pb-4 border-t border-neutral-200">
             <nav className="flex flex-col gap-1 pt-4">
+              <Link
+                href="/bulk-order#bulk-form"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-white font-semibold transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900"
+                style={{ backgroundColor: 'var(--company-accent)' }}
+              >
+                <Zap aria-hidden="true" className="w-5 h-5" />
+                <span>{translations.bulkOrder}</span>
+              </Link>
               <PortalLink
                 href={portalUrl('/', 'header_mobile', portalSource)}
                 newTabLabel={translations.opensInNewTab}
                 iconClassName="w-3 h-3 ml-auto"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-white font-semibold transition-all hover:brightness-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900"
-                style={{ backgroundColor: 'var(--company-accent)' }}
+                className="mt-1 flex items-center gap-3 px-4 py-3 rounded-lg border border-neutral-300 text-neutral-800 font-semibold transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-900"
               >
                 <Store aria-hidden="true" className="w-5 h-5" />
                 <span>{translations.supplierPortal}</span>
@@ -645,15 +653,6 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
               >
                 <Package className="w-5 h-5" />
                 <span>{translations.catalog}</span>
-              </Link>
-
-              <Link
-                href="/bulk-order"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-700 font-medium"
-              >
-                <ClipboardList className="w-5 h-5" />
-                <span>{translations.bulkOrder}</span>
               </Link>
 
               <Link

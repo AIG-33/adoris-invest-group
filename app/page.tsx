@@ -39,20 +39,20 @@ export async function generateMetadata(): Promise<Metadata> {
   const language = company?.language || 'en'
 
   const title = language === 'ru'
-    ? `${companyName} — Поиск по SKU · Массовый заказ · Поставщикам`
-    : `${companyName} — Search by SKU · Bulk Paste · For Suppliers`
+    ? `${companyName} — КП в 1 клик · Поиск по SKU · Поставщикам`
+    : `${companyName} — 1-Click Quote · Search by SKU · For Suppliers`
   const adoris = isAdoris(company)
   const baseDescription = language === 'ru'
-    ? `${companyName} — B2B-поставщик медицинского и лабораторного оборудования. Поиск 75 000+ SKU по артикулу или названию, массовый заказ по списку и партнёрство с поставщиками с прямыми ценами от производителя.`
-    : `${companyName} — B2B medical & laboratory supply. Search 75,000+ SKUs by catalog number or product name, paste a list to build a cart instantly, or partner with us as a supplier with direct manufacturer pricing.`
+    ? `${companyName} — B2B-поставщик медицинского и лабораторного оборудования. Пришлите список в любом виде — текст, фото, скриншот или Excel — и получите КП в один клик. Поиск 75 000+ SKU по артикулу или названию и партнёрство с поставщиками с прямыми ценами от производителя.`
+    : `${companyName} — B2B medical & laboratory supply. Send your list in any form — text, photo, screenshot or Excel — and get a quote in one click. Search 75,000+ SKUs by catalog number or product name, or partner with us as a supplier with direct manufacturer pricing.`
 
   const description = adoris
     ? `${baseDescription} Supplier portal: register, see our open sourcing requests and quote online.`
     : baseDescription
 
   const baseKeywords = language === 'ru'
-    ? 'поиск по SKU, поиск по артикулу, массовый заказ, оптовый заказ, B2B медицинское оборудование, реагенты оптом, стать поставщиком, прямые цены производителя, лабораторное оборудование'
-    : 'search by SKU, search by catalog number, bulk order, paste SKU list, B2B medical equipment, lab reagents wholesale, become a supplier, direct manufacturer pricing, laboratory supplies, IVD distributor'
+    ? 'КП в 1 клик, коммерческое предложение по списку, поиск по SKU, поиск по артикулу, массовый заказ, оптовый заказ, B2B медицинское оборудование, реагенты оптом, стать поставщиком, прямые цены производителя, лабораторное оборудование'
+    : '1-click quote, request a quote, quote from list, search by SKU, search by catalog number, bulk order, paste SKU list, B2B medical equipment, lab reagents wholesale, become a supplier, direct manufacturer pricing, laboratory supplies, IVD distributor'
   const keywords = adoris ? `${baseKeywords}, supplier portal` : baseKeywords
 
   return {
@@ -157,7 +157,7 @@ export default async function HomePage() {
   const companyName = company?.name || process.env.SITE_NAME || 'Shop'
 
   // Service schemas for the two non-product "products" the homepage promotes:
-  // the supplier-recruitment programme and the bulk-paste ordering tool.
+  // the supplier-recruitment programme and the 1-Click Quote tool.
   // Search-by-SKU is already covered by the WebSite SearchAction schema.
   const supplierServiceSchema = {
     '@context': 'https://schema.org',
@@ -174,7 +174,7 @@ export default async function HomePage() {
   const bulkOrderServiceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: language === 'ru' ? 'Инструмент массового заказа' : 'Bulk order tool',
+    name: language === 'ru' ? 'КП в 1 клик' : '1-Click Quote',
     description: dict.homepage.hero.pathway2.description,
     provider: { '@type': 'Organization', name: companyName, url: baseUrl },
     serviceType: language === 'ru' ? 'B2B-инструмент закупок' : 'B2B procurement tool',

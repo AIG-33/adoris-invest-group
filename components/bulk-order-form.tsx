@@ -15,12 +15,15 @@ import {
   ImagePlus,
   Upload,
   Camera,
+  Send,
 } from 'lucide-react';
 import { parseBulkOrderText } from '@/lib/parse-bulk-order';
 import {
   OcrImageError,
   recognizeBulkOrderImages,
 } from '@/lib/ocr-bulk-order';
+import { takePendingQuote } from '@/lib/quote-handoff';
+import { SHEET_ACCEPT, isImageFile, isSheetFile, sheetFileToText } from '@/lib/sheet-to-text';
 
 interface ProcessedProduct {
   id: string;
@@ -76,6 +79,15 @@ interface BulkOrderTranslations {
   photoErrorTooLarge?: string
   photoErrorType?: string
   photoErrorEmpty?: string
+  sheetError?: string
+  rfqTitle?: string
+  rfqSubtitle?: string
+  rfqName?: string
+  rfqEmail?: string
+  rfqSubmit?: string
+  rfqSending?: string
+  rfqSuccess?: string
+  rfqError?: string
 }
 
 interface BulkOrderFormProps {
@@ -83,15 +95,14 @@ interface BulkOrderFormProps {
 }
 
 const EXAMPLE_TEXT = `10446232\t2
-07P3203, 5
-05031738; 12
-Veronal Buffer 10445724 2`;
+10309757, 1
+11622889190; 5`;
 
 const FORMAT_SAMPLES = ['10446232  2', '07P3203, 5', '05031738; 12'];
 
 const MIN_GUTTER_ROWS = 12;
 
-const ACCEPT_ATTR = 'image/png,image/jpeg,image/jpg,image/webp,image/gif,image/bmp,.png,.jpg,.jpeg,.webp,.gif,.bmp';
+const ACCEPT_ATTR = `image/png,image/jpeg,image/jpg,image/webp,image/gif,image/bmp,.png,.jpg,.jpeg,.webp,.gif,.bmp,${SHEET_ACCEPT}`;
 
 function collectClipboardImages(data: DataTransfer | null): File[] {
   if (!data) return [];
@@ -133,6 +144,8 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const dragDepthRef = useRef(0);
   const ocrBusyRef = useRef(false);
+  const inputTextRef = useRef(inputText);
+  inputTextRef.current = inputText;
 
   const t = translations;
   const parsedCount = useMemo(() => parseBulkOrderText(inputText).length, [inputText]);
@@ -163,17 +176,19 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
     return t.photoErrorGeneric || 'Could not read text from that image. Try a clearer photo or paste the text instead.';
   }, [t.photoErrorGeneric, t.photoErrorTooLarge, t.photoErrorType]);
 
-  const applyOcrText = useCallback((text: string) => {
-    setInputText((prev) => {
-      const trimmed = text.trim();
-      if (!trimmed) return prev;
-      if (!prev.trim()) return trimmed;
-      return `${prev.replace(/\s+$/, '')}\n${trimmed}`;
-    });
-  }, []);
+  const appendText = (prev: string, text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return prev;
+    if (!prev.trim()) return trimmed;
+    return `${prev.replace(/\s+$/, '')}\n${trimmed}`;
+  };
 
-  const runOcr = useCallback(async (images: File[]) => {
-    if (images.length === 0 || ocrBusyRef.current) return;
+  // Images go through OCR, spreadsheets are read as rows; the merged text is
+  // matched right away so a dropped file turns into prices without another click.
+  const importFiles = useCallback(async (files: File[], baseText = '') => {
+    const images = files.filter(isImageFile);
+    const sheets = files.filter((f) => !isImageFile(f) && isSheetFile(f));
+    if ((images.length === 0 && sheets.length === 0) || ocrBusyRef.current) return;
 
     ocrBusyRef.current = true;
     setIsOcrRunning(true);
@@ -182,27 +197,43 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
     setError('');
     setResult(null);
 
+    let extracted = '';
     try {
-      const text = await recognizeBulkOrderImages(images, ({ progress }) => {
-        setOcrProgress(Math.max(0, Math.min(1, progress)));
-      });
-
-      if (!text.trim()) {
-        setError(t.photoErrorEmpty || 'No readable text found in the image.');
-        return;
+      for (const sheet of sheets) {
+        try {
+          extracted = appendText(extracted, await sheetFileToText(sheet));
+        } catch {
+          setError(t.sheetError || 'Could not read that spreadsheet. Save it as .xlsx or .csv and try again.');
+        }
       }
-
-      applyOcrText(text);
-      setOcrSuccess(t.photoSuccess || 'Text extracted — review the editor below, then Process Items.');
-      setOcrProgress(1);
-      requestAnimationFrame(() => focusEditor());
-    } catch (err) {
-      setError(mapOcrError(err));
+      if (images.length > 0) {
+        try {
+          const text = await recognizeBulkOrderImages(images, ({ progress }) => {
+            setOcrProgress(Math.max(0, Math.min(1, progress)));
+          });
+          extracted = appendText(extracted, text);
+        } catch (err) {
+          setError(mapOcrError(err));
+        }
+      }
     } finally {
       ocrBusyRef.current = false;
       setIsOcrRunning(false);
     }
-  }, [applyOcrText, mapOcrError, t.photoErrorEmpty, t.photoSuccess]);
+
+    if (!extracted.trim() && !baseText.trim()) {
+      setError((prev) => prev || t.photoErrorEmpty || 'No readable text found in the image.');
+      return;
+    }
+
+    const merged = appendText(appendText(inputTextRef.current, baseText), extracted);
+    setInputText(merged);
+    setOcrProgress(1);
+    if (extracted.trim()) {
+      setOcrSuccess(t.photoSuccess || 'List extracted and matched — check the results below.');
+    }
+    void processRef.current(merged);
+  }, [mapOcrError, t.photoErrorEmpty, t.photoSuccess, t.sheetError]);
 
   // Image paste (Ctrl/Cmd+V) anywhere inside the form card — text paste stays native.
   useEffect(() => {
@@ -218,19 +249,19 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
       if (images.length === 0) return;
 
       e.preventDefault();
-      void runOcr(images);
+      void importFiles(images);
     };
 
     document.addEventListener('paste', onPaste);
     return () => document.removeEventListener('paste', onPaste);
-  }, [runOcr]);
+  }, [importFiles]);
 
-  const handleProcess = async () => {
+  const handleProcess = async (textOverride?: string) => {
+    const text = textOverride ?? inputText;
     setError('');
-    setOcrSuccess('');
     setResult(null);
 
-    if (!inputText.trim()) {
+    if (!text.trim()) {
       setError(t.errorEmpty || 'Please enter catalog numbers and quantities');
       focusEditor();
       return;
@@ -239,7 +270,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
     setIsProcessing(true);
 
     try {
-      const items = parseBulkOrderText(inputText).map((item) => ({
+      const items = parseBulkOrderText(text).map((item) => ({
         sku: item.sku,
         quantity: String(item.quantity),
       }));
@@ -274,6 +305,21 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
       setIsProcessing(false);
     }
   };
+  const processRef = useRef(handleProcess);
+  processRef.current = handleProcess;
+
+  // A list handed over from the homepage smart field: fill in and match at once.
+  useEffect(() => {
+    const pending = takePendingQuote();
+    if (!pending) return;
+    formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (pending.files.length > 0) {
+      void importFiles(pending.files, pending.text);
+    } else if (pending.text.trim()) {
+      setInputText(pending.text);
+      void processRef.current(pending.text);
+    }
+  }, [importFiles]);
 
   const pasteFromClipboard = async () => {
     try {
@@ -289,7 +335,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
             images.push(new File([blob], `clipboard.${imageType.split('/')[1] || 'png'}`, { type: imageType }));
           }
           if (images.length > 0) {
-            await runOcr(images);
+            await importFiles(images);
             return;
           }
         } catch {
@@ -312,7 +358,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
   const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     e.target.value = '';
-    if (files.length > 0) void runOcr(files);
+    if (files.length > 0) void importFiles(files);
   };
 
   const updateFoundQuantity = (id: string, newQuantity: number) => {
@@ -451,10 +497,8 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
               e.stopPropagation();
               dragDepthRef.current = 0;
               setIsDragging(false);
-              const files = Array.from(e.dataTransfer.files || []).filter((f) =>
-                f.type.startsWith('image/') || !f.type
-              );
-              if (files.length > 0) void runOcr(files);
+              const files = Array.from(e.dataTransfer.files || []);
+              if (files.length > 0) void importFiles(files);
             }}
             className={`mt-5 rounded-2xl border-2 border-dashed px-4 py-5 transition-colors sm:px-5 ${
               isDragging
@@ -588,7 +632,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
               onKeyDown={(e) => {
                 if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                   e.preventDefault();
-                  handleProcess();
+                  void handleProcess();
                 }
               }}
               wrap="off"
@@ -612,7 +656,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
           {/* ─── Actions ────────────────────────────────────────────── */}
           <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
-              onClick={handleProcess}
+              onClick={() => handleProcess()}
               disabled={isProcessing || isOcrRunning || !inputText.trim()}
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45 disabled:shadow-none"
               style={{ background: 'var(--brand-grad)', boxShadow: '0 10px 28px var(--brand-1-dim)' }}
@@ -804,6 +848,11 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
                       </span>
                     ))}
                   </div>
+                  <NotFoundQuoteRequest
+                    parsed={parseBulkOrderText(inputText)}
+                    notFound={result.notFound}
+                    t={t}
+                  />
                 </div>
               )}
             </div>
@@ -811,5 +860,96 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+function NotFoundQuoteRequest({
+  parsed,
+  notFound,
+  t,
+}: {
+  parsed: { sku: string; quantity: number }[];
+  notFound: string[];
+  t: BulkOrderTranslations;
+}) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const list = notFound.map((sku) => ({
+    sku,
+    quantity: parsed.find((item) => item.sku.toLowerCase() === sku.toLowerCase())?.quantity ?? 1,
+  }));
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+    try {
+      const res = await fetch('/api/rfq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, items: list, productUrl: '/bulk-order' }),
+      });
+      if (!res.ok) throw new Error('rfq failed');
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (status === 'success') {
+    return (
+      <div className="mt-3 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+        <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-600" />
+        <p className="text-sm text-emerald-800">
+          {t.rfqSuccess || 'Request sent — we will email you a quote within one business day.'}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="mt-3 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+      <div className="text-sm font-semibold text-neutral-900">
+        {(t.rfqTitle || 'Get a quote for {count} items not in our catalog').replace('{count}', String(list.length))}
+      </div>
+      <p className="mt-1 text-[12.5px] leading-relaxed text-neutral-600">
+        {t.rfqSubtitle || 'We source them from manufacturers and email you prices within one business day.'}
+      </p>
+      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_1fr_auto]">
+        <input
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={t.rfqName || 'Your name'}
+          aria-label={t.rfqName || 'Your name'}
+          autoComplete="name"
+          className="h-11 rounded-lg border border-neutral-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-400"
+        />
+        <input
+          required
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={t.rfqEmail || 'Work email'}
+          aria-label={t.rfqEmail || 'Work email'}
+          autoComplete="email"
+          className="h-11 rounded-lg border border-neutral-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-400"
+        />
+        <button
+          type="submit"
+          disabled={status === 'sending'}
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-lg px-5 text-sm font-semibold text-white transition-all hover:brightness-110 disabled:opacity-60"
+          style={{ background: 'var(--brand-grad)' }}
+        >
+          {status === 'sending' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          {status === 'sending' ? t.rfqSending || 'Sending…' : t.rfqSubmit || 'Request quote'}
+        </button>
+      </div>
+      {status === 'error' && (
+        <p className="mt-2 text-sm font-medium text-red-700">
+          {t.rfqError || 'Could not send the request. Please try again or email us.'}
+        </p>
+      )}
+    </form>
   );
 }

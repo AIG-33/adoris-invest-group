@@ -27,18 +27,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = await getBaseUrl()
 
   const title = language === 'ru'
-    ? `Массовый заказ — вставьте список SKU, получите корзину | ${companyName}`
-    : `Bulk Order — Paste SKU List, Get a Cart in Seconds | ${companyName}`
+    ? `КП в 1 клик — пришлите список в любом виде, получите цены | ${companyName}`
+    : `1-Click Quote — Send Your List in Any Form, Get Prices Instantly | ${companyName}`
   const description = language === 'ru'
-    ? 'Скопируйте каталожные номера с количеством — система автоматически сопоставит товары и соберёт корзину. Любые форматы: табы, запятые, пробелы. Для отделов закупок, лабораторий и дистрибьюторов.'
-    : 'Paste catalog numbers with quantities — our system matches products and builds your cart automatically. Any format: tabs, commas, spaces. For procurement teams, labs, and distributors.'
+    ? 'Вставьте артикулы с количеством, перетащите фото, скриншот или Excel/CSV — сопоставим каждую позицию с каталогом и сразу покажем цены. Чего нет в каталоге — посчитаем за рабочий день. Для отделов закупок, лабораторий и дистрибьюторов.'
+    : 'Paste catalog numbers with quantities, or drop a photo, screenshot or Excel/CSV file — we match every item and show prices instantly. Anything not in the catalog is quoted within one business day. For procurement teams, labs and distributors.'
 
   return {
     title,
     description,
     keywords: language === 'ru'
-      ? 'массовый заказ, оптовый заказ, импорт SKU, артикулы массово, B2B закупки, инструмент закупок, заказ по списку, реагенты оптом'
-      : 'bulk order, mass order, SKU import, paste SKU list, B2B procurement, catalog import, paste and order, reagents wholesale',
+      ? 'КП в 1 клик, коммерческое предложение по списку, массовый заказ, оптовый заказ, импорт SKU, артикулы массово, B2B закупки, инструмент закупок, заказ по списку, реагенты оптом'
+      : '1-click quote, request a quote, quote from Excel, bulk order, mass order, SKU import, paste SKU list, B2B procurement, catalog import, paste and order, reagents wholesale',
     openGraph: {
       title,
       description,
@@ -89,8 +89,8 @@ export default async function BulkOrderPage() {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: language === 'ru'
-      ? `Инструмент массового заказа ${companyName}`
-      : `${companyName} Bulk Order Tool`,
+      ? `КП в 1 клик — ${companyName}`
+      : `${companyName} 1-Click Quote`,
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     description: bulk.heroTagline || bulk.subtitle,
@@ -202,7 +202,7 @@ export default async function BulkOrderPage() {
                   {language === 'ru' ? 'Как это работает' : 'How it works'}
                 </div>
                 <h2 className="font-display text-3xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
-                  {language === 'ru' ? '3 шага — от списка до корзины' : 'From list to cart in 3 steps'}
+                  {language === 'ru' ? '3 шага — от любого списка до КП' : 'From any list to a quote in 3 steps'}
                 </h2>
               </div>
               <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-5 md:grid-cols-3">
