@@ -43,6 +43,8 @@ import {
   Check,
   Handshake,
   ExternalLink,
+  ShieldCheck,
+  Grid3x3,
 } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import { portalUrl } from '@/lib/supplier-portal'
@@ -112,6 +114,15 @@ const CATEGORY_ICONS: Record<string, any> = {
   chemicals: FlaskConical,
   'lab-supplies': TestTubes,
   histology: Layers,
+  'primary antibodies': ShieldCheck,
+  'conjugated antibodies': ShieldCheck,
+  'secondary antibodies': ShieldCheck,
+  'elisa kits': Grid3x3,
+  'ivd elisa kits': Grid3x3,
+  'laboratory chemicals & solvents': FlaskConical,
+  'biochemicals & inhibitors': FlaskConical,
+  'laboratory instruments & analyzers': Microscope,
+  'surgical sutures': Syringe,
 }
 
 // Per-locale eyebrow, headline, subtitle and trust strip.

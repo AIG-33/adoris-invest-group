@@ -60,14 +60,24 @@ export default async function EditProductPage({
     notFound()
   }
 
-  const [categories, manufacturers] = await Promise.all([
+  const [categoryRows, manufacturers] = await Promise.all([
     prisma.category.findMany({
-      orderBy: { name: 'asc' },
+      select: {
+        id: true, name: true,
+        parent: { select: { name: true } },
+        _count: { select: { children: true } },
+      },
     }),
     prisma.manufacturer.findMany({
       orderBy: { name: 'asc' },
     }),
   ])
+
+  // Products belong to subcategories; sections (categories with children) are not assignable
+  const categories = categoryRows
+    .filter((c) => c._count.children === 0)
+    .map((c) => ({ id: c.id, name: c.parent ? `${c.parent.name} › ${c.name}` : c.name }))
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   const company = await getServerCompany()
   const language = (company?.language || 'en') as 'en' | 'ru'

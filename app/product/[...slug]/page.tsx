@@ -10,6 +10,7 @@ import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
 import { getBaseUrl } from '@/lib/get-base-url'
+import { getCachedCategoryTree, parentOf } from '@/lib/catalog-taxonomy'
 import {
   generateProductSchema,
   generateBreadcrumbSchema,
@@ -40,6 +41,15 @@ const metaSelect = {
   manufacturer: { select: { id: true, name: true, slug: true, logo: true } },
 } as const
 
+/** Product whose slug was rewritten (old slug kept in ProductSlugRedirect). */
+async function lookupRedirectedProduct<S extends object>(oldSlug: string, select: S) {
+  const row = await retryPrismaQuery(() => prisma.productSlugRedirect.findUnique({
+    where: { oldSlug },
+    select: { product: { select } },
+  }))
+  return (row?.product ?? null) as any
+}
+
 /**
  * Look up a product for the 2-segment URL. Returns null when missing.
  * Must not call notFound()/redirect — those throw and must stay outside try/catch.
@@ -52,6 +62,10 @@ async function lookupProduct(manufacturerSlug: string, productSlug: string) {
     },
     select: metaSelect,
   }))
+
+  if (!product) {
+    product = await lookupRedirectedProduct(productSlug, metaSelect)
+  }
 
   if (!product) {
     product = await retryPrismaQuery(() => prisma.product.findFirst({
@@ -114,6 +128,12 @@ export async function generateMetadata({
       return NOINDEX_META
     }
 
+    // Old slug / manufacturer slug: redirect here, before the HTML shell streams,
+    // so crawlers get a real 308 instead of a 200 with a client-side redirect.
+    if (product.slug !== productSlug || product.manufacturer?.slug !== manufacturerSlug) {
+      permanentRedirect(getProductUrl(product))
+    }
+
     const priceType = company?.priceType || 'EU'
     const price = getProductPrice(
       product.priceEU,
@@ -156,13 +176,12 @@ export async function generateMetadata({
     const productSlug = slug[0]
     let product: { slug: string; manufacturer: { slug: string } | null } | null = null
     try {
+      const select = { slug: true, manufacturer: { select: { slug: true } } }
       product = await retryPrismaQuery(() => prisma.product.findUnique({
         where: { slug: productSlug },
-        select: {
-          slug: true,
-          manufacturer: { select: { slug: true } },
-        },
+        select,
       }))
+      if (!product) product = await lookupRedirectedProduct(productSlug, select)
     } catch {
       notFound()
     }
@@ -178,8 +197,24 @@ export async function generateMetadata({
     }
   }
 
+  await redirectSlashSlug(slug)
   notFound()
   return NOINDEX_META
+}
+
+/** Old product slugs that contained "/" (e.g. "l-741-626-1003/10") arrive as 3+ segments. */
+async function redirectSlashSlug(slug: string[]) {
+  if (slug.length < 3) return
+  const oldSlug = slug.slice(1).join('/')
+  const select = { slug: true, manufacturer: { select: { slug: true } } }
+  let product: { slug: string; manufacturer: { slug: string } | null } | null = null
+  try {
+    product = await retryPrismaQuery(() => prisma.product.findUnique({ where: { slug: oldSlug }, select }))
+    if (!product) product = await lookupRedirectedProduct(oldSlug, select)
+  } catch {
+    return
+  }
+  if (product && product.slug !== oldSlug) permanentRedirect(getProductUrl(product as any))
 }
 
 /**
@@ -230,6 +265,12 @@ export default async function ProductPage({
         },
         select: productSelect,
       }))
+
+      if (!product) {
+        // Slug was rewritten (catalog number added) — exact old-slug match first
+        product = await lookupRedirectedProduct(productSlug, productSelect)
+        if (product) needsCanonicalRedirect = true
+      }
 
       if (!product) {
         // Fallback 1: slug changed (e.g. SKU was appended), prefix match same manufacturer
@@ -336,9 +377,12 @@ export default async function ProductPage({
 
     const baseUrl = await getBaseUrl()
     const productUrl = getProductUrl(product)
+    const categoryTree = await getCachedCategoryTree()
+    const section = parentOf(categoryTree, categoryTree.byId[product.categoryId])
     const breadcrumbs = [
       { name: dict.product.home, url: `${baseUrl}/` },
       { name: dict.product.products, url: `${baseUrl}/products` },
+      ...(section ? [{ name: section.name, url: `${baseUrl}/products?category=${section.slug}` }] : []),
       { name: product.category?.name || 'Category', url: `${baseUrl}/products?category=${product.category?.slug || ''}` },
       { name: product.name, url: `${baseUrl}${productUrl}` },
     ]
@@ -368,14 +412,12 @@ export default async function ProductPage({
 
     let product: { id: string; slug: string; manufacturer: { slug: string } | null } | null = null
     try {
+      const select = { id: true, slug: true, manufacturer: { select: { slug: true } } }
       product = await retryPrismaQuery(() => prisma.product.findUnique({
         where: { slug: productSlug },
-        select: {
-          id: true,
-          slug: true,
-          manufacturer: { select: { slug: true } },
-        },
+        select,
       }))
+      if (!product) product = await lookupRedirectedProduct(productSlug, select)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
         console.error(`[product/${productSlug}] legacy DB error:`, error)
@@ -391,5 +433,6 @@ export default async function ProductPage({
   }
 
   // Invalid format
+  await redirectSlashSlug(slug)
   notFound()
 }

@@ -16,9 +16,9 @@ import { PORTAL_ROOT } from '@/lib/supplier-portal'
 import {
   getCachedFeaturedProducts,
   getCachedManufacturersWithLogo,
-  getCachedCategoriesWithCount,
 } from '@/lib/cached-queries'
 import { getBaseUrl } from '@/lib/get-base-url'
+import { getCachedCategoryTree, visibleSections } from '@/lib/catalog-taxonomy'
 import {
   generateOrganizationSchema,
   generateWebSiteSchema,
@@ -86,10 +86,10 @@ export default async function HomePage() {
 
   // Fetch all data in parallel — all three queries are cached by unstable_cache,
   // so on a warm cache this turns into ~0 DB roundtrips.
-  const [featuredProductsRaw, manufacturersRaw, categoriesRaw] = await Promise.all([
+  const [featuredProductsRaw, manufacturersRaw, categoryTree] = await Promise.all([
     getCachedFeaturedProducts(),
     getCachedManufacturersWithLogo(),
-    getCachedCategoriesWithCount(),
+    getCachedCategoryTree(),
   ])
 
   // Convert prices
@@ -98,9 +98,9 @@ export default async function HomePage() {
     price: getProductPrice(p.priceEU, p.priceRU, priceType as 'EU' | 'RU'),
   }))
 
-  // Adapt to CategoryShowcase shape and filter categories with at least 1 product
-  const categories = categoriesRaw
-    .filter(c => c.productCount > 0)
+  // Top-level sections with at least 1 product (counts include subcategories)
+  const sections = visibleSections(categoryTree)
+  const categories = sections
     .map(c => ({
       id: c.id,
       name: c.name,
@@ -109,13 +109,13 @@ export default async function HomePage() {
     }))
 
   // Hero v6 metrics — totals from cached queries (no extra DB roundtrips)
-  const totalProducts = categoriesRaw.reduce((sum, c) => sum + c.productCount, 0)
+  const totalProducts = categoryTree.sections.reduce((sum, c) => sum + c.productCount, 0)
   const totalManufacturers = manufacturersRaw.length
   // Show the most populated categories first (by SKU count) so the chips
   // surface real disciplines, not alphabetically-first brand-named buckets.
-  // Skip "uncategorized" — it's a fallback bucket, not a discipline.
+  // Skip fallback buckets — they are not disciplines.
   const quickCategories = [...categories]
-    .filter((c) => c.slug !== 'uncategorized')
+    .filter((c) => c.slug !== 'uncategorized' && c.slug !== 'other')
     .sort((a, b) => b._count.products - a._count.products)
     .slice(0, 6)
     .map((c) => ({

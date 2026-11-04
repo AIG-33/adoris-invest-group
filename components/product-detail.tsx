@@ -89,7 +89,7 @@ export function ProductDetail({ product, relatedProducts, translations, company 
         <span>/</span>
         <Link href="/products" className="hover:text-[#333333]">{translations.products || 'Products'}</Link>
         <span>/</span>
-        <Link href={`/?category=${product?.category?.slug}`} className="hover:text-[#333333]">
+        <Link href={`/products?category=${product?.category?.slug}`} className="hover:text-[#333333]">
           {product?.category?.name}
         </Link>
         <span>/</span>

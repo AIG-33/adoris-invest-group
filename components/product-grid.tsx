@@ -24,9 +24,11 @@ interface ProductGridProps {
   products: Product[]
   search?: string
   company: CompanyConfig | null
+  /** The page already renders its own H1 (category pages) */
+  hideHeader?: boolean
 }
 
-export function ProductGrid({ products, search, company }: ProductGridProps) {
+export function ProductGrid({ products, search, company, hideHeader }: ProductGridProps) {
   const addToCart = (product: Product) => {
     const cart = JSON.parse(localStorage?.getItem?.('cart') || '[]')
     const existingItem = cart?.find?.((item: any) => item?.id === product?.id)
@@ -47,7 +49,7 @@ export function ProductGrid({ products, search, company }: ProductGridProps) {
   return (
     <div>
       {/* Header */}
-      <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-neutral-200 mb-4 sm:mb-6">
+      {!hideHeader && <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-neutral-200 mb-4 sm:mb-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-neutral-900">
@@ -58,7 +60,7 @@ export function ProductGrid({ products, search, company }: ProductGridProps) {
             </p>
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* Products Grid */}
       {products?.length === 0 ? (
