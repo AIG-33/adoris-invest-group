@@ -74,6 +74,19 @@ interface SupplierEmailOptions {
   company?: CompanyConfig | null
 }
 
+/**
+ * Marks a website form submission for the info@ inbox admin (adoris-rfq): which brand site it came
+ * from and which form. Form mail goes from info@ to info@, so without these the admin files it as
+ * our own outgoing/internal mail. Header values stay ASCII.
+ */
+export function siteFormHeaders(company: CompanyConfig | null | undefined, form: 'rfq' | 'supplier' | 'order') {
+  return {
+    'X-Adoris-Brand': company?.slug || 'unknown',
+    'X-Adoris-Site': company?.domain || new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000').hostname,
+    'X-Adoris-Form': form,
+  }
+}
+
 // Email template helpers
 const getEmailHeader = (company?: CompanyConfig | null) => {
   const companyName = company?.name || process.env.EMAIL_FROM_NAME || 'Medical Equipment Store'
@@ -484,6 +497,7 @@ A PDF invoice is attached.
         subject: `New Order: ${orderNumber} - ${customerName}`,
         headers: {
           ...mailOptions.headers,
+          ...siteFormHeaders(company, 'order'),
           'Message-ID': `<${orderNumber}-internal-${Date.now()}@${companyDomain}>`,
         },
       })
@@ -908,6 +922,7 @@ The ${companyName} Team
       headers: {
         'Message-ID': `<supplier-${Date.now()}@${companyDomain}>`,
         'X-Mailer': 'Next.js Email System',
+        ...siteFormHeaders(company, 'supplier'),
         'X-Priority': '1',
         'Importance': 'high',
       },
@@ -987,8 +1002,9 @@ ${message ? `Message:\n${message}\n` : ''}
       </body></html>
     `,
     headers: {
-      'Message-ID': `<rfq-${sku}-${Date.now()}@${companyDomain}>`,
+      'Message-ID': `<rfq-${sku.replace(/[^A-Za-z0-9._-]/g, '')}-${Date.now()}@${companyDomain}>`,
       'X-Mailer': 'Next.js Email System',
+      ...siteFormHeaders(company, 'rfq'),
     },
   })
 
