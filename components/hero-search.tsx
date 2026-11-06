@@ -167,6 +167,8 @@ const COPY = {
     nothingMatched: 'Nothing matched.',
     openCatalog: 'Open full catalog',
     uploadCsvLabel: 'Upload photo / Excel',
+    forBuyers: 'For buyers',
+    forSuppliers: 'For suppliers',
   },
   ru: {
     eyebrow: (skus: number, brands: number) =>
@@ -197,6 +199,8 @@ const COPY = {
     nothingMatched: 'Ничего не найдено.',
     openCatalog: 'Открыть весь каталог',
     uploadCsvLabel: 'Загрузить фото / Excel',
+    forBuyers: 'Покупателям',
+    forSuppliers: 'Поставщикам',
   },
 } as const
 
@@ -344,11 +348,6 @@ export function HeroSearch({
       setDragging(false)
       acceptFiles(e.dataTransfer.files)
     },
-  }
-
-  const focusSearch = () => {
-    inputRef.current?.focus()
-    inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   const showOverlay = !quoteMode && focused && (results.length > 0 || isSearching || query.trim().length >= 2)
@@ -664,33 +663,59 @@ export function HeroSearch({
             }}
           />
 
-          {/* ─── THREE TILES ─────────────────────────────────────────────── */}
-          {translations.pathway1 && translations.pathway2 && translations.pathway3 && (
-            <div className="mt-8 grid grid-cols-1 gap-4 pb-12 sm:mt-10 sm:grid-cols-3 sm:gap-5 sm:pb-16">
-              <Tile
+          {/* ─── TWO FEATURE TILES: buyers (quote) and suppliers (wanted) ──── */}
+          {translations.pathway2 && translations.pathway3 && (
+            <div className="mt-8 grid grid-cols-1 gap-4 pb-12 sm:mt-10 md:grid-cols-2 md:gap-6 sm:pb-16">
+              <FeatureTile
+                variant="dark"
+                eyebrow={t.forBuyers}
                 Icon={Zap}
                 title={translations.pathway2.title}
                 blurb={translations.pathway2.description}
                 cta={translations.pathway2.cta}
                 href="/bulk-order"
-                primary
                 secondaryAction={{
                   Icon: Upload,
                   label: t.uploadCsvLabel,
                   onClick: () => fileInputRef.current?.click(),
                 }}
-              />
-              <Tile
-                Icon={Search}
-                title={translations.pathway1.title}
-                blurb={translations.pathway1.description}
-                cta={translations.pathway1.cta}
-                onClick={focusSearch}
-              />
+              >
+                <ul className="flex flex-wrap gap-2">
+                  {[
+                    { Icon: Type, label: t.chipText },
+                    { Icon: ImagePlus, label: t.chipPhoto },
+                    { Icon: FileSpreadsheet, label: t.chipSheet },
+                  ].map(({ Icon: ChipIcon, label }) => (
+                    <li
+                      key={label}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-[12.5px] font-medium text-[#dbe7ec]"
+                    >
+                      <ChipIcon aria-hidden="true" className="h-3.5 w-3.5 text-[#7ed4ee]" />
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+              </FeatureTile>
               {isAdoris && portalCopy ? (
-                <WantedTile copy={portalCopy} wanted={wanted} />
+                <FeatureTile
+                  variant="live"
+                  eyebrow={t.forSuppliers}
+                  Icon={Radar}
+                  badge={copyLiveBadge(portalCopy.live)}
+                  title={portalCopy.title}
+                  blurb={portalCopy.blurb}
+                  cta={portalCopy.cta}
+                  href={portalUrl('/#requests', 'hero_tile')}
+                  newTabLabel={portalCopy.newTabLabel}
+                >
+                  {wanted && wanted.items.length > 0 && (
+                    <WantedList count={portalCopy.count.replace('{count}', String(wanted.count))} items={wanted.items} />
+                  )}
+                </FeatureTile>
               ) : (
-                <Tile
+                <FeatureTile
+                  variant="live"
+                  eyebrow={t.forSuppliers}
                   Icon={Handshake}
                   title={translations.pathway3.title}
                   blurb={translations.pathway3.description}
@@ -706,7 +731,6 @@ export function HeroSearch({
   )
 }
 
-// ─── WantedTile — live preview of the supplier portal's open requests ─────
 interface WantedTileCopy {
   live: string
   title: string
@@ -716,206 +740,166 @@ interface WantedTileCopy {
   newTabLabel: string
 }
 
-function WantedTile({ copy, wanted }: { copy: WantedTileCopy; wanted: WantedProducts | null }) {
-  const hasItems = !!wanted && wanted.items.length > 0
+function copyLiveBadge(label: string) {
   return (
-    <div className="h-full">
-      <div
-        className="group relative flex h-full flex-col gap-3 rounded-2xl border border-neutral-200 bg-white p-5 text-neutral-900 transition-all hover:-translate-y-0.5 sm:p-6"
-        style={{ boxShadow: '0 4px 14px -10px rgba(0,0,0,0.1)' }}
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div
-            className="grid h-11 w-11 place-items-center rounded-xl sm:h-12 sm:w-12"
-            style={{ background: '#e6f1f6', color: '#0a7ea4' }}
-          >
-            <Radar aria-hidden="true" className="h-5 w-5 sm:h-[22px] sm:w-[22px]" strokeWidth={1.6} />
-          </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700">
-            <span aria-hidden="true" className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75 motion-safe:animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </span>
-            {copy.live}
-          </span>
-        </div>
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-800">
+      <span aria-hidden="true" className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75 motion-safe:animate-ping" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+      </span>
+      {label}
+    </span>
+  )
+}
 
-        <div className="font-display text-[20px] font-extrabold leading-tight tracking-[-0.015em] sm:text-[22px]">
-          {copy.title}
-        </div>
-        <p className="text-[14px] leading-[1.55]" style={{ color: '#4a5462' }}>
-          {copy.blurb}
-        </p>
-
-        {hasItems && (
-          <div className="rounded-xl border border-neutral-100 bg-neutral-50/80 px-3 py-2">
-            <p className="text-[12px] font-semibold text-neutral-700">
-              {copy.count.replace('{count}', String(wanted!.count))}
-            </p>
-            <ul className="mt-1.5 space-y-1">
-              {wanted!.items.map((item) => (
-                <li key={item.id} className="flex min-w-0 items-baseline gap-2 text-[12px]">
-                  <span className="font-mono-brand font-semibold text-neutral-900">{item.sku}</span>
-                  <span className="min-w-0 flex-1 truncate text-neutral-600">{item.manufacturer}</span>
-                  {item.quantity != null && (
-                    <span className="flex-shrink-0 tabular-nums text-neutral-600">
-                      ×{item.quantity.toLocaleString('en-US')}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <div className="mt-auto pt-2">
-          <a
-            href={portalUrl('/#requests', 'hero_tile')}
-            target="_blank"
-            rel="noopener"
-            className="inline-flex min-h-[44px] items-center gap-2 text-[14px] font-bold transition-all group-hover:gap-3 focus-visible:outline-none after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-[#0a7ea4] focus-visible:after:ring-offset-2"
-            style={{ color: '#0a7ea4' }}
-          >
-            {copy.cta}
-            <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
-            <ExternalLink aria-hidden="true" className="h-3 w-3" />
-            <span className="sr-only"> {copy.newTabLabel}</span>
-          </a>
-        </div>
-      </div>
+function WantedList({ count, items }: { count: string; items: WantedProducts['items'] }) {
+  return (
+    <div className="rounded-xl border border-emerald-100 bg-white/80 px-3.5 py-2.5">
+      <p className="text-[12px] font-semibold text-emerald-800">{count}</p>
+      <ul className="mt-1.5 space-y-1">
+        {items.map((item) => (
+          <li key={item.id} className="flex min-w-0 items-baseline gap-2 text-[12.5px]">
+            <span className="font-mono-brand font-semibold text-neutral-900">{item.sku}</span>
+            <span className="min-w-0 flex-1 truncate text-neutral-600">{item.manufacturer}</span>
+            {item.quantity != null && (
+              <span className="flex-shrink-0 tabular-nums text-neutral-600">
+                ×{item.quantity.toLocaleString('en-US')}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
 
-// ─── Tile — one of the three entry-point cards under the search bar ──────
-// Non-primary: white card with cyan icon backplate and cyan CTA.
-// Primary:     dark ink card with cyan accents — anchors the visual hierarchy.
-interface TileProps {
+// ─── FeatureTile — the two big entry points under the hero search ────────
+// dark: ink card with cyan CTA (buyers). live: emerald-tinted card (suppliers).
+// The CTA is the real link; its ::after stretches over the card so the whole
+// card is clickable, while secondaryAction sits above it (z-10).
+interface FeatureTileProps {
+  variant: 'dark' | 'live'
+  eyebrow: string
   Icon: any
+  badge?: React.ReactNode
   title: string
   blurb: string
   cta: string
-  href?: string
-  onClick?: () => void
-  primary?: boolean
-  secondaryAction?: {
-    Icon: any
-    label: string
-    onClick: () => void
-  }
-  /** Off-site CTA: the CTA is the link and stretches over the whole card. */
-  external?: { href: string; newTabLabel: string }
-  /** Extra on-site text link; sits above the stretched CTA. Only used with `external`. */
-  secondaryLink?: { href: string; label: string }
+  href: string
+  /** Set for off-site links: opens in a new tab and is announced to screen readers. */
+  newTabLabel?: string
+  secondaryAction?: { Icon: any; label: string; onClick: () => void }
+  children?: React.ReactNode
 }
 
-function Tile({ Icon, title, blurb, cta, href, onClick, primary, secondaryAction, external, secondaryLink }: TileProps) {
-  const ctaColor = primary ? ACCENT : '#0a7ea4'
-  const inner = (
+function FeatureTile({
+  variant,
+  eyebrow,
+  Icon,
+  badge,
+  title,
+  blurb,
+  cta,
+  href,
+  newTabLabel,
+  secondaryAction,
+  children,
+}: FeatureTileProps) {
+  const dark = variant === 'dark'
+  const ctaClass = `inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl px-6 text-[15px] font-bold transition-all group-hover:gap-3 focus-visible:outline-none after:absolute after:inset-0 after:rounded-3xl after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-offset-2 ${
+    dark
+      ? 'bg-[#7ed4ee] text-[#0c1116] hover:bg-[#9de0f3] focus-visible:after:ring-[#7ed4ee] focus-visible:after:ring-offset-[#0c1116]'
+      : 'bg-emerald-700 text-white hover:bg-emerald-800 focus-visible:after:ring-emerald-700'
+  }`
+  const ctaContent = (
+    <>
+      {cta}
+      <ArrowRight aria-hidden="true" className="h-4 w-4" strokeWidth={2.25} />
+      {newTabLabel && (
+        <>
+          <ExternalLink aria-hidden="true" className="h-3.5 w-3.5 opacity-80" />
+          <span className="sr-only"> {newTabLabel}</span>
+        </>
+      )}
+    </>
+  )
+
+  return (
     <div
-      className={`group relative flex h-full flex-col gap-3 rounded-2xl p-5 transition-all hover:-translate-y-0.5 sm:p-6 ${
-        primary
+      className={`group relative flex h-full flex-col gap-4 overflow-hidden rounded-3xl p-6 transition-all hover:-translate-y-1 sm:p-8 ${
+        dark
           ? 'bg-[#0c1116] text-white'
-          : 'border border-neutral-200 bg-white text-neutral-900'
+          : 'border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-white text-neutral-900'
       }`}
       style={{
-        boxShadow: primary
-          ? '0 18px 40px -24px rgba(10,126,164,0.55)'
-          : '0 4px 14px -10px rgba(0,0,0,0.1)',
+        boxShadow: dark
+          ? '0 28px 60px -28px rgba(10,126,164,0.75)'
+          : '0 24px 50px -30px rgba(4,120,87,0.45)',
       }}
     >
-      <div
-        className="grid h-11 w-11 place-items-center rounded-xl sm:h-12 sm:w-12"
-        style={{
-          background: primary ? 'rgba(255,255,255,0.12)' : '#e6f1f6',
-          color: primary ? '#fff' : '#0a7ea4',
-        }}
-      >
-        <Icon className="h-5 w-5 sm:h-[22px] sm:w-[22px]" strokeWidth={1.6} />
+      {dark && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full opacity-40 blur-3xl"
+          style={{ background: '#0a7ea4' }}
+        />
+      )}
+
+      <div className="relative flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div
+            className={`grid h-12 w-12 place-items-center rounded-2xl ${
+              dark ? 'bg-white/10 text-[#7ed4ee]' : 'bg-emerald-100 text-emerald-700'
+            }`}
+          >
+            <Icon aria-hidden="true" className="h-6 w-6" strokeWidth={1.75} />
+          </div>
+          <span
+            className={`text-[12px] font-bold uppercase tracking-[0.14em] ${
+              dark ? 'text-[#a8c1cc]' : 'text-emerald-800'
+            }`}
+          >
+            {eyebrow}
+          </span>
+        </div>
+        {badge}
       </div>
 
-      <div className="font-display text-[20px] font-extrabold leading-tight tracking-[-0.015em] sm:text-[22px]">
+      <h2 className="relative font-display text-[24px] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[30px]">
         {title}
-      </div>
-      <p
-        className="text-[14px] leading-[1.55]"
-        style={{ color: primary ? '#a8c1cc' : '#4a5462' }}
-      >
+      </h2>
+      <p className={`relative text-[15px] leading-[1.6] ${dark ? 'text-[#b9cdd6]' : 'text-[#4a5462]'}`}>
         {blurb}
       </p>
 
-      <div className={`mt-auto flex flex-wrap items-center pt-2 ${external ? 'gap-x-4 gap-y-1' : 'gap-3'}`}>
-        {external ? (
-          <a
-            href={external.href}
-            target="_blank"
-            rel="noopener"
-            className="inline-flex min-h-[44px] items-center gap-2 text-[14px] font-bold transition-all group-hover:gap-3 focus-visible:outline-none after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-[#0a7ea4] focus-visible:after:ring-offset-2"
-            style={{ color: ctaColor }}
-          >
-            {cta}
-            <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
-            <ExternalLink aria-hidden="true" className="h-3 w-3" />
-            <span className="sr-only"> {external.newTabLabel}</span>
+      {children && <div className="relative">{children}</div>}
+
+      <div className="relative mt-auto flex flex-wrap items-center gap-3 pt-2">
+        {newTabLabel ? (
+          <a href={href} target="_blank" rel="noopener" className={ctaClass}>
+            {ctaContent}
           </a>
         ) : (
-          <span
-            className="inline-flex items-center gap-2 text-[14px] font-bold transition-all group-hover:gap-3"
-            style={{ color: ctaColor }}
-          >
-            {cta}
-            <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-          </span>
-        )}
-
-        {external && secondaryLink && (
-          <Link
-            href={secondaryLink.href}
-            className="relative z-10 inline-flex min-h-[44px] items-center text-[13px] font-medium underline underline-offset-4 hover:decoration-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a7ea4] rounded"
-            style={{ color: primary ? '#cfdde2' : '#4a5462' }}
-          >
-            {secondaryLink.label}
+          <Link href={href} className={ctaClass}>
+            {ctaContent}
           </Link>
         )}
 
         {secondaryAction && (
           <button
             type="button"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              secondaryAction.onClick()
-            }}
-            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors"
-            style={{
-              border: primary ? '1px solid rgba(255,255,255,0.16)' : '1px solid #e5e7eb',
-              background: primary ? 'rgba(255,255,255,0.04)' : '#fff',
-              color: primary ? '#cfdde2' : '#4a5462',
-            }}
+            onClick={secondaryAction.onClick}
+            className={`relative z-10 inline-flex min-h-[48px] items-center gap-2 rounded-xl px-4 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 ${
+              dark
+                ? 'border border-white/20 text-[#cfdde2] hover:bg-white/10 focus-visible:ring-[#7ed4ee]'
+                : 'border border-neutral-300 text-neutral-700 hover:bg-neutral-50 focus-visible:ring-emerald-700'
+            }`}
           >
-            <secondaryAction.Icon className="h-3 w-3" />
+            <secondaryAction.Icon aria-hidden="true" className="h-4 w-4" />
             {secondaryAction.label}
           </button>
         )}
       </div>
     </div>
-  )
-
-  if (external) {
-    return <div className="h-full">{inner}</div>
-  }
-
-  if (href) {
-    return (
-      <Link href={href} className="block h-full">
-        {inner}
-      </Link>
-    )
-  }
-
-  return (
-    <button type="button" onClick={onClick} className="block h-full w-full text-left">
-      {inner}
-    </button>
   )
 }
