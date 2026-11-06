@@ -43,8 +43,13 @@ const metaSelect = {
 
 /** Product whose slug was rewritten (old slug kept in ProductSlugRedirect). */
 async function lookupRedirectedProduct<S extends object>(oldSlug: string, select: S) {
-  const row = await retryPrismaQuery(() => prisma.productSlugRedirect.findUnique({
-    where: { oldSlug },
+  // Route params arrive percent-encoded ("6%3F3110", "20%C2%B5l"); old slugs are stored decoded.
+  let decoded = oldSlug
+  try {
+    decoded = decodeURIComponent(oldSlug)
+  } catch {}
+  const row = await retryPrismaQuery(() => prisma.productSlugRedirect.findFirst({
+    where: { oldSlug: { in: decoded === oldSlug ? [oldSlug] : [oldSlug, decoded] } },
     select: { product: { select } },
   }))
   return (row?.product ?? null) as any
