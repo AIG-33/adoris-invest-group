@@ -41,6 +41,7 @@ import {
   Layers,
   Check,
   Handshake,
+  Radar,
   ExternalLink,
   ShieldCheck,
   Grid3x3,
@@ -52,6 +53,7 @@ import {
 } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import { portalUrl } from '@/lib/supplier-portal'
+import type { WantedProducts } from '@/lib/wanted-products'
 import { parseBulkOrderText } from '@/lib/parse-bulk-order'
 import { setPendingQuote } from '@/lib/quote-handoff'
 import { SHEET_ACCEPT, isImageFile, isSheetFile } from '@/lib/sheet-to-text'
@@ -105,7 +107,9 @@ interface HeroSearchProps {
   quickCategories: QuickCategory[]
   /** Adoris tenant: the third tile points to the supplier portal. */
   isAdoris?: boolean
-  portalCopy?: { cta: string; inquiry: string; newTabLabel: string }
+  portalCopy?: WantedTileCopy
+  /** Live open requests from the supplier portal; null when the portal was unreachable. */
+  wanted?: WantedProducts | null
 }
 
 // Decorative — only used by the live-suggestions dropdown when a product
@@ -208,6 +212,7 @@ export function HeroSearch({
   totalManufacturers,
   isAdoris = false,
   portalCopy,
+  wanted = null,
 }: HeroSearchProps) {
   const router = useRouter()
   const t = COPY[language] || COPY.en
@@ -683,17 +688,7 @@ export function HeroSearch({
                 onClick={focusSearch}
               />
               {isAdoris && portalCopy ? (
-                <Tile
-                  Icon={Handshake}
-                  title={translations.pathway3.title}
-                  blurb={translations.pathway3.description}
-                  cta={portalCopy.cta}
-                  external={{
-                    href: portalUrl('/login?mode=signup', 'hero_tile'),
-                    newTabLabel: portalCopy.newTabLabel,
-                  }}
-                  secondaryLink={{ href: '/supplier', label: portalCopy.inquiry }}
-                />
+                <WantedTile copy={portalCopy} wanted={wanted} />
               ) : (
                 <Tile
                   Icon={Handshake}
@@ -708,6 +703,87 @@ export function HeroSearch({
         </div>
       </div>
     </section>
+  )
+}
+
+// ─── WantedTile — live preview of the supplier portal's open requests ─────
+interface WantedTileCopy {
+  live: string
+  title: string
+  blurb: string
+  count: string
+  cta: string
+  newTabLabel: string
+}
+
+function WantedTile({ copy, wanted }: { copy: WantedTileCopy; wanted: WantedProducts | null }) {
+  const hasItems = !!wanted && wanted.items.length > 0
+  return (
+    <div className="h-full">
+      <div
+        className="group relative flex h-full flex-col gap-3 rounded-2xl border border-neutral-200 bg-white p-5 text-neutral-900 transition-all hover:-translate-y-0.5 sm:p-6"
+        style={{ boxShadow: '0 4px 14px -10px rgba(0,0,0,0.1)' }}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div
+            className="grid h-11 w-11 place-items-center rounded-xl sm:h-12 sm:w-12"
+            style={{ background: '#e6f1f6', color: '#0a7ea4' }}
+          >
+            <Radar aria-hidden="true" className="h-5 w-5 sm:h-[22px] sm:w-[22px]" strokeWidth={1.6} />
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+            <span aria-hidden="true" className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            {copy.live}
+          </span>
+        </div>
+
+        <div className="font-display text-[20px] font-extrabold leading-tight tracking-[-0.015em] sm:text-[22px]">
+          {copy.title}
+        </div>
+        <p className="text-[14px] leading-[1.55]" style={{ color: '#4a5462' }}>
+          {copy.blurb}
+        </p>
+
+        {hasItems && (
+          <div className="rounded-xl border border-neutral-100 bg-neutral-50/80 px-3 py-2">
+            <p className="text-[12px] font-semibold text-neutral-700">
+              {copy.count.replace('{count}', String(wanted!.count))}
+            </p>
+            <ul className="mt-1.5 space-y-1">
+              {wanted!.items.map((item) => (
+                <li key={item.id} className="flex min-w-0 items-baseline gap-2 text-[12px]">
+                  <span className="font-mono-brand font-semibold text-neutral-900">{item.sku}</span>
+                  <span className="min-w-0 flex-1 truncate text-neutral-600">{item.manufacturer}</span>
+                  {item.quantity != null && (
+                    <span className="flex-shrink-0 tabular-nums text-neutral-600">
+                      ×{item.quantity.toLocaleString('en-US')}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="mt-auto pt-2">
+          <a
+            href={portalUrl('/#requests', 'hero_tile')}
+            target="_blank"
+            rel="noopener"
+            className="inline-flex min-h-[44px] items-center gap-2 text-[14px] font-bold transition-all group-hover:gap-3 focus-visible:outline-none after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-[#0a7ea4] focus-visible:after:ring-offset-2"
+            style={{ color: '#0a7ea4' }}
+          >
+            {copy.cta}
+            <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2} />
+            <ExternalLink aria-hidden="true" className="h-3 w-3" />
+            <span className="sr-only"> {copy.newTabLabel}</span>
+          </a>
+        </div>
+      </div>
+    </div>
   )
 }
 

@@ -1,6 +1,6 @@
 const BASE = 'https://suppliers.adorisgroup.com'
 
-export type PortalPath = '/' | '/login' | '/login?mode=signup'
+export type PortalPath = '/' | '/#requests' | '/login' | '/login?mode=signup'
 
 export type PortalUtmContent =
   | 'header'

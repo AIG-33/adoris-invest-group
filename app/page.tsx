@@ -13,6 +13,7 @@ import { getProductPrice } from '@/lib/product-price'
 import { getDictionary } from '@/lib/translations'
 import { isAdoris } from '@/lib/tenant'
 import { PORTAL_ROOT } from '@/lib/supplier-portal'
+import { getWantedProducts } from '@/lib/wanted-products'
 import {
   getCachedFeaturedProducts,
   getCachedManufacturersWithLogo,
@@ -86,10 +87,11 @@ export default async function HomePage() {
 
   // Fetch all data in parallel — all three queries are cached by unstable_cache,
   // so on a warm cache this turns into ~0 DB roundtrips.
-  const [featuredProductsRaw, manufacturersRaw, categoryTree] = await Promise.all([
+  const [featuredProductsRaw, manufacturersRaw, categoryTree, wanted] = await Promise.all([
     getCachedFeaturedProducts(),
     getCachedManufacturersWithLogo(),
     getCachedCategoryTree(),
+    adoris ? getWantedProducts() : Promise.resolve(null),
   ])
 
   // Convert prices
@@ -213,10 +215,14 @@ export default async function HomePage() {
             quickCategories={quickCategories}
             isAdoris={adoris}
             portalCopy={{
-              cta: dict.homepage.supplierPortal.heroTileCta,
-              inquiry: dict.homepage.supplierPortal.heroTileInquiry,
+              live: dict.homepage.supplierPortal.wantedLive,
+              title: dict.homepage.supplierPortal.wantedTitle,
+              blurb: dict.homepage.supplierPortal.wantedBlurb,
+              count: dict.homepage.supplierPortal.wantedCount,
+              cta: dict.homepage.supplierPortal.wantedCta,
               newTabLabel: dict.nav.opensInNewTab,
             }}
+            wanted={wanted}
           />
         </section>
 

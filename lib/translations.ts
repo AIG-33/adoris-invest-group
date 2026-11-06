@@ -87,8 +87,12 @@ export interface Translations {
       ctaPrimary: string
       ctaSecondary: string
       ctaRequests: string
-      heroTileCta: string
-      heroTileInquiry: string
+      // Hero "wanted right now" tile; {count} is replaced with the number of open items
+      wantedLive: string
+      wantedTitle: string
+      wantedBlurb: string
+      wantedCount: string
+      wantedCta: string
     }
   }
   
@@ -772,8 +776,11 @@ const translations: Record<Language, Translations> = {
         ctaPrimary: 'Become a supplier',
         ctaSecondary: 'Log in',
         ctaRequests: 'See what we need now →',
-        heroTileCta: 'Join the supplier portal',
-        heroTileInquiry: 'Or send us an inquiry',
+        wantedLive: 'Live',
+        wantedTitle: 'Wanted right now',
+        wantedBlurb: 'A live list of products our customers are asking for today. Have any at a direct price? Send an offer in one click.',
+        wantedCount: '{count} products open for offers',
+        wantedCta: 'See all wanted products',
       },
     },
     nav: {
@@ -1501,8 +1508,11 @@ const translations: Record<Language, Translations> = {
         ctaPrimary: 'Стать поставщиком',
         ctaSecondary: 'Войти',
         ctaRequests: 'Что нам нужно сейчас →',
-        heroTileCta: 'Присоединиться к порталу поставщиков',
-        heroTileInquiry: 'Или отправьте нам заявку',
+        wantedLive: 'Онлайн',
+        wantedTitle: 'Ищем прямо сейчас',
+        wantedBlurb: 'Живой список товаров, которые сегодня запрашивают наши клиенты. Есть по прямой цене? Отправьте предложение в один клик.',
+        wantedCount: 'Открыто для предложений: {count}',
+        wantedCta: 'Смотреть все позиции',
       },
     },
     nav: {
