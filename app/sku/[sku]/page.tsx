@@ -2,7 +2,18 @@ import { permanentRedirect, notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import { getProductUrl } from '@/lib/product-url'
 import { retryPrismaQuery } from '@/lib/retry-prisma'
+import { OLD_SKU_PRODUCT_IDS } from '@/lib/sku-redirects.generated'
 import type { Metadata } from 'next'
+
+const redirectSelect = { slug: true, manufacturer: { select: { slug: true } } } as const
+
+/** SKU removed in the catalog dedup or rewritten by the SKU cleanup → the product it belongs to now. */
+async function findByOldSku(sku: string) {
+  if (!Object.prototype.hasOwnProperty.call(OLD_SKU_PRODUCT_IDS, sku)) return null
+  return retryPrismaQuery(() =>
+    prisma.product.findUnique({ where: { id: OLD_SKU_PRODUCT_IDS[sku] }, select: redirectSelect })
+  )
+}
 
 /**
  * /sku/[sku] — Direct SKU access route
@@ -80,12 +91,10 @@ export default async function SkuPage({
     product = await retryPrismaQuery(() =>
       prisma.product.findUnique({
         where: { sku: decodedSku },
-        select: {
-          slug: true,
-          manufacturer: { select: { slug: true } },
-        },
+        select: redirectSelect,
       })
     )
+    if (!product) product = await findByOldSku(decodedSku)
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error(`[sku/${decodedSku}] DB error:`, error)
