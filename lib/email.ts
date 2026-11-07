@@ -74,6 +74,9 @@ interface SupplierEmailOptions {
   company?: CompanyConfig | null
 }
 
+/** The only service mailbox: receives the admin copy of every order (adoris-rfq reads it). */
+const CENTRAL_ORDER_EMAIL = 'info@adorisgroup.com'
+
 /**
  * Marks a website form submission for the info@ inbox admin (adoris-rfq): which brand site it came
  * from and which form. Form mail goes from info@ to info@, so without these the admin files it as
@@ -503,16 +506,19 @@ A PDF invoice is attached.
       })
     }
 
-    // Send copy to info@ivdgroup.eu (central notification for all orders from all sites)
-    await transporter.sendMail({
-      ...adminMailBase,
-      to: 'info@ivdgroup.eu',
-      subject: `New Order: ${orderNumber} - ${customerName} [${companyName}]`,
-      headers: {
-        ...mailOptions.headers,
-        'Message-ID': `<${orderNumber}-ivdgroup-${Date.now()}@${companyDomain}>`,
-      },
-    })
+    // Central copy of every order from every site to the one service mailbox (unless it already got it above)
+    if (companyEmail?.trim().toLowerCase() !== CENTRAL_ORDER_EMAIL) {
+      await transporter.sendMail({
+        ...adminMailBase,
+        to: CENTRAL_ORDER_EMAIL,
+        subject: `New Order: ${orderNumber} - ${customerName} [${companyName}]`,
+        headers: {
+          ...mailOptions.headers,
+          ...siteFormHeaders(company, 'order'),
+          'Message-ID': `<${orderNumber}-central-${Date.now()}@${companyDomain}>`,
+        },
+      })
+    }
 
     return { success: true }
   } catch (error) {
