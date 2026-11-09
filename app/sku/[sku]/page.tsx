@@ -87,6 +87,7 @@ export default async function SkuPage({
   // reporting thousands of "Server error (5xx)" entries which originate here
   // when the connection pool is saturated.
   let product: { slug: string; manufacturer: { slug: string } | null } | null = null
+  let unpublishedManufacturer: string | null | undefined
   try {
     product = await retryPrismaQuery(() =>
       prisma.product.findUnique({
@@ -95,11 +96,24 @@ export default async function SkuPage({
       })
     )
     if (!product) product = await findByOldSku(decodedSku)
+    if (!product) {
+      const hidden = await retryPrismaQuery(() =>
+        prisma.product.findUnique({
+          where: { sku: decodedSku, unpublishedAt: { not: null } },
+          select: { manufacturer: { select: { slug: true } } },
+        })
+      )
+      if (hidden) unpublishedManufacturer = hidden.manufacturer?.slug ?? null
+    }
   } catch (error) {
     if (process.env.NODE_ENV === 'development') {
       console.error(`[sku/${decodedSku}] DB error:`, error)
     }
     notFound()
+  }
+
+  if (unpublishedManufacturer !== undefined) {
+    permanentRedirect(unpublishedManufacturer ? `/products?manufacturer=${encodeURIComponent(unpublishedManufacturer)}` : '/products')
   }
 
   if (!product) {

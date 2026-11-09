@@ -4,7 +4,7 @@ import { redirect, notFound } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { EditProductForm } from '@/components/edit-product-form'
-import { prisma } from '@/lib/db'
+import { prismaAll as prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
 

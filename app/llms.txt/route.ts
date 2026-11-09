@@ -28,7 +28,7 @@ export async function GET() {
     retryPrismaQuery(() => prisma.product.count()),
     getCachedCategoryTree(),
     retryPrismaQuery(() => prisma.manufacturer.findMany({
-      select: { name: true, slug: true, _count: { select: { products: true } } },
+      select: { name: true, slug: true, _count: { select: { products: { where: { unpublishedAt: null } } } } },
       orderBy: { name: 'asc' },
     })),
     retryPrismaQuery(() => prisma.product.findMany({

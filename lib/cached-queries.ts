@@ -25,7 +25,7 @@ export const getCachedManufacturersWithLogo = unstable_cache(
       >`
         SELECT m.name, m.slug, m.logo
         FROM "Manufacturer" m
-        INNER JOIN "Product" p ON p."manufacturerId" = m.id
+        INNER JOIN "Product" p ON p."manufacturerId" = m.id AND p."unpublishedAt" IS NULL
         WHERE m.logo IS NOT NULL
         GROUP BY m.id, m.name, m.slug, m.logo
         ORDER BY COUNT(p.id) DESC, m.name ASC
@@ -46,7 +46,7 @@ export const getCachedManufacturersList = unstable_cache(
       >`
         SELECT m.id, m.name, m.slug
         FROM "Manufacturer" m
-        INNER JOIN "Product" p ON p."manufacturerId" = m.id
+        INNER JOIN "Product" p ON p."manufacturerId" = m.id AND p."unpublishedAt" IS NULL
         GROUP BY m.id, m.name, m.slug
         ORDER BY COUNT(p.id) DESC, m.name ASC
       `
@@ -73,7 +73,7 @@ export const getCachedCategoriesWithCount = unstable_cache(
       () => prisma.$queryRaw<Array<{ id: string; name: string; slug: string; productCount: bigint }>>`
         SELECT c.id, c.name, c.slug, COUNT(p.id) AS "productCount"
         FROM "Category" c
-        LEFT JOIN "Product" p ON p."categoryId" = c.id
+        LEFT JOIN "Product" p ON p."categoryId" = c.id AND p."unpublishedAt" IS NULL
         GROUP BY c.id, c.name, c.slug
         ORDER BY c.name ASC
       `

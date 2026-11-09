@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { AdminPanel } from '@/components/admin-panel'
-import { prisma } from '@/lib/db'
+import { prismaAll as prisma } from '@/lib/db'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
 

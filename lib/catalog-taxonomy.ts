@@ -57,7 +57,7 @@ async function loadCategoryTree(): Promise<CategoryTree> {
       SELECT c.id, c.name, c.slug, c.description, c."parentId", c."sortOrder",
              COUNT(p.id) AS "productCount"
       FROM "Category" c
-      LEFT JOIN "Product" p ON p."categoryId" = c.id
+      LEFT JOIN "Product" p ON p."categoryId" = c.id AND p."unpublishedAt" IS NULL
       GROUP BY c.id
     `
   )

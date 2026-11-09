@@ -168,6 +168,8 @@ model Product {
   /// Research-area facet for antibodies (slug from lib/catalog-taxonomy.ts RESEARCH_AREAS)
   researchArea   String?
   slugRedirects  ProductSlugRedirect[]
+  /// Removed from the public price list (RFQ admin); hidden on the site, product URL 308s to the manufacturer listing
+  unpublishedAt  DateTime?    @db.Timestamptz(6)
 
   @@index([featured])
   @@index([categoryId])

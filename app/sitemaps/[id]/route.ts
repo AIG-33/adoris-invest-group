@@ -64,7 +64,7 @@ async function generateStaticSitemap(baseUrl: string): Promise<string> {
     ),
     retryPrismaQuery(() =>
       prisma.manufacturer.findMany({
-        where: { products: { some: {} } },
+        where: { products: { some: { unpublishedAt: null } } },
         select: { slug: true, updatedAt: true },
       })
     ),

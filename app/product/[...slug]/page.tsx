@@ -109,6 +109,7 @@ export async function generateMetadata({
   // New format: /product/manufacturer/product-slug
   if (slug.length === 2) {
     const [manufacturerSlug, productSlug] = slug
+    await redirectIfUnpublished(productSlug)
     const company = await getServerCompany()
     const baseUrl = await getBaseUrl()
 
@@ -179,6 +180,7 @@ export async function generateMetadata({
   // Legacy single-segment or invalid: resolve or 404 (no homepage canonical)
   if (slug.length === 1) {
     const productSlug = slug[0]
+    await redirectIfUnpublished(productSlug)
     let product: { slug: string; manufacturer: { slug: string } | null } | null = null
     try {
       const select = { slug: true, manufacturer: { select: { slug: true } } }
@@ -205,6 +207,28 @@ export async function generateMetadata({
   await redirectSlashSlug(slug)
   notFound()
   return NOINDEX_META
+}
+
+/**
+ * Product removed from the public price list (hidden, restorable): 308 to its manufacturer's
+ * listing instead of a 404, so indexed URLs do not pile up as errors. Call outside try/catch.
+ */
+async function redirectIfUnpublished(productSlug: string) {
+  let target: string | null = null
+  try {
+    let decoded = productSlug
+    try {
+      decoded = decodeURIComponent(productSlug)
+    } catch {}
+    const row = await retryPrismaQuery(() => prisma.product.findFirst({
+      where: { slug: { in: decoded === productSlug ? [productSlug] : [productSlug, decoded] }, unpublishedAt: { not: null } },
+      select: { manufacturer: { select: { slug: true } } },
+    }))
+    if (row) target = row.manufacturer?.slug ? `/products?manufacturer=${encodeURIComponent(row.manufacturer.slug)}` : '/products'
+  } catch {
+    return
+  }
+  if (target) permanentRedirect(target)
 }
 
 /** Old product slugs that contained "/" (e.g. "l-741-626-1003/10") arrive as 3+ segments. */
@@ -260,6 +284,7 @@ export default async function ProductPage({
     // Lookup with three fallbacks. We must NOT call permanentRedirect()/notFound()
     // inside the try block, because Next.js implements them via thrown signals
     // (NEXT_REDIRECT / NEXT_NOT_FOUND) and a generic catch would swallow them.
+    await redirectIfUnpublished(productSlug)
     let product: any = null
     let needsCanonicalRedirect = false
     try {
@@ -414,6 +439,7 @@ export default async function ProductPage({
   // Legacy format: /product/old-slug (1 segment) -> redirect
   if (slug.length === 1) {
     const productSlug = slug[0]
+    await redirectIfUnpublished(productSlug)
 
     let product: { id: string; slug: string; manufacturer: { slug: string } | null } | null = null
     try {
