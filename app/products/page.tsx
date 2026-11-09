@@ -35,6 +35,7 @@ import {
 } from '@/lib/seo'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
 // ISR: Revalidate every 5 minutes (300 seconds) for better performance
@@ -71,7 +72,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const baseUrl = await getBaseUrl()
   const language = company?.language || 'en'
 
-  const { search, category, manufacturer, page } = searchParams
+  const { search, category, manufacturer, page, minPrice, maxPrice, sort } = searchParams
   const tree = category ? await getCachedCategoryTree() : null
   const categoryNode = category ? tree?.bySlug[category] : undefined
   const area = searchParams.area && RESEARCH_AREAS[searchParams.area] ? searchParams.area : undefined
@@ -112,13 +113,19 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       : `${manufacturerName} products. ${companyName} catalog. B2B medical equipment.`
   }
 
-  // Build canonical URL (without page param for page 1)
+  // Canonical: listing facets plus the page number (page 2+ is its own page,
+  // not a duplicate of page 1). Price filters and sort are left out.
+  const pageNum = parseInt(page || '1')
   const canonicalParams = new URLSearchParams()
   if (search) canonicalParams.set('search', search)
   if (category) canonicalParams.set('category', category)
   if (category && area) canonicalParams.set('area', area)
   if (manufacturer) canonicalParams.set('manufacturer', manufacturer)
+  if (pageNum > 1) canonicalParams.set('page', String(pageNum))
   const queryString = canonicalParams.toString()
+  // Search results and price/sort variants are an unbounded URL space: keep
+  // them out of the index but let Google follow through to product pages.
+  const indexable = !search && !minPrice && !maxPrice && !sort
   const canonical = `${baseUrl}/products${queryString ? `?${queryString}` : ''}`
 
   return {
@@ -139,7 +146,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       canonical,
     },
     robots: {
-      index: true,
+      index: indexable,
       follow: true,
     },
   }
@@ -149,6 +156,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   const { search, category, manufacturer, minPrice, maxPrice, page, sort } = searchParams
   const area = searchParams.area && RESEARCH_AREAS[searchParams.area] ? searchParams.area : undefined
   const currentPage = parseInt(page || '1')
+  if (!Number.isFinite(currentPage) || currentPage < 1) notFound()
   const tree = await getCachedCategoryTree()
   const categoryNode = category ? tree.bySlug[category] : undefined
   const parentNode = parentOf(tree, categoryNode)
@@ -241,6 +249,14 @@ export default async function ProductsPage({ searchParams }: Props) {
   ])
 
   const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE)
+
+  // An empty category/manufacturer listing or a page past the end is a real
+  // 404, not a 200 "no products" page (Google reports those as soft 404s).
+  // User-driven searches and price filters may legitimately be empty.
+  const isFacetListing = (category || manufacturer) && !search && !minPrice && !maxPrice
+  if ((isFacetListing && totalProducts === 0) || (currentPage > 1 && currentPage > totalPages)) {
+    notFound()
+  }
 
   // Convert Decimal to number and apply correct price.
   // Normalize empty image strings to null so cards fall back to manufacturer.logo.

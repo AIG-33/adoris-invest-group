@@ -9,6 +9,7 @@ import {
 import { retryPrismaQuery } from '@/lib/retry-prisma'
 import { getProductUrl } from '@/lib/product-url'
 import { getBaseUrl } from '@/lib/get-base-url'
+import { MANUFACTURER_SLUG_REDIRECTS } from '@/lib/legacy-redirects'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -63,6 +64,7 @@ async function generateStaticSitemap(baseUrl: string): Promise<string> {
     ),
     retryPrismaQuery(() =>
       prisma.manufacturer.findMany({
+        where: { products: { some: {} } },
         select: { slug: true, updatedAt: true },
       })
     ),
@@ -106,7 +108,9 @@ async function generateStaticSitemap(baseUrl: string): Promise<string> {
   }
 
   // Manufacturers — use manufacturer.updatedAt when present
+  // Only manufacturers with products, and not legacy slugs that 301 elsewhere
   for (const m of manufacturers) {
+    if (MANUFACTURER_SLUG_REDIRECTS[m.slug]) continue
     const lastmod = (m.updatedAt ?? latestProduct?.updatedAt ?? new Date(STATIC_PAGE_LASTMOD)).toISOString()
     entries.push(urlEntry(`${baseUrl}/products?manufacturer=${m.slug}`, lastmod, 'weekly', 0.7))
   }
