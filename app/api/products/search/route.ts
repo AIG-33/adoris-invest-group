@@ -44,6 +44,7 @@ export async function GET(request: Request) {
         slug: true,
         priceEU: true,
         priceRU: true,
+        priceToConfirm: true,
         image: true,
         category: {
           select: {

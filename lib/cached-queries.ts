@@ -101,6 +101,7 @@ export const getCachedFeaturedProducts = unstable_cache(
           slug: true,
           priceEU: true,
           priceRU: true,
+          priceToConfirm: true,
           image: true,
           category: { select: { id: true, name: true, slug: true } },
           manufacturer: { select: { id: true, name: true, slug: true, logo: true } },

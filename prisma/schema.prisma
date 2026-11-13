@@ -170,6 +170,8 @@ model Product {
   slugRedirects  ProductSlugRedirect[]
   /// Removed from the public price list (RFQ admin); hidden on the site, product URL 308s to the manufacturer listing
   unpublishedAt  DateTime?    @db.Timestamptz(6)
+  /// No supplier behind the price (set by the RFQ admin): «Цена требует подтверждения» next to the price
+  priceToConfirm Boolean      @default(false)
 
   @@index([featured])
   @@index([categoryId])

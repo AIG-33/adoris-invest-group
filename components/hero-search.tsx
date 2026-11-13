@@ -57,6 +57,7 @@ import type { WantedProducts } from '@/lib/wanted-products'
 import { parseBulkOrderText } from '@/lib/parse-bulk-order'
 import { setPendingQuote } from '@/lib/quote-handoff'
 import { SHEET_ACCEPT, isImageFile, isSheetFile } from '@/lib/sheet-to-text'
+import { PriceToConfirm } from '@/components/price-to-confirm'
 
 // Accent used for the cyan headline tail and the on-dark primary-tile CTA.
 // Kept as a literal hex so the hero stays recognisable across white-labelled
@@ -69,6 +70,7 @@ interface SearchResult {
   sku: string
   slug: string
   price: number
+  priceToConfirm?: boolean
   imageUrl: string | null
   category: { name: string } | null
   manufacturer: { name: string; slug: string } | null
@@ -563,8 +565,13 @@ export function HeroSearch({
                           </div>
                         )}
                       </div>
-                      <div className="font-mono-brand text-sm font-bold text-neutral-900">
+                      <div className="text-right font-mono-brand text-sm font-bold text-neutral-900">
                         {p.price > 0 ? `€${Number(p.price).toLocaleString()}` : '—'}
+                        {p.price > 0 && p.priceToConfirm && (
+                          <div>
+                            <PriceToConfirm language={language} compact />
+                          </div>
+                        )}
                       </div>
                       <ArrowRight className="h-3.5 w-3.5 text-neutral-400" />
                     </Link>

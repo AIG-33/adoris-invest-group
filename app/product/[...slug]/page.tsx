@@ -275,6 +275,7 @@ export default async function ProductPage({
       description: true,
       priceEU: true,
       priceRU: true,
+      priceToConfirm: true,
       image: true,
       categoryId: true,
       category: { select: { id: true, name: true, slug: true } },
@@ -364,6 +365,7 @@ export default async function ProductPage({
           slug: true,
           priceEU: true,
           priceRU: true,
+          priceToConfirm: true,
           image: true,
           category: {
             select: {
