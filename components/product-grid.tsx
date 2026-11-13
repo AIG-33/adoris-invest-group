@@ -6,6 +6,7 @@ import { ShoppingCart, Eye } from 'lucide-react'
 import { useState } from 'react'
 import { getProductUrl } from '@/lib/product-url'
 import { normalizeImageUrl } from '@/lib/normalize-image-url'
+import { PriceToConfirm } from '@/components/price-to-confirm'
 
 interface Product {
   id: string
@@ -14,6 +15,7 @@ interface Product {
   sku: string
   description: string | null
   price: number
+  priceToConfirm?: boolean
   image: string | null
   stockStatus: string
   category: { name: string; slug: string }
@@ -143,6 +145,9 @@ export function ProductGrid({ products, search, company, hideHeader }: ProductGr
                       )}
                     </div>
                   </div>
+                  {company?.showPrices && product?.price > 0 && product?.priceToConfirm && (
+                    <PriceToConfirm language={company.language} className="-mt-1 mb-2 sm:mb-3" />
+                  )}
                   <div className="flex gap-2">
                     <button
                       onClick={() => addToCart(product)}

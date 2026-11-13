@@ -9,6 +9,7 @@ import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
 import { normalizeImageUrl } from '@/lib/normalize-image-url'
 import { ProductRfqForm } from '@/components/product-rfq-form'
+import { PriceToConfirm } from '@/components/price-to-confirm'
 
 interface Product {
   id: string
@@ -17,6 +18,7 @@ interface Product {
   sku: string
   description: string | null
   price: number
+  priceToConfirm?: boolean
   image: string | null
   stockStatus: string
   stockQuantity: number
@@ -165,6 +167,9 @@ export function ProductDetail({ product, relatedProducts, translations, company 
                 }) || '0.00'}`
               )}
             </div>
+            {company?.showPrices && product?.price > 0 && product?.priceToConfirm && (
+              <PriceToConfirm language={company.language} className="mt-2 text-sm" />
+            )}
           </div>
 
           {/* Order Info */}
@@ -373,6 +378,9 @@ export function ProductDetail({ product, relatedProducts, translations, company 
                       }) || '0.00'}`
                     )}
                   </div>
+                  {company?.showPrices && relProduct?.price > 0 && relProduct?.priceToConfirm && (
+                    <PriceToConfirm language={company.language} className="mt-1" />
+                  )}
                 </div>
               </Link>
             )) || []}

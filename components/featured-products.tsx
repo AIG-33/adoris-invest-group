@@ -6,6 +6,7 @@ import { ShoppingCart, ArrowRight } from 'lucide-react'
 import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
 import { normalizeImageUrl } from '@/lib/normalize-image-url'
+import { PriceToConfirm } from '@/components/price-to-confirm'
 
 type Product = {
   id: string
@@ -13,6 +14,7 @@ type Product = {
   sku: string
   slug: string
   price: number
+  priceToConfirm?: boolean
   image: string | null
   description?: string | null
   category: { name: string; slug: string }
@@ -158,6 +160,9 @@ export function FeaturedProducts({ products, translations, company }: Props) {
                   </span>
                   <span className="text-[10px] uppercase tracking-wider text-white/55 font-medium">By Order</span>
                 </div>
+                {company?.showPrices && product.price > 0 && product.priceToConfirm && (
+                  <PriceToConfirm language={company.language} tone="dark" className="mt-2" />
+                )}
               </div>
             </Link>
           ))}

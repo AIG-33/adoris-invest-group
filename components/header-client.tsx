@@ -32,6 +32,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { PriceToConfirm } from '@/components/price-to-confirm'
 
 interface SearchResult {
   id: string
@@ -39,6 +40,7 @@ interface SearchResult {
   sku: string
   slug: string
   price: number
+  priceToConfirm?: boolean
   imageUrl: string | null
   category: { name: string } | null
   manufacturer: { name: string; slug: string } | null
@@ -412,6 +414,7 @@ export function HeaderClient({ company, translations, language = 'en' }: HeaderC
                       <div className="font-mono-brand font-bold text-sm sm:text-base" style={{ color: 'var(--company-primary)' }}>
                         €{Number(product.price || 0).toFixed(2)}
                       </div>
+                      {Number(product.price) > 0 && product.priceToConfirm && <PriceToConfirm language={language} compact />}
                       <div className="text-xs text-neutral-500 hidden sm:block">excl. VAT</div>
                     </div>
                   </button>

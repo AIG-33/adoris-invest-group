@@ -222,6 +222,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         slug: true,
         priceEU: true,
         priceRU: true,
+        priceToConfirm: true,
         image: true,
         category: {
           select: {
