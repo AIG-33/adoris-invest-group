@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Minus, Plus, X, ArrowRight, FileSpreadsheet } from 'lucide-react'
+import { Minus, Plus, X, ArrowRight, FileSpreadsheet, FileText, CheckCircle2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
 import { normalizeImageUrl } from '@/lib/normalize-image-url'
+import { hasCartQuote } from '@/lib/cart-quote'
 
 interface CartItem {
   id: string
@@ -36,6 +37,17 @@ interface CartTranslations {
   clearCart: string
   clearConfirm: string
   exportExcel: string
+  requestQuote: string
+  quoteTitle: string
+  quoteDescription: string
+  quoteEmailLabel: string
+  quoteSubmit: string
+  quoteSending: string
+  quoteCancel: string
+  quoteSuccessTitle: string
+  quoteSuccess: string
+  quoteError: string
+  quoteClose: string
   common?: {
     loading?: string
   }
@@ -50,11 +62,54 @@ export function CartContent({ translations, company }: CartContentProps) {
   const router = useRouter()
   const [cart, setCart] = useState<CartItem[]>([])
   const [mounted, setMounted] = useState(false)
+  const [quoteOpen, setQuoteOpen] = useState(false)
+  const [quoteEmail, setQuoteEmail] = useState('')
+  const [quoteStatus, setQuoteStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const cartQuote = hasCartQuote(company)
 
   useEffect(() => {
     setMounted(true)
     loadCart()
   }, [])
+
+  useEffect(() => {
+    if (!quoteOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && quoteStatus !== 'sending') setQuoteOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [quoteOpen, quoteStatus])
+
+  const openQuote = () => {
+    setQuoteStatus('idle')
+    setQuoteOpen(true)
+  }
+
+  const submitQuote = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!cart?.length || quoteStatus === 'sending') return
+    setQuoteStatus('sending')
+    try {
+      const res = await fetch('/api/cart-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: quoteEmail.trim(),
+          items: cart.map((item) => ({
+            sku: item?.sku,
+            name: item?.name,
+            manufacturer: item?.manufacturer?.name,
+            quantity: item?.quantity,
+            url: getProductUrl(item),
+          })),
+        }),
+      })
+      setQuoteStatus(res.ok ? 'sent' : 'error')
+    } catch {
+      setQuoteStatus('error')
+    }
+  }
 
   const loadCart = () => {
     const savedCart = JSON.parse(localStorage?.getItem?.('cart') || '[]')
@@ -388,6 +443,17 @@ export function CartContent({ translations, company }: CartContentProps) {
               {translations.exportExcel}
             </button>
 
+            {cartQuote && (
+              <button
+                type="button"
+                onClick={openQuote}
+                className="w-full mt-3 py-3 rounded-lg border-2 border-neutral-300 text-neutral-800 hover:border-neutral-500 hover:bg-neutral-50 transition-all font-medium text-sm sm:text-base inline-flex items-center justify-center gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                {translations.requestQuote}
+              </button>
+            )}
+
             <button
               type="button"
               onClick={clearCart}
@@ -398,6 +464,96 @@ export function CartContent({ translations, company }: CartContentProps) {
           </div>
         </div>
       </div>
+
+      {cartQuote && quoteOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cart-quote-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && quoteStatus !== 'sending') setQuoteOpen(false)
+          }}
+        >
+          <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 sm:p-8">
+            <button
+              type="button"
+              onClick={() => setQuoteOpen(false)}
+              disabled={quoteStatus === 'sending'}
+              className="absolute top-3 right-3 p-2 rounded-lg text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 disabled:opacity-50"
+              aria-label={translations.quoteClose}
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {quoteStatus === 'sent' ? (
+              <div className="text-center py-2">
+                <CheckCircle2 className="w-12 h-12 mx-auto mb-3 text-emerald-600" />
+                <h3 id="cart-quote-title" className="text-xl font-bold text-neutral-900 mb-2">
+                  {translations.quoteSuccessTitle}
+                </h3>
+                <p className="text-sm text-neutral-700 mb-6" role="status">
+                  {translations.quoteSuccess.replace('{email}', quoteEmail.trim())}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setQuoteOpen(false)}
+                  className="w-full px-4 py-3 rounded-lg text-white font-semibold"
+                  style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                >
+                  {translations.quoteClose}
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={submitQuote}>
+                <h3 id="cart-quote-title" className="text-xl font-bold text-neutral-900 mb-2 pr-8">
+                  {translations.quoteTitle}
+                </h3>
+                <p className="text-sm text-neutral-700 leading-relaxed mb-5">
+                  {translations.quoteDescription}
+                </p>
+                <label htmlFor="cart-quote-email" className="block text-sm font-medium text-neutral-800 mb-1.5">
+                  {translations.quoteEmailLabel}
+                </label>
+                <input
+                  id="cart-quote-email"
+                  type="email"
+                  required
+                  autoFocus
+                  autoComplete="email"
+                  value={quoteEmail}
+                  onChange={(e) => setQuoteEmail(e.target.value)}
+                  placeholder="name@company.by"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-neutral-300 focus:border-neutral-600 focus:outline-none text-base"
+                />
+                {quoteStatus === 'error' && (
+                  <p className="mt-3 text-sm text-red-600" role="alert">
+                    {translations.quoteError}
+                  </p>
+                )}
+                <div className="flex flex-col-reverse sm:flex-row gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setQuoteOpen(false)}
+                    disabled={quoteStatus === 'sending'}
+                    className="flex-1 px-4 py-3 rounded-lg border-2 border-neutral-300 text-neutral-800 font-semibold hover:bg-neutral-50 disabled:opacity-50"
+                  >
+                    {translations.quoteCancel}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={quoteStatus === 'sending'}
+                    className="flex-1 px-4 py-3 rounded-lg text-white font-semibold disabled:opacity-50"
+                    style={{ backgroundColor: 'var(--company-accent, #000000)' }}
+                  >
+                    {quoteStatus === 'sending' ? translations.quoteSending : translations.quoteSubmit}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

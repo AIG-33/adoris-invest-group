@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer'
 import type { CompanyConfig } from '@/lib/company-types'
+import type { CartQuoteItem } from '@/lib/cart-quote'
+import { escapeHtml } from '@/lib/rfq/template'
 
 // Create reusable transporter
 function createTransporter() {
@@ -1009,6 +1011,89 @@ ${message ? `Message:\n${message}\n` : ''}
     `,
     headers: {
       'Message-ID': `<rfq-${sku.replace(/[^A-Za-z0-9._-]/g, '')}-${Date.now()}@${companyDomain}>`,
+      'X-Mailer': 'Next.js Email System',
+      ...siteFormHeaders(company, 'rfq'),
+    },
+  })
+
+  return { success: true }
+}
+
+interface CartQuoteEmailOptions {
+  to: string
+  customerEmail: string
+  items: CartQuoteItem[]
+  company?: CompanyConfig | null
+}
+
+/** Quote request for the whole cart: the cart contents plus the address the quote should be sent to. */
+export async function sendCartQuoteRequestEmail({ to, customerEmail, items, company }: CartQuoteEmailOptions) {
+  const transporter = createTransporter()
+  const companyName = company?.name || process.env.EMAIL_FROM_NAME || ''
+  const companyDomain =
+    company?.domain ||
+    new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000').hostname
+  const totalQty = items.reduce((sum, i) => sum + i.quantity, 0)
+  const productUrl = (path?: string) => (path ? `https://${companyDomain}${path}` : '')
+
+  const textVersion = [
+    `Запрос коммерческого предложения с сайта ${companyDomain}`,
+    '',
+    `Отправить КП на: ${customerEmail}`,
+    '',
+    `Позиции в корзине (${items.length}, всего ${totalQty} шт.):`,
+    ...items.map(
+      (i, n) =>
+        `${n + 1}. ${i.manufacturer ? `${i.manufacturer} | ` : ''}${i.sku} | ${i.name} — ${i.quantity} шт.${i.url ? `\n   ${productUrl(i.url)}` : ''}`
+    ),
+  ].join('\n')
+
+  const cell = 'padding:8px 10px;border-bottom:1px solid #e5e7eb;vertical-align:top;'
+  const rows = items
+    .map(
+      (i, n) => `
+        <tr>
+          <td style="${cell}color:#6b7280;">${n + 1}</td>
+          <td style="${cell}">${escapeHtml(i.manufacturer)}</td>
+          <td style="${cell}font-family:monospace;white-space:nowrap;">${escapeHtml(i.sku)}</td>
+          <td style="${cell}">${i.url ? `<a href="${escapeHtml(productUrl(i.url))}" style="color:#1a8c7c;">${escapeHtml(i.name)}</a>` : escapeHtml(i.name)}</td>
+          <td style="${cell}text-align:right;font-weight:bold;white-space:nowrap;">${i.quantity}</td>
+        </tr>`
+    )
+    .join('')
+
+  await transporter.sendMail({
+    from: `${process.env.EMAIL_FROM_NAME || companyName} <${process.env.EMAIL_FROM}>`,
+    to,
+    replyTo: customerEmail,
+    subject: `Запрос КП из корзины: ${items.length} поз. — ${customerEmail}`,
+    text: textVersion,
+    html: `
+      <!DOCTYPE html>
+      <html><body style="font-family: Arial, sans-serif; color: #222;">
+        <h2 style="margin:0 0 12px;">Запрос коммерческого предложения</h2>
+        <p style="margin:0 0 16px;font-size:15px;">
+          Отправить КП на: <a href="mailto:${escapeHtml(customerEmail)}"><strong>${escapeHtml(customerEmail)}</strong></a>
+        </p>
+        <p style="margin:0 0 8px;color:#555;">Позиций: ${items.length}, всего ${totalQty} шт.</p>
+        <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;width:100%;max-width:800px;">
+          <thead>
+            <tr style="background:#f3f4f6;text-align:left;">
+              <th style="padding:8px 10px;">#</th>
+              <th style="padding:8px 10px;">Производитель</th>
+              <th style="padding:8px 10px;">Артикул</th>
+              <th style="padding:8px 10px;">Наименование</th>
+              <th style="padding:8px 10px;text-align:right;">Кол-во</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <hr style="margin-top:24px;"/>
+        <p style="color:#666;font-size:12px;">Отправлено из корзины сайта ${escapeHtml(companyDomain)}. Ответ на это письмо уйдёт клиенту.</p>
+      </body></html>
+    `,
+    headers: {
+      'Message-ID': `<cart-quote-${Date.now()}@${companyDomain}>`,
       'X-Mailer': 'Next.js Email System',
       ...siteFormHeaders(company, 'rfq'),
     },

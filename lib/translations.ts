@@ -281,6 +281,17 @@ export interface Translations {
     clearCart: string
     clearConfirm: string
     exportExcel: string
+    requestQuote: string
+    quoteTitle: string
+    quoteDescription: string
+    quoteEmailLabel: string
+    quoteSubmit: string
+    quoteSending: string
+    quoteCancel: string
+    quoteSuccessTitle: string
+    quoteSuccess: string
+    quoteError: string
+    quoteClose: string
   }
   
   // Checkout
@@ -957,6 +968,17 @@ const translations: Record<Language, Translations> = {
       clearCart: 'Clear cart',
       clearConfirm: 'Remove all items from your cart?',
       exportExcel: 'Export to Excel',
+      requestQuote: 'Request a quote',
+      quoteTitle: 'Request a quote',
+      quoteDescription: 'Enter your email and we will send a commercial offer for the items in your cart.',
+      quoteEmailLabel: 'Email for the quote',
+      quoteSubmit: 'Send request',
+      quoteSending: 'Sending…',
+      quoteCancel: 'Cancel',
+      quoteSuccessTitle: 'Request sent',
+      quoteSuccess: 'Thank you! We will send the quote to {email}.',
+      quoteError: 'Could not send the request. Please try again or email us.',
+      quoteClose: 'Close',
     },
     checkout: {
       title: 'Checkout',
@@ -1689,6 +1711,17 @@ const translations: Record<Language, Translations> = {
       clearCart: 'Очистить корзину',
       clearConfirm: 'Удалить все товары из корзины?',
       exportExcel: 'Экспорт в Excel',
+      requestQuote: 'Запросить КП',
+      quoteTitle: 'Запрос коммерческого предложения',
+      quoteDescription: 'Укажите email, и мы пришлём коммерческое предложение на товары из корзины.',
+      quoteEmailLabel: 'Email для отправки КП',
+      quoteSubmit: 'Отправить запрос',
+      quoteSending: 'Отправляем…',
+      quoteCancel: 'Отмена',
+      quoteSuccessTitle: 'Запрос отправлен',
+      quoteSuccess: 'Спасибо! Мы пришлём КП на {email}.',
+      quoteError: 'Не удалось отправить запрос. Попробуйте ещё раз или напишите нам на почту.',
+      quoteClose: 'Закрыть',
     },
     checkout: {
       title: 'Оформление заказа',
