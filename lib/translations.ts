@@ -285,6 +285,7 @@ export interface Translations {
     quoteTitle: string
     quoteDescription: string
     quoteEmailLabel: string
+    quoteCountryLabel: string
     quoteSubmit: string
     quoteSending: string
     quoteCancel: string
@@ -972,6 +973,7 @@ const translations: Record<Language, Translations> = {
       quoteTitle: 'Request a quote',
       quoteDescription: 'Enter your email and we will send a commercial offer for the items in your cart.',
       quoteEmailLabel: 'Email for the quote',
+      quoteCountryLabel: 'Delivery country',
       quoteSubmit: 'Send request',
       quoteSending: 'Sending…',
       quoteCancel: 'Cancel',
@@ -1715,6 +1717,7 @@ const translations: Record<Language, Translations> = {
       quoteTitle: 'Запрос коммерческого предложения',
       quoteDescription: 'Укажите email, и мы пришлём коммерческое предложение на товары из корзины.',
       quoteEmailLabel: 'Email для отправки КП',
+      quoteCountryLabel: 'Страна доставки',
       quoteSubmit: 'Отправить запрос',
       quoteSending: 'Отправляем…',
       quoteCancel: 'Отмена',

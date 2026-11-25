@@ -10,6 +10,7 @@ import type { CompanyConfig } from '@/lib/company-types'
 import { normalizeImageUrl } from '@/lib/normalize-image-url'
 import { ProductRfqForm } from '@/components/product-rfq-form'
 import { PriceToConfirm } from '@/components/price-to-confirm'
+import { isVienaShop } from '@/lib/tenant'
 
 interface Product {
   id: string
@@ -246,6 +247,22 @@ export function ProductDetail({ product, relatedProducts, translations, company 
             )}
           </div>
 
+          {isVienaShop(company) ? (
+            <div className="rounded-2xl border-2 border-neutral-200 bg-neutral-50 p-5 sm:p-6">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-1">Запросить коммерческое предложение</h3>
+              <p className="text-sm text-neutral-600 mb-4">
+                Добавьте товар в корзину — из корзины можно одним запросом получить КП на все выбранные позиции.
+              </p>
+              <Link
+                href="/cart"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white text-sm font-semibold"
+                style={{ backgroundColor: 'var(--company-primary, #333333)' }}
+              >
+                <ShoppingCart className="w-4 h-4" />
+                Перейти в корзину
+              </Link>
+            </div>
+          ) : (
           <ProductRfqForm
             sku={product?.sku || ''}
             productName={product?.name || ''}
@@ -265,6 +282,7 @@ export function ProductDetail({ product, relatedProducts, translations, company 
               rfqError: translations.rfqError,
             }}
           />
+          )}
         </section>
       </div>
 

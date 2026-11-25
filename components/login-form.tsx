@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { PdConsentCheckbox } from '@/components/viena-consent'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -12,9 +13,11 @@ interface LoginFormProps {
   translations: Translations['auth']
   companyName?: string
   companyLogo?: string
+  requirePdConsent?: boolean
 }
 
-export function LoginForm({ translations, companyName, companyLogo }: LoginFormProps) {
+export function LoginForm({ translations, companyName, companyLogo, requirePdConsent = false }: LoginFormProps) {
+  const [pdConsent, setPdConsent] = useState(false)
   const router = useRouter()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password')
@@ -298,6 +301,8 @@ export function LoginForm({ translations, companyName, companyLogo }: LoginFormP
                 />
               </div>
 
+              {requirePdConsent && <PdConsentCheckbox checked={pdConsent} onChange={setPdConsent} />}
+
               <button
                 type="submit"
                 disabled={loading}
@@ -334,6 +339,8 @@ export function LoginForm({ translations, companyName, companyLogo }: LoginFormP
                   placeholder="you@example.com"
                 />
               </div>
+
+              {requirePdConsent && <PdConsentCheckbox checked={pdConsent} onChange={setPdConsent} />}
 
               <button
                 type="submit"

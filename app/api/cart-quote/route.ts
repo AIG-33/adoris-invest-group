@@ -23,6 +23,13 @@ export async function POST(request: Request) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
     }
+    const country = text(body?.country, 100)
+    if (!country) {
+      return NextResponse.json({ error: 'Delivery country is required' }, { status: 400 })
+    }
+    if (body?.consent !== true) {
+      return NextResponse.json({ error: 'Personal data consent is required' }, { status: 400 })
+    }
 
     const items: CartQuoteItem[] = (Array.isArray(body?.items) ? body.items : [])
       .slice(0, MAX_ITEMS)
@@ -45,6 +52,7 @@ export async function POST(request: Request) {
     await sendCartQuoteRequestEmail({
       to: CART_QUOTE_RECIPIENT,
       customerEmail: email,
+      country,
       items,
       company,
     })

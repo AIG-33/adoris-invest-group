@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { CompanyConfig } from '@/lib/company-types'
-import { isAdoris } from '@/lib/tenant'
+import { isAdoris, isVienaShop } from '@/lib/tenant'
 import { portalUrl } from '@/lib/supplier-portal'
 import { ExternalLink } from '@/components/external-link'
 
@@ -184,6 +184,17 @@ export function FooterClient({ company, navTranslations, footerTranslations }: F
           <p>
             &copy; {new Date()?.getFullYear() || 2025} {companyName}. {footerTranslations.allRightsReserved}
           </p>
+          {isVienaShop(company) && (
+            <p className="mt-3 flex flex-wrap justify-center gap-x-2 gap-y-1">
+              <Link href="/privacy" className="footer-link">
+                Политика обработки персональных данных
+              </Link>
+              <span aria-hidden>·</span>
+              <Link href="/cookies" className="footer-link">
+                Политика cookie
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </footer>

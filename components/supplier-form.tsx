@@ -21,6 +21,8 @@ import {
   ChevronDown,
 } from 'lucide-react'
 import type { CompanyConfig } from '@/lib/company-types'
+import { isVienaShop } from '@/lib/tenant'
+import { PdConsentCheckbox } from '@/components/viena-consent'
 
 interface SupplierTranslations {
   title: string
@@ -105,6 +107,7 @@ export function SupplierForm({ company, translations }: SupplierFormProps) {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [notes, setNotes] = useState('')
+  const [consent, setConsent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
@@ -590,6 +593,8 @@ export function SupplierForm({ company, translations }: SupplierFormProps) {
                 </div>
               </div>
             )}
+
+            {isVienaShop(company) && <PdConsentCheckbox checked={consent} onChange={setConsent} />}
 
             {/* Submit Button */}
             <button

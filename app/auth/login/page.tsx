@@ -2,6 +2,7 @@ import { LoginForm } from '@/components/login-form'
 import { getServerCompany } from '@/lib/server-company'
 import { getDictionary } from '@/lib/translations'
 import { normalizeLogoUrl } from '@/lib/logo-url'
+import { isVienaShop } from '@/lib/tenant'
 
 export default async function LoginPage() {
   const company = await getServerCompany()
@@ -13,6 +14,7 @@ export default async function LoginPage() {
       translations={dict.auth}
       companyName={company?.name || ''}
       companyLogo={company?.logo ? normalizeLogoUrl(company.logo) : '/logo.png'}
+      requirePdConsent={isVienaShop(company)}
     />
   )
 }

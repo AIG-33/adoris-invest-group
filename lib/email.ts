@@ -1022,12 +1022,13 @@ ${message ? `Message:\n${message}\n` : ''}
 interface CartQuoteEmailOptions {
   to: string
   customerEmail: string
+  country: string
   items: CartQuoteItem[]
   company?: CompanyConfig | null
 }
 
 /** Quote request for the whole cart: the cart contents plus the address the quote should be sent to. */
-export async function sendCartQuoteRequestEmail({ to, customerEmail, items, company }: CartQuoteEmailOptions) {
+export async function sendCartQuoteRequestEmail({ to, customerEmail, country, items, company }: CartQuoteEmailOptions) {
   const transporter = createTransporter()
   const companyName = company?.name || process.env.EMAIL_FROM_NAME || ''
   const companyDomain =
@@ -1040,6 +1041,8 @@ export async function sendCartQuoteRequestEmail({ to, customerEmail, items, comp
     `Запрос коммерческого предложения с сайта ${companyDomain}`,
     '',
     `Отправить КП на: ${customerEmail}`,
+    `Страна доставки: ${country}`,
+    'Согласие на обработку персональных данных: получено',
     '',
     `Позиции в корзине (${items.length}, всего ${totalQty} шт.):`,
     ...items.map(
@@ -1073,8 +1076,10 @@ export async function sendCartQuoteRequestEmail({ to, customerEmail, items, comp
       <html><body style="font-family: Arial, sans-serif; color: #222;">
         <h2 style="margin:0 0 12px;">Запрос коммерческого предложения</h2>
         <p style="margin:0 0 16px;font-size:15px;">
-          Отправить КП на: <a href="mailto:${escapeHtml(customerEmail)}"><strong>${escapeHtml(customerEmail)}</strong></a>
+          Отправить КП на: <a href="mailto:${escapeHtml(customerEmail)}"><strong>${escapeHtml(customerEmail)}</strong></a><br/>
+          Страна доставки: <strong>${escapeHtml(country)}</strong>
         </p>
+        <p style="margin:0 0 16px;color:#555;font-size:13px;">Согласие на обработку персональных данных: получено (${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC)</p>
         <p style="margin:0 0 8px;color:#555;">Позиций: ${items.length}, всего ${totalQty} шт.</p>
         <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;width:100%;max-width:800px;">
           <thead>

@@ -10,6 +10,8 @@ import { AnalyticsHead } from '@/components/analytics-head'
 import { getServerCompany } from '@/lib/server-company'
 import { normalizeLogoUrl } from '@/lib/logo-url'
 import { getBaseUrl } from '@/lib/get-base-url'
+import { isVienaShop } from '@/lib/tenant'
+import { VienaCookieConsent } from '@/components/viena-consent'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' })
 
@@ -148,7 +150,14 @@ export default async function RootLayout({
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <ColorSync />
-        <AnalyticsHead company={company} />
+        {isVienaShop(company) ? (
+          <VienaCookieConsent
+            googleAnalyticsId={company?.googleAnalyticsId}
+            yandexMetrikaId={company?.yandexMetrikaId}
+          />
+        ) : (
+          <AnalyticsHead company={company} />
+        )}
         <Providers>{children}</Providers>
       </body>
     </html>

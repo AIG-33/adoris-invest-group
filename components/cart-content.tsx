@@ -9,6 +9,8 @@ import { getProductUrl } from '@/lib/product-url'
 import type { CompanyConfig } from '@/lib/company-types'
 import { normalizeImageUrl } from '@/lib/normalize-image-url'
 import { hasCartQuote } from '@/lib/cart-quote'
+import { isVienaShop } from '@/lib/tenant'
+import { PdConsentCheckbox } from '@/components/viena-consent'
 
 interface CartItem {
   id: string
@@ -41,6 +43,7 @@ interface CartTranslations {
   quoteTitle: string
   quoteDescription: string
   quoteEmailLabel: string
+  quoteCountryLabel: string
   quoteSubmit: string
   quoteSending: string
   quoteCancel: string
@@ -64,8 +67,11 @@ export function CartContent({ translations, company }: CartContentProps) {
   const [mounted, setMounted] = useState(false)
   const [quoteOpen, setQuoteOpen] = useState(false)
   const [quoteEmail, setQuoteEmail] = useState('')
+  const [quoteCountry, setQuoteCountry] = useState('Беларусь')
+  const [quoteConsent, setQuoteConsent] = useState(false)
   const [quoteStatus, setQuoteStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const cartQuote = hasCartQuote(company)
+  const quotesOnly = isVienaShop(company)
 
   useEffect(() => {
     setMounted(true)
@@ -96,6 +102,8 @@ export function CartContent({ translations, company }: CartContentProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: quoteEmail.trim(),
+          country: quoteCountry.trim(),
+          consent: quoteConsent,
           items: cart.map((item) => ({
             sku: item?.sku,
             name: item?.name,
@@ -426,6 +434,7 @@ export function CartContent({ translations, company }: CartContentProps) {
               </div>
             </div>
 
+            {!quotesOnly && (
             <button
               onClick={() => router?.push?.('/checkout')}
               className="w-full bg-[#333333] text-white py-3 sm:py-4 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold text-base sm:text-lg flex items-center justify-center gap-2 hover:shadow-lg hover:-translate-y-0.5"
@@ -433,6 +442,7 @@ export function CartContent({ translations, company }: CartContentProps) {
               {translations.proceedToCheckout}
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
+            )}
 
             <button
               type="button"
@@ -447,7 +457,9 @@ export function CartContent({ translations, company }: CartContentProps) {
               <button
                 type="button"
                 onClick={openQuote}
-                className="w-full mt-3 py-3 rounded-lg border-2 border-neutral-300 text-neutral-800 hover:border-neutral-500 hover:bg-neutral-50 transition-all font-medium text-sm sm:text-base inline-flex items-center justify-center gap-2"
+                className={quotesOnly
+                  ? 'w-full mt-3 bg-[#333333] text-white py-3 sm:py-4 rounded-lg hover:bg-[#1a1a1a] transition-all font-semibold text-base sm:text-lg inline-flex items-center justify-center gap-2'
+                  : 'w-full mt-3 py-3 rounded-lg border-2 border-neutral-300 text-neutral-800 hover:border-neutral-500 hover:bg-neutral-50 transition-all font-medium text-sm sm:text-base inline-flex items-center justify-center gap-2'}
               >
                 <FileText className="w-4 h-4" />
                 {translations.requestQuote}
@@ -526,6 +538,19 @@ export function CartContent({ translations, company }: CartContentProps) {
                   placeholder="name@company.by"
                   className="w-full px-4 py-3 rounded-lg border-2 border-neutral-300 focus:border-neutral-600 focus:outline-none text-base"
                 />
+                <label htmlFor="cart-quote-country" className="block text-sm font-medium text-neutral-800 mt-4 mb-1.5">
+                  {translations.quoteCountryLabel}
+                </label>
+                <input
+                  id="cart-quote-country"
+                  type="text"
+                  required
+                  autoComplete="country-name"
+                  value={quoteCountry}
+                  onChange={(e) => setQuoteCountry(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border-2 border-neutral-300 focus:border-neutral-600 focus:outline-none text-base"
+                />
+                <PdConsentCheckbox checked={quoteConsent} onChange={setQuoteConsent} className="mt-4" />
                 {quoteStatus === 'error' && (
                   <p className="mt-3 text-sm text-red-600" role="alert">
                     {translations.quoteError}

@@ -24,6 +24,7 @@ import {
 } from '@/lib/ocr-bulk-order';
 import { takePendingQuote } from '@/lib/quote-handoff';
 import { SHEET_ACCEPT, isImageFile, isSheetFile, sheetFileToText } from '@/lib/sheet-to-text';
+import { PdConsentCheckbox } from '@/components/viena-consent';
 
 interface ProcessedProduct {
   id: string;
@@ -92,6 +93,7 @@ interface BulkOrderTranslations {
 
 interface BulkOrderFormProps {
   translations: BulkOrderTranslations
+  requirePdConsent?: boolean
 }
 
 const EXAMPLE_TEXT = `10446232\t2
@@ -126,7 +128,7 @@ function collectClipboardImages(data: DataTransfer | null): File[] {
   return files;
 }
 
-export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
+export default function BulkOrderForm({ translations, requirePdConsent = false }: BulkOrderFormProps) {
   const router = useRouter();
   const [inputText, setInputText] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -852,6 +854,7 @@ export default function BulkOrderForm({ translations }: BulkOrderFormProps) {
                     parsed={parseBulkOrderText(inputText)}
                     notFound={result.notFound}
                     t={t}
+                    requirePdConsent={requirePdConsent}
                   />
                 </div>
               )}
@@ -867,11 +870,14 @@ function NotFoundQuoteRequest({
   parsed,
   notFound,
   t,
+  requirePdConsent,
 }: {
   parsed: { sku: string; quantity: number }[];
   notFound: string[];
   t: BulkOrderTranslations;
+  requirePdConsent: boolean;
 }) {
+  const [consent, setConsent] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
@@ -945,6 +951,7 @@ function NotFoundQuoteRequest({
           {status === 'sending' ? t.rfqSending || 'Sending…' : t.rfqSubmit || 'Request quote'}
         </button>
       </div>
+      {requirePdConsent && <PdConsentCheckbox checked={consent} onChange={setConsent} className="mt-3" />}
       {status === 'error' && (
         <p className="mt-2 text-sm font-medium text-red-700">
           {t.rfqError || 'Could not send the request. Please try again or email us.'}

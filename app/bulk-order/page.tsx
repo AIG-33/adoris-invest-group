@@ -3,6 +3,7 @@ import { Footer } from '@/components/footer';
 import BulkOrderForm from '@/components/bulk-order-form';
 import { StructuredData } from '@/components/structured-data';
 import { getServerCompany } from '@/lib/server-company';
+import { isVienaShop } from '@/lib/tenant';
 import { getDictionary, resolveBulkOrderTranslations } from '@/lib/translations';
 import { getBaseUrl } from '@/lib/get-base-url';
 import { generateHowToSchema } from '@/lib/seo';
@@ -136,7 +137,7 @@ export default async function BulkOrderPage() {
 
             {/* ─── The form itself, right in the first screen ─────────── */}
             <div id="bulk-form" className="mx-auto mt-7 max-w-4xl scroll-mt-24 sm:mt-8">
-              <BulkOrderForm translations={{ ...bulk, items: dict.cart.items }} />
+              <BulkOrderForm translations={{ ...bulk, items: dict.cart.items }} requirePdConsent={isVienaShop(company)} />
             </div>
 
             <div className="mt-6 text-center">
